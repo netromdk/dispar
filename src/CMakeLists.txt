@@ -5,6 +5,9 @@ add_executable(
 
   main.cc
 
+  Util.h
+  Util.cc
+
   Reader.h
   Reader.cc
 
@@ -15,6 +18,11 @@ add_executable(
   BinaryObject.cc
   SymbolTable.h
   SymbolTable.cc
+
+  formats/Format.h
+  formats/Format.cc
+  formats/MachO.h
+  formats/MachO.cc
   )
 
 qt5_use_modules(
