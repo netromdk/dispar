@@ -79,7 +79,7 @@ bool MachO::parse() {
     }
 
     // Parse the actual binary objects.
-    foreach (const auto &arch, archs) {
+    for (const auto &arch : archs) {
       if (!parseHeader(arch.first, arch.second, r)) {
         return false;
       }
@@ -799,7 +799,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r) {
   }
 
   // Fill data of stored sections.
-  foreach (auto sec, binaryObject->getSections()) {
+  for (auto &sec : binaryObject->getSections()) {
     r.seek(sec->getOffset());
     sec->setData(r.read(sec->getSize()));
   }
