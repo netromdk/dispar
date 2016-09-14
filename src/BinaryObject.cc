@@ -56,7 +56,7 @@ QList<std::shared_ptr<Section>> BinaryObject::getSections() const {
 
 QList<std::shared_ptr<Section>> BinaryObject::getSectionsByType(Section::Type type) const {
   QList<std::shared_ptr<Section>> res;
-  foreach (auto sec, sections) {
+  for (auto &sec : sections) {
     if (sec->getType() == type) {
       res << sec;
     }
@@ -65,7 +65,7 @@ QList<std::shared_ptr<Section>> BinaryObject::getSectionsByType(Section::Type ty
 }
 
 std::shared_ptr<Section> BinaryObject::getSection(Section::Type type) const {
-  foreach (auto sec, sections) {
+  for (auto &sec : sections) {
     if (sec->getType() == type) {
       return sec;
     }

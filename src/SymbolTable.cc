@@ -25,7 +25,7 @@ void SymbolTable::addSymbol(const SymbolEntry &entry) {
 }
 
 bool SymbolTable::getString(quint64 value, QString &str) const {
-  foreach (const auto &entry, entries) {
+  for (const auto &entry : entries) {
     if (entry.getValue() == value) {
       const auto &s  = entry.getString();
       if (s.isEmpty()) continue;
