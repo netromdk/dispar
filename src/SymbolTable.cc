@@ -1,30 +1,5 @@
 #include "SymbolTable.h"
 
-quint32 SymbolEntry::index() const
-{
-  return index_;
-}
-
-void SymbolEntry::setValue(quint64 value)
-{
-  value_ = value;
-}
-
-quint64 SymbolEntry::value() const
-{
-  return value_;
-}
-
-void SymbolEntry::setString(const QString &str)
-{
-  strValue = str;
-}
-
-const QString &SymbolEntry::string() const
-{
-  return strValue;
-}
-
 void SymbolTable::addSymbol(const SymbolEntry &entry)
 {
   entries << entry;

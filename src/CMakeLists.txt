@@ -21,6 +21,8 @@ add_executable(
 
   BinaryObject.h
   BinaryObject.cc
+  SymbolEntry.h
+  SymbolEntry.cc
   SymbolTable.h
   SymbolTable.cc
 
