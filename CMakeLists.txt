@@ -15,7 +15,8 @@ endif()
 include(platform)
 include(target)
 
-#add_subdirectory(examples)
+set(libName core)
+set(binName dispar)
 
 include(CTest)
 enable_testing()

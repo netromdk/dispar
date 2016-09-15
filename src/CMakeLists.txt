@@ -1,9 +1,5 @@
-set(name dispar)
-
-add_executable(
-  ${name}
-
-  main.cc
+add_library(
+  ${libName}
 
   Util.h
   Util.cc
@@ -33,6 +29,17 @@ add_executable(
   )
 
 qt5_use_modules(
-  ${name}
+  ${libName}
   Core
+  )
+
+add_executable(
+  ${binName}
+
+  main.cc
+  )
+
+target_link_libraries(
+  ${binName}
+  ${libName}
   )

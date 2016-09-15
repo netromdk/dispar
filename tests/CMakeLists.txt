@@ -14,8 +14,6 @@ add_executable(
   ${testName}
 
   Reader.cc
-
-  ../src/Reader.cc
   )
 
 add_test(
@@ -26,6 +24,7 @@ add_test(
 target_link_libraries(
   ${testName}
   gtest
+  ${libName}
   )
 
 include_directories(
