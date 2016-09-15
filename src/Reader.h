@@ -1,5 +1,5 @@
-#ifndef BMOD_READER_H
-#define BMOD_READER_H
+#ifndef DISPAR_READER_H
+#define DISPAR_READER_H
 
 #include <QByteArray>
 
@@ -37,4 +37,4 @@ private:
   bool littleEndian;
 };
 
-#endif // BMOD_READER_H
+#endif // DISPAR_READER_H

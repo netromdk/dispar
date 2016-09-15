@@ -1,5 +1,5 @@
-#ifndef BMOD_MACHO_FORMAT_H
-#define BMOD_MACHO_FORMAT_H
+#ifndef DISPAR_MACHO_FORMAT_H
+#define DISPAR_MACHO_FORMAT_H
 
 #include "Format.h"
 
@@ -23,4 +23,4 @@ private:
   QList<std::shared_ptr<BinaryObject>> objects_;
 };
 
-#endif // BMOD_MACHO_FORMAT_H
+#endif // DISPAR_MACHO_FORMAT_H

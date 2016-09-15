@@ -1,5 +1,5 @@
-#ifndef BMOD_UTIL_H
-#define BMOD_UTIL_H
+#ifndef DISPAR_UTIL_H
+#define DISPAR_UTIL_H
 
 #include <QString>
 #include <QByteArray>
@@ -30,4 +30,4 @@ public:
   static QString addrDataString(quint64 addr, QByteArray data);
 };
 
-#endif // BMOD_UTIL_H
+#endif // DISPAR_UTIL_H

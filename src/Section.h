@@ -1,5 +1,5 @@
-#ifndef BMOD_SECTION_H
-#define BMOD_SECTION_H
+#ifndef DISPAR_SECTION_H
+#define DISPAR_SECTION_H
 
 #include <QList>
 #include <QPair>
@@ -51,4 +51,4 @@ private:
   QDateTime modified;
 };
 
-#endif // BMOD_SECTION_H
+#endif // DISPAR_SECTION_H

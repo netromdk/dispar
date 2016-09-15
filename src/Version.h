@@ -1,5 +1,5 @@
-#ifndef BMOD_VERSION_H
-#define BMOD_VERSION_H
+#ifndef DISPAR_VERSION_H
+#define DISPAR_VERSION_H
 
 #include <QString>
 #include <QStringList>
@@ -24,4 +24,4 @@ static inline QString versionString(bool showDate = false)
   return versionString(MAJOR_VERSION, MINOR_VERSION, BUILD_VERSION, showDate);
 }
 
-#endif // BMOD_VERSION_H
+#endif // DISPAR_VERSION_H

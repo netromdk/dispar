@@ -1,5 +1,5 @@
-#ifndef BMOD_SYMBOL_ENTRY_H
-#define BMOD_SYMBOL_ENTRY_H
+#ifndef DISPAR_SYMBOL_ENTRY_H
+#define DISPAR_SYMBOL_ENTRY_H
 
 #include <QString>
 
@@ -21,4 +21,4 @@ private:
   QString strValue; // String table value
 };
 
-#endif // BMOD_SYMBOL_ENTRY_H
+#endif // DISPAR_SYMBOL_ENTRY_H

@@ -1,5 +1,5 @@
-#ifndef BMOD_FORMAT_H
-#define BMOD_FORMAT_H
+#ifndef DISPAR_FORMAT_H
+#define DISPAR_FORMAT_H
 
 #include <QList>
 #include <QString>
@@ -41,4 +41,4 @@ private:
   Type type_;
 };
 
-#endif // BMOD_FORMAT_H
+#endif // DISPAR_FORMAT_H

@@ -1,5 +1,5 @@
-#ifndef BMOD_BINARY_OBJECT_H
-#define BMOD_BINARY_OBJECT_H
+#ifndef DISPAR_BINARY_OBJECT_H
+#define DISPAR_BINARY_OBJECT_H
 
 #include <QList>
 
@@ -51,4 +51,4 @@ private:
   SymbolTable symTable, dynsymTable;
 };
 
-#endif // BMOD_BINARY_OBJECT_H
+#endif // DISPAR_BINARY_OBJECT_H

@@ -1,5 +1,5 @@
-#ifndef BMOD_SYMBOL_TABLE_H
-#define BMOD_SYMBOL_TABLE_H
+#ifndef DISPAR_SYMBOL_TABLE_H
+#define DISPAR_SYMBOL_TABLE_H
 
 #include "SymbolEntry.h"
 
@@ -18,4 +18,4 @@ private:
   QList<SymbolEntry> entries;
 };
 
-#endif // BMOD_SYMBOL_TABLE_H
+#endif // DISPAR_SYMBOL_TABLE_H

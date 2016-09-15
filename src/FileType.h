@@ -1,5 +1,5 @@
-#ifndef BMOD_FILE_TYPE_H
-#define BMOD_FILE_TYPE_H
+#ifndef DISPAR_FILE_TYPE_H
+#define DISPAR_FILE_TYPE_H
 
 #include <QString>
 
@@ -15,4 +15,4 @@ enum class FileType : int {
 
 QString fileTypeName(FileType type);
 
-#endif // BMOD_FILE_TYPE_H
+#endif // DISPAR_FILE_TYPE_H

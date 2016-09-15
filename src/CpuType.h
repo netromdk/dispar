@@ -1,5 +1,5 @@
-#ifndef BMOD_CPU_TYPE_H
-#define BMOD_CPU_TYPE_H
+#ifndef DISPAR_CPU_TYPE_H
+#define DISPAR_CPU_TYPE_H
 
 #include <QString>
 
@@ -37,4 +37,4 @@ enum class CpuType : int {
 
 QString cpuTypeName(CpuType type);
 
-#endif // BMOD_CPU_TYPE_H
+#endif // DISPAR_CPU_TYPE_H
