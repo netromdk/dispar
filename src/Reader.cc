@@ -3,7 +3,7 @@
 #include <QIODevice>
 #include <QByteArray>
 
-Reader::Reader(QIODevice &dev, bool littleEndian) : dev{dev}, littleEndian{littleEndian}
+Reader::Reader(QIODevice &dev, bool littleEndian) : dev(dev), littleEndian(littleEndian)
 {
 }
 
@@ -83,10 +83,12 @@ bool Reader::peekList(std::initializer_list<unsigned char> list)
   if (list.size() == 0) {
     return false;
   }
-  const QByteArray parr = dev.peek(list.size());
+
+  const auto parr = dev.peek(list.size());
   if (parr.size() != list.size()) {
     return false;
   }
+
   int i{0};
   for (auto it = list.begin(); it != list.end(); it++, i++) {
     if (*it != (unsigned char) parr[i]) {

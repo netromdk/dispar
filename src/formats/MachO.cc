@@ -296,7 +296,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
 
   // Parse load commands sequentially. Each consists of the type, size
   // and data.
-  for (int i = 0; i < ncmds; i++) {
+  for (decltype(ncmds) i = 0; i < ncmds; i++) {
     quint32 type = r.getUInt32(&ok);
     if (!ok) return false;
 
@@ -369,7 +369,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
 
       // Read sections.
       if (nsects > 0) {
-        for (int j = 0; j < nsects; j++) {
+        for (decltype(nsects) j = 0; j < nsects; j++) {
           QString secname{r.read(16)};
 
           QString segname{r.read(16)};
@@ -735,7 +735,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
   if (symnum > 0) {
     r.seek(symoff);
     qint64 pos;
-    for (int i = 0; i < symnum; i++) {
+    for (decltype(symnum) i = 0; i < symnum; i++) {
       pos = r.pos();
 
       // Index into the string table.
@@ -781,7 +781,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
   if (indirsymnum > 0) {
     r.seek(indirsymoff);
     qint64 pos;
-    for (int i = 0; i < indirsymnum; i++) {
+    for (decltype(indirsymnum) i = 0; i < indirsymnum; i++) {
       pos = r.pos();
 
       quint32 num = r.getUInt32(&ok);
@@ -833,7 +833,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
       auto &dynsymbols = dynsymTable.symbols();
       for (int h = 0; h < dynsymbols.size(); h++) {
         auto &symbol = dynsymbols[h];
-        int idx = symbol.index();
+        auto idx = symbol.index();
         if (idx >= 0 && idx < symnum) {
           // The index corresponds to the index in the symbol table.
           symbol.setString(symbols[idx].string());
