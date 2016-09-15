@@ -1,11 +1,16 @@
 set(SDK_MIN "10.11")
 set(SDK "10.11")
 set(DEV_SDK "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX${SDK}.sdk")
+SET(DEV_SDK2 "/Developer/SDKs/MacOSX${SDK}.sdk")
 
 if (NOT EXISTS "${DEV_SDK}" AND NOT IS_DIRECTORY "${DEV_SDK}")
-  MESSAGE("Could not find Mac OSX SDK at: ${DEV_SDK}")
-  MESSAGE("Aborting!")
-  RETURN()
+  if (NOT EXISTS "${DEV_SDK2}" AND NOT IS_DIRECTORY "${DEV_SDK2}")
+    message("Could not find Mac OSX SDK at: ${DEV_SDK} or ${DEV_SDK2}")
+    message("Aborting!")
+    return()
+  else()
+    set(DEV_SDK ${DEV_SDK2})
+  endif()
 endif()
 
 add_definitions(
