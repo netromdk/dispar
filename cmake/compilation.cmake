@@ -1,4 +1,4 @@
-set(CMAKE_CXX_FLAGS "-Wall")
+set(CMAKE_CXX_FLAGS "-Wall -std=c++14")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
 set(CMAKE_CXX_FLAGS_MINSIZEREL "-O3 -DNDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
@@ -24,10 +24,8 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
     COMMAND ${CMAKE_CXX_COMPILER} -dumpversion
     OUTPUT_VARIABLE GCC_VERSION
     )
-  if (NOT (GCC_VERSION VERSION_GREATER 4.8 OR GCC_VERSION VERSION_EQUAL 4.8))
-    MESSAGE(FATAL_ERROR "Requires GCC >= 4.8.")
-  else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y")
+  if (NOT (GCC_VERSION VERSION_GREATER 4.9 OR GCC_VERSION VERSION_EQUAL 4.9))
+    MESSAGE(FATAL_ERROR "Requires GCC >= 4.9.")
   endif()
 elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
   execute_process(
@@ -37,7 +35,7 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
   if (NOT (CLANG_VERSION VERSION_GREATER 3.7 OR CLANG_VERSION VERSION_EQUAL 3.7))
     message(FATAL_ERROR "Requires Clang >= 3.7.")
   else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -stdlib=libc++")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
   endif()
 elseif (MSVC AND MSVC14)
   # C++14 support is implicitly enabled.
