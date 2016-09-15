@@ -7,18 +7,18 @@
 #include "../Util.h"
 #include "../Reader.h"
 
-MachO::MachO(const QString &file) : Format(Format::Type::MachO), file{file}
+MachO::MachO(const QString &file) : Format(Format::Type::MachO), file_{file}
 {
 }
 
-QString MachO::getFile() const
+QString MachO::file() const
 {
-  return file;
+  return file_;
 }
 
 bool MachO::detect()
 {
-  QFile f{file};
+  QFile f{file_};
   if (!f.open(QIODevice::ReadOnly)) {
     return false;
   }
@@ -38,7 +38,7 @@ bool MachO::detect()
 
 bool MachO::parse()
 {
-  QFile f{file};
+  QFile f{file_};
   if (!f.open(QIODevice::ReadOnly)) {
     return false;
   }
@@ -99,9 +99,9 @@ bool MachO::parse()
   return true;
 }
 
-QList<std::shared_ptr<BinaryObject>> MachO::getObjects() const
+QList<std::shared_ptr<BinaryObject>> MachO::objects() const
 {
-  return objects;
+  return objects_;
 }
 
 bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
@@ -798,21 +798,21 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
   }
 
   // Fill data of stored sections.
-  for (auto &sec : binaryObject->getSections()) {
-    r.seek(sec->getOffset());
-    sec->setData(r.read(sec->getSize()));
+  for (auto &sec : binaryObject->sections()) {
+    r.seek(sec->offset());
+    sec->setData(r.read(sec->size()));
   }
 
   // If symbol table loaded then merge string table entries into it.
   if (symnum > 0) {
-    auto strTable = binaryObject->getSection(Section::Type::String);
+    auto strTable = binaryObject->section(Section::Type::String);
     if (strTable) {
-      auto &data = strTable->getData();
-      auto &symbols = symTable.getSymbols();
+      auto &data = strTable->data();
+      auto &symbols = symTable.symbols();
       for (int h = 0; h < symbols.size(); h++) {
         auto &symbol = symbols[h];
         QByteArray tmp;
-        for (int i = symbol.getIndex(); i < data.size(); i++) {
+        for (int i = symbol.index(); i < data.size(); i++) {
           char c = data[i];
           tmp += c;
           if (c == 0) break;
@@ -826,17 +826,17 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
   // If dynamic symbol table loaded then merge data from symbol table
   // and symbol stubs into it.
   if (indirsymnum > 0 && symnum > 0) {
-    auto stubs = binaryObject->getSection(Section::Type::SymbolStubs);
+    auto stubs = binaryObject->section(Section::Type::SymbolStubs);
     if (stubs) {
-      quint64 stubAddr = stubs->getAddress();
-      const auto &symbols = symTable.getSymbols();
-      auto &dynsymbols = dynsymTable.getSymbols();
+      quint64 stubAddr = stubs->address();
+      const auto &symbols = symTable.symbols();
+      auto &dynsymbols = dynsymTable.symbols();
       for (int h = 0; h < dynsymbols.size(); h++) {
         auto &symbol = dynsymbols[h];
-        int idx = symbol.getIndex();
+        int idx = symbol.index();
         if (idx >= 0 && idx < symnum) {
           // The index corresponds to the index in the symbol table.
-          symbol.setString(symbols[idx].getString());
+          symbol.setString(symbols[idx].string());
 
           // Each symbol stub takes up 6 bytes.
           symbol.setValue(stubAddr + h * 6);
@@ -846,6 +846,6 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
     binaryObject->setDynSymbolTable(dynsymTable);
   }
 
-  objects << binaryObject;
+  objects_ << binaryObject;
   return true;
 }

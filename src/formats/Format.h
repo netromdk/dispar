@@ -17,9 +17,9 @@ public:
 
   Format(Type type);
 
-  Type getType() const;
+  Type type() const;
 
-  virtual QString getFile() const = 0;
+  virtual QString file() const = 0;
 
   /// Detect whether the magic code of the file corresponds to the format.
   /** Only reads the first chunk of the file and not all of it! */
@@ -29,7 +29,7 @@ public:
   virtual bool parse() = 0;
 
   /// Get the list of probed binary objects of the file.
-  virtual QList<std::shared_ptr<BinaryObject>> getObjects() const = 0;
+  virtual QList<std::shared_ptr<BinaryObject>> objects() const = 0;
 
   /// Try each of the known formats and see if any of them are compatible with the file.
   static std::shared_ptr<Format> detect(const QString &file);
@@ -38,7 +38,7 @@ public:
   static QString typeName(Type type);
 
 private:
-  Type type;
+  Type type_;
 };
 
 #endif // BMOD_FORMAT_H

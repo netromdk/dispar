@@ -14,28 +14,28 @@ int main(int argc, char **argv)
 
   auto fmt = Format::detect(file);
   if (!fmt) return -1;
-  qDebug() << "format:" << Format::typeName(fmt->getType());
+  qDebug() << "format:" << Format::typeName(fmt->type());
 
   qDebug() << "parsing..";
   bool ret = fmt->parse();
   if (!ret) return -1;
 
-  const auto &objects = fmt->getObjects();
+  const auto &objects = fmt->objects();
   qDebug() << "#objects:" << objects.size();
 
   for (const auto &object : objects) {
     qDebug() << "===========";
-    qDebug() << "cpu type:" << cpuTypeName(object->getCpuType());
-    qDebug() << "cpu sub type:" << cpuTypeName(object->getCpuSubType());
+    qDebug() << "cpu type:" << cpuTypeName(object->cpuType());
+    qDebug() << "cpu sub type:" << cpuTypeName(object->cpuSubType());
     qDebug() << "little endian:" << object->isLittleEndian();
-    qDebug() << "file type:" << fileTypeName(object->getFileType());
+    qDebug() << "file type:" << fileTypeName(object->fileType());
 
-    const auto &sections = object->getSections();
+    const auto &sections = object->sections();
     for (const auto &section : sections) {
       qDebug() << "***";
-      qDebug() << "section name:" << section->getName();
-      qDebug() << "section type:" << Section::typeName(section->getType());
-      qDebug() << "section size:" << Util::formatSize(section->getSize());
+      qDebug() << "section name:" << section->name();
+      qDebug() << "section type:" << Section::typeName(section->type());
+      qDebug() << "section size:" << Util::formatSize(section->size());
     }
   }
 

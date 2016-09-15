@@ -1,13 +1,13 @@
 #include "MachO.h"
 #include "Format.h"
 
-Format::Format(Type type) : type{type}
+Format::Format(Type type) : type_{type}
 {
 }
 
-Format::Type Format::getType() const
+Format::Type Format::type() const
 {
-  return type;
+  return type_;
 }
 
 std::shared_ptr<Format> Format::detect(const QString &file)

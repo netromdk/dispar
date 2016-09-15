@@ -16,38 +16,38 @@ public:
                bool littleEndian = true, int systemBits = 32,
                FileType fileType = FileType::Execute);
 
-  CpuType getCpuType() const;
+  CpuType cpuType() const;
   void setCpuType(CpuType type);
 
-  CpuType getCpuSubType() const;
+  CpuType cpuSubType() const;
   void setCpuSubType(CpuType type);
 
   bool isLittleEndian() const;
   void setLittleEndian(bool little);
 
-  int getSystemBits() const;
+  int systemBits() const;
   void setSystemBits(int bits);
 
-  FileType getFileType() const;
+  FileType fileType() const;
   void setFileType(FileType type);
 
-  QList<std::shared_ptr<Section>> getSections() const;
-  QList<std::shared_ptr<Section>> getSectionsByType(Section::Type type) const;
-  std::shared_ptr<Section> getSection(Section::Type type) const;
+  QList<std::shared_ptr<Section>> sections() const;
+  QList<std::shared_ptr<Section>> sectionsByType(Section::Type type) const;
+  std::shared_ptr<Section> section(Section::Type type) const;
   void addSection(std::shared_ptr<Section> ptr);
 
   void setSymbolTable(const SymbolTable &tbl);
-  const SymbolTable &getSymbolTable() const;
+  const SymbolTable &symbolTable() const;
 
   void setDynSymbolTable(const SymbolTable &tbl);
-  const SymbolTable &getDynSymbolTable() const;
+  const SymbolTable &dynSymbolTable() const;
 
 private:
-  CpuType cpuType, cpuSubType;
+  CpuType cpuType_, cpuSubType_;
   bool littleEndian;
-  int systemBits;
-  FileType fileType;
-  QList<std::shared_ptr<Section>> sections;
+  int systemBits_;
+  FileType fileType_;
+  QList<std::shared_ptr<Section>> sections_;
   SymbolTable symTable, dynsymTable;
 };
 

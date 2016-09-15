@@ -7,31 +7,31 @@
 class SymbolEntry {
 public:
   SymbolEntry(quint32 index, quint64 value, const QString &strValue = QString())
-    : index{index}, value{value}, strValue{strValue}
+    : index_{index}, value_{value}, strValue{strValue}
   {
   }
 
-  quint32 getIndex() const;
+  quint32 index() const;
 
   void setValue(quint64 value);
-  quint64 getValue() const;
+  quint64 value() const;
 
   void setString(const QString &str);
-  const QString &getString() const;
+  const QString &string() const;
 
 private:
-  quint32 index;    // of string table
-  quint64 value;    // of symbol
+  quint32 index_;   // of string table
+  quint64 value_;   // of symbol
   QString strValue; // String table value
 };
 
 class SymbolTable {
 public:
   void addSymbol(const SymbolEntry &entry);
-  QList<SymbolEntry> &getSymbols();
-  const QList<SymbolEntry> &getSymbols() const;
+  QList<SymbolEntry> &symbols();
+  const QList<SymbolEntry> &symbols() const;
 
-  bool getString(quint64 value, QString &str) const;
+  bool string(quint64 value, QString &str) const;
 
 private:
   QList<SymbolEntry> entries;

@@ -27,27 +27,27 @@ public:
   /// Get string representation of type.
   static QString typeName(Type type);
 
-  Type getType() const;
-  QString getName() const;
-  quint64 getAddress() const;
-  quint64 getSize() const;
-  quint32 getOffset() const;
+  Type type() const;
+  QString name() const;
+  quint64 address() const;
+  quint64 size() const;
+  quint32 offset() const;
 
-  const QByteArray &getData() const;
+  const QByteArray &data() const;
   void setData(const QByteArray &data);
 
   void setSubData(const QByteArray &subData, int pos);
   bool isModified() const;
   QDateTime modifiedWhen() const;
-  const QList<QPair<int, int>> &getModifiedRegions() const;
+  const QList<QPair<int, int>> &modifiedRegions() const;
 
 private:
-  Type type;
-  QString name;
-  quint64 addr, size;
-  quint32 offset;
-  QByteArray data;
-  QList<QPair<int, int>> modifiedRegions;
+  Type type_;
+  QString name_;
+  quint64 addr, size_;
+  quint32 offset_;
+  QByteArray data_;
+  QList<QPair<int, int>> modifiedRegions_;
   QDateTime modified;
 };
 
