@@ -34,6 +34,9 @@ public:
   /// Try each of the known formats and see if any of them are compatible with the file.
   static std::shared_ptr<Format> detect(const QString &file);
 
+  /// Get string representation of type.
+  static QString typeName(Type type);
+
 private:
   Type type;
 };

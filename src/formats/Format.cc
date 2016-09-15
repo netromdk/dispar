@@ -19,3 +19,14 @@ std::shared_ptr<Format> Format::detect(const QString &file)
   }
   return nullptr;
 }
+
+// *************************************************************************************************
+QString Format::typeName(Type type)
+// *************************************************************************************************
+{
+  switch (type) {
+  default:
+  case Type::MachO:
+    return "Mach-O";
+  }
+}

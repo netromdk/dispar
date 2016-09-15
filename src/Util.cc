@@ -3,15 +3,6 @@
 
 #include "Util.h"
 
-QString Util::formatTypeString(Format::Type type)
-{
-  switch (type) {
-  default:
-  case Format::Type::MachO:
-    return "Mach-O";
-  }
-}
-
 QString Util::cpuTypeString(CpuType type)
 {
   switch (type) {

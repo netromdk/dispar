@@ -13,7 +13,7 @@ int main(int argc, char **argv)
 
   auto fmt = Format::detect(file);
   if (!fmt) return -1;
-  qDebug() << "format:" << Util::formatTypeString(fmt->getType());
+  qDebug() << "format:" << Format::typeName(fmt->getType());
 
   qDebug() << "parsing..";
   bool ret = fmt->parse();

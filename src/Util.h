@@ -11,7 +11,6 @@
 
 class Util {
 public:
-  static QString formatTypeString(Format::Type type);
   static QString cpuTypeString(CpuType type);
   static QString fileTypeString(FileType type);
   static QString sectionTypeString(Section::Type type);
