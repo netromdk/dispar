@@ -4,17 +4,8 @@
 #include <QString>
 #include <QByteArray>
 
-#include "Section.h"
-#include "CpuType.h"
-#include "FileType.h"
-#include "formats/Format.h"
-
 class Util {
 public:
-  static QString cpuTypeString(CpuType type);
-  static QString fileTypeString(FileType type);
-  static QString sectionTypeString(Section::Type type);
-
   static QString formatSize(qint64 bytes, int digits = 1);
 
   // char(48) = '0'

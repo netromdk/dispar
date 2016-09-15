@@ -1,8 +1,10 @@
 #ifndef BMOD_CPU_TYPE_H
 #define BMOD_CPU_TYPE_H
 
+#include <QString>
+
 enum class CpuType : int {
-  X86, // Same as i386
+  X86, ///< Same as i386
   X86_64,
   HPPA,
   ARM,
@@ -32,5 +34,7 @@ enum class CpuType : int {
   Xeon,
   Xeon_MP
 };
+
+QString cpuTypeName(CpuType type);
 
 #endif // BMOD_CPU_TYPE_H

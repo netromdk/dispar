@@ -6,6 +6,18 @@ Section::Section(Section::Type type, const QString &name, quint64 addr, quint64 
 {
 }
 
+QString Section::typeName(Type type)
+{
+  switch (type) {
+  default:
+  case Section::Type::Text:
+    return "Text";
+
+  case Section::Type::CString:
+    return "CString";
+  }
+}
+
 Section::Type Section::getType() const
 {
   return type;

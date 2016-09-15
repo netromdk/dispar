@@ -2,6 +2,7 @@
 #include <QDebug>
 
 #include "Util.h"
+#include "CpuType.h"
 #include "formats/Format.h"
 
 int main(int argc, char **argv)
@@ -24,10 +25,10 @@ int main(int argc, char **argv)
 
   for (const auto &object : objects) {
     qDebug() << "===";
-    qDebug() << "cpu type:" << Util::cpuTypeString(object->getCpuType());
-    qDebug() << "cpu sub type:" << Util::cpuTypeString(object->getCpuSubType());
+    qDebug() << "cpu type:" << cpuTypeName(object->getCpuType());
+    qDebug() << "cpu sub type:" << cpuTypeName(object->getCpuSubType());
     qDebug() << "little endian:" << object->isLittleEndian();
-    qDebug() << "file type:" << Util::fileTypeString(object->getFileType());
+    qDebug() << "file type:" << fileTypeName(object->getFileType());
   }
 
   return 0;

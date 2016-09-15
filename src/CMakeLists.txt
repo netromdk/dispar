@@ -14,6 +14,11 @@ add_executable(
   Section.h
   Section.cc
 
+  CpuType.h
+  CpuType.cc
+  FileType.h
+  FileType.cc
+
   BinaryObject.h
   BinaryObject.cc
   SymbolTable.h

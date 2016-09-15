@@ -24,6 +24,9 @@ public:
 
   Section(Type type, const QString &name, quint64 addr, quint64 size, quint32 offset = 0);
 
+  /// Get string representation of type.
+  static QString typeName(Type type);
+
   Type getType() const;
   QString getName() const;
   quint64 getAddress() const;
