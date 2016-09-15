@@ -12,8 +12,13 @@ public:
   bool isLittleEndian() const;
   void setLittleEndian(bool little);
 
+  /// Read 2 bytes = 16 bits.
   quint16 getUInt16(bool *ok = nullptr);
+
+  /// Read 4 bytes = 32 bits.
   quint32 getUInt32(bool *ok = nullptr);
+
+  /// Read 8 bytes = 64 bits.
   quint64 getUInt64(bool *ok = nullptr);
 
   char getChar(bool *ok = nullptr);

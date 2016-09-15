@@ -17,9 +17,9 @@ include(target)
 
 #add_subdirectory(examples)
 
-#include(CTest)
-#enable_testing()
-#add_subdirectory(tests)
+include(CTest)
+enable_testing()
+add_subdirectory(tests)
 
 # Add a target to generate API documentation with Doxygen.
 # find_package(Doxygen)
