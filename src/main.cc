@@ -24,11 +24,19 @@ int main(int argc, char **argv)
   qDebug() << "#objects:" << objects.size();
 
   for (const auto &object : objects) {
-    qDebug() << "===";
+    qDebug() << "===========";
     qDebug() << "cpu type:" << cpuTypeName(object->getCpuType());
     qDebug() << "cpu sub type:" << cpuTypeName(object->getCpuSubType());
     qDebug() << "little endian:" << object->isLittleEndian();
     qDebug() << "file type:" << fileTypeName(object->getFileType());
+
+    const auto &sections = object->getSections();
+    for (const auto &section : sections) {
+      qDebug() << "***";
+      qDebug() << "section name:" << section->getName();
+      qDebug() << "section type:" << Section::typeName(section->getType());
+      qDebug() << "section size:" << Util::formatSize(section->getSize());
+    }
   }
 
   return 0;

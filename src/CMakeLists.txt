@@ -1,4 +1,4 @@
-set(name bmod)
+set(name dispar)
 
 add_executable(
   ${name}
