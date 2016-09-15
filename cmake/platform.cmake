@@ -7,4 +7,6 @@ endif()
 
 if (APPLE)
   include(mac)
+elseif (LINUX)
+  include(linux)
 endif()
