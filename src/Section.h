@@ -22,8 +22,7 @@ public:
     CodeSig,     ///< Code signature.
   };
 
-  Section(Type type, const QString &name, quint64 addr, quint64 size,
-          quint32 offset = 0);
+  Section(Type type, const QString &name, quint64 addr, quint64 size, quint32 offset = 0);
 
   Type getType() const;
   QString getName() const;

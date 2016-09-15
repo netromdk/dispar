@@ -13,13 +13,14 @@
 #define MAJOR_FACTOR 1000000
 #define MINOR_FACTOR 1000
 
-static inline QString versionString(int major, int minor, int build,
-                                    bool showDate = false) {
-  return QString::number(major) + "." + QString::number(minor) + "." +
-    QString::number(build) + (showDate ? " [" + QString(BUILD_DATE) + "]" : "");
+static inline QString versionString(int major, int minor, int build, bool showDate = false)
+{
+  return QString::number(major) + "." + QString::number(minor) + "." + QString::number(build) +
+         (showDate ? " [" + QString(BUILD_DATE) + "]" : "");
 }
 
-static inline QString versionString(bool showDate = false) {
+static inline QString versionString(bool showDate = false)
+{
   return versionString(MAJOR_VERSION, MINOR_VERSION, BUILD_VERSION, showDate);
 }
 

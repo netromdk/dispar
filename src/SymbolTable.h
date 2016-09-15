@@ -6,10 +6,10 @@
 
 class SymbolEntry {
 public:
-  SymbolEntry(quint32 index, quint64 value,
-              const QString &strValue = QString())
+  SymbolEntry(quint32 index, quint64 value, const QString &strValue = QString())
     : index{index}, value{value}, strValue{strValue}
-  { }
+  {
+  }
 
   quint32 getIndex() const;
 
@@ -20,8 +20,8 @@ public:
   const QString &getString() const;
 
 private:
-  quint32 index; // of string table
-  quint64 value; // of symbol
+  quint32 index;    // of string table
+  quint64 value;    // of symbol
   QString strValue; // String table value
 };
 

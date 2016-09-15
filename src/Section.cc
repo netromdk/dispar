@@ -1,39 +1,48 @@
 #include "Section.h"
 
-Section::Section(Section::Type type, const QString &name, quint64 addr,
-                 quint64 size, quint32 offset)
+Section::Section(Section::Type type, const QString &name, quint64 addr, quint64 size,
+                 quint32 offset)
   : type{type}, name{name}, addr{addr}, size{size}, offset{offset}
-{ }
+{
+}
 
-Section::Type Section::getType() const {
+Section::Type Section::getType() const
+{
   return type;
 }
 
-QString Section::getName() const {
+QString Section::getName() const
+{
   return name;
 }
 
-quint64 Section::getAddress() const {
+quint64 Section::getAddress() const
+{
   return addr;
 }
 
-quint64 Section::getSize() const {
+quint64 Section::getSize() const
+{
   return size;
 }
 
-quint32 Section::getOffset() const {
+quint32 Section::getOffset() const
+{
   return offset;
 }
 
-const QByteArray &Section::getData() const {
+const QByteArray &Section::getData() const
+{
   return data;
 }
 
-void Section::setData(const QByteArray &data) {
+void Section::setData(const QByteArray &data)
+{
   this->data = data;
 }
 
-void Section::setSubData(const QByteArray &subData, int pos) {
+void Section::setSubData(const QByteArray &subData, int pos)
+{
   if (pos < 0 || pos > data.size() - 1) {
     return;
   }
@@ -46,14 +55,17 @@ void Section::setSubData(const QByteArray &subData, int pos) {
   }
 }
 
-bool Section::isModified() const {
+bool Section::isModified() const
+{
   return !modifiedRegions.isEmpty();
 }
 
-QDateTime Section::modifiedWhen() const {
+QDateTime Section::modifiedWhen() const
+{
   return modified;
 }
 
-const QList<QPair<int, int>> &Section::getModifiedRegions() const {
+const QList<QPair<int, int>> &Section::getModifiedRegions() const
+{
   return modifiedRegions;
 }

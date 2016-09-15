@@ -3,7 +3,8 @@
 
 #include "Util.h"
 
-QString Util::formatTypeString(Format::Type type) {
+QString Util::formatTypeString(Format::Type type)
+{
   switch (type) {
   default:
   case Format::Type::MachO:
@@ -11,7 +12,8 @@ QString Util::formatTypeString(Format::Type type) {
   }
 }
 
-QString Util::cpuTypeString(CpuType type) {
+QString Util::cpuTypeString(CpuType type)
+{
   switch (type) {
   default:
   case CpuType::X86:
@@ -97,7 +99,8 @@ QString Util::cpuTypeString(CpuType type) {
   }
 }
 
-QString Util::fileTypeString(FileType type) {
+QString Util::fileTypeString(FileType type)
+{
   switch (type) {
   case FileType::Object:
     return "Object";
@@ -123,7 +126,8 @@ QString Util::fileTypeString(FileType type) {
   }
 }
 
-QString Util::sectionTypeString(Section::Type type) {
+QString Util::sectionTypeString(Section::Type type)
+{
   switch (type) {
   default:
   case Section::Type::Text:
@@ -134,7 +138,8 @@ QString Util::sectionTypeString(Section::Type type) {
   }
 }
 
-QString Util::formatSize(qint64 bytes, int digits) {
+QString Util::formatSize(qint64 bytes, int digits)
+{
   constexpr double KB = 1024, MB = 1024 * KB, GB = 1024 * MB, TB = 1024 * GB;
   QString unit{"B"};
   double size = bytes;
@@ -157,7 +162,8 @@ QString Util::formatSize(qint64 bytes, int digits) {
   return QString("%1 %2").arg(QString::number(size, 'f', digits)).arg(unit);
 }
 
-QString Util::padString(const QString &str, int size, bool before, char pad) {
+QString Util::padString(const QString &str, int size, bool before, char pad)
+{
   int addrLen = str.size();
   if (addrLen < size) {
     QString res{str}, padStr{QString(size - addrLen, pad)};
@@ -166,7 +172,8 @@ QString Util::padString(const QString &str, int size, bool before, char pad) {
   return str;
 }
 
-QString Util::dataToAscii(const QByteArray &data, int offset, int size) {
+QString Util::dataToAscii(const QByteArray &data, int offset, int size)
+{
   QString res;
   int len = data.size();
   for (int i = offset; i - offset < size && i < len; i++) {
@@ -176,8 +183,8 @@ QString Util::dataToAscii(const QByteArray &data, int offset, int size) {
   return res;
 }
 
-QString Util::hexToAscii(const QString &str, int offset, int blocks,
-                         bool unicode) {
+QString Util::hexToAscii(const QString &str, int offset, int blocks, bool unicode)
+{
   QString res;
   int len = str.size();
   int size = blocks * 2;
@@ -194,17 +201,19 @@ QString Util::hexToAscii(const QString &str, int offset, int blocks,
       res += (ic >= 32 && ic <= 126 ? (char) ic : '.');
     }
     else {
-      res += QString::fromUtf16((ushort*) &ic, 1);
+      res += QString::fromUtf16((ushort *) &ic, 1);
     }
   }
   return res;
 }
 
-QString Util::hexToString(const QString &str) {
+QString Util::hexToString(const QString &str)
+{
   return QString::fromUtf8(hexToData(str));
 }
 
-QByteArray Util::hexToData(const QString &str) {
+QByteArray Util::hexToData(const QString &str)
+{
   QByteArray data;
   int size = str.size();
   bool ok;
@@ -215,7 +224,8 @@ QByteArray Util::hexToData(const QString &str) {
   return data;
 }
 
-QString Util::resolveAppBinary(const QString &path) {
+QString Util::resolveAppBinary(const QString &path)
+{
   if (!path.toLower().endsWith(".app")) {
     return QString();
   }
@@ -229,7 +239,8 @@ QString Util::resolveAppBinary(const QString &path) {
   return QString();
 }
 
-QString Util::addrDataString(quint64 addr, QByteArray data) {
+QString Util::addrDataString(quint64 addr, QByteArray data)
+{
   // Pad data to a multiple of 16.
   quint64 rest = data.size() % 16;
   if (rest != 0) {

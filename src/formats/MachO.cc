@@ -7,13 +7,17 @@
 #include "../Util.h"
 #include "../Reader.h"
 
-MachO::MachO(const QString &file) : Format(Format::Type::MachO), file{file} { }
+MachO::MachO(const QString &file) : Format(Format::Type::MachO), file{file}
+{
+}
 
-QString MachO::getFile() const {
+QString MachO::getFile() const
+{
   return file;
 }
 
-bool MachO::detect() {
+bool MachO::detect()
+{
   QFile f{file};
   if (!f.open(QIODevice::ReadOnly)) {
     return false;
@@ -25,14 +29,15 @@ bool MachO::detect() {
   if (!ok) return false;
 
   return magic == 0xFEEDFACE || // 32-bit little endian
-    magic == 0xFEEDFACF || // 64-bit little endian
-    magic == 0xECAFDEEF || // 32-bit big endian
-    magic == 0xFCAFDEEF || // 64-bit big endian
-    magic == 0xCAFEBABE || // Universal binary little endian
-    magic == 0xBEBAFECA; // Universal binary big endian
+         magic == 0xFEEDFACF || // 64-bit little endian
+         magic == 0xECAFDEEF || // 32-bit big endian
+         magic == 0xFCAFDEEF || // 64-bit big endian
+         magic == 0xCAFEBABE || // Universal binary little endian
+         magic == 0xBEBAFECA;   // Universal binary big endian
 }
 
-bool MachO::parse() {
+bool MachO::parse()
+{
   QFile f{file};
   if (!f.open(QIODevice::ReadOnly)) {
     return false;
@@ -94,11 +99,13 @@ bool MachO::parse() {
   return true;
 }
 
-QList<std::shared_ptr<BinaryObject>> MachO::getObjects() const {
+QList<std::shared_ptr<BinaryObject>> MachO::getObjects() const
+{
   return objects;
 }
 
-bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r) {
+bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
+{
   auto binaryObject = std::make_shared<BinaryObject>();
 
   r.seek(offset);
@@ -419,32 +426,28 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r) {
           // Store needed sections.
           if (segname == "__TEXT") {
             if (secname == "__text") {
-              auto sec = std::make_shared<Section>(Section::Type::Text,
-                                                   QObject::tr("Program"),
+              auto sec = std::make_shared<Section>(Section::Type::Text, QObject::tr("Program"),
                                                    addr, secsize, offset + secfileoff);
               binaryObject->addSection(sec);
             }
-            else if (secname == "__symbol_stub" ||
-                     secname == "__stubs") {
-              auto sec = std::make_shared<Section>(Section::Type::SymbolStubs,
-                                                   QObject::tr("Symbol Stubs"),
-                                                   addr, secsize, offset + secfileoff);
+            else if (secname == "__symbol_stub" || secname == "__stubs") {
+              auto sec =
+                std::make_shared<Section>(Section::Type::SymbolStubs, QObject::tr("Symbol Stubs"),
+                                          addr, secsize, offset + secfileoff);
               binaryObject->addSection(sec);
             }
             else if (secname == "__cstring") {
-              auto sec = std::make_shared<Section>(Section::Type::CString,
-                                                   QObject::tr("C-Strings"),
+              auto sec = std::make_shared<Section>(Section::Type::CString, QObject::tr("C-Strings"),
                                                    addr, secsize, offset + secfileoff);
               binaryObject->addSection(sec);
             }
             else if (secname == "__objc_methname") {
-              auto sec = std::make_shared<Section>(Section::Type::CString,
-                                                   QObject::tr("ObjC Method Names"),
-                                                   addr, secsize, offset + secfileoff);
+              auto sec =
+                std::make_shared<Section>(Section::Type::CString, QObject::tr("ObjC Method Names"),
+                                          addr, secsize, offset + secfileoff);
               binaryObject->addSection(sec);
             }
           }
-
         }
       }
     }
@@ -510,8 +513,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r) {
       quint32 strsize = r.getUInt32(&ok);
       if (!ok) return false;
 
-      auto sec = std::make_shared<Section>(Section::Type::String,
-                                           QObject::tr("String Table"),
+      auto sec = std::make_shared<Section>(Section::Type::String, QObject::tr("String Table"),
                                            stroff, strsize, offset + stroff);
       binaryObject->addSection(sec);
     }
@@ -669,16 +671,14 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r) {
 
       // LC_FUNCTION_STARTS
       if (type == 0x26) {
-        auto sec = std::make_shared<Section>(Section::Type::FuncStarts,
-                                             QObject::tr("Function Starts"),
-                                             off, siz, offset + off);
+        auto sec = std::make_shared<Section>(
+          Section::Type::FuncStarts, QObject::tr("Function Starts"), off, siz, offset + off);
         binaryObject->addSection(sec);
       }
 
       // LC_CODE_SIGNATURE
       else if (type == 0x1D) {
-        auto sec = std::make_shared<Section>(Section::Type::CodeSig,
-                                             QObject::tr("Code Signature"),
+        auto sec = std::make_shared<Section>(Section::Type::CodeSig, QObject::tr("Code Signature"),
                                              off, siz, offset + off);
         binaryObject->addSection(sec);
       }
@@ -769,8 +769,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r) {
       symsize += (r.pos() - pos);
     }
 
-    auto sec = std::make_shared<Section>(Section::Type::Symbols,
-                                         QObject::tr("Symbol Table"),
+    auto sec = std::make_shared<Section>(Section::Type::Symbols, QObject::tr("Symbol Table"),
                                          symoff, symsize, offset + symoff);
     binaryObject->addSection(sec);
   }
@@ -792,9 +791,9 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r) {
       dynsymsize += (r.pos() - pos);
     }
 
-    auto sec = std::make_shared<Section>(Section::Type::DynSymbols,
-                                         QObject::tr("Dynamic Symbol Table"),
-                                         indirsymoff, dynsymsize, offset + indirsymoff);
+    auto sec =
+      std::make_shared<Section>(Section::Type::DynSymbols, QObject::tr("Dynamic Symbol Table"),
+                                indirsymoff, dynsymsize, offset + indirsymoff);
     binaryObject->addSection(sec);
   }
 

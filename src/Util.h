@@ -19,12 +19,10 @@ public:
   static QString formatSize(qint64 bytes, int digits = 1);
 
   // char(48) = '0'
-  static QString padString(const QString &str, int size, bool before = true,
-                           char pad = 48);
+  static QString padString(const QString &str, int size, bool before = true, char pad = 48);
 
   static QString dataToAscii(const QByteArray &data, int offset, int size);
-  static QString hexToAscii(const QString &data, int offset, int blocks,
-                            bool unicode = false);
+  static QString hexToAscii(const QString &data, int offset, int blocks, bool unicode = false);
   static QString hexToString(const QString &str);
   static QByteArray hexToData(const QString &str);
 
