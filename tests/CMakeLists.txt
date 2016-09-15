@@ -21,11 +21,20 @@ add_test(
   COMMAND ${testName}
   )
 
-target_link_libraries(
-  ${testName}
-  gtest
-  ${libName}
-  )
+if (NOT LINUX)
+  target_link_libraries(
+    ${testName}
+    gtest
+    ${libName}
+    )
+else()
+  target_link_libraries(
+    ${testName}
+    gtest
+    ${libName}
+    pthread
+    )
+endif()
 
 include_directories(
   gtest/include
