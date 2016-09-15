@@ -15,3 +15,11 @@ add_definitions(
   )
 
 set(CMAKE_OSX_SYSROOT ${DEV_SDK})
+
+# Silence annoying "ranlib: file: ...o has no symbols" warnings! On Mac the ar utility will run
+# ranlib, which causes the warning. Using the "Src" argument stops ar from executing ranlib, and
+# when ranlib is executed normally we give it "-no_warning_for_no_symbols" to suppress the warning.
+set(CMAKE_C_ARCHIVE_CREATE "<CMAKE_AR> Scr <TARGET> <LINK_FLAGS> <OBJECTS>")
+set(CMAKE_CXX_ARCHIVE_CREATE "<CMAKE_AR> Scr <TARGET> <LINK_FLAGS> <OBJECTS>")
+set(CMAKE_C_ARCHIVE_FINISH "<CMAKE_RANLIB> -no_warning_for_no_symbols -c <TARGET>")
+set(CMAKE_CXX_ARCHIVE_FINISH "<CMAKE_RANLIB> -no_warning_for_no_symbols -c <TARGET>")
