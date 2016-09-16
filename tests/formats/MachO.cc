@@ -7,6 +7,7 @@
 TEST(MachO, instantiate)
 {
   MachO fmt("some_file");
+  EXPECT_EQ(fmt.type(), Format::Type::MachO);
 }
 
 TEST(MachO, file)

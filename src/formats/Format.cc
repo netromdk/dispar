@@ -25,8 +25,9 @@ QString Format::typeName(Type type)
 // *************************************************************************************************
 {
   switch (type) {
-  default:
   case Type::MachO:
     return "Mach-O";
   }
+
+  return "";
 }
