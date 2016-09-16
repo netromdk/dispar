@@ -130,6 +130,8 @@ TEST_F(ReaderTest, peekUChar)
 
 TEST_F(ReaderTest, peekList)
 {
+  EXPECT_FALSE(reader->peekList({}));
+
   std::initializer_list<unsigned char> list = {1, 2, 3, 4};
 
   for (const auto &ch : list) {
@@ -139,6 +141,12 @@ TEST_F(ReaderTest, peekList)
   ASSERT_EQ(reader->pos(), 0);
   EXPECT_TRUE(reader->peekList(list));
   EXPECT_EQ(reader->pos(), 0);
+
+  array.clear();
+  EXPECT_FALSE(reader->peekList(list));
+
+  array.append(1);
+  EXPECT_FALSE(reader->peekList({2}));
 }
 
 TEST_F(ReaderTest, getUInt16)
@@ -152,6 +160,10 @@ TEST_F(ReaderTest, getUInt16)
   auto tmp = reader->getUInt16(&ok);
   EXPECT_TRUE(ok);
   EXPECT_EQ(tmp, val);
+
+  array.clear();
+  tmp = reader->getUInt16(&ok);
+  EXPECT_FALSE(ok);
 }
 
 TEST_F(ReaderTest, getUInt16BigEndian)
@@ -167,6 +179,10 @@ TEST_F(ReaderTest, getUInt16BigEndian)
   auto tmp = reader->getUInt16(&ok);
   EXPECT_TRUE(ok);
   EXPECT_EQ(tmp, val);
+
+  array.clear();
+  tmp = reader->getUInt16(&ok);
+  EXPECT_FALSE(ok);
 }
 
 TEST_F(ReaderTest, getUInt32)
@@ -182,6 +198,10 @@ TEST_F(ReaderTest, getUInt32)
   auto tmp = reader->getUInt32(&ok);
   EXPECT_TRUE(ok);
   EXPECT_EQ(tmp, val);
+
+  array.clear();
+  tmp = reader->getUInt32(&ok);
+  EXPECT_FALSE(ok);
 }
 
 TEST_F(ReaderTest, getUInt32BigEndian)
@@ -199,6 +219,10 @@ TEST_F(ReaderTest, getUInt32BigEndian)
   auto tmp = reader->getUInt32(&ok);
   EXPECT_TRUE(ok);
   EXPECT_EQ(tmp, val);
+
+  array.clear();
+  tmp = reader->getUInt32(&ok);
+  EXPECT_FALSE(ok);
 }
 
 TEST_F(ReaderTest, getUInt64)
@@ -219,6 +243,10 @@ TEST_F(ReaderTest, getUInt64)
   auto tmp = reader->getUInt64(&ok);
   EXPECT_TRUE(ok);
   EXPECT_EQ(tmp, val);
+
+  array.clear();
+  tmp = reader->getUInt64(&ok);
+  EXPECT_FALSE(ok);
 }
 
 TEST_F(ReaderTest, getUInt64BigEndian)
@@ -241,6 +269,10 @@ TEST_F(ReaderTest, getUInt64BigEndian)
   auto tmp = reader->getUInt64(&ok);
   EXPECT_TRUE(ok);
   EXPECT_EQ(tmp, val);
+
+  array.clear();
+  tmp = reader->getUInt64(&ok);
+  EXPECT_FALSE(ok);
 }
 
 int main(int argc, char **argv)
