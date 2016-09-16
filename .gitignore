@@ -1,13 +1,5 @@
 *~
 .#*
 \#*
-*.slo
-*.lo
-*.o
-*.so
-*.dylib
-*.lai
-*.la
-*.a
 .DS_Store
 build*/
