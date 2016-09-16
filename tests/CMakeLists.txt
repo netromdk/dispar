@@ -17,6 +17,7 @@ add_executable(
   testutils.cc
 
   Reader.cc
+  SymbolEntry.cc
 
   formats/Format.cc
   formats/MachO.cc
