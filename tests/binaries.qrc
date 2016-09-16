@@ -1,0 +1,10 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+  <qresource>
+    <file alias="macho_main">res/macho/macho_main</file>
+    <file alias="macho_main_32">res/macho/macho_main_32</file>
+    <file alias="macho_main.o">res/macho/macho_main.o</file>
+    <file alias="macho_main_32.o">res/macho/macho_main_32.o</file>
+    <file alias="macho_main_32_64">res/macho/macho_main_32_64</file>
+  </qresource>
+</RCC>

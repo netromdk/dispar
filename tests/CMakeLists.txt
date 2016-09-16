@@ -13,7 +13,15 @@ add_executable(
 
   main.cc
 
+  testutils.h
+  testutils.cc
+
   Reader.cc
+
+  formats/Format.cc
+  formats/MachO.cc
+
+  binaries.qrc
   )
 
 add_test(
