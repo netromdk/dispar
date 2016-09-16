@@ -11,6 +11,8 @@ add_library(
 add_executable(
   ${testName}
 
+  main.cc
+
   Reader.cc
   )
 

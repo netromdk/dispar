@@ -274,9 +274,3 @@ TEST_F(ReaderTest, getUInt64BigEndian)
   tmp = reader->getUInt64(&ok);
   EXPECT_FALSE(ok);
 }
-
-int main(int argc, char **argv)
-{
-  testing::InitGoogleTest(&argc, argv);
-  return (RUN_ALL_TESTS());
-}
