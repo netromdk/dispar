@@ -8,8 +8,6 @@ add_library(
   gtest/src/gtest-all.cc
   )
 
-set(testName tests)
-
 add_executable(
   ${testName}
 
