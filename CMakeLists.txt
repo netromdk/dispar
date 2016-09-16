@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(bmod)
+project(dispar)
 
 set(CMAKE_COLOR_MAKEFILE ON)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
