@@ -124,4 +124,22 @@ TEST(MachO, parse)
     EXPECT_TRUE(fmt.parse());
     EXPECT_EQ(fmt.objects().size(), 2);
   }
+
+  {
+    MachO fmt(":macho_func");
+    EXPECT_TRUE(fmt.parse());
+    EXPECT_EQ(fmt.objects().size(), 1);
+  }
+
+  {
+    MachO fmt(":macho_strings");
+    EXPECT_TRUE(fmt.parse());
+    EXPECT_EQ(fmt.objects().size(), 1);
+  }
+
+  {
+    MachO fmt(":macho_main_objc");
+    EXPECT_TRUE(fmt.parse());
+    EXPECT_EQ(fmt.objects().size(), 1);
+  }
 }

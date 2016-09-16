@@ -6,5 +6,8 @@
     <file alias="macho_main.o">res/macho/macho_main.o</file>
     <file alias="macho_main_32.o">res/macho/macho_main_32.o</file>
     <file alias="macho_main_32_64">res/macho/macho_main_32_64</file>
+    <file alias="macho_func">res/macho/macho_func</file>
+    <file alias="macho_strings">res/macho/macho_strings</file>
+    <file alias="macho_main_objc">res/macho/macho_main_objc</file>
   </qresource>
 </RCC>
