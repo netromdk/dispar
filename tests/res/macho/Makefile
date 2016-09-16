@@ -7,6 +7,7 @@ all:
 	clang++ func.cc -o macho_func
 	clang++ strings.cc -o macho_strings
 	clang main.m -o macho_main_objc -Wl,`xcrun --show-sdk-path`/System/Library/Frameworks/Foundation.framework/Foundation
+	clang++ -install_name "@loader_path/lib.dylib" -dynamiclib -o macho_lib.dylib lib.cc
 
 clean:
 	rm -fv macho_*

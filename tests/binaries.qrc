@@ -9,5 +9,6 @@
     <file alias="macho_func">res/macho/macho_func</file>
     <file alias="macho_strings">res/macho/macho_strings</file>
     <file alias="macho_main_objc">res/macho/macho_main_objc</file>
+    <file alias="macho_lib.dylib">res/macho/macho_lib.dylib</file>
   </qresource>
 </RCC>

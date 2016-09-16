@@ -142,4 +142,10 @@ TEST(MachO, parse)
     EXPECT_TRUE(fmt.parse());
     EXPECT_EQ(fmt.objects().size(), 1);
   }
+
+  {
+    MachO fmt(":macho_lib.dylib");
+    EXPECT_TRUE(fmt.parse());
+    EXPECT_EQ(fmt.objects().size(), 1);
+  }
 }
