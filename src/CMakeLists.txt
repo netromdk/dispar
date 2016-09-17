@@ -24,6 +24,9 @@ add_library(
   SymbolTable.h
   SymbolTable.cc
 
+  widgets/MainWindow.h
+  widgets/MainWindow.cc
+
   formats/Format.h
   formats/Format.cc
   formats/MachO.h

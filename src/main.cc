@@ -1,43 +1,24 @@
-#include <QString>
-#include <QDebug>
+#include <QApplication>
+#include <QTimer>
+#include <QStringList>
 
-#include "Util.h"
-#include "CpuType.h"
-#include "formats/Format.h"
+#include "Version.h"
+#include "widgets/MainWindow.h"
 
 int main(int argc, char **argv)
 {
-  // Temporary!
-  if (argc != 2) return -1;
-  auto file = QString::fromUtf8(argv[1]);
-  qDebug() << "input:" << file;
+  QApplication app(argc, argv);
+  app.setApplicationName("Dispar");
+  app.setApplicationVersion(versionString());
 
-  auto fmt = Format::detect(file);
-  if (!fmt) return -1;
-  qDebug() << "format:" << Format::typeName(fmt->type());
-
-  qDebug() << "parsing..";
-  bool ret = fmt->parse();
-  if (!ret) return -1;
-
-  const auto &objects = fmt->objects();
-  qDebug() << "#objects:" << objects.size();
-
-  for (const auto &object : objects) {
-    qDebug() << "===========";
-    qDebug() << "cpu type:" << cpuTypeName(object->cpuType());
-    qDebug() << "cpu sub type:" << cpuTypeName(object->cpuSubType());
-    qDebug() << "little endian:" << object->isLittleEndian();
-    qDebug() << "file type:" << fileTypeName(object->fileType());
-
-    const auto &sections = object->sections();
-    for (const auto &section : sections) {
-      qDebug() << "***";
-      qDebug() << "section name:" << section->name();
-      qDebug() << "section type:" << Section::typeName(section->type());
-      qDebug() << "section size:" << Util::formatSize(section->size());
-    }
+  QStringList files;
+  for (int i = 1; i < argc; i++) {
+    files << QString::fromUtf8(argv[i]);
   }
 
-  return 0;
+  // Start in event loop.
+  MainWindow main(files);
+  QTimer::singleShot(0, &main, SLOT(show()));
+
+  return app.exec();
 }
