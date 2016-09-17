@@ -1,5 +1,7 @@
 #include <QDir>
 #include <QFileInfo>
+#include <QDesktopWidget>
+#include <QApplication>
 
 #include "Util.h"
 
@@ -102,6 +104,11 @@ QString Util::resolveAppBinary(const QString &path)
     }
   }
   return QString();
+}
+
+void Util::centerWidget(QWidget *widget)
+{
+  widget->move(QApplication::desktop()->screen()->rect().center() - widget->rect().center());
 }
 
 QString Util::addrDataString(quint64 addr, QByteArray data)

@@ -1,6 +1,7 @@
 #ifndef DISPAR_UTIL_H
 #define DISPAR_UTIL_H
 
+#include <QWidget>
 #include <QString>
 #include <QByteArray>
 
@@ -17,6 +18,8 @@ public:
   static QByteArray hexToData(const QString &str);
 
   static QString resolveAppBinary(const QString &path);
+
+  static void centerWidget(QWidget *widget);
 
   /**
    * Generate string of format:
