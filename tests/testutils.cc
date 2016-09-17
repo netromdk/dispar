@@ -25,3 +25,8 @@ std::unique_ptr<QFile, std::function<void(QFile *)>> tempFile(const QByteArray &
 
   return std::unique_ptr<QFile, std::function<void(QFile *) >>(file, deleter);
 }
+
+std::ostream &operator<<(std::ostream &os, const QString &str)
+{
+  return os << str.toStdString();
+}

@@ -1,5 +1,7 @@
 #include "gtest/gtest.h"
 
+#include "testutils.h"
+
 #include "CStringReader.h"
 
 TEST(CStringReader, instantiate)
@@ -27,14 +29,13 @@ TEST(CStringReader, next)
     data += "three";
     data += (char) 0;
 
-    // TODO: implement ostream << QString in testutils
     CStringReader reader(data);
     ASSERT_TRUE(reader.next());
-    EXPECT_EQ(reader.string(), "one") << reader.string().toUtf8().constData();
+    EXPECT_EQ(reader.string(), "one") << reader.string();
     ASSERT_TRUE(reader.next());
-    EXPECT_EQ(reader.string(), "two") << reader.string().toUtf8().constData();
+    EXPECT_EQ(reader.string(), "two") << reader.string();
     ASSERT_TRUE(reader.next());
-    EXPECT_EQ(reader.string(), "three") << reader.string().toUtf8().constData();
+    EXPECT_EQ(reader.string(), "three") << reader.string();
     ASSERT_FALSE(reader.next());
   }
 }
@@ -65,7 +66,6 @@ TEST(CStringReader, readAll)
     data += "three";
     data += (char) 0;
 
-    // TODO: implement ostream << QString in testutils
     CStringReader reader(data);
     auto strings = reader.readAll();
     ASSERT_EQ(strings.size(), 3);

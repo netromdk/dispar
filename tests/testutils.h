@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QByteArray>
 
+#include <ostream>
 #include <memory>
 #include <functional>
 
@@ -11,5 +12,7 @@
 /** If \p data is specified it will be written to the file. */
 std::unique_ptr<QFile, std::function<void(QFile *)>>
 tempFile(const QByteArray &data = QByteArray());
+
+std::ostream &operator<<(std::ostream &os, const QString &str);
 
 #endif // DISPAR_TESTUTILS_H
