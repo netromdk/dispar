@@ -19,11 +19,11 @@ TEST(BinaryObject, cpuType)
 
 TEST(BinaryObject, cpuSubType)
 {
-  BinaryObject b(CpuType::X86_64, CpuType::Celeron);
-  EXPECT_EQ(b.cpuSubType(), CpuType::Celeron);
+  BinaryObject b(CpuType::X86_64, CpuType::CELERON);
+  EXPECT_EQ(b.cpuSubType(), CpuType::CELERON);
 
-  b.setCpuSubType(CpuType::Xeon);
-  EXPECT_EQ(b.cpuSubType(), CpuType::Xeon);
+  b.setCpuSubType(CpuType::XEON);
+  EXPECT_EQ(b.cpuSubType(), CpuType::XEON);
 }
 
 TEST(BinaryObject, isLittleEndian)

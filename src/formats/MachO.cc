@@ -186,10 +186,10 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
     cpuType = CpuType::I860;
   }
   else if (cputype == 18) { // CPU_TYPE_POWERPC
-    cpuType = CpuType::PowerPC;
+    cpuType = CpuType::POWER_PC;
   }
   else if (cputype == 18 + 0x01000000) { // CPU_TYPE_POWERPC | CPU_ARCH_ABI64
-    cpuType = CpuType::PowerPC_64;
+    cpuType = CpuType::POWER_PC_64;
   }
 
   binaryObject->setCpuType(cpuType);
@@ -210,52 +210,52 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
     cpuSubType = CpuType::I486_SX;
   }
   else if (cpusubtype == 5) { // CPU_SUBTYPE_PENT
-    cpuSubType = CpuType::Pentium;
+    cpuSubType = CpuType::PENTIUM;
   }
   else if (cpusubtype == 6 + (1 << 4)) { // CPU_SUBTYPE_PENTPRO
-    cpuSubType = CpuType::PentiumPro;
+    cpuSubType = CpuType::PENTIUM_PRO;
   }
   else if (cpusubtype == 6 + (3 << 4)) { // CPU_SUBTYPE_PENTII_M3
-    cpuSubType = CpuType::PentiumII_M3;
+    cpuSubType = CpuType::PENTIUM_II_M3;
   }
   else if (cpusubtype == 6 + (5 << 4)) { // CPU_SUBTYPE_PENTII_M5
-    cpuSubType = CpuType::PentiumII_M5;
+    cpuSubType = CpuType::PENTIUM_II_M5;
   }
   else if (cpusubtype == 7 + (6 << 4)) { // CPU_SUBTYPE_CELERON
-    cpuSubType = CpuType::Celeron;
+    cpuSubType = CpuType::CELERON;
   }
   else if (cpusubtype == 7 + (7 << 4)) { // CPU_SUBTYPE_CELERON_MOBILE
-    cpuSubType = CpuType::CeleronMobile;
+    cpuSubType = CpuType::CELERON_MOBILE;
   }
   else if (cpusubtype == 8) { // CPU_SUBTYPE_PENTIUM_3
-    cpuSubType = CpuType::Pentium_3;
+    cpuSubType = CpuType::PENTIUM_3;
   }
   else if (cpusubtype == 8 + (1 << 4)) { // CPU_SUBTYPE_PENTIUM_3_M
-    cpuSubType = CpuType::Pentium_3_M;
+    cpuSubType = CpuType::PENTIUM_3_M;
   }
   else if (cpusubtype == 8 + (2 << 4)) { // CPU_SUBTYPE_PENTIUM_3_XEON
-    cpuSubType = CpuType::Pentium_3_Xeon;
+    cpuSubType = CpuType::PENTIUM_3_Xeon;
   }
   else if (cpusubtype == 9) { // CPU_SUBTYPE_PENTIUM_M
-    cpuSubType = CpuType::Pentium_M;
+    cpuSubType = CpuType::PENTIUM_M;
   }
   else if (cpusubtype == 10) { // CPU_SUBTYPE_PENTIUM_4
-    cpuSubType = CpuType::Pentium_4;
+    cpuSubType = CpuType::PENTIUM_4;
   }
   else if (cpusubtype == 10 + (1 << 4)) { // CPU_SUBTYPE_PENTIUM_4_M
-    cpuSubType = CpuType::Pentium_4_M;
+    cpuSubType = CpuType::PENTIUM_4_M;
   }
   else if (cpusubtype == 11) { // CPU_SUBTYPE_ITANIUM
-    cpuSubType = CpuType::Itanium;
+    cpuSubType = CpuType::ITANIUM;
   }
   else if (cpusubtype == 11 + (1 << 4)) { // CPU_SUBTYPE_ITANIUM_2
-    cpuSubType = CpuType::Itanium_2;
+    cpuSubType = CpuType::ITANIUM_2;
   }
   else if (cpusubtype == 12) { // CPU_SUBTYPE_XEON
-    cpuSubType = CpuType::Xeon;
+    cpuSubType = CpuType::XEON;
   }
   else if (cpusubtype == 12 + (1 << 4)) { // CPU_SUBTYPE_XEON_MP
-    cpuSubType = CpuType::Xeon_MP;
+    cpuSubType = CpuType::XEON_MP;
   }
 
   binaryObject->setCpuSubType(cpuSubType);

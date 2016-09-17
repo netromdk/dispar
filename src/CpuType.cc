@@ -22,10 +22,10 @@ QString cpuTypeName(CpuType type)
   case CpuType::I860:
     return "i860";
 
-  case CpuType::PowerPC:
+  case CpuType::POWER_PC:
     return "PowerPC";
 
-  case CpuType::PowerPC_64:
+  case CpuType::POWER_PC_64:
     return "PowerPC 64";
 
   case CpuType::I386:
@@ -37,52 +37,52 @@ QString cpuTypeName(CpuType type)
   case CpuType::I486_SX:
     return "i486 SX";
 
-  case CpuType::Pentium:
+  case CpuType::PENTIUM:
     return "Pentium";
 
-  case CpuType::PentiumPro:
+  case CpuType::PENTIUM_PRO:
     return "Pentium Pro";
 
-  case CpuType::PentiumII_M3:
+  case CpuType::PENTIUM_II_M3:
     return "Pentium II M3";
 
-  case CpuType::PentiumII_M5:
+  case CpuType::PENTIUM_II_M5:
     return "Pentium II M5";
 
-  case CpuType::Celeron:
+  case CpuType::CELERON:
     return "Celeron";
 
-  case CpuType::CeleronMobile:
+  case CpuType::CELERON_MOBILE:
     return "Celeron Mobile";
 
-  case CpuType::Pentium_3:
+  case CpuType::PENTIUM_3:
     return "Pentium 3";
 
-  case CpuType::Pentium_3_M:
+  case CpuType::PENTIUM_3_M:
     return "Pentium 3 M";
 
-  case CpuType::Pentium_3_Xeon:
+  case CpuType::PENTIUM_3_Xeon:
     return "Pentium 3 Xeon";
 
-  case CpuType::Pentium_M:
+  case CpuType::PENTIUM_M:
     return "Pentium M";
 
-  case CpuType::Pentium_4:
+  case CpuType::PENTIUM_4:
     return "Pentium 4";
 
-  case CpuType::Pentium_4_M:
+  case CpuType::PENTIUM_4_M:
     return "Pentium 4 M";
 
-  case CpuType::Itanium:
+  case CpuType::ITANIUM:
     return "Itanium";
 
-  case CpuType::Itanium_2:
+  case CpuType::ITANIUM_2:
     return "Itanium 2";
 
-  case CpuType::Xeon:
+  case CpuType::XEON:
     return "Xeon";
 
-  case CpuType::Xeon_MP:
+  case CpuType::XEON_MP:
     return "Xeon MP";
   }
 }

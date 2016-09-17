@@ -4,35 +4,35 @@
 #include <QString>
 
 enum class CpuType : int {
-  X86, ///< Same as i386
+  X86, ///< Same as I386
   X86_64,
   HPPA,
   ARM,
   SPARC,
   I860,
-  PowerPC,
-  PowerPC_64,
+  POWER_PC,
+  POWER_PC_64,
 
   // Sub types
   I386,
   I486,
   I486_SX,
-  Pentium,
-  PentiumPro,
-  PentiumII_M3,
-  PentiumII_M5,
-  Celeron,
-  CeleronMobile,
-  Pentium_3,
-  Pentium_3_M,
-  Pentium_3_Xeon,
-  Pentium_M,
-  Pentium_4,
-  Pentium_4_M,
-  Itanium,
-  Itanium_2,
-  Xeon,
-  Xeon_MP
+  PENTIUM,
+  PENTIUM_PRO,
+  PENTIUM_II_M3,
+  PENTIUM_II_M5,
+  CELERON,
+  CELERON_MOBILE,
+  PENTIUM_3,
+  PENTIUM_3_M,
+  PENTIUM_3_Xeon,
+  PENTIUM_M,
+  PENTIUM_4,
+  PENTIUM_4_M,
+  ITANIUM,
+  ITANIUM_2,
+  XEON,
+  XEON_MP
 };
 
 QString cpuTypeName(CpuType type);
