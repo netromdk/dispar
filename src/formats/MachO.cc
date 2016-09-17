@@ -7,7 +7,7 @@
 #include "../Util.h"
 #include "../Reader.h"
 
-MachO::MachO(const QString &file) : Format(Format::Type::MachO), file_{file}
+MachO::MachO(const QString &file) : Format(Format::Type::MACH_O), file_{file}
 {
 }
 

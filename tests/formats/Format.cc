@@ -6,12 +6,12 @@
 
 TEST(Format, types)
 {
-  EXPECT_EQ((int) Format::Type::MachO, 0);
+  EXPECT_EQ((int) Format::Type::MACH_O, 0);
 }
 
 TEST(Format, typeNames)
 {
-  EXPECT_EQ(Format::typeName(Format::Type::MachO), "Mach-O");
+  EXPECT_EQ(Format::typeName(Format::Type::MACH_O), "Mach-O");
   EXPECT_EQ(Format::typeName(static_cast<Format::Type>(-1)), "");
 }
 
@@ -22,5 +22,5 @@ TEST(Format, detect)
 
   fmt = Format::detect(":macho_main");
   ASSERT_NE(fmt, nullptr);
-  EXPECT_EQ(fmt->type(), Format::Type::MachO);
+  EXPECT_EQ(fmt->type(), Format::Type::MACH_O);
 }

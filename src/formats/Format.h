@@ -13,7 +13,7 @@
 
 class Format {
 public:
-  enum class Type { MachO };
+  enum class Type { MACH_O };
 
   Format(Type type);
 
