@@ -56,22 +56,22 @@ TEST(BinaryObject, fileType)
 TEST(BinaryObject, section)
 {
   BinaryObject b;
-  EXPECT_EQ(b.section(Section::Type::Text), nullptr);
+  EXPECT_EQ(b.section(Section::Type::TEXT), nullptr);
 
-  auto sec = std::make_shared<Section>(Section::Type::Text, "name", 0x1, 1);
+  auto sec = std::make_shared<Section>(Section::Type::TEXT, "name", 0x1, 1);
   b.addSection(sec);
-  EXPECT_EQ(b.section(Section::Type::Text), sec);
+  EXPECT_EQ(b.section(Section::Type::TEXT), sec);
 }
 
 TEST(BinaryObject, sectionsByType)
 {
   BinaryObject b;
-  EXPECT_EQ(b.sectionsByType(Section::Type::Text).size(), 0);
+  EXPECT_EQ(b.sectionsByType(Section::Type::TEXT).size(), 0);
 
-  auto sec = std::make_shared<Section>(Section::Type::Text, "name", 0x1, 1);
+  auto sec = std::make_shared<Section>(Section::Type::TEXT, "name", 0x1, 1);
   b.addSection(sec);
 
-  auto secs = b.sectionsByType(Section::Type::Text);
+  auto secs = b.sectionsByType(Section::Type::TEXT);
   EXPECT_EQ(secs.size(), 1);
   EXPECT_EQ(secs[0], sec);
 }

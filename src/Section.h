@@ -12,14 +12,14 @@
 class Section {
 public:
   enum class Type : int {
-    Text,        ///< Executable code (__text, .text).
-    SymbolStubs, ///< Indirect symbol stubs.
-    Symbols,     ///< Symbol table.
-    DynSymbols,  ///< Dynamic symbol table.
-    CString,     ///< Constant C strings (__cstring).
-    String,      ///< String table constants.
-    FuncStarts,  ///< Function starts.
-    CodeSig      ///< Code signature.
+    TEXT,        ///< Executable code (__text, .text).
+    SYMBOL_STUBS, ///< Indirect symbol stubs.
+    SYMBOLS,     ///< Symbol table.
+    DYN_SYMBOLS,  ///< Dynamic symbol table.
+    CSTRING,     ///< Constant C strings (__cstring).
+    STRING,      ///< String table constants.
+    FUNC_STARTS,  ///< Function starts.
+    CODE_SIG      ///< Code signature.
   };
 
   Section(Type type, const QString &name, quint64 addr, quint64 size, quint32 offset = 0);

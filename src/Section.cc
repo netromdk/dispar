@@ -9,28 +9,28 @@ Section::Section(Section::Type type, const QString &name, quint64 addr, quint64 
 QString Section::typeName(Type type)
 {
   switch (type) {
-  case Section::Type::Text:
+  case Section::Type::TEXT:
     return "Text";
 
-  case Section::Type::SymbolStubs:
+  case Section::Type::SYMBOL_STUBS:
     return "Symbol Stubs";
 
-  case Section::Type::Symbols:
+  case Section::Type::SYMBOLS:
     return "Symbols";
 
-  case Section::Type::DynSymbols:
+  case Section::Type::DYN_SYMBOLS:
     return "Dynamic Symbols";
 
-  case Section::Type::CString:
+  case Section::Type::CSTRING:
     return "CString";
 
-  case Section::Type::String:
+  case Section::Type::STRING:
     return "String";
 
-  case Section::Type::FuncStarts:
+  case Section::Type::FUNC_STARTS:
     return "Function Starts";
 
-  case Section::Type::CodeSig:
+  case Section::Type::CODE_SIG:
     return "Code Signatures";
   }
 }
