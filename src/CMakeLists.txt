@@ -26,6 +26,8 @@ add_library(
 
   widgets/MainWindow.h
   widgets/MainWindow.cc
+  widgets/BinaryWidget.h
+  widgets/BinaryWidget.cc
 
   formats/Format.h
   formats/Format.cc

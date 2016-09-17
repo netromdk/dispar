@@ -20,14 +20,12 @@ protected:
 
 private slots:
   void openBinary();
-  //void saveBinary();
-  //void closeBinary();
+  // void saveBinary();
+  // void closeBinary();
 
 private:
-  /*
   void createLayout();
-  void createMenu();
-  */
+  // void createMenu();
 
   void loadBinary(QString file);
 
@@ -35,7 +33,7 @@ private:
   QStringList startupFiles;
 
   QTabWidget *tabWidget;
-  QList<BinaryWidget*> binaryWidgets;
+  QList<BinaryWidget *> binaryWidgets;
 };
 
 #endif // DISPAR_MAIN_WINDOW_H

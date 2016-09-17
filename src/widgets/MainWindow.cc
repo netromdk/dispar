@@ -1,7 +1,9 @@
 #include "MainWindow.h"
 #include "../Util.h"
 #include "../formats/Format.h"
+#include "BinaryWidget.h"
 
+#include <QVBoxLayout>
 #include <QDir>
 #include <QFileDialog>
 #include <QApplication>
@@ -18,10 +20,8 @@ MainWindow::MainWindow(const QStringList &files)
   startupFiles = startupFiles.toSet().toList();
 
   setWindowTitle("Dispar");
-  /*
   createLayout();
-  createMenu();
-  */
+  // createMenu();
 }
 
 MainWindow::~MainWindow()
@@ -67,15 +67,26 @@ void MainWindow::openBinary()
   }
 
   auto file = diag.selectedFiles().first();
-  /*
   for (const auto *binary : binaryWidgets) {
     if (binary->file() == file) {
       QMessageBox::warning(this, "dispar", tr("Can't open same binary twice!"));
       return;
     }
   }
-  */
+
   loadBinary(file);
+}
+
+void MainWindow::createLayout()
+{
+  tabWidget = new QTabWidget;
+
+  auto *layout = new QVBoxLayout;
+  layout->addWidget(tabWidget);
+
+  auto *w = new QWidget;
+  w->setLayout(layout);
+  setCentralWidget(w);
 }
 
 void MainWindow::loadBinary(QString file)
@@ -122,11 +133,9 @@ void MainWindow::loadBinary(QString file)
   }
   */
 
-  /*
   auto *binWidget = new BinaryWidget(fmt);
-  connect(binWidget, &BinaryWidget::modified, this, &MainWindow::onBinaryObjectModified);
+  // connect(binWidget, &BinaryWidget::modified, this, &MainWindow::onBinaryObjectModified);
   binaryWidgets << binWidget;
   int idx = tabWidget->addTab(binWidget, QFileInfo(file).fileName());
   tabWidget->setCurrentIndex(idx);
-  */
 }
