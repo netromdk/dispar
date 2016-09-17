@@ -12,12 +12,12 @@
 class Section {
 public:
   enum class Type : int {
-    TEXT,        ///< Executable code (__text, .text).
+    TEXT,         ///< Executable code (__text, .text).
     SYMBOL_STUBS, ///< Indirect symbol stubs.
-    SYMBOLS,     ///< Symbol table.
+    SYMBOLS,      ///< Symbol table.
     DYN_SYMBOLS,  ///< Dynamic symbol table.
-    CSTRING,     ///< Constant C strings (__cstring).
-    STRING,      ///< String table constants.
+    CSTRING,      ///< Constant C strings (__cstring).
+    STRING,       ///< String table constants.
     FUNC_STARTS,  ///< Function starts.
     CODE_SIG      ///< Code signature.
   };

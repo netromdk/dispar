@@ -17,6 +17,7 @@ add_executable(
   testutils.cc
 
   Reader.cc
+  CStringReader.cc
 
   SymbolEntry.cc
   SymbolTable.cc

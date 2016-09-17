@@ -6,6 +6,8 @@ add_library(
 
   Reader.h
   Reader.cc
+  CStringReader.h
+  CStringReader.cc
 
   Section.h
   Section.cc

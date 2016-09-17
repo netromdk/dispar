@@ -33,6 +33,8 @@ QString Section::typeName(Type type)
   case Section::Type::CODE_SIG:
     return "Code Signatures";
   }
+
+  return "";
 }
 
 Section::Type Section::type() const
