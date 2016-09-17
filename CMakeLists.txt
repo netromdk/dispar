@@ -9,6 +9,7 @@ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS TRUE)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 option(CODE_COVERAGE "Instrument for code coverage (clang only!)" OFF)
+option(ADDRESS_SANITIZER "Use memory error detector  (clang only and implies debug mode!)" OFF)
 
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
@@ -19,6 +20,11 @@ include(target)
 
 if (CODE_COVERAGE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-instr-generate -fcoverage-mapping")
+endif()
+
+if (ADDRESS_SANITIZER)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -g -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls")
+  set(CMAKE_BUILD_TYPE Debug)
 endif()
 
 # Names
@@ -72,4 +78,5 @@ if (CODE_COVERAGE)
 else()
   message(STATUS "Code coverage: ${CODE_COVERAGE}")
 endif()
+message(STATUS "Address sanitizer: ${ADDRESS_SANITIZER}")
 message(STATUS "--------------------------------------------------")
