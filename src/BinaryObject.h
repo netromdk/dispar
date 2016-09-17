@@ -14,7 +14,7 @@ class BinaryObject {
 public:
   BinaryObject(CpuType cpuType = CpuType::X86, CpuType cpuSubType = CpuType::I386,
                bool littleEndian = true, int systemBits = 32,
-               FileType fileType = FileType::Execute);
+               FileType fileType = FileType::EXECUTE);
 
   CpuType cpuType() const;
   void setCpuType(CpuType type);

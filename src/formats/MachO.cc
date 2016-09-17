@@ -260,27 +260,27 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
 
   binaryObject->setCpuSubType(cpuSubType);
 
-  FileType fileType{FileType::Object};
+  FileType fileType{FileType::OBJECT};
   if (filetype == 1) { // MH_OBJECT
-    fileType = FileType::Object;
+    fileType = FileType::OBJECT;
   }
   else if (filetype == 2) { // MH_EXECUTE
-    fileType = FileType::Execute;
+    fileType = FileType::EXECUTE;
   }
   else if (filetype == 4) { // MH_CORE
-    fileType = FileType::Core;
+    fileType = FileType::CORE;
   }
   else if (filetype == 5) { // MH_PRELOAD
-    fileType = FileType::Preload;
+    fileType = FileType::PRELOAD;
   }
   else if (filetype == 6) { // MH_DYLIB
-    fileType = FileType::Dylib;
+    fileType = FileType::DYLIB;
   }
   else if (filetype == 7) { // MH_DYLINKER
-    fileType = FileType::Dylinker;
+    fileType = FileType::DYLINKER;
   }
   else if (filetype == 8) { // MH_BUNDLE
-    fileType = FileType::Bundle;
+    fileType = FileType::BUNDLE;
   }
 
   binaryObject->setFileType(fileType);

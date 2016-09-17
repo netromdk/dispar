@@ -47,10 +47,10 @@ TEST(BinaryObject, systemBits)
 TEST(BinaryObject, fileType)
 {
   BinaryObject b;
-  EXPECT_EQ(b.fileType(), FileType::Execute);
+  EXPECT_EQ(b.fileType(), FileType::EXECUTE);
 
-  b.setFileType(FileType::Object);
-  EXPECT_EQ(b.fileType(), FileType::Object);
+  b.setFileType(FileType::OBJECT);
+  EXPECT_EQ(b.fileType(), FileType::OBJECT);
 }
 
 TEST(BinaryObject, section)

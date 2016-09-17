@@ -4,13 +4,13 @@
 #include <QString>
 
 enum class FileType : int {
-  Object,   ///< Intermediate object file (.o).
-  Execute,  ///< Executable file.
-  Core,     ///< Crash report.
-  Preload,  ///< Special-purpose program, like programs burned into ROM chips.
-  Dylib,    ///< Dynamic shared library (.dylib).
-  Dylinker, ///< Dynamic linker shared library.
-  Bundle    ///< Bundle/plugin (.bundle).
+  OBJECT,   ///< Intermediate object file (.o).
+  EXECUTE,  ///< Executable file.
+  CORE,     ///< Crash report.
+  PRELOAD,  ///< Special-purpose program, like programs burned into ROM chips.
+  DYLIB,    ///< Dynamic shared library (.dylib).
+  DYLINKER, ///< Dynamic linker shared library.
+  BUNDLE    ///< Bundle/plugin (.bundle).
 };
 
 QString fileTypeName(FileType type);

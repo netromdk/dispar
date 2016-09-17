@@ -3,26 +3,26 @@
 QString fileTypeName(FileType type)
 {
   switch (type) {
-  case FileType::Object:
+  case FileType::OBJECT:
     return "Object";
 
   default:
-  case FileType::Execute:
+  case FileType::EXECUTE:
     return "Executable";
 
-  case FileType::Core:
+  case FileType::CORE:
     return "Core";
 
-  case FileType::Preload:
+  case FileType::PRELOAD:
     return "Preloaded Program";
 
-  case FileType::Dylib:
+  case FileType::DYLIB:
     return "Dylib";
 
-  case FileType::Dylinker:
+  case FileType::DYLINKER:
     return "Dylinker";
 
-  case FileType::Bundle:
+  case FileType::BUNDLE:
     return "Bundle";
   }
 }
