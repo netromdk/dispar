@@ -59,5 +59,15 @@ void BinaryWidget::setup()
     symbolList->addItem(item);
   }
 
+  // The "_main" symbol is normally the second symbol so choose that. If not enough symbols then
+  // choose the first.
+  auto count = symbolList->count();
+  if (count > 1) {
+    symbolList->setCurrentRow(1);
+  }
+  else if (count > 0) {
+    symbolList->setCurrentRow(0);
+  }
+
   // TODO: Fill out the text edit!
 }
