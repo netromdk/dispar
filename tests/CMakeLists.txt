@@ -21,6 +21,7 @@ add_executable(
   SymbolEntry.cc
   SymbolTable.cc
   Section.cc
+  BinaryObject.cc
 
   formats/Format.cc
   formats/MachO.cc
