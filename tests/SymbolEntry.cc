@@ -31,3 +31,24 @@ TEST(SymbolEntry, string)
   se.setString("ok");
   EXPECT_EQ(se.string(), "ok");
 }
+
+TEST(SymbolEntry, operatorEquals)
+{
+  {
+    SymbolEntry se(42, 84, "hello");
+    SymbolEntry se2(42, 84, "hello");
+    EXPECT_EQ(se, se2);
+  }
+
+  {
+    SymbolEntry se(42, 84, "hello");
+    SymbolEntry se2(84, 42, "hello");
+    EXPECT_NE(se, se2);
+  }
+
+  {
+    SymbolEntry se(42, 84, "hello");
+    SymbolEntry se2(42, 84, "no no");
+    EXPECT_NE(se, se2);
+  }
+}

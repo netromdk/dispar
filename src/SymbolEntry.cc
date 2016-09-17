@@ -29,3 +29,13 @@ const QString &SymbolEntry::string() const
 {
   return strValue;
 }
+
+bool SymbolEntry::operator==(const SymbolEntry &other) const
+{
+  return index() == other.index() && value() == other.value() && string() == other.string();
+}
+
+bool SymbolEntry::operator!=(const SymbolEntry &other) const
+{
+  return !(*this == other);
+}

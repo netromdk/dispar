@@ -15,6 +15,9 @@ public:
   void setString(const QString &str);
   const QString &string() const;
 
+  bool operator==(const SymbolEntry &other) const;
+  bool operator!=(const SymbolEntry &other) const;
+
 private:
   quint32 index_;   // of string table
   quint64 value_;   // of symbol
