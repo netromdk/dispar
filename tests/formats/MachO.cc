@@ -2,6 +2,7 @@
 
 #include "testutils.h"
 
+#include "CStringReader.h"
 #include "formats/MachO.h"
 
 TEST(MachO, instantiate)
@@ -98,54 +99,92 @@ TEST(MachO, parse)
   {
     MachO fmt(":macho_main");
     EXPECT_TRUE(fmt.parse());
-    EXPECT_EQ(fmt.objects().size(), 1);
+    auto objs = fmt.objects();
+    ASSERT_EQ(objs.size(), 1);
+    EXPECT_EQ(objs[0]->cpuType(), CpuType::X86_64);
+    EXPECT_EQ(objs[0]->fileType(), FileType::EXECUTE);
   }
 
   {
     MachO fmt(":macho_main.o");
     EXPECT_TRUE(fmt.parse());
-    EXPECT_EQ(fmt.objects().size(), 1);
+    auto objs = fmt.objects();
+    ASSERT_EQ(objs.size(), 1);
+    EXPECT_EQ(objs[0]->cpuType(), CpuType::X86_64);
+    EXPECT_EQ(objs[0]->fileType(), FileType::OBJECT);
   }
 
   {
     MachO fmt(":macho_main_32");
     EXPECT_TRUE(fmt.parse());
-    EXPECT_EQ(fmt.objects().size(), 1);
+    auto objs = fmt.objects();
+    ASSERT_EQ(objs.size(), 1);
+    EXPECT_EQ(objs[0]->cpuType(), CpuType::X86);
+    EXPECT_EQ(objs[0]->fileType(), FileType::EXECUTE);
   }
 
   {
     MachO fmt(":macho_main_32.o");
     EXPECT_TRUE(fmt.parse());
-    EXPECT_EQ(fmt.objects().size(), 1);
+    auto objs = fmt.objects();
+    ASSERT_EQ(objs.size(), 1);
+    EXPECT_EQ(objs[0]->cpuType(), CpuType::X86);
+    EXPECT_EQ(objs[0]->fileType(), FileType::OBJECT);
   }
 
   {
     MachO fmt(":macho_main_32_64");
     EXPECT_TRUE(fmt.parse());
-    EXPECT_EQ(fmt.objects().size(), 2);
+    auto objs = fmt.objects();
+    ASSERT_EQ(objs.size(), 2);
+    EXPECT_EQ(objs[0]->cpuType(), CpuType::X86);
+    EXPECT_EQ(objs[0]->fileType(), FileType::EXECUTE);
+    EXPECT_EQ(objs[1]->cpuType(), CpuType::X86_64);
+    EXPECT_EQ(objs[1]->fileType(), FileType::EXECUTE);
   }
 
   {
     MachO fmt(":macho_func");
     EXPECT_TRUE(fmt.parse());
-    EXPECT_EQ(fmt.objects().size(), 1);
+    auto objs = fmt.objects();
+    ASSERT_EQ(objs.size(), 1);
+    EXPECT_EQ(objs[0]->cpuType(), CpuType::X86_64);
+    EXPECT_EQ(objs[0]->fileType(), FileType::EXECUTE);
   }
 
   {
     MachO fmt(":macho_strings");
     EXPECT_TRUE(fmt.parse());
-    EXPECT_EQ(fmt.objects().size(), 1);
+
+    auto objs = fmt.objects();
+    ASSERT_EQ(objs.size(), 1);
+    EXPECT_EQ(objs[0]->cpuType(), CpuType::X86_64);
+    EXPECT_EQ(objs[0]->fileType(), FileType::EXECUTE);
+
+    auto sec = objs[0]->section(Section::Type::CSTRING);
+    ASSERT_NE(sec, nullptr);
+
+    auto strings = CStringReader(sec->data()).readAll();
+    ASSERT_EQ(strings.size(), 2);
+    EXPECT_EQ(strings[0], "hello");
+    EXPECT_EQ(strings[1], "second");
   }
 
   {
     MachO fmt(":macho_main_objc");
     EXPECT_TRUE(fmt.parse());
-    EXPECT_EQ(fmt.objects().size(), 1);
+    auto objs = fmt.objects();
+    ASSERT_EQ(objs.size(), 1);
+    EXPECT_EQ(objs[0]->cpuType(), CpuType::X86_64);
+    EXPECT_EQ(objs[0]->fileType(), FileType::EXECUTE);
   }
 
   {
     MachO fmt(":macho_lib.dylib");
     EXPECT_TRUE(fmt.parse());
-    EXPECT_EQ(fmt.objects().size(), 1);
+    auto objs = fmt.objects();
+    ASSERT_EQ(objs.size(), 1);
+    EXPECT_EQ(objs[0]->cpuType(), CpuType::X86_64);
+    EXPECT_EQ(objs[0]->fileType(), FileType::DYLIB);
   }
 }
