@@ -21,5 +21,5 @@ set(CMAKE_AUTORCC ON) # rcc when necessary.
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5Core REQUIRED)
-#find_package(Qt5Gui REQUIRED)
-#find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Gui REQUIRED)
+find_package(Qt5Widgets REQUIRED)

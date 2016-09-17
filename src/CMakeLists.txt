@@ -33,6 +33,8 @@ add_library(
 qt5_use_modules(
   ${libName}
   Core
+  Gui
+  Widgets
   )
 
 add_executable(
