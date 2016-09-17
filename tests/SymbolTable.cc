@@ -51,3 +51,35 @@ TEST(SymbolTable, string)
   EXPECT_FALSE(st.string(sym2.value(), str));
   EXPECT_TRUE(str.isEmpty());
 }
+
+TEST(SymbolTable, operatorEquals)
+{
+  {
+    SymbolEntry se(42, 84, "hello");
+    SymbolEntry se2(42, 84, "hello");
+
+    SymbolTable st;
+    st.addSymbol(se);
+    st.addSymbol(se2);
+
+    SymbolTable st2;
+    st2.addSymbol(se);
+    st2.addSymbol(se2);
+
+    EXPECT_EQ(st, st2);
+  }
+
+  {
+    SymbolEntry se(42, 84, "hello");
+    SymbolEntry se2(42, 84, "hello");
+
+    SymbolTable st;
+    st.addSymbol(se);
+    st.addSymbol(se2);
+
+    SymbolTable st2;
+    st2.addSymbol(se2);
+
+    EXPECT_NE(st, st2);
+  }
+}

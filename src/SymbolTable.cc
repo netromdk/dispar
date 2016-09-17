@@ -27,3 +27,13 @@ const QList<SymbolEntry> &SymbolTable::symbols() const
 {
   return entries;
 }
+
+bool SymbolTable::operator==(const SymbolTable &other) const
+{
+  return symbols() == other.symbols();
+}
+
+bool SymbolTable::operator!=(const SymbolTable &other) const
+{
+  return !(*this == other);
+}

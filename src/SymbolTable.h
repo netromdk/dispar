@@ -14,6 +14,9 @@ public:
 
   bool string(quint64 value, QString &str) const;
 
+  bool operator==(const SymbolTable &other) const;
+  bool operator!=(const SymbolTable &other) const;
+
 private:
   QList<SymbolEntry> entries;
 };
