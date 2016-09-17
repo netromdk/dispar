@@ -17,7 +17,7 @@ public:
   static QString hexToString(const QString &str);
   static QByteArray hexToData(const QString &str);
 
-  static QString resolveAppBinary(const QString &path);
+  static QString resolveAppBinary(QString path);
 
   static void centerWidget(QWidget *widget);
 

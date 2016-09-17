@@ -91,8 +91,11 @@ QByteArray Util::hexToData(const QString &str)
   return data;
 }
 
-QString Util::resolveAppBinary(const QString &path)
+QString Util::resolveAppBinary(QString path)
 {
+  if (path.endsWith("/")) {
+    path.chop(1);
+  }
   if (!path.toLower().endsWith(".app")) {
     return QString();
   }
