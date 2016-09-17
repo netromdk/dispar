@@ -5,11 +5,8 @@
 
 #include "../formats/Format.h"
 
-/*
-class Pane;
 class QListWidget;
-class QStackedLayout;
-*/
+class QTextEdit;
 
 class BinaryWidget : public QWidget {
   Q_OBJECT
@@ -17,10 +14,7 @@ class BinaryWidget : public QWidget {
 public:
   BinaryWidget(std::shared_ptr<Format> fmt);
 
-  QString file() const
-  {
-    return fmt->file();
-  }
+  QString file() const;
 
   // void commit();
 
@@ -28,19 +22,16 @@ signals:
   // void modified();
 
 private slots:
-  // void onModeChanged(int row);
+  void onSymbolChosen(int row);
 
 private:
-  // void createLayout();
-  // void setup();
-  // void addPane(const QString &title, Pane *pane, int level = 0);
+  void createLayout();
+  void setup();
 
   std::shared_ptr<Format> fmt;
 
-  /*
-  QListWidget *listWidget;
-  QStackedLayout *stackLayout;
-  */
+  QListWidget *symbolList;
+  QTextEdit *mainView;
 };
 
 #endif // DISPAR_BINARY_WIDGET_H
