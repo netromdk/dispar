@@ -1,3 +1,5 @@
+#include <QTimer>
+#include <QScrollBar>
 #include <QDir>
 #include <QFileInfo>
 #include <QDesktopWidget>
@@ -147,4 +149,14 @@ QString Util::addrDataString(quint64 addr, QByteArray data)
     }
   }
   return output;
+}
+
+void Util::scrollToTop(QAbstractScrollArea *widget)
+{
+  QTimer::singleShot(1, widget, [widget] {
+    auto *bar = widget->verticalScrollBar();
+    if (bar) {
+      bar->triggerAction(QScrollBar::SliderToMinimum);
+    }
+  });
 }

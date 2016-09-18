@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QString>
 #include <QByteArray>
+#include <QAbstractScrollArea>
 
 class Util {
 public:
@@ -31,6 +32,9 @@ public:
    * ASCII representation of meaningful values.
    */
   static QString addrDataString(quint64 addr, QByteArray data);
+
+  /// Scroll area to top.
+  static void scrollToTop(QAbstractScrollArea *widget);
 };
 
 #endif // DISPAR_UTIL_H
