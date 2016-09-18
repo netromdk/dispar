@@ -1,3 +1,4 @@
+#include <QTimer>
 #include <QFile>
 #include <QTextEdit>
 #include <QDebug>
@@ -47,9 +48,19 @@ QString BinaryWidget::file() const
 
 void BinaryWidget::onSymbolChosen(int row)
 {
+  // If offset is found then select the text block.
   auto *item = symbolList->item(row);
   auto offset = item->data(Qt::UserRole).toLongLong();
-  qDebug() << "Chosen offset:" << QString::number(offset, 16);
+  if (offsetBlock.contains(offset)) {
+    auto blockNum = offsetBlock[offset];
+    auto block = doc->findBlockByNumber(blockNum);
+    auto cursor = mainView->textCursor();
+    cursor.setPosition(block.position());
+    cursor.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
+    mainView->setTextCursor(cursor);
+    mainView->ensureCursorVisible();
+    mainView->setFocus();
+  }
 }
 
 void BinaryWidget::onCursorPositionChanged()
@@ -100,21 +111,11 @@ void BinaryWidget::setup()
     symbolList->addItem(item);
   }
 
-  // The "_main" symbol is normally the second symbol so choose that. If not enough symbols then
-  // choose the first.
-  auto count = symbolList->count();
-  if (count > 1) {
-    symbolList->setCurrentRow(1);
-  }
-  else if (count > 0) {
-    symbolList->setCurrentRow(0);
-  }
-
   // Create text edit of all binary contents.
   // TODO: FAKE IT FOW NOW!
   QTextCursor cursor(doc);
 
-  auto createTable = [&cursor](const QStringList &values) {
+  auto createTable = [this, &cursor](const QStringList &values) {
     cursor.movePosition(QTextCursor::End);
     auto *table = cursor.insertTable(1, 3);
     Q_ASSERT(values.size() <= 3);
@@ -142,33 +143,47 @@ void BinaryWidget::setup()
 
       auto block = cellCursor.block();
       block.setUserData(userData);
+
+      if (cellCol == 0) {
+        offsetBlock[value.toLongLong(nullptr, 16)] = block.blockNumber();
+      }
     }
   };
 
   cursor.beginEditBlock();
 
-  for (int i = 0; i < 100; i++) {
-    cursor.movePosition(QTextCursor::End);
+  cursor.movePosition(QTextCursor::End);
 
-    // There is a default block at the beginning so reuse that.
-    if (cursor.block() != doc->firstBlock()) {
-      cursor.insertBlock();
-    }
-    cursor.insertText("_main:");
-
-    createTable(QStringList{"0x0000000100000fa0", "push", "rbp"});
-    createTable(QStringList{"0x0000000100000fa1", "mov", "rbp, rsp"});
-    createTable(QStringList{"0x0000000100000fa4", "xor", "eax, eax"});
-    createTable(QStringList{"0x0000000100000fa6", "mov", "dword [ss:rbp+4], 0x0"});
-    createTable(QStringList{"0x0000000100000fad", "pop", "rbp"});
-    createTable(QStringList{"0x0000000100000fae", "ret"});
-
-    cursor.movePosition(QTextCursor::End);
+  // There is a default block at the beginning so reuse that.
+  if (cursor.block() != doc->firstBlock()) {
     cursor.insertBlock();
-    cursor.insertText("; endp");
   }
+  cursor.insertText("_main:");
+
+  createTable(QStringList{"0x0000000100000fa0", "push", "rbp"});
+  createTable(QStringList{"0x0000000100000fa1", "mov", "rbp, rsp"});
+  createTable(QStringList{"0x0000000100000fa4", "xor", "eax, eax"});
+  createTable(QStringList{"0x0000000100000fa6", "mov", "dword [ss:rbp+4], 0x0"});
+  createTable(QStringList{"0x0000000100000fad", "pop", "rbp"});
+  createTable(QStringList{"0x0000000100000fae", "ret"});
+
+  cursor.movePosition(QTextCursor::End);
+  cursor.insertBlock();
+  cursor.insertText("; endp");
 
   cursor.endEditBlock();
 
   Util::scrollToTop(mainView);
+
+  // The "_main" symbol is normally the second symbol so choose that. If not enough symbols then
+  // choose the first.
+  QTimer::singleShot(1, this, [this] {
+    auto count = symbolList->count();
+    if (count > 1) {
+      symbolList->setCurrentRow(1);
+    }
+    else if (count > 0) {
+      symbolList->setCurrentRow(0);
+    }
+  });
 }

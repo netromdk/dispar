@@ -1,6 +1,7 @@
 #ifndef DISPAR_BINARY_WIDGET_H
 #define DISPAR_BINARY_WIDGET_H
 
+#include <QHash>
 #include <QWidget>
 
 #include "../formats/Format.h"
@@ -35,6 +36,7 @@ private:
   QListWidget *symbolList;
   QTextEdit *mainView;
   QTextDocument *doc;
+  QHash<quint64, int> offsetBlock; // offset -> block
 };
 
 #endif // DISPAR_BINARY_WIDGET_H
