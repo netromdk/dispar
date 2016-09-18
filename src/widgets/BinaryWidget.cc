@@ -12,6 +12,9 @@
 #include "../Util.h"
 #include "BinaryWidget.h"
 
+#include <X86Disasm.hh>
+#include <Disasm.hpp>
+
 namespace {
 
 // Temporary solution!
@@ -110,6 +113,36 @@ void BinaryWidget::setup()
     item->setToolTip(QString("0x%1").arg(symbol.value(), 0, 16));
     symbolList->addItem(item);
   }
+
+  // Disassemble test! ============
+  CX86Disasm64 dis;
+
+  // check if no error occured
+  if (dis.GetError()) return;
+
+  // set how deep should capstone reverse instruction
+  dis.SetDetail(cs_opt_value::CS_OPT_ON);
+
+  // set syntax for output disasembly string
+  dis.SetSyntax(cs_opt_value::CS_OPT_SYNTAX_INTEL);
+
+  // process disasembling
+  auto textSec = obj->section(Section::Type::TEXT);
+  auto *code = textSec->data().constData();
+  auto *insn = dis.Disasm(code, textSec->size());
+
+  // check if disassembling succesfull
+  if (!insn) {
+    qFatal("disasm failed!");
+  }
+
+  // print basic info
+  for (size_t i = 0; i < insn->Count; i++) {
+    printf("-> 0x%llu:\t%s\t%s\n", insn->Instructions(i)->address, insn->Instructions(i)->mnemonic,
+           insn->Instructions(i)->op_str);
+  }
+
+  // =========================
 
   // Create text edit of all binary contents.
   // TODO: FAKE IT FOW NOW!
