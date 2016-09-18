@@ -193,12 +193,11 @@ void BinaryWidget::setup()
   }
   cursor.insertText("_main:");
 
-  createTable(QStringList{"0x0000000100000fa0", "push", "rbp"});
-  createTable(QStringList{"0x0000000100000fa1", "mov", "rbp, rsp"});
-  createTable(QStringList{"0x0000000100000fa4", "xor", "eax, eax"});
-  createTable(QStringList{"0x0000000100000fa6", "mov", "dword [ss:rbp+4], 0x0"});
-  createTable(QStringList{"0x0000000100000fad", "pop", "rbp"});
-  createTable(QStringList{"0x0000000100000fae", "ret"});
+  for (size_t i = 0; i < insn->Count; i++) {
+    auto instr = insn->Instructions(i);
+    createTable(QStringList{QString("0x%1").arg(instr->address + textSec->address(), 0, 16),
+                            instr->mnemonic, instr->op_str});
+  }
 
   cursor.movePosition(QTextCursor::End);
   cursor.insertBlock();
