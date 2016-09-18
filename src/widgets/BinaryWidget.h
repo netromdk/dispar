@@ -7,6 +7,7 @@
 
 class QListWidget;
 class QTextEdit;
+class QTextDocument;
 
 class BinaryWidget : public QWidget {
   Q_OBJECT
@@ -32,6 +33,7 @@ private:
 
   QListWidget *symbolList;
   QTextEdit *mainView;
+  QTextDocument *doc;
 };
 
 #endif // DISPAR_BINARY_WIDGET_H

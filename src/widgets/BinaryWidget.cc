@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QProgressDialog>
+#include <QTextTable>
 
 #include "../Util.h"
 #include "BinaryWidget.h"
@@ -35,6 +36,7 @@ void BinaryWidget::createLayout()
   connect(symbolList, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
 
   mainView = new QTextEdit;
+  doc = mainView->document();
 
   auto *layout = new QHBoxLayout;
   layout->setContentsMargins(5, 5, 5, 5);
@@ -69,5 +71,55 @@ void BinaryWidget::setup()
     symbolList->setCurrentRow(0);
   }
 
-  // TODO: Fill out the text edit!
+  // Create text edit of all binary contents.
+  // TODO: FAKE IT FOW NOW!
+  QTextCursor cursor(doc);
+
+  auto createTable = [&cursor](const QStringList &values) {
+    cursor.movePosition(QTextCursor::End);
+    auto *table = cursor.insertTable(1, 3);
+    Q_ASSERT(values.size() <= 3);
+
+    auto format = table->format();
+    QVector<QTextLength> colWidths;
+    colWidths << QTextLength(QTextLength::FixedLength, 200)
+              << QTextLength(QTextLength::FixedLength, 40)
+              << QTextLength(QTextLength::VariableLength, 1);
+    format.setColumnWidthConstraints(colWidths);
+    format.setBorder(0);
+    format.setBorderStyle(QTextFrameFormat::BorderStyle_None);
+    table->setFormat(format);
+
+    int col = 0;
+    for (const auto &value : values) {
+      table->cellAt(0, col++).firstCursorPosition().insertText(value);
+    }
+  };
+
+  cursor.beginEditBlock();
+
+  for (int i = 0; i < 100; i++) {
+    cursor.movePosition(QTextCursor::End);
+
+    // There is a default block at the beginning so reuse that.
+    if (cursor.block() != doc->firstBlock()) {
+      cursor.insertBlock();
+    }
+    cursor.insertText("_main:");
+
+    createTable(QStringList{"0x0000000100000fa0", "push", "rbp"});
+    createTable(QStringList{"0x0000000100000fa1", "mov", "rbp, rsp"});
+    createTable(QStringList{"0x0000000100000fa4", "xor", "eax, eax"});
+    createTable(QStringList{"0x0000000100000fa6", "mov", "dword [ss:rbp+4], 0x0"});
+    createTable(QStringList{"0x0000000100000fad", "pop", "rbp"});
+    createTable(QStringList{"0x0000000100000fae", "ret"});
+
+    cursor.movePosition(QTextCursor::End);
+    cursor.insertBlock();
+    cursor.insertText("; endp");
+  }
+
+  cursor.endEditBlock();
+
+  Util::scrollToTop(mainView);
 }
