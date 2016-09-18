@@ -1,3 +1,7 @@
+include_directories(
+  ${CAPSTONE_INC_DIR}
+  )
+
 add_library(
   ${libName}
 
@@ -33,6 +37,11 @@ add_library(
   formats/Format.cc
   formats/MachO.h
   formats/MachO.cc
+  )
+
+target_link_libraries(
+  ${libName}
+  ${CAPSTONE_STATIC_LIB}
   )
 
 qt5_use_modules(
