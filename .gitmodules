@@ -1,0 +1,3 @@
+[submodule "lib/cccapstone"]
+	path = lib/cccapstone
+	url = https://github.com/zer0mem/cccapstone
