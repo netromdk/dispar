@@ -24,6 +24,7 @@ signals:
 
 private slots:
   void onSymbolChosen(int row);
+  void onCursorPositionChanged();
 
 private:
   void createLayout();

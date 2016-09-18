@@ -11,7 +11,30 @@
 #include "../Util.h"
 #include "BinaryWidget.h"
 
-BinaryWidget::BinaryWidget(std::shared_ptr<Format> fmt) : fmt(fmt)
+namespace {
+
+// Temporary solution!
+class TextBlockUserData : public QTextBlockUserData {
+public:
+  QString toString()
+  {
+    if (addr) {
+      return "address";
+    }
+    else if (inst) {
+      return "instruction";
+    }
+    else {
+      return "operands";
+    }
+  }
+
+  bool addr = false, inst = false, ops = false;
+};
+
+} // anon
+
+BinaryWidget::BinaryWidget(std::shared_ptr<Format> fmt) : fmt(fmt), doc(nullptr)
 {
   createLayout();
   setup();
@@ -29,6 +52,18 @@ void BinaryWidget::onSymbolChosen(int row)
   qDebug() << "Chosen offset:" << QString::number(offset, 16);
 }
 
+void BinaryWidget::onCursorPositionChanged()
+{
+  auto cursor = mainView->textCursor();
+  auto block = cursor.block();
+  qDebug() << "column:" << cursor.columnNumber() << "block:" << block.blockNumber();
+
+  auto *userData = reinterpret_cast<TextBlockUserData *>(block.userData());
+  if (userData) {
+    qDebug() << userData->toString();
+  }
+}
+
 void BinaryWidget::createLayout()
 {
   symbolList = new QListWidget;
@@ -36,8 +71,10 @@ void BinaryWidget::createLayout()
   connect(symbolList, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
 
   mainView = new QTextEdit;
-  auto font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
-  mainView->setFont(font);
+  mainView->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
+  connect(mainView, &QTextEdit::cursorPositionChanged, this,
+          &BinaryWidget::onCursorPositionChanged);
+
   doc = mainView->document();
 
   auto *layout = new QHBoxLayout;
@@ -94,7 +131,17 @@ void BinaryWidget::setup()
 
     int col = 0;
     for (const auto &value : values) {
-      table->cellAt(0, col++).firstCursorPosition().insertText(value);
+      int cellCol = col++;
+      auto cellCursor = table->cellAt(0, cellCol).firstCursorPosition();
+      cellCursor.insertText(value);
+
+      auto *userData = new TextBlockUserData;
+      userData->addr = (cellCol == 0);
+      userData->inst = (cellCol == 1);
+      userData->ops = (cellCol == 2);
+
+      auto block = cellCursor.block();
+      block.setUserData(userData);
     }
   };
 
