@@ -1,39 +1,25 @@
 #include <QTimer>
 #include <QFile>
-#include <QTextEdit>
+#include <QPlainTextEdit>
 #include <QDebug>
 #include <QListWidget>
 #include <QHBoxLayout>
 #include <QMessageBox>
 #include <QApplication>
 #include <QProgressDialog>
-#include <QTextTable>
+#include <QTextBlockUserData>
 
 #include "../Util.h"
 #include "BinaryWidget.h"
 
 #include <X86Disasm.hh>
-#include <Disasm.hpp>
 
 namespace {
 
 // Temporary solution!
 class TextBlockUserData : public QTextBlockUserData {
 public:
-  QString toString()
-  {
-    if (addr) {
-      return "address";
-    }
-    else if (inst) {
-      return "instruction";
-    }
-    else {
-      return "operands";
-    }
-  }
-
-  bool addr = false, inst = false, ops = false;
+  quint64 address;
 };
 
 } // anon
@@ -59,7 +45,7 @@ void BinaryWidget::onSymbolChosen(int row)
     auto block = doc->findBlockByNumber(blockNum);
     auto cursor = mainView->textCursor();
     cursor.setPosition(block.position());
-    cursor.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
+    cursor.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
     mainView->setTextCursor(cursor);
     mainView->ensureCursorVisible();
     mainView->setFocus();
@@ -74,7 +60,8 @@ void BinaryWidget::onCursorPositionChanged()
 
   auto *userData = reinterpret_cast<TextBlockUserData *>(block.userData());
   if (userData) {
-    qDebug() << userData->toString();
+    qDebug() << "address:" << QString::number(userData->address, 16);
+    // TODO: show if cursor is on address, instruction or operands.
   }
 }
 
@@ -84,9 +71,9 @@ void BinaryWidget::createLayout()
   symbolList->setFixedWidth(175);
   connect(symbolList, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
 
-  mainView = new QTextEdit;
+  mainView = new QPlainTextEdit;
   mainView->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
-  connect(mainView, &QTextEdit::cursorPositionChanged, this,
+  connect(mainView, &QPlainTextEdit::cursorPositionChanged, this,
           &BinaryWidget::onCursorPositionChanged);
 
   doc = mainView->document();
@@ -126,6 +113,9 @@ void BinaryWidget::setup()
   }
 
   // Disassemble test! ============
+  auto textSec = obj->section(Section::Type::TEXT);
+  CS_INSN_HOLDER<CX86InsClass> *insn = nullptr;
+  //{
   CX86Disasm64 dis;
 
   // check if no error occured
@@ -138,20 +128,17 @@ void BinaryWidget::setup()
   dis.SetSyntax(cs_opt_value::CS_OPT_SYNTAX_INTEL);
 
   // process disasembling
-  auto textSec = obj->section(Section::Type::TEXT);
+  qDebug() << "Disassembling..";
   auto *code = textSec->data().constData();
-  auto *insn = dis.Disasm(code, textSec->size());
+  insn = dis.Disasm(code, textSec->size());
+  //}
 
   // check if disassembling succesfull
   if (!insn) {
     qFatal("disasm failed!");
   }
 
-  // print basic info
-  for (size_t i = 0; i < insn->Count; i++) {
-    printf("-> 0x%llu:\t%s\t%s\n", insn->Instructions(i)->address, insn->Instructions(i)->mnemonic,
-           insn->Instructions(i)->op_str);
-  }
+  qDebug() << "Disassembled" << insn->Count << "instructions";
 
   // =========================
 
@@ -159,39 +146,19 @@ void BinaryWidget::setup()
   // TODO: FAKE IT FOW NOW!
   QTextCursor cursor(doc);
 
-  auto createTable = [this, &cursor](const QStringList &values) {
-    cursor.movePosition(QTextCursor::End);
-    auto *table = cursor.insertTable(1, 3);
+  auto appendInstruction = [this, &cursor](const QStringList &values) {
     Q_ASSERT(values.size() <= 3);
 
-    auto format = table->format();
-    QVector<QTextLength> colWidths;
-    colWidths << QTextLength(QTextLength::FixedLength, 200)
-              << QTextLength(QTextLength::FixedLength, 40)
-              << QTextLength(QTextLength::VariableLength, 1);
-    format.setColumnWidthConstraints(colWidths);
-    format.setBorder(0);
-    format.setBorderStyle(QTextFrameFormat::BorderStyle_None);
-    table->setFormat(format);
+    cursor.insertBlock();
+    cursor.insertText(QString("%1%2%3").arg(values[0], -20).arg(values[1], -8).arg(values[2]));
 
-    int col = 0;
-    for (const auto &value : values) {
-      int cellCol = col++;
-      auto cellCursor = table->cellAt(0, cellCol).firstCursorPosition();
-      cellCursor.insertText(value);
+    auto *userData = new TextBlockUserData;
+    userData->address = values[0].toLongLong(nullptr, 16);
 
-      auto *userData = new TextBlockUserData;
-      userData->addr = (cellCol == 0);
-      userData->inst = (cellCol == 1);
-      userData->ops = (cellCol == 2);
+    auto block = cursor.block();
+    block.setUserData(userData);
 
-      auto block = cellCursor.block();
-      block.setUserData(userData);
-
-      if (cellCol == 0) {
-        offsetBlock[value.toLongLong(nullptr, 16)] = block.blockNumber();
-      }
-    }
+    offsetBlock[userData->address] = block.blockNumber();
   };
 
   cursor.beginEditBlock();
@@ -206,8 +173,8 @@ void BinaryWidget::setup()
 
   for (size_t i = 0; i < insn->Count; i++) {
     auto instr = insn->Instructions(i);
-    createTable(QStringList{QString("0x%1").arg(instr->address + textSec->address(), 0, 16),
-                            instr->mnemonic, instr->op_str});
+    appendInstruction(QStringList{QString("0x%1").arg(instr->address + textSec->address(), 0, 16),
+                                  instr->mnemonic, instr->op_str});
   }
 
   cursor.movePosition(QTextCursor::End);
@@ -217,16 +184,4 @@ void BinaryWidget::setup()
   cursor.endEditBlock();
 
   Util::scrollToTop(mainView);
-
-  // The "_main" symbol is normally the second symbol so choose that. If not enough symbols then
-  // choose the first.
-  QTimer::singleShot(1, this, [this] {
-    auto count = symbolList->count();
-    if (count > 1) {
-      symbolList->setCurrentRow(1);
-    }
-    else if (count > 0) {
-      symbolList->setCurrentRow(0);
-    }
-  });
 }

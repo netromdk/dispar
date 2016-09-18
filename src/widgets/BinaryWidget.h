@@ -7,7 +7,7 @@
 #include "../formats/Format.h"
 
 class QListWidget;
-class QTextEdit;
+class QPlainTextEdit;
 class QTextDocument;
 
 class BinaryWidget : public QWidget {
@@ -34,7 +34,7 @@ private:
   std::shared_ptr<Format> fmt;
 
   QListWidget *symbolList;
-  QTextEdit *mainView;
+  QPlainTextEdit *mainView;
   QTextDocument *doc;
   QHash<quint64, int> offsetBlock; // offset -> block
 };
