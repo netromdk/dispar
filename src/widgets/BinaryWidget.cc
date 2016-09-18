@@ -36,6 +36,8 @@ void BinaryWidget::createLayout()
   connect(symbolList, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
 
   mainView = new QTextEdit;
+  auto font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+  mainView->setFont(font);
   doc = mainView->document();
 
   auto *layout = new QHBoxLayout;
