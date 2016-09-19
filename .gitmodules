@@ -1,3 +1,0 @@
-[submodule "lib/cccapstone"]
-	path = lib/cccapstone
-	url = https://github.com/netromdk/cccapstone
