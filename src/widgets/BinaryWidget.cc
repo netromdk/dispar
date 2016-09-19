@@ -72,6 +72,7 @@ void BinaryWidget::createLayout()
   connect(symbolList, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
 
   mainView = new QPlainTextEdit;
+  mainView->setReadOnly(true);
   mainView->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
   connect(mainView, &QPlainTextEdit::cursorPositionChanged, this,
           &BinaryWidget::onCursorPositionChanged);
