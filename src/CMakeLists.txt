@@ -1,6 +1,5 @@
 include_directories(
   ${CAPSTONE_INC_DIR}
-  ${CCCAPSTONE_INC_DIR}
   )
 
 add_library(

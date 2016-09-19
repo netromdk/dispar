@@ -37,9 +37,3 @@ if (NOT WIN32)
 else()
   message(FATAL_ERROR "Detection of Capstone for Windows not implemented yet!")
 endif()
-
-# Capstone CPP bindings
-set(CCCAPSTONE_INC_DIR "${CMAKE_SOURCE_DIR}/lib/cccapstone/cppbindings")
-if (NOT EXISTS ${CCCAPSTONE_INC_DIR})
-  message(FATAL_ERROR "Could not detect Capstone CPP bindings include dir: ${CCCAPSTONE_INC_DIR}")
-endif()
