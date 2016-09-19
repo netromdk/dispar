@@ -19,6 +19,9 @@ add_library(
   CStringReader.h
   CStringReader.cc
 
+  Disassembler.h
+  Disassembler.cc
+
   Section.h
   Section.cc
 

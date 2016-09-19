@@ -10,9 +10,8 @@
 #include <QTextBlockUserData>
 
 #include "../Util.h"
+#include "../Disassembler.h"
 #include "BinaryWidget.h"
-
-#include <capstone/capstone.h>
 
 namespace {
 
@@ -114,53 +113,20 @@ void BinaryWidget::setup()
     symbolList->addItem(item);
   }
 
-  // Disassemble test! ============
-
-  /*
-  class Disassembler {
-  public:
-    Disassembler(std::shared_ptr<BinaryObject> object);
-  };
-  */
-
-  cs_arch arch;
-  switch (obj->cpuType()) {
-  case CpuType::X86:
-  case CpuType::X86_64:
-    arch = cs_arch::CS_ARCH_X86;
-    break;
-
-  default:
-    qFatal("invalid cpu type!");
-    break;
+  Disassembler dis(obj);
+  if (!dis.valid()) {
+    qFatal("failed to create disassembler!"); // TODO: don't do like this!
   }
 
-  int mode = (obj->systemBits() == 32 ? cs_mode::CS_MODE_32 : cs_mode::CS_MODE_64);
-  mode += (obj->isLittleEndian() ? cs_mode::CS_MODE_LITTLE_ENDIAN : cs_mode::CS_MODE_BIG_ENDIAN);
-
-  csh csHandle;
-  cs_err csHandleErr = cs_open(arch, static_cast<cs_mode>(mode), &csHandle);
-  Q_ASSERT(!csHandleErr);
-
-  bool ok = !cs_option(csHandle, cs_opt_type::CS_OPT_DETAIL, cs_opt_value::CS_OPT_ON);
-  ok &= !cs_option(csHandle, cs_opt_type::CS_OPT_SYNTAX, cs_opt_value::CS_OPT_SYNTAX_INTEL);
-  Q_ASSERT(ok);
-
   auto textSec = obj->section(Section::Type::TEXT);
-  const void *code = textSec->data().constData();
-  size_t baseAddr = 0;
-  cs_insn *insn = nullptr;
-  size_t count = cs_disasm(csHandle, static_cast<const unsigned char *>(code),
-                           textSec->size(), baseAddr, 0, &insn);
-  qDebug() << "Disassembled" << count << "instructions..";
-
-  if (!insn) {
+  auto res = dis.disassemble(textSec->data());
+  if (!res) {
     qFatal("disam failed!"); // TODO: don't do like this!
   }
 
-  // =========================
+  qDebug() << "Disassembled" << res->count() << "instructions..";
+
   // Create text edit of all binary contents.
-  // TODO: FAKE IT FOW NOW!
   QTextCursor cursor(doc);
 
   auto appendInstruction = [this, &cursor](const QStringList &values) {
@@ -188,14 +154,11 @@ void BinaryWidget::setup()
   }
   cursor.insertText("_main:");
 
-  for (size_t i = 0; i < count; i++) {
-    auto *instr = insn + i;
+  for (size_t i = 0; i < res->count(); i++) {
+    auto *instr = res->instructions(i);
     appendInstruction(QStringList{QString("0x%1").arg(instr->address + textSec->address(), 0, 16),
                                   instr->mnemonic, instr->op_str});
   }
-
-  // Free disassembled instructions!
-  cs_free(insn, count);
 
   cursor.movePosition(QTextCursor::End);
   cursor.insertBlock();
