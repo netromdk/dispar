@@ -2,6 +2,12 @@ include_directories(
   ${CAPSTONE_INC_DIR}
   )
 
+if (NOT WIN32)
+  include_directories(
+    /usr/local/include
+    )
+endif()
+
 add_library(
   ${libName}
 

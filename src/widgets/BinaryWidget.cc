@@ -12,7 +12,7 @@
 #include "../Util.h"
 #include "BinaryWidget.h"
 
-#include <capstone.h>
+#include <capstone/capstone.h>
 
 namespace {
 
