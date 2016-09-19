@@ -12,7 +12,7 @@
 #include "../Util.h"
 #include "BinaryWidget.h"
 
-#include <X86Disasm.hh>
+#include <capstone.h>
 
 namespace {
 
@@ -61,8 +61,9 @@ void BinaryWidget::onCursorPositionChanged()
   auto *userData = reinterpret_cast<TextBlockUserData *>(block.userData());
   if (userData) {
     qDebug() << "address:" << QString::number(userData->address, 16);
-    // TODO: show if cursor is on address, instruction or operands.
   }
+
+  // auto text = block.text();
 }
 
 void BinaryWidget::createLayout()
@@ -114,35 +115,50 @@ void BinaryWidget::setup()
   }
 
   // Disassemble test! ============
-  auto textSec = obj->section(Section::Type::TEXT);
-  CS_INSN_HOLDER<CX86InsClass> *insn = nullptr;
-  //{
-  CX86Disasm64 dis;
 
-  // check if no error occured
-  if (dis.GetError()) return;
+  /*
+  class Disassembler {
+  public:
+    Disassembler(std::shared_ptr<BinaryObject> object);
+  };
+  */
 
-  // set how deep should capstone reverse instruction
-  dis.SetDetail(cs_opt_value::CS_OPT_ON);
+  cs_arch arch;
+  switch (obj->cpuType()) {
+  case CpuType::X86:
+  case CpuType::X86_64:
+    arch = cs_arch::CS_ARCH_X86;
+    break;
 
-  // set syntax for output disasembly string
-  dis.SetSyntax(cs_opt_value::CS_OPT_SYNTAX_INTEL);
-
-  // process disasembling
-  qDebug() << "Disassembling..";
-  auto *code = textSec->data().constData();
-  insn = dis.Disasm(code, textSec->size());
-  //}
-
-  // check if disassembling succesfull
-  if (!insn) {
-    qFatal("disasm failed!");
+  default:
+    qFatal("invalid cpu type!");
+    break;
   }
 
-  qDebug() << "Disassembled" << insn->Count << "instructions";
+  int mode = (obj->systemBits() == 32 ? cs_mode::CS_MODE_32 : cs_mode::CS_MODE_64);
+  mode += (obj->isLittleEndian() ? cs_mode::CS_MODE_LITTLE_ENDIAN : cs_mode::CS_MODE_BIG_ENDIAN);
+
+  csh csHandle;
+  cs_err csHandleErr = cs_open(arch, static_cast<cs_mode>(mode), &csHandle);
+  Q_ASSERT(!csHandleErr);
+
+  bool ok = !cs_option(csHandle, cs_opt_type::CS_OPT_DETAIL, cs_opt_value::CS_OPT_ON);
+  ok &= !cs_option(csHandle, cs_opt_type::CS_OPT_SYNTAX, cs_opt_value::CS_OPT_SYNTAX_INTEL);
+  Q_ASSERT(ok);
+
+  auto textSec = obj->section(Section::Type::TEXT);
+  const void *code = textSec->data().constData();
+  size_t baseAddr = 0;
+  cs_insn *insn = nullptr;
+  size_t count = cs_disasm(csHandle, static_cast<const unsigned char *>(code),
+                           textSec->size(), baseAddr, 0, &insn);
+  qDebug() << "Disassembled" << count << "instructions..";
+
+  if (!insn) {
+    qFatal("disam failed!"); // TODO: don't do like this!
+  }
 
   // =========================
-
   // Create text edit of all binary contents.
   // TODO: FAKE IT FOW NOW!
   QTextCursor cursor(doc);
@@ -172,11 +188,14 @@ void BinaryWidget::setup()
   }
   cursor.insertText("_main:");
 
-  for (size_t i = 0; i < insn->Count; i++) {
-    auto instr = insn->Instructions(i);
+  for (size_t i = 0; i < count; i++) {
+    auto *instr = insn + i;
     appendInstruction(QStringList{QString("0x%1").arg(instr->address + textSec->address(), 0, 16),
                                   instr->mnemonic, instr->op_str});
   }
+
+  // Free disassembled instructions!
+  cs_free(insn, count);
 
   cursor.movePosition(QTextCursor::End);
   cursor.insertBlock();
