@@ -25,6 +25,8 @@ add_executable(
   Reader.cc
   CStringReader.cc
 
+  CpuType.cc
+
   Disassembler.cc
 
   SymbolEntry.cc
