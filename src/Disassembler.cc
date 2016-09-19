@@ -1,5 +1,7 @@
 #include "Disassembler.h"
 
+#include <QDebug>
+
 Disassembler::Result::Result(cs_insn *insn, size_t count) : insn(insn), count_(count)
 {
 }
@@ -24,6 +26,11 @@ cs_insn *Disassembler::Result::instructions(size_t pos) const
 
 Disassembler::Disassembler(std::shared_ptr<BinaryObject> object) : valid_(false)
 {
+  if (!object) {
+    qCritical() << "Null binary object!";
+    return;
+  }
+
   cs_arch arch;
   switch (object->cpuType()) {
   case CpuType::X86:
@@ -32,8 +39,8 @@ Disassembler::Disassembler(std::shared_ptr<BinaryObject> object) : valid_(false)
     break;
 
   default:
-    qFatal("invalid cpu type!");
-    break;
+    qCritical() << "Invalid arch:" << cpuTypeName(object->cpuType());
+    return;
   }
 
   int mode = (object->systemBits() == 32 ? cs_mode::CS_MODE_32 : cs_mode::CS_MODE_64);
@@ -41,7 +48,7 @@ Disassembler::Disassembler(std::shared_ptr<BinaryObject> object) : valid_(false)
 
   cs_err err = cs_open(arch, static_cast<cs_mode>(mode), &handle);
   if (err) {
-    valid_ = false;
+    qCritical() << "Failed to create cs disassembler!" << (int) err;
     return;
   }
 
@@ -51,7 +58,9 @@ Disassembler::Disassembler(std::shared_ptr<BinaryObject> object) : valid_(false)
 
 Disassembler::~Disassembler()
 {
-  cs_close(&handle);
+  if (valid()) {
+    cs_close(&handle);
+  }
 }
 
 std::shared_ptr<Disassembler::Result> Disassembler::disassemble(const QByteArray &data,

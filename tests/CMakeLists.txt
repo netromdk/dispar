@@ -3,6 +3,12 @@ include_directories(
   gtest/include
   )
 
+if (NOT WIN32)
+  include_directories(
+    /usr/local/include
+    )
+endif()
+
 add_library(
   gtest
   gtest/src/gtest-all.cc
@@ -18,6 +24,8 @@ add_executable(
 
   Reader.cc
   CStringReader.cc
+
+  Disassembler.cc
 
   SymbolEntry.cc
   SymbolTable.cc
