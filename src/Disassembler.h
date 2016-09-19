@@ -3,6 +3,8 @@
 
 #include "BinaryObject.h"
 
+#include <memory>
+
 #include <capstone/capstone.h>
 
 class Disassembler {
