@@ -97,7 +97,13 @@ void BinaryWidget::setup()
   for (auto symbol : obj->symbolTable().symbols()) {
     if (symbol.value() == 0) continue;
     auto *item = new QListWidgetItem;
-    item->setText(symbol.string());
+
+    auto func = symbol.string();
+    if (func.isEmpty()) {
+      func = QString("unnamed_%1").arg(symbol.value(), 0, 16);
+    }
+    item->setText(func);
+
     item->setData(Qt::UserRole, symbol.value()); // Offset to symbol.
     item->setToolTip(QString("0x%1").arg(symbol.value(), 0, 16));
     symbolList->addItem(item);
@@ -107,7 +113,13 @@ void BinaryWidget::setup()
   for (auto symbol : obj->dynSymbolTable().symbols()) {
     if (symbol.value() == 0) continue;
     auto *item = new QListWidgetItem;
-    item->setText(symbol.string());
+
+    auto func = symbol.string();
+    if (func.isEmpty()) {
+      func = QString("unnamed_%1").arg(symbol.value(), 0, 16);
+    }
+    item->setText(func);
+
     item->setData(Qt::UserRole, symbol.value()); // Offset to symbol.
     item->setToolTip(QString("0x%1").arg(symbol.value(), 0, 16));
     symbolList->addItem(item);
