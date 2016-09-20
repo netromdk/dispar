@@ -11,13 +11,13 @@ int main(int argc, char **argv)
   app.setApplicationName("Dispar");
   app.setApplicationVersion(versionString());
 
-  QStringList files;
-  for (int i = 1; i < argc; i++) {
-    files << QString::fromUtf8(argv[i]);
+  QString file;
+  if (argc == 2) {
+    file = QString::fromUtf8(argv[1]);
   }
 
   // Start in event loop.
-  MainWindow main(files);
+  MainWindow main(file);
   QTimer::singleShot(0, &main, SLOT(show()));
 
   return app.exec();

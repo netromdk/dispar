@@ -13,12 +13,9 @@
 #include <QSet>
 #include <QSettings>
 
-MainWindow::MainWindow(const QStringList &files)
-  : shown(false), modified(false), startupFiles(files)
+MainWindow::MainWindow(const QString &file)
+  : shown(false), modified(false), startupFile(file)
 {
-  // Remove possible duplicates.
-  startupFiles = startupFiles.toSet().toList();
-
   setWindowTitle("Dispar");
   createLayout();
   // createMenu();
@@ -43,13 +40,11 @@ void MainWindow::showEvent(QShowEvent *event)
   }
 
   // Load specified files or open file dialog.
-  if (startupFiles.isEmpty()) {
+  if (startupFile.isEmpty()) {
     openBinary();
   }
   else {
-    for (const auto &file : startupFiles) {
-      loadBinary(file);
-    }
+    loadBinary(startupFile);
   }
 }
 

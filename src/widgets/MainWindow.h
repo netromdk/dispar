@@ -5,14 +5,13 @@
 #include <QMainWindow>
 
 class QTabWidget;
-class QStringList;
 class BinaryWidget;
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
 public:
-  MainWindow(const QStringList &files = QStringList());
+  MainWindow(const QString &file = QString());
   virtual ~MainWindow();
 
 protected:
@@ -30,7 +29,7 @@ private:
   void loadBinary(QString file);
 
   bool shown, modified;
-  QStringList startupFiles;
+  QString startupFile;
 
   QTabWidget *tabWidget;
   QList<BinaryWidget *> binaryWidgets;
