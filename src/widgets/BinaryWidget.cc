@@ -93,24 +93,11 @@ void BinaryWidget::setup()
 
   auto obj = fmt->objects()[0];
 
-  // Fill side bar with function names of the symbol table.
-  for (auto symbol : obj->symbolTable().symbols()) {
-    if (symbol.value() == 0) continue;
-    auto *item = new QListWidgetItem;
+  // Fill side bar with function names of the symbol tables.
+  auto symbols = obj->symbolTable().symbols();
+  symbols.append(obj->dynSymbolTable().symbols());
 
-    auto func = symbol.string();
-    if (func.isEmpty()) {
-      func = QString("unnamed_%1").arg(symbol.value(), 0, 16);
-    }
-    item->setText(func);
-
-    item->setData(Qt::UserRole, symbol.value()); // Offset to symbol.
-    item->setToolTip(QString("0x%1").arg(symbol.value(), 0, 16));
-    symbolList->addItem(item);
-  }
-
-  // Fill side bar with function names of the dynamic symbol table.
-  for (auto symbol : obj->dynSymbolTable().symbols()) {
+  for (auto symbol : symbols) {
     if (symbol.value() == 0) continue;
     auto *item = new QListWidgetItem;
 
