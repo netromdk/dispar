@@ -52,3 +52,30 @@ TEST(SymbolEntry, operatorEquals)
     EXPECT_NE(se, se2);
   }
 }
+
+TEST(SymbolEntry, qHash)
+{
+  {
+    SymbolEntry se(42, 84, "hello");
+    SymbolEntry se2(42, 84, "hello");
+    EXPECT_EQ(qHash(se), qHash(se2));
+  }
+
+  {
+    SymbolEntry se(43, 84, "hello");
+    SymbolEntry se2(42, 84, "hello");
+    EXPECT_NE(qHash(se), qHash(se2));
+  }
+
+  {
+    SymbolEntry se(42, 84, "hello");
+    SymbolEntry se2(42, 804, "hello");
+    EXPECT_NE(qHash(se), qHash(se2));
+  }
+
+  {
+    SymbolEntry se(42, 84);
+    SymbolEntry se2(42, 84, "hello");
+    EXPECT_NE(qHash(se), qHash(se2));
+  }
+}

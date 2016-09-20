@@ -24,4 +24,6 @@ private:
   QString strValue; // String table value
 };
 
+uint qHash(const SymbolEntry &entry, uint seed = 0);
+
 #endif // DISPAR_SYMBOL_ENTRY_H

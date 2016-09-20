@@ -1,5 +1,7 @@
 #include "SymbolEntry.h"
 
+#include <QHash>
+
 SymbolEntry::SymbolEntry(quint32 index, quint64 value, const QString &strValue)
   : index_{index}, value_{value}, strValue{strValue}
 {
@@ -38,4 +40,9 @@ bool SymbolEntry::operator==(const SymbolEntry &other) const
 bool SymbolEntry::operator!=(const SymbolEntry &other) const
 {
   return !(*this == other);
+}
+
+uint qHash(const SymbolEntry &entry, uint seed)
+{
+  return qHash(QString("%1,%2,%3").arg(entry.index()).arg(entry.value()).arg(entry.string()), seed);
 }
