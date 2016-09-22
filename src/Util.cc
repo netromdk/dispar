@@ -1,3 +1,5 @@
+#include "Util.h"
+
 #include <QTimer>
 #include <QScrollBar>
 #include <QDir>
@@ -5,10 +7,13 @@
 #include <QDesktopWidget>
 #include <QApplication>
 
+#ifdef HAS_LIBIBERTY
+#include <libiberty.h>
+#include <demangle.h>
+#else
 #include <stdlib.h>
 #include <cxxabi.h>
-
-#include "Util.h"
+#endif
 
 QString Util::formatSize(qint64 bytes, int digits)
 {
@@ -182,10 +187,22 @@ QString Util::demangle(const QString &name)
   }
 
   const auto *mangledName = name.mid(skip).toUtf8().constData();
-  int status;
-  auto *realname = abi::__cxa_demangle(mangledName, 0, 0, &status);
-  auto res = QString::fromUtf8(realname);
-  free(realname);
 
-  return (status == 0 ? res : name);
+#ifdef HAS_LIBIBERTY
+  int flags = DMGL_PARAMS | DMGL_ANSI | DMGL_VERBOSE;
+  auto *res = cplus_demangle(mangledName, flags);
+  if (res == 0) {
+    return name;
+  }
+#else
+  int status;
+  auto *res = abi::__cxa_demangle(mangledName, NULL, NULL, &status);
+  if (status != 0) {
+    return name;
+  }
+#endif
+
+  auto output = QString::fromUtf8(res);
+  free(res);
+  return output;
 }

@@ -1,5 +1,6 @@
 include_directories(
   ${CAPSTONE_INC_DIR}
+  ${LIBIBERTY_INC_DIR}
   )
 
 if (NOT WIN32)
@@ -51,6 +52,7 @@ add_library(
 target_link_libraries(
   ${libName}
   ${CAPSTONE_STATIC_LIB}
+  ${LIBIBERTY_STATIC_LIB}
   )
 
 qt5_use_modules(
