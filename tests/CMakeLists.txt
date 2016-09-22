@@ -22,6 +22,8 @@ add_executable(
   testutils.h
   testutils.cc
 
+  Util.cc
+
   Reader.cc
   CStringReader.cc
 
