@@ -100,7 +100,7 @@ void BinaryWidget::setup()
     if (symbol.value() == 0) continue;
     auto *item = new QListWidgetItem;
 
-    auto func = symbol.string();
+    auto func = Util::demangle(symbol.string());
     if (func.isEmpty()) {
       func = QString("unnamed_%1").arg(symbol.value(), 0, 16);
     }
@@ -154,7 +154,7 @@ void BinaryWidget::setup()
         if (symbol.value() == addr && !symbol.string().isEmpty()) {
           cursor.movePosition(QTextCursor::End);
           cursor.insertBlock();
-          cursor.insertText("\nPROC: " + symbol.string() + "\n");
+          cursor.insertText("\nPROC: " + Util::demangle(symbol.string()) + "\n");
           break;
         }
       }

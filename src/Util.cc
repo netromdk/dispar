@@ -5,6 +5,9 @@
 #include <QDesktopWidget>
 #include <QApplication>
 
+#include <stdlib.h>
+#include <cxxabi.h>
+
 #include "Util.h"
 
 QString Util::formatSize(qint64 bytes, int digits)
@@ -159,4 +162,31 @@ void Util::scrollToTop(QAbstractScrollArea *widget)
       bar->triggerAction(QScrollBar::SliderToMinimum);
     }
   });
+}
+
+// *************************************************************************************************
+QString Util::demangle(const QString &name)
+// *************************************************************************************************
+{
+  if (name.isEmpty()) {
+    return name;
+  }
+
+  for (int i = 0; i < 10; i++) {
+    if (i > 0 && !name.startsWith(QString(i, '_'))) {
+      break;
+    }
+
+    const auto *mangledName = name.mid(i).toUtf8().constData();
+    int status;
+    auto *realname = abi::__cxa_demangle(mangledName, 0, 0, &status);
+    auto res = QString::fromUtf8(realname);
+    free(realname);
+
+    if (status == 0) {
+      return res;
+    }
+  }
+
+  return name;
 }

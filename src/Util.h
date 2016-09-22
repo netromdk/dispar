@@ -35,6 +35,9 @@ public:
 
   /// Scroll area to top.
   static void scrollToTop(QAbstractScrollArea *widget);
+
+  /// Demangle ABI identifier.
+  static QString demangle(const QString &name);
 };
 
 #endif // DISPAR_UTIL_H
