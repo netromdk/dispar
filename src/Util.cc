@@ -172,21 +172,22 @@ QString Util::demangle(const QString &name)
     return name;
   }
 
-  for (int i = 0; i < 10; i++) {
-    if (i > 0 && !name.startsWith(QString(i, '_'))) {
-      break;
-    }
-
-    const auto *mangledName = name.mid(i).toUtf8().constData();
-    int status;
-    auto *realname = abi::__cxa_demangle(mangledName, 0, 0, &status);
-    auto res = QString::fromUtf8(realname);
-    free(realname);
-
-    if (status == 0) {
-      return res;
-    }
+  // Skip leading . or $.
+  int skip = 0;
+  if (name[0] == '.' || name[0] == '$') {
+    skip++;
   }
 
-  return name;
+  // Skip leading underscore.
+  if (name.size() > 1 && name[skip] == '_') {
+    skip++;
+  }
+
+  const auto *mangledName = name.mid(skip).toUtf8().constData();
+  int status;
+  auto *realname = abi::__cxa_demangle(mangledName, 0, 0, &status);
+  auto res = QString::fromUtf8(realname);
+  free(realname);
+
+  return (status == 0 ? res : name);
 }
