@@ -2,7 +2,7 @@
 
 Section::Section(Section::Type type, const QString &name, quint64 addr, quint64 size,
                  quint32 offset)
-  : type_{type}, name_{name}, addr{addr}, size_{size}, offset_{offset}
+  : type_{type}, name_{name}, addr{addr}, size_{size}, offset_{offset}, disasm(nullptr)
 {
 }
 
@@ -100,4 +100,14 @@ QDateTime Section::modifiedWhen() const
 const QList<QPair<int, int>> &Section::modifiedRegions() const
 {
   return modifiedRegions_;
+}
+
+void Section::setDisassembly(std::shared_ptr<Disassembler::Result> disasm)
+{
+  this->disasm = disasm;
+}
+
+std::shared_ptr<Disassembler::Result> Section::disassembly() const
+{
+  return disasm;
 }
