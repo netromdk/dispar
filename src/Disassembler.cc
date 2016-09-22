@@ -1,4 +1,5 @@
 #include "Disassembler.h"
+#include "BinaryObject.h"
 
 #include <QDebug>
 

@@ -5,8 +5,8 @@
 
 #include <memory>
 
-#include "Section.h"
 #include "CpuType.h"
+#include "Section.h"
 #include "FileType.h"
 #include "SymbolTable.h"
 

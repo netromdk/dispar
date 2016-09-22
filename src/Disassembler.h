@@ -1,11 +1,13 @@
 #ifndef DISPAR_DISASSEMBLER_H
 #define DISPAR_DISASSEMBLER_H
 
-#include "BinaryObject.h"
+#include <QByteArray>
 
 #include <memory>
 
 #include <capstone/capstone.h>
+
+class BinaryObject;
 
 class Disassembler {
 public:

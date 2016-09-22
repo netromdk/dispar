@@ -1,5 +1,7 @@
 #include "gtest/gtest.h"
 
+#include "CpuType.h"
+#include "BinaryObject.h"
 #include "Disassembler.h"
 
 TEST(Disassembler, instantiate)

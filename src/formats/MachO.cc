@@ -6,6 +6,7 @@
 #include "MachO.h"
 #include "../Util.h"
 #include "../Reader.h"
+#include "../Disassembler.h"
 
 MachO::MachO(const QString &file) : Format(Format::Type::MACH_O), file_{file}
 {
@@ -801,6 +802,26 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
   for (auto &sec : binaryObject->sections()) {
     r.seek(sec->offset());
     sec->setData(r.read(sec->size()));
+  }
+
+  // Disassemble code sections.
+  Disassembler dis(binaryObject);
+  if (dis.valid()) {
+    for (auto &sec : binaryObject->sections()) {
+      switch (sec->type()) {
+      case Section::Type::TEXT:
+      case Section::Type::SYMBOL_STUBS: {
+        auto res = dis.disassemble(sec->data());
+        if (res) {
+          sec->setDisassembly(res);
+        }
+        break;
+      }
+
+      default:
+        break;
+      }
+    }
   }
 
   // If symbol table loaded then merge string table entries into it.
