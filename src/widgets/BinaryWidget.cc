@@ -10,7 +10,6 @@
 #include <QTextBlockUserData>
 
 #include "../Util.h"
-#include "../Disassembler.h"
 #include "BinaryWidget.h"
 
 namespace {
@@ -112,19 +111,6 @@ void BinaryWidget::setup()
     symbolList->addItem(item);
   }
 
-  Disassembler dis(obj);
-  if (!dis.valid()) {
-    qFatal("failed to create disassembler!"); // TODO: don't do like this!
-  }
-
-  auto textSec = obj->section(Section::Type::TEXT);
-  auto res = dis.disassemble(textSec->data());
-  if (!res) {
-    qFatal("disam failed!"); // TODO: don't do like this!
-  }
-
-  qDebug() << "Disassembled" << res->count() << "instructions..";
-
   // Create text edit of all binary contents.
   QTextCursor cursor(doc);
 
@@ -145,23 +131,42 @@ void BinaryWidget::setup()
 
   cursor.beginEditBlock();
 
-  cursor.movePosition(QTextCursor::End);
+  for (auto &sec : obj->sections()) {
+    auto disasm = sec->disassembly();
+    if (!disasm) continue;
 
-  // There is a default block at the beginning so reuse that.
-  if (cursor.block() != doc->firstBlock()) {
+    cursor.movePosition(QTextCursor::End);
+
+    // There is a default block at the beginning so reuse that.
+    if (cursor.block() != doc->firstBlock()) {
+      cursor.insertBlock();
+    }
+
+    auto secName = Section::typeName(sec->type());
+    cursor.insertText("===== " + secName + " =====\n");
+
+    for (size_t i = 0; i < disasm->count(); i++) {
+      auto *instr = disasm->instructions(i);
+      auto addr = instr->address + sec->address();
+
+      // Check if address is the start of a procedure.
+      for (const auto &symbol : symbols) {
+        if (symbol.value() == addr && !symbol.string().isEmpty()) {
+          cursor.movePosition(QTextCursor::End);
+          cursor.insertBlock();
+          cursor.insertText("\nPROC: " + symbol.string() + "\n");
+          break;
+        }
+      }
+
+      appendInstruction(
+        QStringList{QString("0x%1").arg(addr, 0, 16), instr->mnemonic, instr->op_str});
+    }
+
+    cursor.movePosition(QTextCursor::End);
     cursor.insertBlock();
+    cursor.insertText("\n===== /" + secName + " =====\n");
   }
-  cursor.insertText("_main:");
-
-  for (size_t i = 0; i < res->count(); i++) {
-    auto *instr = res->instructions(i);
-    appendInstruction(QStringList{QString("0x%1").arg(instr->address + textSec->address(), 0, 16),
-                                  instr->mnemonic, instr->op_str});
-  }
-
-  cursor.movePosition(QTextCursor::End);
-  cursor.insertBlock();
-  cursor.insertText("; endp");
 
   cursor.endEditBlock();
 
