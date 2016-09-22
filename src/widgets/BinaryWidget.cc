@@ -143,7 +143,7 @@ void BinaryWidget::setup()
     }
 
     auto secName = Section::typeName(sec->type());
-    cursor.insertText("===== " + secName + " =====\n");
+    cursor.insertText("===== " + secName + " =====");
 
     for (size_t i = 0; i < disasm->count(); i++) {
       auto *instr = disasm->instructions(i);

@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 #include "../Util.h"
 #include "../formats/Format.h"
+#include "../Disassembler.h"
 #include "BinaryWidget.h"
 
 #include <QVBoxLayout>
@@ -13,8 +14,7 @@
 #include <QSet>
 #include <QSettings>
 
-MainWindow::MainWindow(const QString &file)
-  : shown(false), modified(false), startupFile(file)
+MainWindow::MainWindow(const QString &file) : shown(false), modified(false), startupFile(file)
 {
   setWindowTitle("Dispar");
   createLayout();
@@ -116,6 +116,31 @@ void MainWindow::loadBinary(QString file)
   if (!fmt->parse()) {
     QMessageBox::warning(this, "dispar", tr("Could not parse file!"));
     return;
+  }
+
+  // Disassemble code sections of all binary objects.
+  progDiag.setLabelText(tr("Disassembling code sections.."));
+  qDebug() << qPrintable(progDiag.labelText());
+  qApp->processEvents();
+  for (auto &object : fmt->objects()) {
+    Disassembler dis(object);
+    if (dis.valid()) {
+      for (auto &sec : object->sections()) {
+        switch (sec->type()) {
+        case Section::Type::TEXT:
+        case Section::Type::SYMBOL_STUBS: {
+          auto res = dis.disassemble(sec->data());
+          if (res) {
+            sec->setDisassembly(res);
+          }
+          break;
+        }
+
+        default:
+          break;
+        }
+      }
+    }
   }
 
   /*
