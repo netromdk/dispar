@@ -3,6 +3,7 @@
 #include "testutils.h"
 
 #include "CStringReader.h"
+#include "BinaryObject.h"
 #include "formats/MachO.h"
 
 TEST(MachO, instantiate)

@@ -1,9 +1,10 @@
 #ifndef DISPAR_READER_H
 #define DISPAR_READER_H
 
-#include <QByteArray>
+#include <QtGlobal>
 
 class QIODevice;
+class QByteArray;
 
 class Reader {
 public:

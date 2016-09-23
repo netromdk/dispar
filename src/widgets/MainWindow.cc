@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 #include "../Util.h"
+#include "../BinaryObject.h"
 #include "../formats/Format.h"
 #include "../Disassembler.h"
 #include "BinaryWidget.h"

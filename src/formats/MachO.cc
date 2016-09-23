@@ -6,6 +6,7 @@
 #include "MachO.h"
 #include "../Util.h"
 #include "../Reader.h"
+#include "../BinaryObject.h"
 
 MachO::MachO(const QString &file) : Format(Format::Type::MACH_O), file_{file}
 {

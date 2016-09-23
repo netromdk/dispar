@@ -4,7 +4,8 @@
 #include <QWidget>
 #include <QString>
 #include <QByteArray>
-#include <QAbstractScrollArea>
+
+class QAbstractScrollArea;
 
 class Util {
 public:

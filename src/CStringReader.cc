@@ -1,5 +1,7 @@
 #include "CStringReader.h"
 
+#include <QByteArray>
+
 CStringReader::CStringReader(const QByteArray &data) : data(data), pos(0)
 {
 }

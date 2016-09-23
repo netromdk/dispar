@@ -3,7 +3,8 @@
 
 #include <QString>
 #include <QStringList>
-#include <QByteArray>
+
+class QByteArray;
 
 class CStringReader {
 public:

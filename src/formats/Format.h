@@ -9,7 +9,8 @@
 #include "../Section.h"
 #include "../CpuType.h"
 #include "../FileType.h"
-#include "../BinaryObject.h"
+
+class BinaryObject;
 
 class Format {
 public:

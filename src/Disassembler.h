@@ -1,12 +1,13 @@
 #ifndef DISPAR_DISASSEMBLER_H
 #define DISPAR_DISASSEMBLER_H
 
-#include <QByteArray>
+#include <QtGlobal>
 
 #include <memory>
 
 #include <capstone/capstone.h>
 
+class QByteArray;
 class BinaryObject;
 
 class Disassembler {

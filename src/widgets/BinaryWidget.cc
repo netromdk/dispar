@@ -10,6 +10,7 @@
 #include <QTextBlockUserData>
 
 #include "../Util.h"
+#include "../BinaryObject.h"
 #include "BinaryWidget.h"
 
 namespace {

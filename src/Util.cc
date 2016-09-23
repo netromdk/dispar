@@ -6,6 +6,7 @@
 #include <QFileInfo>
 #include <QDesktopWidget>
 #include <QApplication>
+#include <QAbstractScrollArea>
 
 #ifdef HAS_LIBIBERTY
 #include <libiberty.h>
