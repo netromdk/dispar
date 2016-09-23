@@ -42,7 +42,7 @@ char Reader::getChar(bool *ok)
 
 unsigned char Reader::getUChar(bool *ok)
 {
-  return (unsigned char) getChar(ok);
+  return static_cast<unsigned char>(getChar(ok));
 }
 
 char Reader::peekChar(bool *ok)
@@ -55,7 +55,7 @@ char Reader::peekChar(bool *ok)
 
 unsigned char Reader::peekUChar(bool *ok)
 {
-  return (unsigned char) peekChar(ok);
+  return static_cast<unsigned char>(peekChar(ok));
 }
 
 QByteArray Reader::read(qint64 max)
@@ -85,13 +85,13 @@ bool Reader::peekList(std::initializer_list<unsigned char> list)
   }
 
   const auto parr = dev.peek(list.size());
-  if (parr.size() != list.size()) {
+  if (parr.size() != static_cast<qint64>(list.size())) {
     return false;
   }
 
   int i{0};
   for (auto it = list.begin(); it != list.end(); it++, i++) {
-    if (*it != (unsigned char) parr[i]) {
+    if (*it != static_cast<unsigned char>(parr[i])) {
       return false;
     }
   }
@@ -113,7 +113,7 @@ T Reader::getUInt(bool *ok)
     if (!littleEndian) {
       j = num - (i + 1);
     }
-    res += ((T)(unsigned char) buf[i]) << j * 8;
+    res += ((T)static_cast<unsigned char>(buf[i])) << j * 8;
   }
   if (ok) *ok = true;
   return res;
