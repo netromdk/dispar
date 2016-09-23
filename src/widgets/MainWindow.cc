@@ -122,6 +122,9 @@ void MainWindow::createMenu()
 
 void MainWindow::loadBinary(QString file)
 {
+  // Resolve absolute path.
+  file = QFileInfo(file).absoluteFilePath();
+
   // If .app then resolve the internal binary file.
   QString appBin = Util::resolveAppBinary(file);
   if (!appBin.isEmpty()) {
