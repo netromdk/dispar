@@ -20,13 +20,16 @@ MainWindow::MainWindow(const QString &file)
   : shown(false), modified(false), startupFile(file), binaryWidget(nullptr)
 {
   setWindowTitle("Dispar");
+  readSettings();
   createLayout();
   createMenu();
 }
 
 MainWindow::~MainWindow()
 {
-  QSettings().setValue("MainWindow.geometry", saveGeometry());
+  QSettings settings;
+  settings.setValue("MainWindow.geometry", saveGeometry());
+  settings.setValue("MainWindow.recentFiles", recentFiles);
 }
 
 void MainWindow::showEvent(QShowEvent *event)
@@ -36,10 +39,12 @@ void MainWindow::showEvent(QShowEvent *event)
   if (shown) return;
   shown = true;
 
-  QSettings settings;
-  if (!restoreGeometry(settings.value("MainWindow.geometry").toByteArray())) {
+  if (geometry.isEmpty()) {
     resize(900, 500);
     Util::centerWidget(this);
+  }
+  else {
+    restoreGeometry(geometry);
   }
 
   // Load specified files or open file dialog.
@@ -73,6 +78,30 @@ void MainWindow::openBinary()
   loadBinary(file);
 }
 
+void MainWindow::onRecentFile()
+{
+  auto *action = qobject_cast<QAction *>(sender());
+  if (!action) return;
+  loadBinary(action->text());
+}
+
+void MainWindow::readSettings()
+{
+  QSettings settings;
+  geometry = settings.value("MainWindow.geometry").toByteArray();
+
+  // Load recent files.
+  recentFiles = settings.value("MainWindow.recentFiles", QStringList()).toStringList();
+  for (int i = recentFiles.size() - 1; i >= 0; i--) {
+    if (!QFile::exists(recentFiles[i])) {
+      recentFiles.removeAt(i);
+    }
+  }
+  if (recentFiles.size() > 10) {
+    recentFiles = recentFiles.mid(recentFiles.size() - 10);
+  }
+}
+
 void MainWindow::createLayout()
 {
   // Doing nothing right now.
@@ -82,6 +111,13 @@ void MainWindow::createMenu()
 {
   auto *fileMenu = menuBar()->addMenu(tr("File"));
   fileMenu->addAction(tr("Open binary"), this, SLOT(openBinary()), QKeySequence::Open);
+
+  if (!recentFiles.isEmpty()) {
+    auto *recentMenu = fileMenu->addMenu(tr("Open recent files"));
+    for (const auto &file : recentFiles) {
+      recentMenu->addAction(file, this, SLOT(onRecentFile()));
+    }
+  }
 }
 
 void MainWindow::loadBinary(QString file)
@@ -143,7 +179,6 @@ void MainWindow::loadBinary(QString file)
     }
   }
 
-  /*
   // Add recent file.
   if (!recentFiles.contains(file)) {
     recentFiles << file;
@@ -151,7 +186,6 @@ void MainWindow::loadBinary(QString file)
   if (recentFiles.size() > 10) {
     recentFiles.removeFirst();
   }
-  */
 
   if (centralWidget()) {
     centralWidget()->deleteLater();

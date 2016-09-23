@@ -21,8 +21,10 @@ private slots:
   void openBinary();
   // void saveBinary();
   // void closeBinary();
+  void onRecentFile();
 
 private:
+  void readSettings();
   void createLayout();
   void createMenu();
 
@@ -30,6 +32,8 @@ private:
 
   bool shown, modified;
   QString startupFile;
+  QStringList recentFiles;
+  QByteArray geometry;
 
   BinaryWidget *binaryWidget;
 };
