@@ -31,8 +31,7 @@ private:
   bool shown, modified;
   QString startupFile;
 
-  QTabWidget *tabWidget;
-  QList<BinaryWidget *> binaryWidgets;
+  BinaryWidget *binaryWidget;
 };
 
 #endif // DISPAR_MAIN_WINDOW_H

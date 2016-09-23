@@ -15,7 +15,8 @@
 #include <QSet>
 #include <QSettings>
 
-MainWindow::MainWindow(const QString &file) : shown(false), modified(false), startupFile(file)
+MainWindow::MainWindow(const QString &file)
+  : shown(false), modified(false), startupFile(file), binaryWidget(nullptr)
 {
   setWindowTitle("Dispar");
   createLayout();
@@ -56,18 +57,16 @@ void MainWindow::openBinary()
     QStringList{"Mach-O binary (*.o *.dylib *.dylinker *.bundle *.app *)", "Any file (*)"});
 
   if (!diag.exec()) {
-    if (binaryWidgets.isEmpty()) {
+    if (!binaryWidget) {
       qApp->quit();
     }
     return;
   }
 
   auto file = diag.selectedFiles().first();
-  for (const auto *binary : binaryWidgets) {
-    if (binary->file() == file) {
-      QMessageBox::warning(this, "dispar", tr("Can't open same binary twice!"));
-      return;
-    }
+  if (binaryWidget->file() == file) {
+    QMessageBox::warning(this, "dispar", tr("Can't open same binary twice!"));
+    return;
   }
 
   loadBinary(file);
@@ -75,14 +74,7 @@ void MainWindow::openBinary()
 
 void MainWindow::createLayout()
 {
-  tabWidget = new QTabWidget;
-
-  auto *layout = new QVBoxLayout;
-  layout->addWidget(tabWidget);
-
-  auto *w = new QWidget;
-  w->setLayout(layout);
-  setCentralWidget(w);
+  // Doing nothing right now.
 }
 
 void MainWindow::loadBinary(QString file)
@@ -154,9 +146,10 @@ void MainWindow::loadBinary(QString file)
   }
   */
 
-  auto *binWidget = new BinaryWidget(fmt);
+  if (centralWidget()) {
+    centralWidget()->deleteLater();
+  }
+  binaryWidget = new BinaryWidget(fmt);
+  setCentralWidget(binaryWidget);
   // connect(binWidget, &BinaryWidget::modified, this, &MainWindow::onBinaryObjectModified);
-  binaryWidgets << binWidget;
-  int idx = tabWidget->addTab(binWidget, QFileInfo(file).fileName());
-  tabWidget->setCurrentIndex(idx);
 }
