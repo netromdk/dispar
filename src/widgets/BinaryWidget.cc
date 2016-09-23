@@ -11,6 +11,7 @@
 
 #include "../Util.h"
 #include "../BinaryObject.h"
+#include "PersistentSplitter.h"
 #include "BinaryWidget.h"
 
 namespace {
@@ -68,7 +69,6 @@ void BinaryWidget::onCursorPositionChanged()
 void BinaryWidget::createLayout()
 {
   symbolList = new QListWidget;
-  symbolList->setFixedWidth(175);
   connect(symbolList, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
 
   mainView = new QPlainTextEdit;
@@ -79,10 +79,15 @@ void BinaryWidget::createLayout()
 
   doc = mainView->document();
 
+  auto *vertSplitter = new PersistentSplitter("BinaryWidget.vertSplitter");
+  vertSplitter->addWidget(symbolList);
+  vertSplitter->addWidget(mainView);
+
+  vertSplitter->setSizes(QList<int>{175, 500});
+
   auto *layout = new QHBoxLayout;
   layout->setContentsMargins(5, 5, 5, 5);
-  layout->addWidget(symbolList);
-  layout->addWidget(mainView);
+  layout->addWidget(vertSplitter);
 
   setLayout(layout);
 }

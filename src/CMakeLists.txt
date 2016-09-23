@@ -42,6 +42,8 @@ add_library(
   widgets/MainWindow.cc
   widgets/BinaryWidget.h
   widgets/BinaryWidget.cc
+  widgets/PersistentSplitter.h
+  widgets/PersistentSplitter.cc
 
   formats/Format.h
   formats/Format.cc
