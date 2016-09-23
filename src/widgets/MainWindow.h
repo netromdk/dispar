@@ -24,7 +24,7 @@ private slots:
 
 private:
   void createLayout();
-  // void createMenu();
+  void createMenu();
 
   void loadBinary(QString file);
 

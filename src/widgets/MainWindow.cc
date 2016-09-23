@@ -5,6 +5,7 @@
 #include "../Disassembler.h"
 #include "BinaryWidget.h"
 
+#include <QMenuBar>
 #include <QVBoxLayout>
 #include <QDir>
 #include <QFileDialog>
@@ -20,7 +21,7 @@ MainWindow::MainWindow(const QString &file)
 {
   setWindowTitle("Dispar");
   createLayout();
-  // createMenu();
+  createMenu();
 }
 
 MainWindow::~MainWindow()
@@ -75,6 +76,12 @@ void MainWindow::openBinary()
 void MainWindow::createLayout()
 {
   // Doing nothing right now.
+}
+
+void MainWindow::createMenu()
+{
+  auto *fileMenu = menuBar()->addMenu(tr("File"));
+  fileMenu->addAction(tr("Open binary"), this, SLOT(openBinary()), QKeySequence::Open);
 }
 
 void MainWindow::loadBinary(QString file)
