@@ -157,6 +157,9 @@ void MainWindow::loadBinary(QString file)
     return;
   }
 
+  // Update window title with path.
+  setWindowTitle(QString("Dispar - %1").arg(file));
+
   // Disassemble code sections of all binary objects.
   progDiag.setLabelText(tr("Disassembling code sections.."));
   qDebug() << qPrintable(progDiag.labelText());
