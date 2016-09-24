@@ -1,15 +1,9 @@
 include_directories(
   gtest/
   gtest/include
-  ${CAPSTONE_INC_DIR}
   ${CMAKE_SOURCE_DIR}/lib
+  ${CMAKE_SOURCE_DIR}/lib/capstone/include
   )
-
-if (NOT WIN32)
-  include_directories(
-    /usr/local/include
-    )
-endif()
 
 add_library(
   gtest

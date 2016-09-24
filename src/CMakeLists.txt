@@ -1,13 +1,7 @@
 include_directories(
-  ${CAPSTONE_INC_DIR}
   ${CMAKE_SOURCE_DIR}/lib
+  ${CMAKE_SOURCE_DIR}/lib/capstone/include
   )
-
-if (NOT WIN32)
-  include_directories(
-    /usr/local/include
-    )
-endif()
 
 LIBIBERTY_ADD_DEFINITIONS()
 
@@ -57,7 +51,7 @@ add_library(
 
 target_link_libraries(
   ${libName}
-  ${CAPSTONE_STATIC_LIB}
+  capstone-static
   iberty
   )
 
