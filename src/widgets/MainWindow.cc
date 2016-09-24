@@ -1,20 +1,21 @@
 #include "MainWindow.h"
-#include "../Util.h"
 #include "../BinaryObject.h"
-#include "../formats/Format.h"
 #include "../Disassembler.h"
+#include "../Util.h"
+#include "../formats/Format.h"
+#include "AboutDialog.h"
 #include "BinaryWidget.h"
 
-#include <QMenuBar>
-#include <QVBoxLayout>
-#include <QDir>
-#include <QFileDialog>
 #include <QApplication>
 #include <QDebug>
+#include <QDir>
+#include <QFileDialog>
+#include <QMenuBar>
 #include <QMessageBox>
 #include <QProgressDialog>
 #include <QSet>
 #include <QSettings>
+#include <QVBoxLayout>
 
 MainWindow::MainWindow(const QString &file)
   : shown(false), modified(false), startupFile(file), binaryWidget(nullptr)
@@ -85,6 +86,12 @@ void MainWindow::onRecentFile()
   loadBinary(action->text());
 }
 
+void MainWindow::onAbout()
+{
+  AboutDialog diag;
+  diag.exec();
+}
+
 void MainWindow::readSettings()
 {
   QSettings settings;
@@ -109,7 +116,7 @@ void MainWindow::createLayout()
 
 void MainWindow::createMenu()
 {
-  auto *fileMenu = menuBar()->addMenu(tr("File"));
+  auto *fileMenu = menuBar()->addMenu(tr("&File"));
   fileMenu->addAction(tr("Open binary"), this, SLOT(openBinary()), QKeySequence::Open);
 
   if (!recentFiles.isEmpty()) {
@@ -118,6 +125,9 @@ void MainWindow::createMenu()
       recentMenu->addAction(file, this, SLOT(onRecentFile()));
     }
   }
+
+  auto *helpMenu = menuBar()->addMenu(tr("&Help"));
+  helpMenu->addAction(tr("&About"), this, SLOT(onAbout()));
 }
 
 void MainWindow::loadBinary(QString file)

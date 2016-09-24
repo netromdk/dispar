@@ -21,7 +21,9 @@ private slots:
   void openBinary();
   // void saveBinary();
   // void closeBinary();
+
   void onRecentFile();
+  void onAbout();
 
 private:
   void readSettings();

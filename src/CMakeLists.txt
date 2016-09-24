@@ -44,6 +44,8 @@ add_library(
   widgets/BinaryWidget.cc
   widgets/PersistentSplitter.h
   widgets/PersistentSplitter.cc
+  widgets/AboutDialog.h
+  widgets/AboutDialog.cc
 
   formats/Format.h
   formats/Format.cc
