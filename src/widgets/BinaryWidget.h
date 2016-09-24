@@ -33,7 +33,7 @@ private:
 
   std::shared_ptr<Format> fmt;
 
-  QListWidget *symbolList;
+  QListWidget *symbolList, *stringList;
   QPlainTextEdit *mainView;
   QTextDocument *doc;
   QHash<quint64, int> offsetBlock; // offset -> block

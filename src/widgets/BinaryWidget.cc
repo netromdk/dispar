@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include <QPlainTextEdit>
 #include <QProgressDialog>
+#include <QTabWidget>
 #include <QTextBlockUserData>
 #include <QTimer>
 
@@ -38,8 +39,10 @@ QString BinaryWidget::file() const
 
 void BinaryWidget::onSymbolChosen(int row)
 {
+  auto *list = qobject_cast<QListWidget *>(sender());
+
   // If offset is found then select the text block.
-  auto *item = symbolList->item(row);
+  auto *item = list->item(row);
   auto offset = item->data(Qt::UserRole).toLongLong();
   if (offsetBlock.contains(offset)) {
     auto blockNum = offsetBlock[offset];
@@ -72,6 +75,13 @@ void BinaryWidget::createLayout()
   symbolList = new QListWidget;
   connect(symbolList, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
 
+  stringList = new QListWidget;
+  connect(stringList, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
+
+  auto *tabWidget = new QTabWidget;
+  tabWidget->addTab(symbolList, tr("Functions"));
+  tabWidget->addTab(stringList, tr("Strings"));
+
   mainView = new QPlainTextEdit;
   mainView->setReadOnly(true);
   mainView->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
@@ -81,7 +91,7 @@ void BinaryWidget::createLayout()
   doc = mainView->document();
 
   auto *vertSplitter = new PersistentSplitter("BinaryWidget.vertSplitter");
-  vertSplitter->addWidget(symbolList);
+  vertSplitter->addWidget(tabWidget);
   vertSplitter->addWidget(mainView);
 
   vertSplitter->setSizes(QList<int>{175, 500});
@@ -189,6 +199,8 @@ void BinaryWidget::setup()
     while (reader.next()) {
       auto addr = reader.offset() + sec->address();
       auto string = reader.string();
+
+      // TODO: use another function with different table size constraints than the instructions!
       appendInstruction(
         QStringList{QString("0x%1").arg(addr, 0, 16), string, tr("; size=%1").arg(string.size())});
 
@@ -196,7 +208,7 @@ void BinaryWidget::setup()
       item->setText(reader.string());
       item->setData(Qt::UserRole, addr);
       item->setToolTip(QString("0x%1").arg(addr, 0, 16));
-      symbolList->addItem(item);
+      stringList->addItem(item);
     }
 
     cursor.movePosition(QTextCursor::End);
