@@ -10,6 +10,7 @@
 #include <QTimer>
 
 #include "../BinaryObject.h"
+#include "../CStringReader.h"
 #include "../Util.h"
 #include "BinaryWidget.h"
 #include "PersistentSplitter.h"
@@ -124,7 +125,10 @@ void BinaryWidget::setup()
     Q_ASSERT(values.size() <= 3);
 
     cursor.insertBlock();
-    cursor.insertText(QString("%1%2%3").arg(values[0], -20).arg(values[1], -8).arg(values[2]));
+    cursor.insertText(QString("%1%2%3")
+                        .arg(values[0], -20)
+                        .arg(values[1], -8)
+                        .arg(values.size() == 3 ? values[2] : ""));
 
     auto *userData = new TextBlockUserData;
     userData->address = values[0].toLongLong(nullptr, 16);
@@ -167,6 +171,25 @@ void BinaryWidget::setup()
 
       appendInstruction(
         QStringList{QString("0x%1").arg(addr, 0, 16), instr->mnemonic, instr->op_str});
+    }
+
+    cursor.movePosition(QTextCursor::End);
+    cursor.insertBlock();
+    cursor.insertText("\n===== /" + secName + " =====\n");
+  }
+
+  // Show cstring sections.
+  for (auto &sec : obj->sectionsByType(Section::Type::CSTRING)) {
+    cursor.movePosition(QTextCursor::End);
+    cursor.insertBlock();
+    auto secName = Section::typeName(sec->type());
+    cursor.insertText("===== " + secName + " =====\n");
+
+    // TODO: While discoverying strings by some reader also add to the side bar..
+    CStringReader reader(sec->data());
+    while (reader.next()) {
+      auto addr = reader.offset() + sec->address();
+      appendInstruction(QStringList{QString("0x%1").arg(addr, 0, 16), reader.string()});
     }
 
     cursor.movePosition(QTextCursor::End);
