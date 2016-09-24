@@ -13,6 +13,7 @@ add_library(
   cp-demint.c
   cplus-dem.c
   safe-ctype.c
+  alloca.c
   xmalloc.c
   xstrdup.c
   xexit.c
