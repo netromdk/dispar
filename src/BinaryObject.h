@@ -6,8 +6,8 @@
 #include <memory>
 
 #include "CpuType.h"
-#include "Section.h"
 #include "FileType.h"
+#include "Section.h"
 #include "SymbolTable.h"
 
 class BinaryObject {

@@ -1,8 +1,8 @@
 #include "Disassembler.h"
 #include "BinaryObject.h"
 
-#include <QDebug>
 #include <QByteArray>
+#include <QDebug>
 
 Disassembler::Result::Result(cs_insn *insn, size_t count) : insn(insn), count_(count)
 {

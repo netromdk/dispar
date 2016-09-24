@@ -6,9 +6,9 @@
 
 #include <memory>
 
-#include "../Section.h"
 #include "../CpuType.h"
 #include "../FileType.h"
+#include "../Section.h"
 
 class BinaryObject;
 

@@ -1,6 +1,6 @@
 #include <QApplication>
-#include <QTimer>
 #include <QStringList>
+#include <QTimer>
 
 #include "Version.h"
 #include "widgets/MainWindow.h"

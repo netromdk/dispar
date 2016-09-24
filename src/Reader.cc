@@ -1,7 +1,7 @@
 #include "Reader.h"
 
-#include <QIODevice>
 #include <QByteArray>
+#include <QIODevice>
 
 Reader::Reader(QIODevice &dev, bool littleEndian) : dev(dev), littleEndian(littleEndian)
 {
@@ -113,7 +113,7 @@ T Reader::getUInt(bool *ok)
     if (!littleEndian) {
       j = num - (i + 1);
     }
-    res += ((T)static_cast<unsigned char>(buf[i])) << j * 8;
+    res += ((T) static_cast<unsigned char>(buf[i])) << j * 8;
   }
   if (ok) *ok = true;
   return res;

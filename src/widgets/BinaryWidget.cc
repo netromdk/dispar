@@ -1,18 +1,18 @@
-#include <QTimer>
-#include <QFile>
-#include <QPlainTextEdit>
-#include <QDebug>
-#include <QListWidget>
-#include <QHBoxLayout>
-#include <QMessageBox>
 #include <QApplication>
+#include <QDebug>
+#include <QFile>
+#include <QHBoxLayout>
+#include <QListWidget>
+#include <QMessageBox>
+#include <QPlainTextEdit>
 #include <QProgressDialog>
 #include <QTextBlockUserData>
+#include <QTimer>
 
-#include "../Util.h"
 #include "../BinaryObject.h"
-#include "PersistentSplitter.h"
+#include "../Util.h"
 #include "BinaryWidget.h"
+#include "PersistentSplitter.h"
 
 namespace {
 

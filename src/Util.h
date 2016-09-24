@@ -1,9 +1,9 @@
 #ifndef DISPAR_UTIL_H
 #define DISPAR_UTIL_H
 
-#include <QWidget>
-#include <QString>
 #include <QByteArray>
+#include <QString>
+#include <QWidget>
 
 class QAbstractScrollArea;
 

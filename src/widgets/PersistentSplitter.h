@@ -1,8 +1,8 @@
 #ifndef DISPAR_PERSISTENT_SPLITTER_H
 #define DISPAR_PERSISTENT_SPLITTER_H
 
-#include <QString>
 #include <QSplitter>
+#include <QString>
 
 class PersistentSplitter : public QSplitter {
 public:

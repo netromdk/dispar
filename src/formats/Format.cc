@@ -1,5 +1,5 @@
-#include "MachO.h"
 #include "Format.h"
+#include "MachO.h"
 
 Format::Format(Type type) : type_{type}
 {

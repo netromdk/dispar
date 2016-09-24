@@ -1,12 +1,12 @@
-#include <QFile>
 #include <QDebug>
+#include <QFile>
 
 #include <cmath>
 
-#include "MachO.h"
-#include "../Util.h"
-#include "../Reader.h"
 #include "../BinaryObject.h"
+#include "../Reader.h"
+#include "../Util.h"
+#include "MachO.h"
 
 MachO::MachO(const QString &file) : Format(Format::Type::MACH_O), file_{file}
 {

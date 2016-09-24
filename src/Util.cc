@@ -1,19 +1,19 @@
 #include "Util.h"
 
-#include <QTimer>
-#include <QScrollBar>
+#include <QAbstractScrollArea>
+#include <QApplication>
+#include <QDesktopWidget>
 #include <QDir>
 #include <QFileInfo>
-#include <QDesktopWidget>
-#include <QApplication>
-#include <QAbstractScrollArea>
+#include <QScrollBar>
+#include <QTimer>
 
 #ifdef HAS_LIBIBERTY
-#include <libiberty.h>
 #include <demangle.h>
+#include <libiberty.h>
 #else
-#include <stdlib.h>
 #include <cxxabi.h>
+#include <stdlib.h>
 #endif
 
 QString Util::formatSize(qint64 bytes, int digits)

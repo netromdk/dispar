@@ -1,11 +1,11 @@
 #ifndef DISPAR_SECTION_H
 #define DISPAR_SECTION_H
 
+#include <QByteArray>
+#include <QDateTime>
 #include <QList>
 #include <QPair>
 #include <QString>
-#include <QDateTime>
-#include <QByteArray>
 
 #include <memory>
 
