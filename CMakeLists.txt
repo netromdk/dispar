@@ -1,20 +1,13 @@
 cmake_minimum_required(VERSION 3.0)
 project(dispar)
 
-# Only interpret if() arguments as variables or keywords when unquoted.
-cmake_policy(SET CMP0054 NEW)
-
-# Target names should not be reserved and should match a validity pattern. Target names reserved by
-# one or more CMake generators are not allowed. Among others these include "all", "help" and
-# "test".
-cmake_policy(SET CMP0037 NEW)
-
 set(CMAKE_COLOR_MAKEFILE ON)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS TRUE)
-
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+include(policies NO_POLICY_SCOPE)
 
 option(CODE_COVERAGE "Instrument for code coverage (clang only!)" OFF)
 option(ADDRESS_SANITIZER "Use memory error detector  (clang only and implies debug mode!)" OFF)
