@@ -49,6 +49,8 @@ add_test(
   COMMAND ${testName}
   )
 
+prepare_win_executable(${testName})
+
 if (NOT LINUX)
   target_link_libraries(
     ${testName}
