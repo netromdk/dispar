@@ -1,16 +1,24 @@
-set(SDK_MIN "10.11")
-set(SDK "10.11")
-set(DEV_SDK "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX${SDK}.sdk")
-SET(DEV_SDK2 "/Developer/SDKs/MacOSX${SDK}.sdk")
+set(SDK_MIN 10.8)
 
-if (NOT EXISTS "${DEV_SDK}" AND NOT IS_DIRECTORY "${DEV_SDK}")
-  if (NOT EXISTS "${DEV_SDK2}" AND NOT IS_DIRECTORY "${DEV_SDK2}")
-    message("Could not find Mac OSX SDK at: ${DEV_SDK} or ${DEV_SDK2}")
-    message("Aborting!")
-    return()
-  else()
-    set(DEV_SDK ${DEV_SDK2})
+# Try to pick the newest!
+set(SDKS 10.12 10.11 10.10 10.9 10.8)
+
+foreach (sdk ${SDKS})
+  set(DEV_SDK "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX${sdk}.sdk")
+  if (EXISTS "${DEV_SDK}" AND IS_DIRECTORY "${DEV_SDK}")
+    set(found_sdk YES)
+    break()
   endif()
+
+  set(DEV_SDK "/Developer/SDKs/MacOSX${sdk}.sdk")
+  if (EXISTS "${DEV_SDK}" AND IS_DIRECTORY "${DEV_SDK}")
+    set(found_sdk YES)
+    break()
+  endif()
+endforeach()
+
+if (NOT found_sdk)
+  message(FATAL_ERROR "Could not find Mac OS X SDK version 10.8 - 10.12!")
 endif()
 
 add_definitions(
