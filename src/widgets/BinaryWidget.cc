@@ -185,11 +185,16 @@ void BinaryWidget::setup()
     auto secName = Section::typeName(sec->type());
     cursor.insertText("===== " + secName + " =====\n");
 
-    // TODO: While discoverying strings by some reader also add to the side bar..
     CStringReader reader(sec->data());
     while (reader.next()) {
       auto addr = reader.offset() + sec->address();
       appendInstruction(QStringList{QString("0x%1").arg(addr, 0, 16), reader.string()});
+
+      auto *item = new QListWidgetItem;
+      item->setText(reader.string());
+      item->setData(Qt::UserRole, addr);
+      item->setToolTip(QString("0x%1").arg(addr, 0, 16));
+      symbolList->addItem(item);
     }
 
     cursor.movePosition(QTextCursor::End);
