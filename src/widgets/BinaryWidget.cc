@@ -188,7 +188,9 @@ void BinaryWidget::setup()
     CStringReader reader(sec->data());
     while (reader.next()) {
       auto addr = reader.offset() + sec->address();
-      appendInstruction(QStringList{QString("0x%1").arg(addr, 0, 16), reader.string()});
+      auto string = reader.string();
+      appendInstruction(
+        QStringList{QString("0x%1").arg(addr, 0, 16), string, tr("; size=%1").arg(string.size())});
 
       auto *item = new QListWidgetItem;
       item->setText(reader.string());
