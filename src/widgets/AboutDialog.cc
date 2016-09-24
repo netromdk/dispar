@@ -3,7 +3,7 @@
 
 #include <QLabel>
 
-#include <capstone/capstone.h>
+#include <capstone.h>
 
 AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent)
 {

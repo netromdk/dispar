@@ -1,6 +1,8 @@
 include_directories(
   gtest/
   gtest/include
+  ${CAPSTONE_INC_DIR}
+  ${CMAKE_SOURCE_DIR}/lib
   )
 
 if (NOT WIN32)

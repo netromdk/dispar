@@ -5,7 +5,7 @@
 
 #include <memory>
 
-#include <capstone/capstone.h>
+#include <capstone.h>
 
 class QByteArray;
 class BinaryObject;
