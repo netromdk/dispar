@@ -30,3 +30,14 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${LIB_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CMAKE_BUILD_TYPE} ${LIB_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELWITHDEBINFO ${LIB_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${LIB_DIR})
+
+macro(add_dispar_executable name)
+  add_executable(
+    ${name}
+    ${ARGN}
+    )
+
+  if (WIN32)
+    prepare_win_executable(${name})
+  endif()
+endmacro()

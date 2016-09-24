@@ -67,14 +67,12 @@ qt5_use_modules(
   Gui
   Widgets
   )
- 
-add_executable(
+
+add_dispar_executable(
   ${binName}
 
   main.cc
   )
-
-prepare_win_executable(${binName})
 
 target_link_libraries(
   ${binName}

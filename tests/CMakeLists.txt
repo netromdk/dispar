@@ -16,7 +16,7 @@ add_library(
   gtest/src/gtest-all.cc
   )
 
-add_executable(
+add_dispar_executable(
   ${testName}
 
   main.cc
@@ -48,8 +48,6 @@ add_test(
   NAME ${testName}
   COMMAND ${testName}
   )
-
-prepare_win_executable(${testName})
 
 if (NOT LINUX)
   target_link_libraries(
