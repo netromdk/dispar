@@ -1,9 +1,13 @@
 cmake_minimum_required(VERSION 3.0)
+project(dispar)
 
 # Only interpret if() arguments as variables or keywords when unquoted.
 cmake_policy(SET CMP0054 NEW)
 
-project(dispar)
+# Target names should not be reserved and should match a validity pattern. Target names reserved by
+# one or more CMake generators are not allowed. Among others these include "all", "help" and
+# "test".
+cmake_policy(SET CMP0037 NEW)
 
 set(CMAKE_COLOR_MAKEFILE ON)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
