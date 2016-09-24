@@ -2,7 +2,7 @@
 
 #include <QByteArray>
 
-CStringReader::CStringReader(const QByteArray &data) : data(data), pos(0)
+CStringReader::CStringReader(const QByteArray &data) : data(data), pos(0), offset_(0)
 {
 }
 
@@ -15,6 +15,7 @@ bool CStringReader::next()
   if (!string_.isEmpty()) {
     string_.clear();
     pos++;
+    offset_ = pos;
   }
 
   for (; pos < size; pos++) {
@@ -29,6 +30,11 @@ bool CStringReader::next()
 QString CStringReader::string() const
 {
   return string_;
+}
+
+quint64 CStringReader::offset() const
+{
+  return offset_;
 }
 
 QStringList CStringReader::readAll()

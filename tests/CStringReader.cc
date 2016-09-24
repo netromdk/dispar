@@ -32,10 +32,16 @@ TEST(CStringReader, next)
     CStringReader reader(data);
     ASSERT_TRUE(reader.next());
     EXPECT_EQ(reader.string(), "one") << reader.string();
+    EXPECT_EQ(reader.offset(), 0) << reader.offset();
+
     ASSERT_TRUE(reader.next());
     EXPECT_EQ(reader.string(), "two") << reader.string();
+    EXPECT_EQ(reader.offset(), 4) << reader.offset();
+
     ASSERT_TRUE(reader.next());
     EXPECT_EQ(reader.string(), "three") << reader.string();
+    EXPECT_EQ(reader.offset(), 8) << reader.offset();
+
     ASSERT_FALSE(reader.next());
   }
 }
@@ -45,6 +51,13 @@ TEST(CStringReader, string)
   QByteArray data;
   CStringReader reader(data);
   EXPECT_EQ(reader.string(), QString());
+}
+
+TEST(CStringReader, offset)
+{
+  QByteArray data;
+  CStringReader reader(data);
+  EXPECT_EQ(reader.offset(), 0);
 }
 
 TEST(CStringReader, readAll)
