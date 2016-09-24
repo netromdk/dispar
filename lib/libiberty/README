@@ -1,0 +1,4 @@
+This libiberty code was copied from the binutils 2.27 repository. It is compiled as a static library
+and linked into dispar.
+
+See copying license in COPYING.LIB.
