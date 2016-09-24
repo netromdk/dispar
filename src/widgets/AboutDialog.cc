@@ -38,7 +38,5 @@ void AboutDialog::createLayout()
   addDep("Qt", QT_VERSION_STR, "https://www.qt.io");
   addDep("Capstone", QString("%1.%2").arg(CS_API_MAJOR).arg(CS_API_MINOR),
          "http://www.capstone-engine.org");
-#ifdef HAS_LIBIBERTY
   addDep("libiberty", "2.27", "https://www.gnu.org/software/binutils");
-#endif
 }

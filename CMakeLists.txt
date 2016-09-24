@@ -52,6 +52,7 @@ add_subdirectory(tests)
 #     )
 # endif()
 
+add_subdirectory(lib)
 add_subdirectory(src)
 
 # Requires llvm/clang v4+!
@@ -79,9 +80,4 @@ else()
   message(STATUS "Code coverage: ${CODE_COVERAGE}")
 endif()
 message(STATUS "Address sanitizer: ${ADDRESS_SANITIZER}")
-if (FOUND_LIBIBERTY)
-  message(STATUS "Found libiberty: ${FOUND_LIBIBERTY} (${LIBIBERTY_INC_DIR} ${LIBIBERTY_STATIC_LIB})")
-else()
-  message(STATUS "Found libiberty: ${FOUND_LIBIBERTY} (define LIBIBERTY_INC_DIR and LIBIBERTY_STATIC_LIB to detect it!)")
-endif()
 message(STATUS "--------------------------------------------------")

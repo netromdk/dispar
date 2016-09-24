@@ -8,13 +8,7 @@
 #include <QScrollBar>
 #include <QTimer>
 
-#ifdef HAS_LIBIBERTY
-#include <demangle.h>
-#include <libiberty.h>
-#else
-#include <cxxabi.h>
-#include <stdlib.h>
-#endif
+#include "libiberty/demangle.h"
 
 QString Util::formatSize(qint64 bytes, int digits)
 {
@@ -189,19 +183,11 @@ QString Util::demangle(const QString &name)
 
   const auto mangledName = name.mid(skip).toUtf8();
 
-#ifdef HAS_LIBIBERTY
   int flags = DMGL_PARAMS | DMGL_ANSI | DMGL_VERBOSE;
   auto *res = cplus_demangle(mangledName.constData(), flags);
   if (res == 0) {
     return name;
   }
-#else
-  int status;
-  auto *res = abi::__cxa_demangle(mangledName.constData(), NULL, NULL, &status);
-  if (status != 0) {
-    return name;
-  }
-#endif
 
   auto output = QString::fromUtf8(res);
   free(res);

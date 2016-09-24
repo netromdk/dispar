@@ -1,6 +1,6 @@
 include_directories(
   ${CAPSTONE_INC_DIR}
-  ${LIBIBERTY_INC_DIR}
+  ${CMAKE_SOURCE_DIR}/lib
   )
 
 if (NOT WIN32)
@@ -8,6 +8,8 @@ if (NOT WIN32)
     /usr/local/include
     )
 endif()
+
+LIBIBERTY_ADD_DEFINITIONS()
 
 add_library(
   ${libName}
@@ -56,7 +58,7 @@ add_library(
 target_link_libraries(
   ${libName}
   ${CAPSTONE_STATIC_LIB}
-  ${LIBIBERTY_STATIC_LIB}
+  iberty
   )
 
 qt5_use_modules(
