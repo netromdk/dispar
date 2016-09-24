@@ -1,6 +1,6 @@
 add_subdirectory(libiberty)
 
-set(CAPSTONE_BUILD_STATIC ON)
-set(CAPSTONE_BUILD_SHARED OFF)
-set(CAPSTONE_BUILD_TESTS OFF)
-add_subdirectory(capstone)
+set(CAPSTONE_BUILD_STATIC ON CACHE BOOL "")
+set(CAPSTONE_BUILD_SHARED OFF CACHE BOOL "")
+set(CAPSTONE_BUILD_TESTS OFF CACHE BOOL "")
+add_subdirectory(capstone EXCLUDE_FROM_ALL)
