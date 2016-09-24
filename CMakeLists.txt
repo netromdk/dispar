@@ -1,4 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
+
+# Only interpret if() arguments as variables or keywords when unquoted.
+cmake_policy(SET CMP0054 NEW)
+
 project(dispar)
 
 set(CMAKE_COLOR_MAKEFILE ON)
