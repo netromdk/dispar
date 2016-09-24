@@ -71,11 +71,6 @@ void MainWindow::openBinary()
   }
 
   auto file = diag.selectedFiles().first();
-  if (binaryWidget->file() == file) {
-    QMessageBox::warning(this, "dispar", tr("Can't open same binary twice!"));
-    return;
-  }
-
   loadBinary(file);
 }
 
