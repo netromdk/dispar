@@ -51,6 +51,8 @@ void FormatLoader::run()
     }
   }
 
+  emit status(tr("Success!"));
+
   auto end = QDateTime::currentDateTime();
   qDebug() << "Loaded in" << start.msecsTo(end) << "ms";
 
