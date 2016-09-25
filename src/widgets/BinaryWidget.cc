@@ -117,6 +117,14 @@ void BinaryWidget::setup()
 {
   // For now we just support one object!
 
+  QProgressDialog setupDiag(this);
+  setupDiag.setLabelText(tr("Setting up for binary data.."));
+  setupDiag.setCancelButton(nullptr);
+  setupDiag.setRange(0, 4);
+  setupDiag.show();
+  qApp->processEvents();
+  qDebug() << qPrintable(setupDiag.labelText());
+
   auto obj = fmt->objects()[0];
 
   auto symbols = obj->symbolTable().symbols();
@@ -161,6 +169,11 @@ void BinaryWidget::setup()
 
   cursor.beginEditBlock();
 
+  setupDiag.setValue(1);
+  setupDiag.setLabelText(tr("Generating UI for disassembled sections.."));
+  qApp->processEvents();
+  qDebug() << qPrintable(setupDiag.labelText());
+
   for (auto &sec : obj->sections()) {
     auto disasm = sec->disassembly();
     if (!disasm) continue;
@@ -198,6 +211,11 @@ void BinaryWidget::setup()
     cursor.insertText("\n===== /" + secName + " =====\n");
   }
 
+  setupDiag.setValue(2);
+  setupDiag.setLabelText(tr("Generating UI for string sections.."));
+  qApp->processEvents();
+  qDebug() << qPrintable(setupDiag.labelText());
+
   // Show cstring+string sections.
   auto stringSecs = obj->sectionsByType(Section::Type::CSTRING);
   stringSecs << obj->sectionsByType(Section::Type::STRING);
@@ -226,6 +244,11 @@ void BinaryWidget::setup()
     cursor.insertText("\n===== /" + secName + " =====\n");
   }
 
+  setupDiag.setValue(3);
+  setupDiag.setLabelText(tr("Generating sidebar with functions and strings.."));
+  qApp->processEvents();
+  qDebug() << qPrintable(setupDiag.labelText());
+
   // Fill side bar with function names of the symbol tables.
   for (auto symbol : symbols) {
     if (symbol.value() == 0) continue;
@@ -246,6 +269,7 @@ void BinaryWidget::setup()
   }
 
   cursor.endEditBlock();
+  setupDiag.setValue(4);
 
   Util::scrollToTop(mainView);
 }
