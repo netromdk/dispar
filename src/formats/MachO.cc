@@ -824,8 +824,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
     binaryObject->setSymbolTable(symTable);
   }
 
-  // If dynamic symbol table loaded then merge data from symbol table
-  // and symbol stubs into it.
+  // If dynamic symbol table loaded then merge data from symbol table and symbol stubs into it.
   if (indirsymnum > 0 && symnum > 0) {
     auto stubs = binaryObject->section(Section::Type::SYMBOL_STUBS);
     if (stubs) {
@@ -835,7 +834,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
       for (int h = 0; h < dynsymbols.size(); h++) {
         auto &symbol = dynsymbols[h];
         auto idx = symbol.index();
-        if (idx >= 0 && idx < symnum) {
+        if (idx < symnum) {
           // The index corresponds to the index in the symbol table.
           symbol.setString(symbols[idx].string());
 
