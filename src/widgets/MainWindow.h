@@ -6,8 +6,6 @@
 
 #include <memory>
 
-class QProgressDialog;
-
 class Format;
 class FormatLoader;
 class BinaryWidget;
@@ -30,8 +28,6 @@ private slots:
   void onRecentFile();
   void onAbout();
 
-  void onLoadFailed(const QString &msg);
-  void onLoadStatus(const QString &msg);
   void onLoadSuccess(std::shared_ptr<Format> fmt);
 
 private:
@@ -49,7 +45,6 @@ private:
   std::unique_ptr<FormatLoader> loader;
 
   BinaryWidget *binaryWidget;
-  QProgressDialog *loaderDiag;
 };
 
 #endif // DISPAR_MAIN_WINDOW_H

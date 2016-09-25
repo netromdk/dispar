@@ -19,7 +19,7 @@
 #include <QVBoxLayout>
 
 MainWindow::MainWindow(const QString &file)
-  : shown(false), modified(false), startupFile(file), binaryWidget(nullptr), loaderDiag(nullptr)
+  : shown(false), modified(false), startupFile(file), binaryWidget(nullptr)
 {
   setTitle();
   readSettings();
@@ -86,19 +86,6 @@ void MainWindow::onAbout()
 {
   AboutDialog diag;
   diag.exec();
-}
-
-void MainWindow::onLoadFailed(const QString &msg)
-{
-  QMessageBox::critical(this, "dispar", msg);
-}
-
-void MainWindow::onLoadStatus(const QString &msg)
-{
-  qDebug() << qPrintable(msg);
-  if (loaderDiag) {
-    loaderDiag->setLabelText(msg);
-  }
 }
 
 void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
@@ -179,11 +166,7 @@ void MainWindow::loadBinary(QString file)
 
   qDebug() << "Loading binary:" << file;
 
-  if (loaderDiag) {
-    loaderDiag->deleteLater();
-  }
-
-  loaderDiag = new QProgressDialog(this);
+  auto *loaderDiag = new QProgressDialog(this);
   loaderDiag->setWindowFlags(loaderDiag->windowFlags() | Qt::WindowStaysOnTopHint);
   loaderDiag->setLabelText(tr("Detecting format.."));
   loaderDiag->setCancelButton(nullptr);
@@ -192,16 +175,21 @@ void MainWindow::loadBinary(QString file)
   qDebug() << qPrintable(loaderDiag->labelText());
 
   loader = std::make_unique<FormatLoader>(file);
-  connect(loader.get(), &FormatLoader::failed, this, &MainWindow::onLoadFailed);
-  connect(loader.get(), &FormatLoader::status, this, &MainWindow::onLoadStatus);
+
+  connect(loader.get(), &FormatLoader::failed, this,
+          [this](const QString &msg) { QMessageBox::critical(this, "dispar", msg); });
+
+  connect(loader.get(), &FormatLoader::status, this, [loaderDiag](const QString &msg) {
+    qDebug() << qPrintable(msg);
+    loaderDiag->setLabelText(msg);
+  });
+
   connect(loader.get(), &FormatLoader::success, this, &MainWindow::onLoadSuccess);
-  connect(loader.get(), &FormatLoader::finished, this, [this] {
+  connect(loader.get(), &FormatLoader::finished, this, [this, loaderDiag] {
     qDebug() << "cleaning up loader";
     loader.reset();
-    if (loaderDiag) {
-      loaderDiag->deleteLater();
-      loaderDiag = nullptr;
-    }
+    loaderDiag->deleteLater();
   });
+
   loader->start();
 }
