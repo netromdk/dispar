@@ -3,6 +3,7 @@
 #include <QTimer>
 
 #include "Version.h"
+#include "formats/Format.h"
 #include "widgets/MainWindow.h"
 
 int main(int argc, char **argv)
@@ -10,6 +11,8 @@ int main(int argc, char **argv)
   QApplication app(argc, argv);
   app.setApplicationName("Dispar");
   app.setApplicationVersion(versionString());
+
+  Format::registerType();
 
   QString file;
   if (argc == 2) {

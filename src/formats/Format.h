@@ -3,6 +3,7 @@
 
 #include <QList>
 #include <QString>
+#include <QMetaType>
 
 #include <memory>
 
@@ -38,8 +39,12 @@ public:
   /// Get string representation of type.
   static QString typeName(Type type);
 
+  static void registerType();
+
 private:
   Type type_;
 };
+
+Q_DECLARE_METATYPE(std::shared_ptr<Format>);
 
 #endif // DISPAR_FORMAT_H

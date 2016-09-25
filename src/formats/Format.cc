@@ -1,7 +1,7 @@
 #include "Format.h"
 #include "MachO.h"
 
-Format::Format(Type type) : type_{type}
+Format::Format(Type type) : type_(type)
 {
 }
 
@@ -30,4 +30,9 @@ QString Format::typeName(Type type)
   }
 
   return "";
+}
+
+void Format::registerType()
+{
+  qRegisterMetaType<std::shared_ptr<Format>>("std::shared_ptr<Format>");
 }
