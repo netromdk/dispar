@@ -116,6 +116,7 @@ void BinaryWidget::createLayout()
 void BinaryWidget::setup()
 {
   // For now we just support one object!
+  auto start = QDateTime::currentDateTime();
 
   QProgressDialog setupDiag(this);
   setupDiag.setLabelText(tr("Setting up for binary data.."));
@@ -272,4 +273,7 @@ void BinaryWidget::setup()
   setupDiag.setValue(4);
 
   Util::scrollToTop(mainView);
+
+  auto end = QDateTime::currentDateTime();
+  qDebug() << "Setup in" << start.msecsTo(end) << "ms";
 }
