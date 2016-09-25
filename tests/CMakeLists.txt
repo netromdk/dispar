@@ -33,6 +33,7 @@ add_dispar_executable(
   BinaryObject.cc
 
   formats/Format.cc
+  formats/FormatLoader.cc
   formats/MachO.cc
 
   binaries.qrc
