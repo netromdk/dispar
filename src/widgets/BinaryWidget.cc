@@ -29,12 +29,20 @@ public:
 BinaryWidget::BinaryWidget(std::shared_ptr<Format> fmt) : fmt(fmt), doc(nullptr)
 {
   createLayout();
-  setup();
 }
 
 QString BinaryWidget::file() const
 {
   return fmt->file();
+}
+
+void BinaryWidget::showEvent(QShowEvent *event)
+{
+  static bool first = true;
+  if (!first) return;
+  first = false;
+
+  setup();
 }
 
 void BinaryWidget::onSymbolChosen(int row)

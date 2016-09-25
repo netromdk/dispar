@@ -23,6 +23,9 @@ public:
 signals:
   // void modified();
 
+protected:
+  void showEvent(QShowEvent *event);
+
 private slots:
   void onSymbolChosen(int row);
   void onCursorPositionChanged();
