@@ -26,14 +26,9 @@ public:
 
 } // anon
 
-BinaryWidget::BinaryWidget(std::shared_ptr<Format> fmt) : fmt(fmt), doc(nullptr)
+BinaryWidget::BinaryWidget(std::shared_ptr<BinaryObject> object) : object(object), doc(nullptr)
 {
   createLayout();
-}
-
-QString BinaryWidget::file() const
-{
-  return fmt->file();
 }
 
 void BinaryWidget::showEvent(QShowEvent *event)
@@ -111,7 +106,6 @@ void BinaryWidget::createLayout()
 
 void BinaryWidget::setup()
 {
-  // For now we just support one object!
   auto start = QDateTime::currentDateTime();
 
   QProgressDialog setupDiag(this);
@@ -122,10 +116,8 @@ void BinaryWidget::setup()
   qApp->processEvents();
   qDebug() << qPrintable(setupDiag.labelText());
 
-  auto obj = fmt->objects()[0];
-
-  auto symbols = obj->symbolTable().symbols();
-  symbols.append(obj->dynSymbolTable().symbols());
+  auto symbols = object->symbolTable().symbols();
+  symbols.append(object->dynSymbolTable().symbols());
 
   // Create text edit of all binary contents.
   QTextCursor cursor(doc);
@@ -171,7 +163,7 @@ void BinaryWidget::setup()
   qApp->processEvents();
   qDebug() << qPrintable(setupDiag.labelText());
 
-  for (auto &sec : obj->sections()) {
+  for (auto &sec : object->sections()) {
     auto disasm = sec->disassembly();
     if (!disasm) continue;
 
@@ -214,8 +206,8 @@ void BinaryWidget::setup()
   qDebug() << qPrintable(setupDiag.labelText());
 
   // Show cstring+string sections.
-  auto stringSecs = obj->sectionsByType(Section::Type::CSTRING);
-  stringSecs << obj->sectionsByType(Section::Type::STRING);
+  auto stringSecs = object->sectionsByType(Section::Type::CSTRING);
+  stringSecs << object->sectionsByType(Section::Type::STRING);
   for (auto &sec : stringSecs) {
     cursor.movePosition(QTextCursor::End);
     cursor.insertBlock();

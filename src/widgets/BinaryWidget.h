@@ -4,7 +4,7 @@
 #include <QHash>
 #include <QWidget>
 
-#include "../formats/Format.h"
+#include "../BinaryObject.h"
 
 class QListWidget;
 class QPlainTextEdit;
@@ -14,9 +14,7 @@ class BinaryWidget : public QWidget {
   Q_OBJECT
 
 public:
-  BinaryWidget(std::shared_ptr<Format> fmt);
-
-  QString file() const;
+  BinaryWidget(std::shared_ptr<BinaryObject> object);
 
   // void commit();
 
@@ -34,7 +32,7 @@ private:
   void createLayout();
   void setup();
 
-  std::shared_ptr<Format> fmt;
+  std::shared_ptr<BinaryObject> object;
 
   QListWidget *symbolList, *stringList;
   QPlainTextEdit *mainView;

@@ -104,7 +104,10 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
     if (centralWidget()) {
       centralWidget()->deleteLater();
     }
-    binaryWidget = new BinaryWidget(fmt);
+
+    auto object = fmt->objects()[0];
+
+    binaryWidget = new BinaryWidget(object);
     setCentralWidget(binaryWidget);
   });
 }
