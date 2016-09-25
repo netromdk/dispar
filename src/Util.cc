@@ -193,3 +193,8 @@ QString Util::demangle(const QString &name)
   free(res);
   return output;
 }
+
+void Util::delayFunc(std::function<void()> func)
+{
+  QTimer::singleShot(1, func);
+}

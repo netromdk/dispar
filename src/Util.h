@@ -5,6 +5,8 @@
 #include <QString>
 #include <QWidget>
 
+#include <functional>
+
 class QAbstractScrollArea;
 
 class Util {
@@ -39,6 +41,8 @@ public:
 
   /// Demangle ABI identifier.
   static QString demangle(const QString &name);
+
+  static void delayFunc(std::function<void()> func);
 };
 
 #endif // DISPAR_UTIL_H
