@@ -149,6 +149,24 @@ void BinaryWidget::setup()
     offsetBlock[userData->address] = block.blockNumber();
   };
 
+  auto appendString = [this, &cursor](const QStringList &values) {
+    Q_ASSERT(values.size() == 3);
+
+    cursor.insertBlock();
+    cursor.insertText(QString("%1%2%3")
+                        .arg(values[0], -20)
+                        .arg(QString("\"%1\"").arg(values[1]))
+                        .arg(values[2], 11));
+
+    auto *userData = new TextBlockUserData;
+    userData->address = values[0].toLongLong(nullptr, 16);
+
+    auto block = cursor.block();
+    block.setUserData(userData);
+
+    offsetBlock[userData->address] = block.blockNumber();
+  };
+
   cursor.beginEditBlock();
 
   for (auto &sec : obj->sections()) {
@@ -200,8 +218,7 @@ void BinaryWidget::setup()
       auto addr = reader.offset() + sec->address();
       auto string = reader.string();
 
-      // TODO: use another function with different table size constraints than the instructions!
-      appendInstruction(
+      appendString(
         QStringList{QString("0x%1").arg(addr, 0, 16), string, tr("; size=%1").arg(string.size())});
 
       auto *item = new QListWidgetItem;
