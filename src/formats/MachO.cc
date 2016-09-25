@@ -722,10 +722,8 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
       r.read(cmdsize - off);
     }
 
-    // Temporary: Fail if unknown!
     else {
-      qDebug() << "what is type:" << type;
-      exit(0);
+      qWarning() << "What is type=" << type << "Ignoring!";
     }
   }
 
