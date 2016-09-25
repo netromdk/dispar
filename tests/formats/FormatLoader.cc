@@ -4,12 +4,38 @@
 
 #include "formats/FormatLoader.h"
 
-TEST(FormatLoader, load)
+// TODO: create general create function with variadic templates instead of one(), two()..
+
+TEST(FormatLoader, failedNonexistent)
+{
+  FormatLoader loader("_/something/that/does/not/exist");
+
+  auto failedSpy = SIGNAL_SPY_ONE(const QString &, &loader, &FormatLoader::failed);
+
+  auto successSpy = SIGNAL_SPY_ONE(std::shared_ptr<Format>, &loader, &FormatLoader::success);
+  successSpy->setExpect(false);
+
+  loader.start();
+  failedSpy->wait();
+}
+
+TEST(FormatLoader, failedCouldNotParse)
+{
+  auto file = tempFile();
+  FormatLoader loader(file->fileName());
+
+  auto failedSpy = SIGNAL_SPY_ONE(const QString &, &loader, &FormatLoader::failed);
+
+  auto successSpy = SIGNAL_SPY_ONE(std::shared_ptr<Format>, &loader, &FormatLoader::success);
+  successSpy->setExpect(false);
+
+  loader.start();
+  failedSpy->wait();
+}
+
+TEST(FormatLoader, success)
 {
   FormatLoader loader(":macho_main");
-
-  // TODO: create more tests for when things fail
-  // TODO: create general create function with variadic templates instead of one(), two()..
 
   auto statusSpy = SIGNAL_SPY_ONE(const QString &, &loader, &FormatLoader::status);
 
