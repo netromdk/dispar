@@ -172,7 +172,7 @@ void MainWindow::loadBinary(QString file)
   auto *loaderDiag = new QProgressDialog(this);
   loaderDiag->setLabelText(tr("Detecting format.."));
   loaderDiag->setCancelButton(nullptr);
-  loaderDiag->setRange(0, 0);
+  loaderDiag->setRange(0, 100);
   loaderDiag->show();
   qDebug() << qPrintable(loaderDiag->labelText());
 
@@ -184,6 +184,14 @@ void MainWindow::loadBinary(QString file)
   connect(loader.get(), &FormatLoader::status, this, [loaderDiag](const QString &msg) {
     qDebug() << qPrintable(msg);
     loaderDiag->setLabelText(msg);
+  });
+
+  connect(loader.get(), &FormatLoader::progress, this, [diag = loaderDiag](float progress) {
+    auto range = diag->maximum() - diag->minimum();
+    if (range > 0) {
+      auto value = static_cast<float>(range) * progress;
+      diag->setValue(value);
+    }
   });
 
   connect(loader.get(), &FormatLoader::success, this, &MainWindow::onLoadSuccess);

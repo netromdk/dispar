@@ -22,12 +22,14 @@ void FormatLoader::run()
 
   auto typeName = Format::typeName(fmt->type());
   emit status(tr("Detected %1 - Reading and parsing binary..").arg(typeName));
+  emit progress(0.33);
 
   if (!fmt->parse()) {
     emit failed(tr("Could not parse file!"));
     return;
   }
 
+  emit progress(0.66);
   emit status(tr("Disassembling code sections.."));
 
   for (auto &object : fmt->objects()) {
@@ -51,6 +53,7 @@ void FormatLoader::run()
     }
   }
 
+  emit progress(1);
   emit status(tr("Success!"));
 
   auto end = QDateTime::currentDateTime();

@@ -16,6 +16,7 @@ public:
 signals:
   void failed(const QString &msg);
   void status(const QString &msg);
+  void progress(float progress);
   void success(std::shared_ptr<Format> fmt);
 
 protected:
