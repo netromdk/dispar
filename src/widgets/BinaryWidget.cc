@@ -123,7 +123,7 @@ void BinaryWidget::setup()
     cursor.insertBlock();
     cursor.insertText(QString("%1%2%3")
                         .arg(values[0], -20)
-                        .arg(values[1], -8)
+                        .arg(values[1], -10)
                         .arg(values.size() == 3 ? values[2] : ""));
 
     auto *userData = new TextBlockUserData;
