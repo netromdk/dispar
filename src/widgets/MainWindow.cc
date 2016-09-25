@@ -50,12 +50,14 @@ void MainWindow::showEvent(QShowEvent *event)
   }
 
   // Load specified files or open file dialog.
-  if (startupFile.isEmpty()) {
-    openBinary();
-  }
-  else {
-    loadBinary(startupFile);
-  }
+  Util::delayFunc([this] {
+    if (startupFile.isEmpty()) {
+      openBinary();
+    }
+    else {
+      loadBinary(startupFile);
+    }
+  });
 }
 
 void MainWindow::openBinary()
@@ -167,7 +169,6 @@ void MainWindow::loadBinary(QString file)
   qDebug() << "Loading binary:" << file;
 
   auto *loaderDiag = new QProgressDialog(this);
-  loaderDiag->setWindowFlags(loaderDiag->windowFlags() | Qt::WindowStaysOnTopHint);
   loaderDiag->setLabelText(tr("Detecting format.."));
   loaderDiag->setCancelButton(nullptr);
   loaderDiag->setRange(0, 0);
