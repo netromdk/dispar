@@ -1,9 +1,9 @@
 #include "MainWindow.h"
 #include "../BinaryObject.h"
-#include "../Disassembler.h"
 #include "../Util.h"
 #include "../Version.h"
 #include "../formats/Format.h"
+#include "../formats/FormatLoader.h"
 #include "AboutDialog.h"
 #include "BinaryWidget.h"
 
@@ -19,7 +19,7 @@
 #include <QVBoxLayout>
 
 MainWindow::MainWindow(const QString &file)
-  : shown(false), modified(false), startupFile(file), binaryWidget(nullptr)
+  : shown(false), modified(false), startupFile(file), binaryWidget(nullptr), loaderDiag(nullptr)
 {
   setTitle();
   readSettings();
@@ -88,6 +88,39 @@ void MainWindow::onAbout()
   diag.exec();
 }
 
+void MainWindow::onLoadFailed(const QString &msg)
+{
+  QMessageBox::critical(this, "dispar", msg);
+}
+
+void MainWindow::onLoadStatus(const QString &msg)
+{
+  qDebug() << qPrintable(msg);
+  if (loaderDiag) {
+    loaderDiag->setLabelText(msg);
+  }
+}
+
+void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
+{
+  auto file = fmt->file();
+  setTitle(file);
+
+  // Add recent file.
+  if (!recentFiles.contains(file)) {
+    recentFiles << file;
+  }
+  if (recentFiles.size() > 10) {
+    recentFiles.removeFirst();
+  }
+
+  if (centralWidget()) {
+    centralWidget()->deleteLater();
+  }
+  binaryWidget = new BinaryWidget(fmt);
+  setCentralWidget(binaryWidget);
+}
+
 void MainWindow::setTitle(const QString &file)
 {
   setWindowTitle(QString("Dispar v%1%2")
@@ -146,70 +179,29 @@ void MainWindow::loadBinary(QString file)
 
   qDebug() << "Loading binary:" << file;
 
-  QProgressDialog progDiag(this);
-  progDiag.setLabelText(tr("Detecting format.."));
-  progDiag.setCancelButton(nullptr);
-  progDiag.setRange(0, 0);
-  progDiag.show();
-  qDebug() << qPrintable(progDiag.labelText());
-  qApp->processEvents();
-
-  auto fmt = Format::detect(file);
-  if (fmt == nullptr) {
-    QMessageBox::critical(this, "dispar", tr("Unknown file - could not open!"));
-    return;
+  if (loaderDiag) {
+    loaderDiag->deleteLater();
   }
 
-  qDebug() << "detected:" << Format::typeName(fmt->type());
+  loaderDiag = new QProgressDialog(this);
+  loaderDiag->setWindowFlags(loaderDiag->windowFlags() | Qt::WindowStaysOnTopHint);
+  loaderDiag->setLabelText(tr("Detecting format.."));
+  loaderDiag->setCancelButton(nullptr);
+  loaderDiag->setRange(0, 0);
+  loaderDiag->show();
+  qDebug() << qPrintable(loaderDiag->labelText());
 
-  progDiag.setLabelText(tr("Reading and parsing binary.."));
-  qDebug() << qPrintable(progDiag.labelText());
-  qApp->processEvents();
-  if (!fmt->parse()) {
-    QMessageBox::warning(this, "dispar", tr("Could not parse file!"));
-    return;
-  }
-
-  // Update window title with path.
-  setTitle(file);
-
-  // Disassemble code sections of all binary objects.
-  progDiag.setLabelText(tr("Disassembling code sections.."));
-  qDebug() << qPrintable(progDiag.labelText());
-  qApp->processEvents();
-  for (auto &object : fmt->objects()) {
-    Disassembler dis(object);
-    if (dis.valid()) {
-      for (auto &sec : object->sections()) {
-        switch (sec->type()) {
-        case Section::Type::TEXT:
-        case Section::Type::SYMBOL_STUBS: {
-          auto res = dis.disassemble(sec->data());
-          if (res) {
-            sec->setDisassembly(res);
-          }
-          break;
-        }
-
-        default:
-          break;
-        }
-      }
+  loader = std::make_unique<FormatLoader>(file);
+  connect(loader.get(), &FormatLoader::failed, this, &MainWindow::onLoadFailed);
+  connect(loader.get(), &FormatLoader::status, this, &MainWindow::onLoadStatus);
+  connect(loader.get(), &FormatLoader::success, this, &MainWindow::onLoadSuccess);
+  connect(loader.get(), &FormatLoader::finished, this, [this] {
+    qDebug() << "cleaning up loader";
+    loader.reset();
+    if (loaderDiag) {
+      loaderDiag->deleteLater();
+      loaderDiag = nullptr;
     }
-  }
-
-  // Add recent file.
-  if (!recentFiles.contains(file)) {
-    recentFiles << file;
-  }
-  if (recentFiles.size() > 10) {
-    recentFiles.removeFirst();
-  }
-
-  if (centralWidget()) {
-    centralWidget()->deleteLater();
-  }
-  binaryWidget = new BinaryWidget(fmt);
-  setCentralWidget(binaryWidget);
-  // connect(binWidget, &BinaryWidget::modified, this, &MainWindow::onBinaryObjectModified);
+  });
+  loader->start();
 }

@@ -45,6 +45,8 @@ add_library(
 
   formats/Format.h
   formats/Format.cc
+  formats/FormatLoader.h
+  formats/FormatLoader.cc
   formats/MachO.h
   formats/MachO.cc
   )
