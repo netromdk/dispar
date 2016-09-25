@@ -1,12 +1,14 @@
 #ifndef DISPAR_TESTUTILS_H
 #define DISPAR_TESTUTILS_H
 
-#include <QFile>
 #include <QByteArray>
+#include <QFile>
 
-#include <ostream>
-#include <memory>
 #include <functional>
+#include <memory>
+#include <ostream>
+
+#include "SignalSpy.h"
 
 /// Creates temporary file that will be deleted when pointer is destroyed.
 /** If \p data is specified it will be written to the file. */
