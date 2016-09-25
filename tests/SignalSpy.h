@@ -78,4 +78,10 @@ private:
   bool expect, triggered;
 };
 
+#define SIGNAL_SPY_ONE(ArgType, instance, mf)                                                      \
+  SignalSpy::one<ArgType>(__FILE__, __LINE__, instance, mf);
+
+#define SIGNAL_SPY_ONE_FUNC(ArgType, instance, mf, func)                                           \
+  SignalSpy::one<ArgType>(__FILE__, __LINE__, instance, mf, func);
+
 #endif // DISPAR_SIGNAL_SPY_H

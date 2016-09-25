@@ -8,11 +8,13 @@ TEST(FormatLoader, load)
 {
   FormatLoader loader(":macho_main");
 
-  auto statusSpy =
-    SignalSpy::one<const QString &>(__FILE__, __LINE__, &loader, &FormatLoader::status);
+  // TODO: create more tests for when things fail
+  // TODO: create general create function with variadic templates instead of one(), two()..
+
+  auto statusSpy = SIGNAL_SPY_ONE(const QString &, &loader, &FormatLoader::status);
 
   auto progressSpy =
-    SignalSpy::one<float>(__FILE__, __LINE__, &loader, &FormatLoader::progress, [](float progress) {
+    SIGNAL_SPY_ONE_FUNC(float, &loader, &FormatLoader::progress, [](float progress) {
       static int cnt = 0;
       cnt++;
       if (cnt == 1) {
@@ -26,8 +28,7 @@ TEST(FormatLoader, load)
       }
     });
 
-  auto successSpy =
-    SignalSpy::one<std::shared_ptr<Format>>(__FILE__, __LINE__, &loader, &FormatLoader::success);
+  auto successSpy = SIGNAL_SPY_ONE(std::shared_ptr<Format>, &loader, &FormatLoader::success);
 
   loader.start();
 
