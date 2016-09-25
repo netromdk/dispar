@@ -26,14 +26,18 @@ public:
 
 } // anon
 
-BinaryWidget::BinaryWidget(std::shared_ptr<BinaryObject> object) : object(object), doc(nullptr)
+BinaryWidget::BinaryWidget(std::shared_ptr<BinaryObject> object)
+  : object(object), shown(false), doc(nullptr)
 {
   createLayout();
 }
 
 void BinaryWidget::showEvent(QShowEvent *event)
 {
-  setup();
+  if (!shown) {
+    shown = true;
+    setup();
+  }
 }
 
 void BinaryWidget::onSymbolChosen(int row)

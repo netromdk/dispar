@@ -34,6 +34,7 @@ private:
 
   std::shared_ptr<BinaryObject> object;
 
+  bool shown;
   QListWidget *symbolList, *stringList;
   QPlainTextEdit *mainView;
   QTextDocument *doc;
