@@ -17,10 +17,10 @@
 #include <QProgressDialog>
 #include <QSet>
 #include <QSettings>
+#include <QTabWidget>
 #include <QVBoxLayout>
 
-MainWindow::MainWindow(const QString &file)
-  : modified(false), startupFile(file), binaryWidget(nullptr)
+MainWindow::MainWindow(const QString &file) : modified(false), startupFile(file)
 {
   setTitle();
   readSettings();
@@ -105,10 +105,17 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
       centralWidget()->deleteLater();
     }
 
-    auto object = fmt->objects()[0];
-
-    binaryWidget = new BinaryWidget(object);
-    setCentralWidget(binaryWidget);
+    auto objects = fmt->objects();
+    if (objects.size() == 1) {
+      setCentralWidget(new BinaryWidget(objects[0]));
+    }
+    else {
+      auto *tabWidget = new QTabWidget;
+      for (auto &object : objects) {
+        tabWidget->addTab(new BinaryWidget(object), cpuTypeName(object->cpuType()));
+      }
+      setCentralWidget(tabWidget);
+    }
   });
 }
 

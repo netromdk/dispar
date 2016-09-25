@@ -43,8 +43,6 @@ private:
   QByteArray geometry;
 
   std::unique_ptr<FormatLoader> loader;
-
-  BinaryWidget *binaryWidget;
 };
 
 #endif // DISPAR_MAIN_WINDOW_H
