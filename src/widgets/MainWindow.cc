@@ -11,6 +11,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QFileDialog>
+#include <QLabel>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QProgressDialog>
@@ -67,12 +68,7 @@ void MainWindow::openBinary()
   diag.setNameFilters(
     QStringList{"Mach-O binary (*.o *.dylib *.dylinker *.bundle *.app *)", "Any file (*)"});
 
-  if (!diag.exec()) {
-    if (!binaryWidget) {
-      qApp->quit();
-    }
-    return;
-  }
+  if (!diag.exec()) return;
 
   auto file = diag.selectedFiles().first();
   loadBinary(file);
@@ -137,7 +133,15 @@ void MainWindow::readSettings()
 
 void MainWindow::createLayout()
 {
-  // Doing nothing right now.
+  auto *label = new QLabel(tr("Load a binary file!"));
+  label->setAlignment(Qt::AlignCenter);
+
+  auto font = label->font();
+  font.setPointSize(24);
+  font.setBold(true);
+  label->setFont(font);
+
+  setCentralWidget(label);
 }
 
 void MainWindow::createMenu()
