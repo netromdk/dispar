@@ -38,10 +38,6 @@ QString BinaryWidget::file() const
 
 void BinaryWidget::showEvent(QShowEvent *event)
 {
-  static bool first = true;
-  if (!first) return;
-  first = false;
-
   setup();
 }
 
