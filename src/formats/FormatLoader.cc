@@ -3,6 +3,7 @@
 #include "../Disassembler.h"
 #include "Format.h"
 
+#include <QDateTime>
 #include <QDebug>
 
 FormatLoader::FormatLoader(const QString &file) : file(file)
@@ -11,6 +12,8 @@ FormatLoader::FormatLoader(const QString &file) : file(file)
 
 void FormatLoader::run()
 {
+  auto start = QDateTime::currentDateTime();
+
   auto fmt = Format::detect(file);
   if (fmt == nullptr) {
     emit failed(tr("Unknown file type - could not detect or open!"));
@@ -47,6 +50,9 @@ void FormatLoader::run()
       }
     }
   }
+
+  auto end = QDateTime::currentDateTime();
+  qDebug() << "Loaded in" << start.msecsTo(end) << "ms";
 
   emit success(fmt);
 }
