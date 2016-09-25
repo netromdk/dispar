@@ -89,22 +89,24 @@ void MainWindow::onAbout()
 
 void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
 {
-  auto file = fmt->file();
-  setTitle(file);
+  Util::delayFunc([this, fmt] {
+    auto file = fmt->file();
+    setTitle(file);
 
-  // Add recent file.
-  if (!recentFiles.contains(file)) {
-    recentFiles << file;
-  }
-  if (recentFiles.size() > 10) {
-    recentFiles.removeFirst();
-  }
+    // Add recent file.
+    if (!recentFiles.contains(file)) {
+      recentFiles << file;
+    }
+    if (recentFiles.size() > 10) {
+      recentFiles.removeFirst();
+    }
 
-  if (centralWidget()) {
-    centralWidget()->deleteLater();
-  }
-  binaryWidget = new BinaryWidget(fmt);
-  setCentralWidget(binaryWidget);
+    if (centralWidget()) {
+      centralWidget()->deleteLater();
+    }
+    binaryWidget = new BinaryWidget(fmt);
+    setCentralWidget(binaryWidget);
+  });
 }
 
 void MainWindow::setTitle(const QString &file)
