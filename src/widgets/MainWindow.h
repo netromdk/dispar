@@ -26,10 +26,10 @@ private slots:
   void onAbout();
 
 private:
+  void setTitle(const QString &file = QString());
   void readSettings();
   void createLayout();
   void createMenu();
-
   void loadBinary(QString file);
 
   bool shown, modified;

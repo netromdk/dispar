@@ -2,6 +2,7 @@
 #include "../BinaryObject.h"
 #include "../Disassembler.h"
 #include "../Util.h"
+#include "../Version.h"
 #include "../formats/Format.h"
 #include "AboutDialog.h"
 #include "BinaryWidget.h"
@@ -20,7 +21,7 @@
 MainWindow::MainWindow(const QString &file)
   : shown(false), modified(false), startupFile(file), binaryWidget(nullptr)
 {
-  setWindowTitle("Dispar");
+  setTitle();
   readSettings();
   createLayout();
   createMenu();
@@ -85,6 +86,13 @@ void MainWindow::onAbout()
 {
   AboutDialog diag;
   diag.exec();
+}
+
+void MainWindow::setTitle(const QString &file)
+{
+  setWindowTitle(QString("Dispar v%1%2")
+                   .arg(versionString())
+                   .arg(!file.isEmpty() ? QString(" - %1").arg(file) : ""));
 }
 
 void MainWindow::readSettings()
@@ -163,7 +171,7 @@ void MainWindow::loadBinary(QString file)
   }
 
   // Update window title with path.
-  setWindowTitle(QString("Dispar - %1").arg(file));
+  setTitle(file);
 
   // Disassemble code sections of all binary objects.
   progDiag.setLabelText(tr("Disassembling code sections.."));
