@@ -19,7 +19,7 @@
 #include <QVBoxLayout>
 
 MainWindow::MainWindow(const QString &file)
-  : shown(false), modified(false), startupFile(file), binaryWidget(nullptr)
+  : modified(false), startupFile(file), binaryWidget(nullptr)
 {
   setTitle();
   readSettings();
@@ -38,8 +38,9 @@ void MainWindow::showEvent(QShowEvent *event)
 {
   QMainWindow::showEvent(event);
 
-  if (shown) return;
-  shown = true;
+  static bool first = true;
+  if (!first) return;
+  first = true;
 
   if (geometry.isEmpty()) {
     resize(900, 500);

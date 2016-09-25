@@ -37,7 +37,7 @@ private:
   void createMenu();
   void loadBinary(QString file);
 
-  bool shown, modified;
+  bool modified;
   QString startupFile;
   QStringList recentFiles;
   QByteArray geometry;
