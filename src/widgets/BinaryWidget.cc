@@ -206,8 +206,10 @@ void BinaryWidget::setup()
     cursor.insertText("\n===== /" + secName + " =====\n");
   }
 
-  // Show cstring sections.
-  for (auto &sec : obj->sectionsByType(Section::Type::CSTRING)) {
+  // Show cstring+string sections.
+  auto stringSecs = obj->sectionsByType(Section::Type::CSTRING);
+  stringSecs << obj->sectionsByType(Section::Type::STRING);
+  for (auto &sec : stringSecs) {
     cursor.movePosition(QTextCursor::End);
     cursor.insertBlock();
     auto secName = Section::typeName(sec->type());
