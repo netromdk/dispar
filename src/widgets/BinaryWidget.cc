@@ -84,6 +84,7 @@ void BinaryWidget::createLayout()
 
   mainView = new QPlainTextEdit;
   mainView->setReadOnly(true);
+  mainView->setCenterOnScroll(true);
   mainView->setLineWrapMode(QPlainTextEdit::NoWrap);
   mainView->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
   connect(mainView, &QPlainTextEdit::cursorPositionChanged, this,
