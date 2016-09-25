@@ -110,24 +110,8 @@ void BinaryWidget::setup()
 
   auto obj = fmt->objects()[0];
 
-  // Fill side bar with function names of the symbol tables.
   auto symbols = obj->symbolTable().symbols();
   symbols.append(obj->dynSymbolTable().symbols());
-
-  for (auto symbol : symbols) {
-    if (symbol.value() == 0) continue;
-    auto *item = new QListWidgetItem;
-
-    auto func = Util::demangle(symbol.string());
-    if (func.isEmpty()) {
-      func = QString("unnamed_%1").arg(symbol.value(), 0, 16);
-    }
-    item->setText(func);
-
-    item->setData(Qt::UserRole, symbol.value()); // Offset to symbol.
-    item->setToolTip(QString("0x%1").arg(symbol.value(), 0, 16));
-    symbolList->addItem(item);
-  }
 
   // Create text edit of all binary contents.
   QTextCursor cursor(doc);
@@ -231,6 +215,25 @@ void BinaryWidget::setup()
     cursor.movePosition(QTextCursor::End);
     cursor.insertBlock();
     cursor.insertText("\n===== /" + secName + " =====\n");
+  }
+
+  // Fill side bar with function names of the symbol tables.
+  for (auto symbol : symbols) {
+    if (symbol.value() == 0) continue;
+    auto *item = new QListWidgetItem;
+
+    auto func = Util::demangle(symbol.string());
+    if (func.isEmpty()) {
+      func = QString("unnamed_%1").arg(symbol.value(), 0, 16);
+    }
+    if (offsetBlock.contains(symbol.value())) {
+      func += " *";
+    }
+    item->setText(func);
+
+    item->setData(Qt::UserRole, symbol.value()); // Offset to symbol.
+    item->setToolTip(QString("0x%1").arg(symbol.value(), 0, 16));
+    symbolList->addItem(item);
   }
 
   cursor.endEditBlock();
