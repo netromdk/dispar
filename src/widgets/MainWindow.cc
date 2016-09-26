@@ -129,7 +129,34 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
 
     setTitle(file, object->cpuType());
 
-    // TODO: Disassemble code sections in a thread!
+    QProgressDialog disDiag(this);
+    disDiag.setLabelText(tr("Disassembling code sections.."));
+    disDiag.setCancelButton(nullptr);
+    disDiag.setRange(0, 0);
+    disDiag.show();
+    qApp->processEvents();
+    qDebug() << qPrintable(disDiag.labelText());
+
+    Disassembler dis(object);
+    if (dis.valid()) {
+      for (auto &sec : object->sections()) {
+        switch (sec->type()) {
+        case Section::Type::TEXT:
+        case Section::Type::SYMBOL_STUBS: {
+          auto res = dis.disassemble(sec->data());
+          if (res) {
+            sec->setDisassembly(res);
+          }
+          break;
+        }
+
+        default:
+          break;
+        }
+      }
+    }
+
+    disDiag.close();
 
     if (centralWidget()) {
       centralWidget()->deleteLater();
