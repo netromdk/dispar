@@ -7,6 +7,7 @@
 #include "AboutDialog.h"
 #include "BinaryWidget.h"
 #include "ConversionHelper.h"
+#include "DisassemblerDialog.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -85,6 +86,14 @@ void MainWindow::onRecentFile()
 void MainWindow::onConversionHelper()
 {
   static auto *diag = new ConversionHelper(this);
+  diag->show();
+  diag->raise();
+  diag->activateWindow();
+}
+
+void MainWindow::onDisassembler()
+{
+  static auto *diag = new DisassemblerDialog(this, Util::currentCpuType());
   diag->show();
   diag->raise();
   diag->activateWindow();
@@ -237,10 +246,8 @@ void MainWindow::createMenu()
   auto *toolsMenu = menuBar()->addMenu(tr("&Tools"));
   toolsMenu->addAction(tr("Conversion helper"), this, SLOT(onConversionHelper()),
                        QKeySequence(Qt::SHIFT + Qt::CTRL + Qt::Key_C));
-  /*
   toolsMenu->addAction(tr("Disassembler"), this, SLOT(onDisassembler()),
                        QKeySequence(Qt::SHIFT + Qt::CTRL + Qt::Key_D));
-  */
 
   auto *helpMenu = menuBar()->addMenu(tr("&Help"));
   helpMenu->addAction(tr("&About"), this, SLOT(onAbout()));

@@ -166,7 +166,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
     r.getUInt32();
   }
 
-  // Types in /usr/local/mach/machine.h
+  // Types in /usr/include/mach/machine.h
   CpuType cpuType{CpuType::X86};
   if (cputype == 7) { // CPU_TYPE_X86, CPU_TYPE_I386
     cpuType = CpuType::X86;

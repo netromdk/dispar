@@ -29,6 +29,7 @@ private slots:
 
   void onRecentFile();
   void onConversionHelper();
+  void onDisassembler();
   void onAbout();
 
   void onLoadSuccess(std::shared_ptr<Format> fmt);
