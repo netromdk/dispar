@@ -82,10 +82,12 @@ void MainWindow::onRecentFile()
   loadBinary(action->text());
 }
 
-void MainWindow::onCoversionHelper()
+void MainWindow::onConversionHelper()
 {
-  ConversionHelper diag;
-  diag.exec();
+  static auto *diag = new ConversionHelper(this);
+  diag->show();
+  diag->raise();
+  diag->activateWindow();
 }
 
 void MainWindow::onAbout()
@@ -233,7 +235,7 @@ void MainWindow::createMenu()
   }
 
   auto *toolsMenu = menuBar()->addMenu(tr("&Tools"));
-  toolsMenu->addAction(tr("Conversion helper"), this, SLOT(onCoversionHelper()),
+  toolsMenu->addAction(tr("Conversion helper"), this, SLOT(onConversionHelper()),
                        QKeySequence(Qt::SHIFT + Qt::CTRL + Qt::Key_C));
   /*
   toolsMenu->addAction(tr("Disassembler"), this, SLOT(onDisassembler()),
