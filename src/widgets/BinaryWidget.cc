@@ -196,14 +196,9 @@ void BinaryWidget::setup()
         }
       }
 
-      // TODO: Create Util function to make it easier.
-      QString bytes;
-      for (int j = 0; j < instr->size; j++) {
-        bytes += Util::padString(QString::number(instr->bytes[j], 16), 2, true, '0') + " ";
-      }
-
-      appendInstruction(
-        QStringList{QString("0x%1").arg(addr, 0, 16), bytes, instr->mnemonic, instr->op_str});
+      appendInstruction(QStringList{QString("0x%1").arg(addr, 0, 16),
+                                    Util::bytesToHex(instr->bytes, instr->size), instr->mnemonic,
+                                    instr->op_str});
     }
 
     cursor.movePosition(QTextCursor::End);
