@@ -65,13 +65,9 @@ TEST(FormatLoader, success)
       static int cnt = 0;
       cnt++;
       if (cnt == 1) {
-        EXPECT_FLOAT_EQ(progress, 0.33);
+        EXPECT_FLOAT_EQ(progress, 0.5);
       }
       else if (cnt == 2) {
-        //EXPECT_FLOAT_EQ(progress, 0.66);
-        EXPECT_FLOAT_EQ(progress, 1);
-      }
-      else if (cnt == 3) {
         EXPECT_FLOAT_EQ(progress, 1);
       }
     });

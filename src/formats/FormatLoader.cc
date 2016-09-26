@@ -1,6 +1,5 @@
 #include "FormatLoader.h"
 #include "../BinaryObject.h"
-#include "../Disassembler.h"
 #include "Format.h"
 
 #include <QDateTime>
@@ -22,38 +21,13 @@ void FormatLoader::run()
 
   auto typeName = Format::typeName(fmt->type());
   emit status(tr("Detected %1 - Reading and parsing binary..").arg(typeName));
-  emit progress(0.33);
+  emit progress(0.5);
 
   if (!fmt->parse()) {
     emit failed(tr("Could not parse file!"));
     return;
   }
 
-  /*
-  emit progress(0.66);
-  emit status(tr("Disassembling code sections.."));
-
-  for (auto &object : fmt->objects()) {
-    Disassembler dis(object);
-    if (dis.valid()) {
-      for (auto &sec : object->sections()) {
-        switch (sec->type()) {
-        case Section::Type::TEXT:
-        case Section::Type::SYMBOL_STUBS: {
-          auto res = dis.disassemble(sec->data());
-          if (res) {
-            sec->setDisassembly(res);
-          }
-          break;
-        }
-
-        default:
-          break;
-        }
-      }
-    }
-  }
-  */
   emit progress(1);
   emit status(tr("Success!"));
 
