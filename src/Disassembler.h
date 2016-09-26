@@ -29,6 +29,7 @@ public:
   ~Disassembler();
 
   std::shared_ptr<Result> disassemble(const QByteArray &data, quint64 baseAddr = 0);
+  std::shared_ptr<Result> disassemble(const QString &text, quint64 baseAddr = 0);
 
   bool valid() const;
 

@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
-#include "CpuType.h"
 #include "BinaryObject.h"
+#include "CpuType.h"
 #include "Disassembler.h"
 
 TEST(Disassembler, instantiate)
@@ -30,7 +30,7 @@ TEST(Disassembler, valid)
   }
 }
 
-TEST(Disassembler, disassemble)
+TEST(Disassembler, disassembleData)
 {
   {
     auto obj = std::make_shared<BinaryObject>();
@@ -38,7 +38,7 @@ TEST(Disassembler, disassemble)
     ASSERT_TRUE(dis.valid());
 
     const char *code = "\x90";
-    auto res = dis.disassemble(code, 1);
+    auto res = dis.disassemble(QByteArray(code));
     ASSERT_NE(res, nullptr);
     EXPECT_EQ(res->count(), 1);
 
@@ -52,7 +52,26 @@ TEST(Disassembler, disassemble)
     Disassembler dis(obj);
     ASSERT_TRUE(dis.valid());
 
-    auto res = dis.disassemble(nullptr, 0);
+    auto res = dis.disassemble(QByteArray(nullptr));
     ASSERT_EQ(res, nullptr);
+  }
+}
+
+TEST(Disassembler, disassembleText)
+{
+  {
+    auto obj = std::make_shared<BinaryObject>();
+    Disassembler dis(obj);
+    ASSERT_TRUE(dis.valid());
+
+    auto res = dis.disassemble(QString("90 90 90"));
+    ASSERT_NE(res, nullptr);
+    ASSERT_EQ(res->count(), 3);
+
+    for (int i = 0; i < res->count(); i++) {
+      auto *instr = res->instructions(i);
+      ASSERT_NE(instr, nullptr);
+      EXPECT_EQ(std::string(instr->mnemonic), std::string("nop")) << instr->mnemonic;
+    }
   }
 }

@@ -1,5 +1,6 @@
 #include "Disassembler.h"
 #include "BinaryObject.h"
+#include "Util.h"
 
 #include <QByteArray>
 #include <QDebug>
@@ -76,6 +77,13 @@ std::shared_ptr<Disassembler::Result> Disassembler::disassemble(const QByteArray
     return nullptr;
   }
   return std::make_shared<Result>(insn, count);
+}
+
+std::shared_ptr<Disassembler::Result> Disassembler::disassemble(const QString &text,
+                                                                quint64 baseAddr)
+{
+  auto input = Util::hexToData(text.simplified().trimmed().replace(" ", ""));
+  return disassemble(input, baseAddr);
 }
 
 bool Disassembler::valid() const
