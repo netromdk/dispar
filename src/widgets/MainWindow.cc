@@ -106,16 +106,26 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
       object = objects.first();
     }
     else {
+      auto currentCpu = Util::currentCpuType();
+      qDebug() << "Current ARCH:" << cpuTypeName(currentCpu);
+
       QStringList items;
-      for (auto &obj : objects) {
+      int current = 0;
+      for (int i = 0; i < objects.size(); i++) {
+        auto &obj = objects[i];
         items << QString("%1, %2 (%3-bit)")
                    .arg(cpuTypeName(obj->cpuType()))
                    .arg(cpuTypeName(obj->cpuSubType()))
                    .arg(obj->systemBits());
+
+        if (obj->cpuType() == currentCpu && obj->systemBits() == sizeof(void *) * 8) {
+          current = i;
+        }
       }
+
       bool ok;
-      auto choice = QInputDialog::getItem(this, tr("Multiple binary objects"), tr("Choose:"), items,
-                                          0, false, &ok);
+      auto choice = QInputDialog::getItem(this, tr("%1 binary objects in file").arg(objects.size()),
+                                          tr("Choose:"), items, current, false, &ok);
 
       if (!ok || choice.isEmpty()) {
         return;
