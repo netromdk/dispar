@@ -97,6 +97,15 @@ QByteArray Util::hexToData(const QString &str)
   return data;
 }
 
+QString Util::bytesToHex(const unsigned char *bytes, int size)
+{
+  QString res;
+  for (int j = 0; j < size; j++) {
+    res += padString(QString::number(bytes[j], 16), 2, true, '0') + (j < size - 1 ? " " : "");
+  }
+  return res;
+}
+
 QString Util::resolveAppBinary(QString path)
 {
   if (path.endsWith("/")) {

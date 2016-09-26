@@ -23,6 +23,8 @@ public:
   static QString hexToString(const QString &str);
   static QByteArray hexToData(const QString &str);
 
+  static QString bytesToHex(const unsigned char *bytes, int size);
+
   static QString resolveAppBinary(QString path);
 
   static void centerWidget(QWidget *widget);
