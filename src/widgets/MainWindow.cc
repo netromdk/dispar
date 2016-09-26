@@ -6,6 +6,7 @@
 #include "../formats/FormatLoader.h"
 #include "AboutDialog.h"
 #include "BinaryWidget.h"
+#include "ConversionHelper.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -79,6 +80,12 @@ void MainWindow::onRecentFile()
   auto *action = qobject_cast<QAction *>(sender());
   if (!action) return;
   loadBinary(action->text());
+}
+
+void MainWindow::onCoversionHelper()
+{
+  ConversionHelper diag;
+  diag.exec();
 }
 
 void MainWindow::onAbout()
@@ -224,6 +231,14 @@ void MainWindow::createMenu()
       recentMenu->addAction(file, this, SLOT(onRecentFile()));
     }
   }
+
+  auto *toolsMenu = menuBar()->addMenu(tr("&Tools"));
+  toolsMenu->addAction(tr("Conversion helper"), this, SLOT(onCoversionHelper()),
+                       QKeySequence(Qt::SHIFT + Qt::CTRL + Qt::Key_C));
+  /*
+  toolsMenu->addAction(tr("Disassembler"), this, SLOT(onDisassembler()),
+                       QKeySequence(Qt::SHIFT + Qt::CTRL + Qt::Key_D));
+  */
 
   auto *helpMenu = menuBar()->addMenu(tr("&Help"));
   helpMenu->addAction(tr("&About"), this, SLOT(onAbout()));

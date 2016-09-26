@@ -28,6 +28,7 @@ private slots:
   // void closeBinary();
 
   void onRecentFile();
+  void onCoversionHelper();
   void onAbout();
 
   void onLoadSuccess(std::shared_ptr<Format> fmt);
