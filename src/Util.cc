@@ -200,6 +200,7 @@ void Util::delayFunc(std::function<void()> func)
   QTimer::singleShot(1, func);
 }
 
+// Great list: https://sourceforge.net/p/predef/wiki/Architectures/
 CpuType Util::currentCpuType()
 {
 #if defined(i386) || defined(__i386__) || defined(__i386) || defined(__i486__) ||                  \
@@ -224,11 +225,7 @@ CpuType Util::currentCpuType()
   return CpuType::POWER_PC_64;
 #elif defined(__sparc__) /* GNU C */ || defined(__sparc) /* Sun Studio */
   return CpuType::SPARC;
+#else
+  qFatal("Could not detect arch!")
 #endif
-
-  // Great list: https://sourceforge.net/p/predef/wiki/Architectures/
-
-  // Return something!
-  qCritical() << "Could not detect current architecture!";
-  return CpuType::X86;
 }
