@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QCommandLineParser>
 #include <QStringList>
 #include <QTimer>
 
@@ -14,9 +15,17 @@ int main(int argc, char **argv)
 
   Format::registerType();
 
+  QCommandLineParser parser;
+  parser.addHelpOption();
+  parser.addVersionOption();
+  parser.addPositionalArgument("binary", "Binary file to load.", "(binary)");
+
+  parser.process(app);
+  auto posArgs = parser.positionalArguments();
+
   QString file;
-  if (argc == 2) {
-    file = QString::fromUtf8(argv[1]);
+  if (posArgs.size() == 1) {
+    file = posArgs.first();
   }
 
   // Start in event loop.
