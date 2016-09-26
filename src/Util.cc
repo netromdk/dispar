@@ -2,6 +2,7 @@
 
 #include <QAbstractScrollArea>
 #include <QApplication>
+#include <QDebug>
 #include <QDesktopWidget>
 #include <QDir>
 #include <QFileInfo>
@@ -197,4 +198,37 @@ QString Util::demangle(const QString &name)
 void Util::delayFunc(std::function<void()> func)
 {
   QTimer::singleShot(1, func);
+}
+
+CpuType Util::currentCpuType()
+{
+#if defined(i386) || defined(__i386__) || defined(__i386) || defined(__i486__) ||                  \
+  defined(__i586__) || defined(__i686__) /* GNU C */ || defined(_M_I86) /* VS */ ||                \
+  defined(_M_IX86) /* VS + Intel C + Watcom */ || defined(__X86__) /* Watcom */ ||                 \
+  defined(_X86_) /* MinGW32 */
+  return CpuType::X86;
+#elif defined(__amd64__) || defined(__amd64) || defined(__x86_64__) ||                             \
+  defined(__x86_64) /* GNU C + Sun Studio */ || defined(_M_X64) || defined(_M_AMD64) /* VS */
+  return CpuType::X86_64;
+#elif defined(__arm__) /* GNU C */ || defined(__arm) /* Diab */ || defined(_M_ARM) /* VS */ ||     \
+  defined(__TARGET_ARCH_ARM) /* RealView */
+  // TODO: Detect 32 or 64 bit!
+  return CpuType::ARM;
+#elif defined(__aarch64__)   // GNU C
+  return CpuType::ARM_64;
+#elif defined(__powerpc) || defined(__powerpc__) || defined(__POWERPC__) || defined(__ppc__) ||    \
+  defined(__PPC__) || defined(_ARCH_PPC) /* GNU C */ || defined(_M_PPC) /* VS */
+  return CpuType::POWER_PC;
+#elif defined(__powerpc64__) || defined(__ppc64__) || defined(__PPC64__) ||                        \
+  defined(_ARCH_PPC64)                                   /* GNU C */
+  return CpuType::POWER_PC_64;
+#elif defined(__sparc__) /* GNU C */ || defined(__sparc) /* Sun Studio */
+  return CpuType::SPARC;
+#endif
+
+  // Great list: https://sourceforge.net/p/predef/wiki/Architectures/
+
+  // Return something!
+  qCritical() << "Could not detect current architecture!";
+  return CpuType::X86;
 }

@@ -8,6 +8,7 @@ enum class CpuType : int {
   X86_64,
   HPPA,
   ARM,
+  ARM_64,
   SPARC,
   I860,
   POWER_PC,

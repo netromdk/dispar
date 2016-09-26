@@ -7,6 +7,8 @@
 
 #include <functional>
 
+#include "CpuType.h"
+
 class QAbstractScrollArea;
 
 class Util {
@@ -43,6 +45,8 @@ public:
   static QString demangle(const QString &name);
 
   static void delayFunc(std::function<void()> func);
+
+  static CpuType currentCpuType();
 };
 
 #endif // DISPAR_UTIL_H
