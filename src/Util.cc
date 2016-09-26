@@ -203,6 +203,9 @@ void Util::delayFunc(std::function<void()> func)
 // Great list: https://sourceforge.net/p/predef/wiki/Architectures/
 CpuType Util::currentCpuType()
 {
+  constexpr bool _64 = (sizeof(void *) == 8);
+  (void) _64; // Mark used.
+
 #if defined(i386) || defined(__i386__) || defined(__i386) || defined(__i486__) ||                  \
   defined(__i586__) || defined(__i686__) /* GNU C */ || defined(_M_I86) /* VS */ ||                \
   defined(_M_IX86) /* VS + Intel C + Watcom */ || defined(__X86__) /* Watcom */ ||                 \
@@ -213,8 +216,7 @@ CpuType Util::currentCpuType()
   return CpuType::X86_64;
 #elif defined(__arm__) /* GNU C */ || defined(__arm) /* Diab */ || defined(_M_ARM) /* VS */ ||     \
   defined(__TARGET_ARCH_ARM) /* RealView */
-  // TODO: Detect 32 or 64 bit!
-  return CpuType::ARM;
+  return (_64 ? CpuType::ARM_64 : CpuType::ARM);
 #elif defined(__aarch64__)   // GNU C
   return CpuType::ARM_64;
 #elif defined(__powerpc) || defined(__powerpc__) || defined(__POWERPC__) || defined(__ppc__) ||    \
