@@ -6,6 +6,8 @@
 
 #include <memory>
 
+#include "../CpuType.h"
+
 class Format;
 class FormatLoader;
 class BinaryWidget;
@@ -31,7 +33,7 @@ private slots:
   void onLoadSuccess(std::shared_ptr<Format> fmt);
 
 private:
-  void setTitle(const QString &file = QString());
+  void setTitle(const QString &file = QString(), CpuType type = CpuType::X86);
   void readSettings();
   void createLayout();
   void createMenu();

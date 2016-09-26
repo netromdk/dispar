@@ -11,13 +11,13 @@
 #include <QDebug>
 #include <QDir>
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QLabel>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QProgressDialog>
 #include <QSet>
 #include <QSettings>
-#include <QTabWidget>
 #include <QVBoxLayout>
 
 MainWindow::MainWindow(const QString &file) : modified(false), startupFile(file)
@@ -91,7 +91,6 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
 {
   Util::delayFunc([this, fmt] {
     auto file = fmt->file();
-    setTitle(file);
 
     // Add recent file.
     if (!recentFiles.contains(file)) {
@@ -101,29 +100,50 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
       recentFiles.removeFirst();
     }
 
+    auto objects = fmt->objects();
+    std::shared_ptr<BinaryObject> object = nullptr;
+    if (objects.size() == 1) {
+      object = objects.first();
+    }
+    else {
+      QStringList items;
+      for (auto &obj : objects) {
+        items << QString("%1, %2 (%3-bit)")
+                   .arg(cpuTypeName(obj->cpuType()))
+                   .arg(cpuTypeName(obj->cpuSubType()))
+                   .arg(obj->systemBits());
+      }
+      bool ok;
+      auto choice = QInputDialog::getItem(this, tr("Multiple binary objects"), tr("Choose:"), items,
+                                          0, false, &ok);
+
+      if (!ok || choice.isEmpty()) {
+        return;
+      }
+
+      int idx = items.indexOf(choice);
+      Q_ASSERT(idx != -1);
+      object = objects[idx];
+    }
+    Q_ASSERT(object);
+
+    setTitle(file, object->cpuType());
+
+    // TODO: Disassemble code sections in a thread!
+
     if (centralWidget()) {
       centralWidget()->deleteLater();
     }
-
-    auto objects = fmt->objects();
-    if (objects.size() == 1) {
-      setCentralWidget(new BinaryWidget(objects[0]));
-    }
-    else {
-      auto *tabWidget = new QTabWidget;
-      for (auto &object : objects) {
-        tabWidget->addTab(new BinaryWidget(object), cpuTypeName(object->cpuType()));
-      }
-      setCentralWidget(tabWidget);
-    }
+    setCentralWidget(new BinaryWidget(object));
   });
 }
 
-void MainWindow::setTitle(const QString &file)
+void MainWindow::setTitle(const QString &file, CpuType type)
 {
-  setWindowTitle(QString("Dispar v%1%2")
-                   .arg(versionString())
-                   .arg(!file.isEmpty() ? QString(" - %1").arg(file) : ""));
+  setWindowTitle(
+    QString("Dispar v%1%2")
+      .arg(versionString())
+      .arg(!file.isEmpty() ? QString(" - %1 (%2)").arg(file).arg(cpuTypeName(type)) : ""));
 }
 
 void MainWindow::readSettings()

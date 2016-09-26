@@ -29,6 +29,7 @@ void FormatLoader::run()
     return;
   }
 
+  /*
   emit progress(0.66);
   emit status(tr("Disassembling code sections.."));
 
@@ -52,7 +53,7 @@ void FormatLoader::run()
       }
     }
   }
-
+  */
   emit progress(1);
   emit status(tr("Success!"));
 
