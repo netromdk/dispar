@@ -127,13 +127,14 @@ void BinaryWidget::setup()
   QTextCursor cursor(doc);
 
   auto appendInstruction = [this, &cursor](const QStringList &values) {
-    Q_ASSERT(values.size() <= 3);
+    Q_ASSERT(values.size() == 4);
 
     cursor.insertBlock();
-    cursor.insertText(QString("%1%2%3")
+    cursor.insertText(QString("%1%2%3%4")
                         .arg(values[0], -20)
-                        .arg(values[1], -10)
-                        .arg(values.size() == 3 ? values[2] : ""));
+                        .arg(values[1], -24)
+                        .arg(values[2], -10)
+                        .arg(values[3]));
 
     auto *userData = new TextBlockUserData;
     userData->address = values[0].toLongLong(nullptr, 16);
@@ -195,8 +196,14 @@ void BinaryWidget::setup()
         }
       }
 
+      // TODO: Create Util function to make it easier.
+      QString bytes;
+      for (int j = 0; j < instr->size; j++) {
+        bytes += Util::padString(QString::number(instr->bytes[j], 16), 2, true, '0') + " ";
+      }
+
       appendInstruction(
-        QStringList{QString("0x%1").arg(addr, 0, 16), instr->mnemonic, instr->op_str});
+        QStringList{QString("0x%1").arg(addr, 0, 16), bytes, instr->mnemonic, instr->op_str});
     }
 
     cursor.movePosition(QTextCursor::End);

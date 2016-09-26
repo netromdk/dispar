@@ -55,8 +55,9 @@ Disassembler::Disassembler(std::shared_ptr<BinaryObject> object) : valid_(false)
     return;
   }
 
-  valid_ = !cs_option(handle, cs_opt_type::CS_OPT_DETAIL, cs_opt_value::CS_OPT_ON);
-  valid_ &= !cs_option(handle, cs_opt_type::CS_OPT_SYNTAX, cs_opt_value::CS_OPT_SYNTAX_INTEL);
+  // Don't use CS_OPT_ON because I want to use the 'size' and 'bytes' variables on cs_insn!
+  //valid_ = !cs_option(handle, cs_opt_type::CS_OPT_DETAIL, cs_opt_value::CS_OPT_ON);
+  valid_ /*&*/= !cs_option(handle, cs_opt_type::CS_OPT_SYNTAX, cs_opt_value::CS_OPT_SYNTAX_INTEL);
 }
 
 Disassembler::~Disassembler()
