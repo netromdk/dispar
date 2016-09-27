@@ -81,11 +81,9 @@ if (STATIC_ANALYZER)
   add_custom_target(
     sa
 
-    scan-build -v -k ninja ${binName}
-
+    sh ${CMAKE_SOURCE_DIR}/scripts/static_analysis.sh ${CMAKE_CURRENT_BINARY_DIR} ${Qt5Core_DIR}/../../ ${binName}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    COMMENT "Static analysis"
-    DEPENDS ${binName}
+    COMMENT "Doing static analysis"
     )
 endif()
 
