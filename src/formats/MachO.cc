@@ -157,9 +157,11 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
 
   sizeofcmds = r.getUInt32(&ok);
   if (!ok) return false;
+  (void) sizeofcmds; // Mark used.
 
   flags = r.getUInt32(&ok);
   if (!ok) return false;
+  (void) flags; // Mark used.
 
   // Read reserved field.
   if (systemBits == 64) {
@@ -318,6 +320,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
         vmaddr = r.getUInt64(&ok);
         if (!ok) return false;
       }
+      (void) vmaddr; // Mark used.
 
       // Memory size of this segment.
       quint64 vmsize;
@@ -329,6 +332,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
         vmsize = r.getUInt64(&ok);
         if (!ok) return false;
       }
+      (void) vmsize; // Mark used.
 
       // File offset of this segment.
       quint64 fileoff;
@@ -340,6 +344,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
         fileoff = r.getUInt64(&ok);
         if (!ok) return false;
       }
+      (void) fileoff; // Mark used.
 
       // Amount to map from the file.
       quint64 filesize;
@@ -351,6 +356,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
         filesize = r.getUInt64(&ok);
         if (!ok) return false;
       }
+      (void) filesize; // Mark used.
 
       // Maximum VM protection.
       r.getUInt32(&ok);
