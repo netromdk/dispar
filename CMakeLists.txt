@@ -11,6 +11,7 @@ include(policies NO_POLICY_SCOPE)
 
 option(CODE_COVERAGE "Instrument for code coverage (clang only!)" OFF)
 option(ADDRESS_SANITIZER "Use memory error detector  (clang only and implies debug mode!)" OFF)
+option(STATIC_ANALYZER "Do static analysis (clang only and implies debug mode!)" OFF)
 
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
@@ -26,6 +27,10 @@ endif()
 
 if (ADDRESS_SANITIZER)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -g -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls")
+  set(CMAKE_BUILD_TYPE Debug)
+endif()
+
+if (STATIC_ANALYZER)
   set(CMAKE_BUILD_TYPE Debug)
 endif()
 
@@ -71,6 +76,19 @@ if (CODE_COVERAGE)
     )
 endif()
 
+# Setup: scan-build cmake -G Ninja -DSTATIC_ANALYZER=ON ../../
+if (STATIC_ANALYZER)
+  add_custom_target(
+    sa
+
+    scan-build -v -k ninja ${binName}
+
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Static analysis"
+    DEPENDS ${binName}
+    )
+endif()
+
 message(STATUS "--------------------------------------------------")
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 if (APPLE)
@@ -84,6 +102,13 @@ else()
 endif()
 
 message(STATUS "Address sanitizer: ${ADDRESS_SANITIZER}")
+
+
+if (STATIC_ANALYZER)
+  message(STATUS "Static analyzer: ${STATIC_ANALYZER} (target: sa)")
+else()
+  message(STATUS "Static analyzer: ${STATIC_ANALYZER}")
+endif()
 
 message(STATUS "Found Qt: ${FOUND_QT}")
 if (FOUND_QT)
