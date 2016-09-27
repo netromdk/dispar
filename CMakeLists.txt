@@ -17,6 +17,9 @@ if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
+# Output compile_commands.json (Ninja generator only!)
+set(CMAKE_EXPORT_COMPILE_COMMANDS YES)
+
 include(misc)
 include(platform)
 include(target)
@@ -86,6 +89,16 @@ if (STATIC_ANALYZER)
     COMMENT "Doing static analysis"
     )
 endif()
+
+# cppcheck can be cloned and compiled: git clone git@github.com:danmar/cppcheck.git
+add_custom_target(
+  cppcheck
+
+  cppcheck --enable=all --project=${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json --xml 2> cppcheck.xml && echo "XML report: cppcheck.xml"
+
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  COMMENT "Running cppcheck"
+  )
 
 message(STATUS "--------------------------------------------------")
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
