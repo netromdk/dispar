@@ -26,7 +26,7 @@ public:
 
 } // anon
 
-BinaryWidget::BinaryWidget(std::shared_ptr<BinaryObject> object)
+BinaryWidget::BinaryWidget(std::shared_ptr<BinaryObject> &object)
   : object(object), shown(false), doc(nullptr)
 {
   createLayout();

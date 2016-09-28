@@ -14,7 +14,7 @@ class BinaryWidget : public QWidget {
   Q_OBJECT
 
 public:
-  BinaryWidget(std::shared_ptr<BinaryObject> object);
+  BinaryWidget(std::shared_ptr<BinaryObject> &object);
 
   // void commit();
 
