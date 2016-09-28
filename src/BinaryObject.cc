@@ -86,7 +86,7 @@ std::shared_ptr<Section> BinaryObject::section(Section::Type type) const
   return nullptr;
 }
 
-void BinaryObject::addSection(std::shared_ptr<Section> ptr)
+void BinaryObject::addSection(std::shared_ptr<Section> &ptr)
 {
   sections_ << ptr;
 }

@@ -34,7 +34,7 @@ public:
   QList<std::shared_ptr<Section>> sections() const;
   QList<std::shared_ptr<Section>> sectionsByType(Section::Type type) const;
   std::shared_ptr<Section> section(Section::Type type) const;
-  void addSection(std::shared_ptr<Section> ptr);
+  void addSection(std::shared_ptr<Section> &ptr);
 
   void setSymbolTable(const SymbolTable &tbl);
   const SymbolTable &symbolTable() const;
