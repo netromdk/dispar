@@ -75,7 +75,7 @@ public:
 private:
   const char *file;
   int line, count_;
-  bool expect, triggered;
+  bool expect;
 };
 
 #define SIGNAL_SPY_ONE(ArgType, instance, mf)                                                      \
