@@ -40,6 +40,8 @@ QString Util::padString(const QString &str, int size, bool before, char pad)
   int addrLen = str.size();
   if (addrLen < size) {
     QString res{str}, padStr{QString(size - addrLen, pad)};
+
+    // cppcheck: No, they are not the same in both branches!
     return (before ? padStr + res : res + padStr);
   }
   return str;

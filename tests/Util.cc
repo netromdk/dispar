@@ -4,6 +4,12 @@
 
 #include "Util.h"
 
+TEST(Util, padString)
+{
+  EXPECT_EQ(Util::padString("x", 3, true, ' '), "  x");
+  EXPECT_EQ(Util::padString("x", 3, false, ' '), "x  ");
+}
+
 TEST(Util, demangle)
 {
   auto res = Util::demangle("__ZSt9terminatev");
