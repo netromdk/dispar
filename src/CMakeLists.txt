@@ -49,6 +49,8 @@ add_library(
   widgets/ConversionHelper.cc
   widgets/DisassemblerDialog.h
   widgets/DisassemblerDialog.cc
+  widgets/OptionsDialog.h
+  widgets/OptionsDialog.cc
 
   formats/Format.h
   formats/Format.cc

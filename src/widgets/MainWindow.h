@@ -31,6 +31,7 @@ private slots:
   void onConversionHelper();
   void onDisassembler();
   void onAbout();
+  void onOptions();
 
   void onLoadSuccess(std::shared_ptr<Format> fmt);
 

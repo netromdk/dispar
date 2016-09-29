@@ -8,6 +8,7 @@
 #include "BinaryWidget.h"
 #include "ConversionHelper.h"
 #include "DisassemblerDialog.h"
+#include "OptionsDialog.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -99,6 +100,12 @@ void MainWindow::onDisassembler()
 void MainWindow::onAbout()
 {
   AboutDialog diag;
+  diag.exec();
+}
+
+void MainWindow::onOptions()
+{
+  OptionsDialog diag;
   diag.exec();
 }
 
@@ -248,6 +255,7 @@ void MainWindow::createMenu()
 
   auto *helpMenu = menuBar()->addMenu(tr("&Help"));
   helpMenu->addAction(tr("&About"), this, SLOT(onAbout()));
+  helpMenu->addAction(tr("&Options"), this, SLOT(onOptions()));
 }
 
 void MainWindow::loadBinary(QString file)
