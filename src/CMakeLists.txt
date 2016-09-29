@@ -11,6 +11,9 @@ add_library(
   Util.h
   Util.cc
 
+  Context.h
+  Context.cc
+
   Reader.h
   Reader.cc
   CStringReader.h

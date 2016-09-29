@@ -3,6 +3,7 @@
 #include <QStringList>
 #include <QTimer>
 
+#include "Context.h"
 #include "Version.h"
 #include "formats/Format.h"
 #include "widgets/MainWindow.h"
@@ -27,6 +28,9 @@ int main(int argc, char **argv)
   if (posArgs.size() == 1) {
     file = posArgs.first();
   }
+
+  // Initialize and load context.
+  Context::get();
 
   // Start in event loop.
   MainWindow main(file);
