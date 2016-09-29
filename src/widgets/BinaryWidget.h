@@ -40,6 +40,7 @@ private:
   QPlainTextEdit *mainView;
   QTextDocument *doc;
   QHash<quint64, int> offsetBlock; // offset -> block
+  QList<int> codeBlocks;
 };
 
 #endif // DISPAR_BINARY_WIDGET_H

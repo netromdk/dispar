@@ -84,29 +84,29 @@ void BinaryWidget::onCursorPositionChanged()
 
 void BinaryWidget::onShowMachineCodeChanged(bool show)
 {
-  // TODO: Only go through blocks associated machine code!
-
   auto cursor = mainView->textCursor();
   cursor.beginEditBlock();
 
-  auto block = doc->firstBlock();
+  auto block = doc->findBlockByNumber(codeBlocks.first());
   while (block.isValid()) {
     auto *userData = dynamic_cast<TextBlockUserData *>(block.userData());
-    if (userData && !userData->bytes.isEmpty()) {
-      QTextCursor c(block);
-      c.setPosition(block.position() + userData->bytesStart - 1);
-      if (show && userData->bytesEnd == -1) {
-        c.insertText(QString("%1").arg(
-          userData->bytes, -1 * (userData->instructionStart - userData->bytesStart - 1)));
-        userData->bytesEnd = userData->instructionStart - 1;
-      }
-      else if (!show && userData->bytesEnd != -1) {
-        c.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor,
-                       userData->instructionStart - userData->bytesStart - 1);
-        c.removeSelectedText();
-        userData->bytesEnd = -1;
-      }
+    if (!userData || userData->bytes.isEmpty()) {
+      break;
     }
+
+    cursor.setPosition(block.position() + userData->bytesStart - 1);
+    if (show && userData->bytesEnd == -1) {
+      cursor.insertText(QString("%1").arg(
+        userData->bytes, -1 * (userData->instructionStart - userData->bytesStart - 1)));
+      userData->bytesEnd = userData->instructionStart - 1;
+    }
+    else if (!show && userData->bytesEnd != -1) {
+      cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor,
+                          userData->instructionStart - userData->bytesStart - 1);
+      cursor.removeSelectedText();
+      userData->bytesEnd = -1;
+    }
+
     block = block.next();
   }
 
@@ -192,6 +192,7 @@ void BinaryWidget::setup()
     block.setUserData(userData);
 
     offsetBlock[userData->address] = block.blockNumber();
+    codeBlocks << block.blockNumber();
   };
 
   auto appendString = [this, &cursor](const quint64 &address, const QString &string) {
