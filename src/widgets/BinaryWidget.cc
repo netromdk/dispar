@@ -84,6 +84,11 @@ void BinaryWidget::onCursorPositionChanged()
 
 void BinaryWidget::onShowMachineCodeChanged(bool show)
 {
+  // TODO: Only go through blocks associated machine code!
+
+  auto cursor = mainView->textCursor();
+  cursor.beginEditBlock();
+
   auto block = doc->firstBlock();
   while (block.isValid()) {
     auto *userData = dynamic_cast<TextBlockUserData *>(block.userData());
@@ -104,6 +109,8 @@ void BinaryWidget::onShowMachineCodeChanged(bool show)
     }
     block = block.next();
   }
+
+  cursor.endEditBlock();
 }
 
 void BinaryWidget::createLayout()
