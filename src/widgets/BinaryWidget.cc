@@ -185,16 +185,6 @@ void BinaryWidget::setup()
     block.setUserData(userData);
 
     offsetBlock[userData->address] = block.blockNumber();
-
-    // This is temporary!
-    if (!Context::get().showMachineCode()) {
-      QTextCursor c(block);
-      c.setPosition(block.position() + userData->bytesStart - 1);
-      c.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor,
-                     userData->instructionStart - userData->bytesStart - 1);
-      c.removeSelectedText();
-      userData->bytesEnd = -1;
-    }
   };
 
   auto appendString = [this, &cursor](const quint64 &address, const QString &string) {
@@ -256,6 +246,11 @@ void BinaryWidget::setup()
     cursor.movePosition(QTextCursor::End);
     cursor.insertBlock();
     cursor.insertText("\n===== /" + secName + " =====\n");
+  }
+
+  // Trigger hiding machine code if necessary.
+  if (!Context::get().showMachineCode()) {
+    onShowMachineCodeChanged(false);
   }
 
   setupDiag.setValue(2);
