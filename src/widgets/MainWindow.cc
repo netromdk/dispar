@@ -45,12 +45,9 @@ void MainWindow::showEvent(QShowEvent *event)
   if (!first) return;
   first = true;
 
-  if (geometry.isEmpty()) {
+  if (!restoreGeometry(geometry)) {
     resize(900, 500);
     Util::centerWidget(this);
-  }
-  else {
-    restoreGeometry(geometry);
   }
 
   // Load specified files or open file dialog.
