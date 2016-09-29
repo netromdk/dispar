@@ -90,13 +90,16 @@ void BinaryWidget::onShowMachineCodeChanged(bool show)
     if (userData && !userData->bytes.isEmpty()) {
       QTextCursor c(block);
       c.setPosition(block.position() + userData->bytesStart - 1);
-      c.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, userData->bytes.size());
-      c.removeSelectedText();
-      if (show) {
-        c.insertText(userData->bytes);
+      if (show && userData->bytesEnd == -1) {
+        c.insertText(QString("%1").arg(
+          userData->bytes, -1 * (userData->instructionStart - userData->bytesStart - 1)));
+        userData->bytesEnd = userData->instructionStart - 1;
       }
-      else {
-        c.insertText(QString(userData->bytes.size(), ' '));
+      else if (!show && userData->bytesEnd != -1) {
+        c.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor,
+                       userData->instructionStart - userData->bytesStart - 1);
+        c.removeSelectedText();
+        userData->bytesEnd = -1;
       }
     }
     block = block.next();
@@ -187,9 +190,10 @@ void BinaryWidget::setup()
     if (!Context::get().showMachineCode()) {
       QTextCursor c(block);
       c.setPosition(block.position() + userData->bytesStart - 1);
-      c.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, userData->bytes.size());
+      c.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor,
+                     userData->instructionStart - userData->bytesStart - 1);
       c.removeSelectedText();
-      c.insertText(QString(userData->bytes.size(), ' '));
+      userData->bytesEnd = -1;
     }
   };
 
