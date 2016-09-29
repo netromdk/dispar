@@ -12,6 +12,7 @@
 
 #include "../BinaryObject.h"
 #include "../CStringReader.h"
+#include "../Context.h"
 #include "../Util.h"
 #include "BinaryWidget.h"
 #include "PersistentSplitter.h"
@@ -22,6 +23,11 @@ namespace {
 class TextBlockUserData : public QTextBlockUserData {
 public:
   quint64 address;
+  int addressStart, addressEnd;
+  int bytesStart, bytesEnd;
+  int instructionStart, instructionEnd;
+  int operandsStart, operandsEnd;
+  QString bytes;
 };
 
 } // anon
@@ -30,6 +36,9 @@ BinaryWidget::BinaryWidget(std::shared_ptr<BinaryObject> &object)
   : object(object), shown(false), doc(nullptr)
 {
   createLayout();
+
+  auto &ctx = Context::get();
+  connect(&ctx, &Context::showMachineCodeChanged, this, &BinaryWidget::onShowMachineCodeChanged);
 }
 
 void BinaryWidget::showEvent(QShowEvent *event)
@@ -71,6 +80,27 @@ void BinaryWidget::onCursorPositionChanged()
   }
 
   // auto text = block.text();
+}
+
+void BinaryWidget::onShowMachineCodeChanged(bool show)
+{
+  auto block = doc->firstBlock();
+  while (block.isValid()) {
+    auto *userData = dynamic_cast<TextBlockUserData *>(block.userData());
+    if (userData && !userData->bytes.isEmpty()) {
+      QTextCursor c(block);
+      c.setPosition(block.position() + userData->bytesStart - 1);
+      c.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, userData->bytes.size());
+      c.removeSelectedText();
+      if (show) {
+        c.insertText(userData->bytes);
+      }
+      else {
+        c.insertText(QString(userData->bytes.size(), ' '));
+      }
+    }
+    block = block.next();
+  }
 }
 
 void BinaryWidget::createLayout()
@@ -138,11 +168,29 @@ void BinaryWidget::setup()
 
     auto *userData = new TextBlockUserData;
     userData->address = values[0].toLongLong(nullptr, 16);
+    userData->addressStart = 0;
+    userData->addressEnd = 20;
+    userData->bytesStart = userData->addressEnd + 1;
+    userData->bytesEnd = userData->bytesStart + 24;
+    userData->instructionStart = userData->bytesEnd + 1;
+    userData->instructionEnd = userData->instructionStart + 10;
+    userData->operandsStart = userData->instructionEnd + 1;
+    userData->operandsEnd = userData->operandsStart + values[3].size();
+    userData->bytes = values[1];
 
     auto block = cursor.block();
     block.setUserData(userData);
 
     offsetBlock[userData->address] = block.blockNumber();
+
+    // This is temporary!
+    if (!Context::get().showMachineCode()) {
+      QTextCursor c(block);
+      c.setPosition(block.position() + userData->bytesStart - 1);
+      c.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, userData->bytes.size());
+      c.removeSelectedText();
+      c.insertText(QString(userData->bytes.size(), ' '));
+    }
   };
 
   auto appendString = [this, &cursor](const quint64 &address, const QString &string) {

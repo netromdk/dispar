@@ -27,6 +27,7 @@ protected:
 private slots:
   void onSymbolChosen(int row);
   void onCursorPositionChanged();
+  void onShowMachineCodeChanged(bool show);
 
 private:
   void createLayout();
