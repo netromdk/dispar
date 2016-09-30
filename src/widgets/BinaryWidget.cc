@@ -84,6 +84,14 @@ void BinaryWidget::onCursorPositionChanged()
 
 void BinaryWidget::onShowMachineCodeChanged(bool show)
 {
+  QProgressDialog progDiag(this);
+  progDiag.setLabelText(tr("Modifying machine code visibility.."));
+  progDiag.setCancelButton(nullptr);
+  progDiag.setRange(0, 0);
+  progDiag.show();
+  qApp->processEvents();
+  qDebug() << qPrintable(progDiag.labelText());
+
   auto cursor = mainView->textCursor();
   cursor.beginEditBlock();
 
@@ -94,6 +102,7 @@ void BinaryWidget::onShowMachineCodeChanged(bool show)
       break;
     }
 
+    qApp->processEvents();
     cursor.setPosition(block.position() + userData->bytesStart - 1);
     if (show && userData->bytesEnd == -1) {
       cursor.insertText(QString("%1").arg(
@@ -254,6 +263,7 @@ void BinaryWidget::setup()
     cursor.movePosition(QTextCursor::End);
     cursor.insertBlock();
     cursor.insertText("\n===== /" + secName + " =====\n");
+    qApp->processEvents();
   }
 
   // Trigger hiding machine code if necessary.
@@ -292,6 +302,7 @@ void BinaryWidget::setup()
     cursor.movePosition(QTextCursor::End);
     cursor.insertBlock();
     cursor.insertText("\n===== /" + secName + " =====\n");
+    qApp->processEvents();
   }
 
   setupDiag.setValue(3);
