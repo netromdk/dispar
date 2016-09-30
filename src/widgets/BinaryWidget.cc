@@ -25,8 +25,6 @@ public:
   quint64 address;
   int addressStart, addressEnd;
   int bytesStart, bytesEnd;
-  int instructionStart, instructionEnd;
-  int operandsStart, operandsEnd;
   QString bytes;
 };
 
@@ -105,13 +103,11 @@ void BinaryWidget::onShowMachineCodeChanged(bool show)
     qApp->processEvents();
     cursor.setPosition(block.position() + userData->bytesStart - 1);
     if (show && userData->bytesEnd == -1) {
-      cursor.insertText(QString("%1").arg(
-        userData->bytes, -1 * (userData->instructionStart - userData->bytesStart - 1)));
-      userData->bytesEnd = userData->instructionStart - 1;
+      cursor.insertText(QString("%1").arg(userData->bytes, -24));
+      userData->bytesEnd = userData->bytesStart + 24;
     }
     else if (!show && userData->bytesEnd != -1) {
-      cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor,
-                          userData->instructionStart - userData->bytesStart - 1);
+      cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, 24);
       cursor.removeSelectedText();
       userData->bytesEnd = -1;
     }
@@ -175,27 +171,27 @@ void BinaryWidget::setup()
   // Create text edit of all binary contents.
   QTextCursor cursor(doc);
 
-  auto appendInstruction = [this, &cursor](const QStringList &values) {
-    Q_ASSERT(values.size() == 4);
+  auto &ctx = Context::get();
 
-    cursor.insertBlock();
-    cursor.insertText(QString("%1%2%3%4")
-                        .arg(values[0], -20)
-                        .arg(values[1], -24)
-                        .arg(values[2], -10)
-                        .arg(values[3]));
+  auto appendInstruction = [this, &cursor, &ctx](const QStringList &values) {
+    Q_ASSERT(values.size() == 4);
 
     auto *userData = new TextBlockUserData;
     userData->address = values[0].toLongLong(nullptr, 16);
     userData->addressStart = 0;
     userData->addressEnd = 20;
-    userData->bytesStart = userData->addressEnd + 1;
-    userData->bytesEnd = userData->bytesStart + 24;
-    userData->instructionStart = userData->bytesEnd + 1;
-    userData->instructionEnd = userData->instructionStart + 10;
-    userData->operandsStart = userData->instructionEnd + 1;
-    userData->operandsEnd = userData->operandsStart + values[3].size();
+
+    bool smc = ctx.showMachineCode();
     userData->bytes = values[1];
+    userData->bytesStart = userData->addressEnd + 1;
+    userData->bytesEnd = (smc ? userData->bytesStart + 24 : -1);
+
+    cursor.insertBlock();
+    cursor.insertText(QString("%1%2%3%4")
+                        .arg(values[0], -20)
+                        .arg(smc ? QString("%1").arg(values[1], -24) : QString())
+                        .arg(values[2], -10)
+                        .arg(values[3]));
 
     auto block = cursor.block();
     block.setUserData(userData);
@@ -264,11 +260,6 @@ void BinaryWidget::setup()
     cursor.insertBlock();
     cursor.insertText("\n===== /" + secName + " =====\n");
     qApp->processEvents();
-  }
-
-  // Trigger hiding machine code if necessary.
-  if (!Context::get().showMachineCode()) {
-    onShowMachineCodeChanged(false);
   }
 
   setupDiag.setValue(2);
