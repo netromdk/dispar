@@ -8,6 +8,7 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QMessageBox>
 #include <QSettings>
 #include <QVBoxLayout>
 
@@ -32,7 +33,15 @@ void OptionsDialog::onAccept()
 
   auto &ctx = Context::get();
   ctx.setShowMachineCode(showMachineCode->checkState() == Qt::Checked);
-  ctx.setDisassemblerSyntax(static_cast<Disassembler::Syntax>(disAsmSyntax->currentData().toInt()));
+
+  auto syntax = static_cast<Disassembler::Syntax>(disAsmSyntax->currentData().toInt());
+  static bool disWarnOnce = false;
+  if (!disWarnOnce && syntax != ctx.disassemblerSyntax()) {
+    disWarnOnce = true;
+    QMessageBox::warning(
+      this, "dispar", tr("Disassembler syntax won't change until the program has been restarted!"));
+  }
+  ctx.setDisassemblerSyntax(syntax);
 
   accept();
 }
