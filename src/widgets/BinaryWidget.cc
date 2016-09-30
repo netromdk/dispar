@@ -83,6 +83,7 @@ void BinaryWidget::onCursorPositionChanged()
 void BinaryWidget::onShowMachineCodeChanged(bool show)
 {
   QProgressDialog progDiag(this);
+  progDiag.setWindowFlags(progDiag.windowFlags() | Qt::WindowStaysOnTopHint);
   progDiag.setLabelText(tr("Modifying machine code visibility.."));
   progDiag.setCancelButton(nullptr);
   progDiag.setRange(0, 0);
