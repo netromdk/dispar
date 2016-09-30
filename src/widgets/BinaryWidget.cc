@@ -261,7 +261,6 @@ void BinaryWidget::setup()
     cursor.movePosition(QTextCursor::End);
     cursor.insertBlock();
     cursor.insertText("\n===== /" + secName + " =====\n");
-    qApp->processEvents();
   }
 
   setupDiag.setValue(2);
@@ -295,7 +294,6 @@ void BinaryWidget::setup()
     cursor.movePosition(QTextCursor::End);
     cursor.insertBlock();
     cursor.insertText("\n===== /" + secName + " =====\n");
-    qApp->processEvents();
   }
 
   setupDiag.setValue(3);
