@@ -27,6 +27,8 @@ OptionsDialog::~OptionsDialog()
 
 void OptionsDialog::onAccept()
 {
+  setWindowTitle(tr("Applying options!"));
+
   auto &ctx = Context::get();
   ctx.setShowMachineCode(showMachineCode->checkState() == Qt::Checked);
 
