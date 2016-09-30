@@ -27,7 +27,7 @@ cs_insn *Disassembler::Result::instructions(size_t pos) const
   return insn + pos;
 }
 
-Disassembler::Disassembler(std::shared_ptr<BinaryObject> object) : valid_(false)
+Disassembler::Disassembler(std::shared_ptr<BinaryObject> object, Syntax syntax) : valid_(false)
 {
   if (!object) {
     qCritical() << "Null binary object!";
@@ -56,8 +56,20 @@ Disassembler::Disassembler(std::shared_ptr<BinaryObject> object) : valid_(false)
   }
 
   // Don't use CS_OPT_ON because I want to use the 'size' and 'bytes' variables on cs_insn!
-  //valid_ = !cs_option(handle, cs_opt_type::CS_OPT_DETAIL, cs_opt_value::CS_OPT_ON);
-  valid_ /*&*/= !cs_option(handle, cs_opt_type::CS_OPT_SYNTAX, cs_opt_value::CS_OPT_SYNTAX_INTEL);
+  // valid_ = !cs_option(handle, cs_opt_type::CS_OPT_DETAIL, cs_opt_value::CS_OPT_ON);
+
+  cs_opt_value csSyntax;
+  switch (syntax) {
+  case Syntax::ATT:
+    csSyntax = cs_opt_value::CS_OPT_SYNTAX_ATT;
+    break;
+
+  case Syntax::INTEL:
+    csSyntax = cs_opt_value::CS_OPT_SYNTAX_INTEL;
+    break;
+  }
+
+  valid_ = !cs_option(handle, cs_opt_type::CS_OPT_SYNTAX, csSyntax);
 }
 
 Disassembler::~Disassembler()

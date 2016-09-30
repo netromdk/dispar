@@ -12,6 +12,8 @@ class BinaryObject;
 
 class Disassembler {
 public:
+  enum class Syntax { ATT, INTEL };
+
   class Result {
   public:
     Result(cs_insn *insn, size_t count);
@@ -25,7 +27,7 @@ public:
     size_t count_;
   };
 
-  Disassembler(std::shared_ptr<BinaryObject> object);
+  Disassembler(std::shared_ptr<BinaryObject> object, Syntax syntax = Syntax::INTEL);
   ~Disassembler();
 
   std::shared_ptr<Result> disassemble(const QByteArray &data, quint64 baseAddr = 0);
