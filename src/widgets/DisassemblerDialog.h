@@ -4,6 +4,7 @@
 #include <QDialog>
 
 #include "../CpuType.h"
+#include "../Disassembler.h"
 
 class QTextEdit;
 class QSplitter;
@@ -16,11 +17,13 @@ class DisassemblerDialog : public QDialog {
 
 public:
   DisassemblerDialog(QWidget *parent = nullptr, CpuType cpuType = CpuType::X86,
-                     const QString &data = QString(), quint64 offset = 0);
+                     const QString &data = QString(), quint64 offset = 0,
+                     Disassembler::Syntax syntax = Disassembler::Syntax::INTEL);
 
 private slots:
   void onConvert();
   void onCpuTypeIndexChanged(int index);
+  void onSyntaxIndexChanged(int index);
 
 private:
   void createLayout();
@@ -28,11 +31,12 @@ private:
 
   CpuType cpuType;
   quint64 offset;
+  Disassembler::Syntax syntax;
 
   QTextEdit *machineText, *asmText;
   QSplitter *splitter;
   QLineEdit *offsetEdit;
-  QComboBox *cpuTypeBox;
+  QComboBox *cpuTypeBox, *syntaxBox;
   QPushButton *convertBtn;
 };
 

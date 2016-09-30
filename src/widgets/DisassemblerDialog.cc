@@ -9,14 +9,15 @@
 #include <QTextEdit>
 #include <QVBoxLayout>
 
+#include "../cxx.h"
 #include "../BinaryObject.h"
 #include "../Disassembler.h"
 #include "../Util.h"
 #include "DisassemblerDialog.h"
 
 DisassemblerDialog::DisassemblerDialog(QWidget *parent, CpuType cpuType, const QString &data,
-                                       quint64 offset)
-  : QDialog{parent}, cpuType{cpuType}, offset{offset}
+                                       quint64 offset, Disassembler::Syntax syntax)
+  : QDialog(parent), cpuType(cpuType), offset(offset), syntax(syntax)
 {
   setWindowTitle(tr("Disassembler"));
   createLayout();
@@ -42,7 +43,7 @@ void DisassemblerDialog::onConvert()
   quint64 offset = offsetEdit->text().toULongLong(nullptr, 16);
 
   auto obj = std::make_shared<BinaryObject>(cpuType);
-  Disassembler dis(obj);
+  Disassembler dis(obj, syntax);
 
   auto result = dis.disassemble(text, offset);
   if (result) {
@@ -60,24 +61,16 @@ void DisassemblerDialog::onConvert()
     machineText->setFocus();
     QMessageBox::warning(this, "dispar", tr("Could not disassemble machine code!"));
   }
-
-  /*
-  Disassembly result;
-  if (dis.disassemble(text, result, offset)) {
-    asmText->setText(result.asmLines.join("\n"));
-    setAsmVisible();
-  }
-  else {
-    setAsmVisible(false);
-    machineText->setFocus();
-    QMessageBox::warning(this, "dispar", tr("Could not disassemble machine code!"));
-  }
-  */
 }
 
 void DisassemblerDialog::onCpuTypeIndexChanged(int index)
 {
   cpuType = (CpuType) cpuTypeBox->itemData(index).toInt();
+}
+
+void DisassemblerDialog::onSyntaxIndexChanged(int index)
+{
+  syntax = (Disassembler::Syntax) syntaxBox->itemData(index).toInt();
 }
 
 void DisassemblerDialog::createLayout()
@@ -135,7 +128,20 @@ void DisassemblerDialog::createLayout()
     cpuTypeBox->setCurrentIndex(idx);
   }
 
-  connect(cpuTypeBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onCpuTypeIndexChanged(int)));
+  connect(cpuTypeBox, Use<int>::overloadOf(&QComboBox::currentIndexChanged), this,
+          &DisassemblerDialog::onCpuTypeIndexChanged);
+
+  syntaxBox = new QComboBox;
+  syntaxBox->addItem(tr("AT&T"), (int) Disassembler::Syntax::ATT);
+  syntaxBox->addItem(tr("Intel"), (int) Disassembler::Syntax::INTEL);
+
+  idx = syntaxBox->findData((int) syntax);
+  if (idx != -1) {
+    syntaxBox->setCurrentIndex(idx);
+  }
+
+  connect(syntaxBox, Use<int>::overloadOf(&QComboBox::currentIndexChanged), this,
+          &DisassemblerDialog::onSyntaxIndexChanged);
 
   convertBtn = new QPushButton(tr("Disassemble"));
   connect(convertBtn, &QPushButton::clicked, this, &DisassemblerDialog::onConvert);
@@ -143,6 +149,8 @@ void DisassemblerDialog::createLayout()
   auto *bottomLayout = new QHBoxLayout;
   bottomLayout->addWidget(new QLabel(tr("CPU:")));
   bottomLayout->addWidget(cpuTypeBox);
+  bottomLayout->addWidget(new QLabel(tr("Syntax:")));
+  bottomLayout->addWidget(syntaxBox);
   bottomLayout->addStretch();
   bottomLayout->addWidget(convertBtn);
 
