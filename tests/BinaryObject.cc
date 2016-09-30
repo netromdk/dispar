@@ -91,3 +91,10 @@ TEST(BinaryObject, dynSymbolTable)
   b.setDynSymbolTable(st);
   EXPECT_EQ(b.dynSymbolTable(), st);
 }
+
+TEST(BinaryObject, cpuTypeX8664SystemBits64)
+{
+  BinaryObject b(CpuType::X86_64);
+  EXPECT_EQ(b.cpuType(), CpuType::X86_64);
+  EXPECT_EQ(b.systemBits(), 64);
+}
