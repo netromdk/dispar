@@ -155,6 +155,10 @@ void BinaryWidget::createLayout()
 
   auto *filterSymLine = new QLineEdit;
   filterSymLine->setPlaceholderText(tr("Filter symbols.."));
+
+  connect(tabWidget, &QTabWidget::currentChanged, this,
+          [filterSymLine](int index) { filterSymLine->clear(); });
+
   connect(filterSymLine, &QLineEdit::textEdited, this, &BinaryWidget::filterSymbols);
 
   auto *symbolsLayout = new QVBoxLayout;
