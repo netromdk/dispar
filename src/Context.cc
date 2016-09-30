@@ -34,9 +34,11 @@ bool Context::showMachineCode() const
 
 void Context::setShowMachineCode(bool show)
 {
+  bool changed = (show != showMachineCode_);
   showMachineCode_ = show;
-  // TODO: Maybe don't emit like this!?
-  emit showMachineCodeChanged(show);
+  if (changed) {
+    emit showMachineCodeChanged(show);
+  }
 }
 
 Disassembler::Syntax Context::disassemblerSyntax() const
