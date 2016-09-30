@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 #include "../BinaryObject.h"
+#include "../Context.h"
 #include "../Util.h"
 #include "../Version.h"
 #include "../formats/Format.h"
@@ -169,7 +170,7 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
     qApp->processEvents();
     qDebug() << qPrintable(disDiag.labelText());
 
-    Disassembler dis(object);
+    Disassembler dis(object, Context::get().disassemblerSyntax());
     if (dis.valid()) {
       for (auto &sec : object->sections()) {
         switch (sec->type()) {
