@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QHBoxLayout>
+#include <QLineEdit>
 #include <QListWidget>
 #include <QMessageBox>
 #include <QPlainTextEdit>
@@ -62,7 +63,6 @@ void BinaryWidget::onSymbolChosen(int row)
     cursor.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
     mainView->setTextCursor(cursor);
     mainView->ensureCursorVisible();
-    mainView->setFocus();
   }
 }
 
@@ -72,7 +72,7 @@ void BinaryWidget::onCursorPositionChanged()
   auto block = cursor.block();
   qDebug() << "column:" << cursor.columnNumber() << "block:" << block.blockNumber();
 
-  auto *userData = reinterpret_cast<TextBlockUserData *>(block.userData());
+  auto *userData = dynamic_cast<TextBlockUserData *>(block.userData());
   if (userData) {
     qDebug() << "address:" << QString::number(userData->address, 16);
   }
@@ -121,6 +121,26 @@ void BinaryWidget::onShowMachineCodeChanged(bool show)
   qDebug() << "Modified machine code visibility in" << start.msecsTo(end) << "ms";
 }
 
+void BinaryWidget::filterSymbols(const QString &filter)
+{
+  auto *list = (symbolList->isVisible() ? symbolList : stringList);
+
+  // Unhide all.
+  auto allItems = list->findItems("*", Qt::MatchWildcard);
+  for (auto *item : allItems) {
+    item->setHidden(false);
+  }
+
+  auto matches = list->findItems(filter, Qt::MatchContains);
+
+  // Hide all that are not matches.
+  for (auto *item : allItems) {
+    if (!matches.contains(item)) {
+      item->setHidden(true);
+    }
+  }
+}
+
 void BinaryWidget::createLayout()
 {
   symbolList = new QListWidget;
@@ -133,6 +153,18 @@ void BinaryWidget::createLayout()
   tabWidget->addTab(symbolList, tr("Functions"));
   tabWidget->addTab(stringList, tr("Strings"));
 
+  auto *filterSymLine = new QLineEdit;
+  filterSymLine->setPlaceholderText(tr("Filter symbols.."));
+  connect(filterSymLine, &QLineEdit::textEdited, this, &BinaryWidget::filterSymbols);
+
+  auto *symbolsLayout = new QVBoxLayout;
+  symbolsLayout->setContentsMargins(0, 0, 0, 0);
+  symbolsLayout->addWidget(tabWidget);
+  symbolsLayout->addWidget(filterSymLine);
+
+  auto *symbolsWidget = new QWidget;
+  symbolsWidget->setLayout(symbolsLayout);
+
   mainView = new QPlainTextEdit;
   mainView->setReadOnly(true);
   mainView->setCenterOnScroll(true);
@@ -144,7 +176,7 @@ void BinaryWidget::createLayout()
   doc = mainView->document();
 
   auto *vertSplitter = new PersistentSplitter("BinaryWidget.vertSplitter");
-  vertSplitter->addWidget(tabWidget);
+  vertSplitter->addWidget(symbolsWidget);
   vertSplitter->addWidget(mainView);
 
   vertSplitter->setSizes(QList<int>{175, 500});

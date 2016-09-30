@@ -29,6 +29,8 @@ private slots:
   void onCursorPositionChanged();
   void onShowMachineCodeChanged(bool show);
 
+  void filterSymbols(const QString &filter);
+
 private:
   void createLayout();
   void setup();
