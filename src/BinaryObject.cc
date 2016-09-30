@@ -5,9 +5,7 @@ BinaryObject::BinaryObject(CpuType cpuType, CpuType cpuSubType, bool littleEndia
   : cpuType_{cpuType}, cpuSubType_{cpuSubType}, littleEndian{littleEndian}, systemBits_{systemBits},
     fileType_{fileType}
 {
-  if (cpuType_ == CpuType::X86_64) {
-    systemBits_ = 64;
-  }
+  setCpuType(cpuType);
 }
 
 CpuType BinaryObject::cpuType() const
@@ -18,6 +16,9 @@ CpuType BinaryObject::cpuType() const
 void BinaryObject::setCpuType(CpuType type)
 {
   cpuType_ = type;
+  if (cpuType_ == CpuType::X86_64) {
+    systemBits_ = 64;
+  }
 }
 
 CpuType BinaryObject::cpuSubType() const
