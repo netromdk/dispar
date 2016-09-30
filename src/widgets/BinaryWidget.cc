@@ -90,32 +90,34 @@ void BinaryWidget::onShowMachineCodeChanged(bool show)
   qApp->processEvents();
   qDebug() << qPrintable(progDiag.labelText());
 
+  auto start = QDateTime::currentDateTime();
+
   auto cursor = mainView->textCursor();
   cursor.beginEditBlock();
 
   auto block = doc->findBlockByNumber(codeBlocks.first());
   while (block.isValid()) {
     auto *userData = dynamic_cast<TextBlockUserData *>(block.userData());
-    if (!userData || userData->bytes.isEmpty()) {
-      break;
-    }
-
-    qApp->processEvents();
-    cursor.setPosition(block.position() + userData->bytesStart - 1);
-    if (show && userData->bytesEnd == -1) {
-      cursor.insertText(QString("%1").arg(userData->bytes, -24));
-      userData->bytesEnd = userData->bytesStart + 24;
-    }
-    else if (!show && userData->bytesEnd != -1) {
-      cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, 24);
-      cursor.removeSelectedText();
-      userData->bytesEnd = -1;
+    if (userData && !userData->bytes.isEmpty()) {
+      cursor.setPosition(block.position() + userData->bytesStart - 1);
+      if (show && userData->bytesEnd == -1) {
+        cursor.insertText(QString("%1").arg(userData->bytes, -24));
+        userData->bytesEnd = userData->bytesStart + 24;
+      }
+      else if (!show && userData->bytesEnd != -1) {
+        cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, 24);
+        cursor.removeSelectedText();
+        userData->bytesEnd = -1;
+      }
     }
 
     block = block.next();
   }
 
   cursor.endEditBlock();
+
+  auto end = QDateTime::currentDateTime();
+  qDebug() << "Modified machine code visibility in" << start.msecsTo(end) << "ms";
 }
 
 void BinaryWidget::createLayout()
