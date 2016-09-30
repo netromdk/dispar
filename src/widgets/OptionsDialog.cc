@@ -1,5 +1,6 @@
 #include "OptionsDialog.h"
 #include "../Context.h"
+#include "../Disassembler.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -31,6 +32,7 @@ void OptionsDialog::onAccept()
 
   auto &ctx = Context::get();
   ctx.setShowMachineCode(showMachineCode->checkState() == Qt::Checked);
+  ctx.setDisassemblerSyntax(static_cast<Disassembler::Syntax>(disAsmSyntax->currentData().toInt()));
 
   accept();
 }
@@ -44,9 +46,14 @@ void OptionsDialog::createLayout()
 
   auto *disAsmLabel = new QLabel(tr("Disassembly Syntax:"));
 
-  auto *disAsmSyntax = new QComboBox;
-  disAsmSyntax->addItem(tr("Intel"));
-  disAsmSyntax->addItem(tr("AT/T"));
+  disAsmSyntax = new QComboBox;
+  disAsmSyntax->addItem(tr("AT&T"), (int) Disassembler::Syntax::ATT);
+  disAsmSyntax->addItem(tr("Intel"), (int) Disassembler::Syntax::INTEL);
+
+  int idx = disAsmSyntax->findData((int) ctx.disassemblerSyntax());
+  if (idx != -1) {
+    disAsmSyntax->setCurrentIndex(idx);
+  }
 
   auto *disAsmSyntaxLayout = new QHBoxLayout;
   disAsmSyntaxLayout->addWidget(disAsmLabel);
