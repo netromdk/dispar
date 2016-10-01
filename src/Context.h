@@ -31,6 +31,9 @@ public:
 
   void clearProject();
 
+  /// Tries to load a project from \p file.
+  std::shared_ptr<Project> loadProject(const QString &file);
+
 signals:
   void showMachineCodeChanged(bool show);
 

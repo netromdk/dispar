@@ -66,10 +66,30 @@ void MainWindow::showEvent(QShowEvent *event)
 
 void MainWindow::openProject()
 {
+  // TODO: Ask to save if project is live and unsaved!
+
+  QFileDialog diag(this, tr("Open Project"), QDir::homePath());
+  diag.setNameFilters(QStringList{"Dispar project (*.dispar)"});
+
+  if (!diag.exec()) return;
+
+  auto file = diag.selectedFiles().first();
+  qDebug() << "Opening project:" << file;
+
+  closeProject();
+
+  if (!Context::get().loadProject(file)) {
+    QMessageBox::critical(this, "dispar",
+                          tr("Failed to load \"%1\"!\nMake sure file is valid.").arg(file));
+    return;
+  }
+
+  // TODO: Add to recent projects list.
 }
 
 void MainWindow::saveProject()
 {
+  bool saveAs = (sender() == saveAsProjectAction);
 }
 
 void MainWindow::closeProject()

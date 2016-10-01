@@ -71,3 +71,9 @@ void Context::clearProject()
   }
   project_ = nullptr;
 }
+
+std::shared_ptr<Project> Context::loadProject(const QString &file)
+{
+  project_ = Project::load(file);
+  return project_;
+}
