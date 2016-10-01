@@ -23,9 +23,9 @@ namespace {
 // Temporary solution!
 class TextBlockUserData : public QTextBlockUserData {
 public:
-  quint64 address;
-  int addressStart, addressEnd;
-  int bytesStart, bytesEnd;
+  quint64 address = 0, offset = 0;
+  int addressStart = 0, addressEnd = 0;
+  int bytesStart = 0, bytesEnd = 0;
   QString bytes;
 };
 
@@ -212,25 +212,27 @@ void BinaryWidget::setup()
 
   auto &ctx = Context::get();
 
-  auto appendInstruction = [this, &cursor, &ctx](const QStringList &values) {
-    Q_ASSERT(values.size() == 4);
-
+  auto appendInstruction = [this, &cursor, &ctx](quint64 address, quint64 offset,
+                                                 const QString &bytes, const QString &instruction,
+                                                 const QString &operands) {
     auto *userData = new TextBlockUserData;
-    userData->address = values[0].toLongLong(nullptr, 16);
+    userData->address = address;
     userData->addressStart = 0;
     userData->addressEnd = 20;
 
+    userData->offset = offset;
+
     bool smc = ctx.showMachineCode();
-    userData->bytes = values[1];
+    userData->bytes = bytes;
     userData->bytesStart = userData->addressEnd + 1;
     userData->bytesEnd = (smc ? userData->bytesStart + 24 : -1);
 
     cursor.insertBlock();
     cursor.insertText(QString("%1%2%3%4")
-                        .arg(values[0], -20)
-                        .arg(smc ? QString("%1").arg(values[1], -24) : QString())
-                        .arg(values[2], -10)
-                        .arg(values[3]));
+                        .arg(QString("0x%1").arg(address, 0, 16), -20)
+                        .arg(smc ? QString("%1").arg(bytes, -24) : QString())
+                        .arg(instruction, -10)
+                        .arg(operands));
 
     auto block = cursor.block();
     block.setUserData(userData);
@@ -239,7 +241,7 @@ void BinaryWidget::setup()
     codeBlocks << block.blockNumber();
   };
 
-  auto appendString = [this, &cursor](const quint64 &address, const QString &string) {
+  auto appendString = [this, &cursor](quint64 address, quint64 offset, const QString &string) {
     cursor.insertBlock();
     cursor.insertText(QString("%1%2%3")
                         .arg(QString("0x%1").arg(address, 0, 16), -20)
@@ -248,6 +250,7 @@ void BinaryWidget::setup()
 
     auto *userData = new TextBlockUserData;
     userData->address = address;
+    userData->offset = offset;
 
     auto block = cursor.block();
     block.setUserData(userData);
@@ -278,7 +281,8 @@ void BinaryWidget::setup()
 
     for (size_t i = 0; i < disasm->count(); i++) {
       auto *instr = disasm->instructions(i);
-      auto addr = instr->address + sec->address();
+      auto offset = instr->address;
+      auto addr = offset + sec->address();
 
       // Check if address is the start of a procedure.
       for (const auto &symbol : symbols) {
@@ -290,9 +294,8 @@ void BinaryWidget::setup()
         }
       }
 
-      appendInstruction(QStringList{QString("0x%1").arg(addr, 0, 16),
-                                    Util::bytesToHex(instr->bytes, instr->size), instr->mnemonic,
-                                    instr->op_str});
+      appendInstruction(addr, offset, Util::bytesToHex(instr->bytes, instr->size), instr->mnemonic,
+                        instr->op_str);
     }
 
     cursor.movePosition(QTextCursor::End);
@@ -316,10 +319,11 @@ void BinaryWidget::setup()
 
     CStringReader reader(sec->data());
     while (reader.next()) {
-      auto addr = reader.offset() + sec->address();
+      auto offset = reader.offset();
+      auto addr = offset + sec->address();
       auto string = reader.string();
 
-      appendString(addr, string);
+      appendString(addr, offset, string);
 
       auto *item = new QListWidgetItem;
       item->setText(reader.string());
