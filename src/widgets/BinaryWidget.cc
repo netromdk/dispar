@@ -217,6 +217,8 @@ void BinaryWidget::createLayout()
   archLabel = new QLabel(
     tr("Arch: %1 %2").arg(cpuTypeName(object->cpuType())).arg(cpuTypeName(object->cpuSubType())));
 
+  fileTypeLabel = new QLabel(tr("Type: %1").arg(fileTypeName(object->fileType())));
+
   auto *binaryOpenFolderButton = new QPushButton(tr("Open Folder"));
   binaryOpenFolderButton->setToolTip(tr("Open folder of binary file."));
 
@@ -235,6 +237,7 @@ void BinaryWidget::createLayout()
   binaryLayout->addWidget(binaryLabel);
   binaryLayout->addWidget(sizeLabel);
   binaryLayout->addWidget(archLabel);
+  binaryLayout->addWidget(fileTypeLabel);
   binaryLayout->addLayout(binaryButtonLayout);
 
   auto *binaryBox = new QGroupBox(tr("Binary"));
