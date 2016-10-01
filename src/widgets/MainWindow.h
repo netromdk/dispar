@@ -40,7 +40,7 @@ private slots:
   void onLoadSuccess(std::shared_ptr<Format> fmt);
 
 private:
-  void setTitle(const QString &file = QString(), CpuType type = CpuType::X86);
+  void setTitle(const QString &file = QString());
   void readSettings();
   void createLayout();
   void createMenu();

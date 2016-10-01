@@ -128,13 +128,19 @@ void MainWindow::saveProject()
 
   if (!ret) {
     QMessageBox::critical(this, "dispar", tr("Could not save project!"));
+    return;
   }
+
+  setTitle(project->file());
 }
 
 void MainWindow::closeProject()
 {
   // TODO: Ask to save if project is live and unsaved.
+
   Context::get().clearProject();
+
+  setTitle();
 
   saveProjectAction->setEnabled(false);
   saveAsProjectAction->setEnabled(false);
@@ -208,6 +214,8 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
   }
   project->setBinary(fmt->file());
 
+  setTitle(project->file());
+
   saveProjectAction->setEnabled(true);
   saveAsProjectAction->setEnabled(true);
   closeProjectAction->setEnabled(true);
@@ -260,8 +268,6 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
     }
     Q_ASSERT(object);
 
-    setTitle(file, object->cpuType());
-
     QProgressDialog disDiag(this);
     disDiag.setLabelText(tr("Disassembling code sections.."));
     disDiag.setCancelButton(nullptr);
@@ -298,12 +304,9 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
   });
 }
 
-void MainWindow::setTitle(const QString &file, CpuType type)
+void MainWindow::setTitle(const QString &file)
 {
-  setWindowTitle(
-    QString("Dispar v%1%2")
-      .arg(versionString())
-      .arg(!file.isEmpty() ? QString(" - %1 (%2)").arg(file).arg(cpuTypeName(type)) : ""));
+  setWindowTitle(QString("Dispar v%1%2").arg(versionString()).arg(!file.isEmpty() ? " - " + file : ""));
 }
 
 void MainWindow::readSettings()
