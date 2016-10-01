@@ -1,5 +1,7 @@
 #include <QApplication>
 #include <QDebug>
+#include <QDesktopServices>
+#include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QGroupBox>
@@ -10,6 +12,7 @@
 #include <QMessageBox>
 #include <QPlainTextEdit>
 #include <QProgressDialog>
+#include <QPushButton>
 #include <QTabWidget>
 #include <QTextBlockUserData>
 #include <QTimer>
@@ -214,10 +217,25 @@ void BinaryWidget::createLayout()
   archLabel = new QLabel(
     tr("Arch: %1 %2").arg(cpuTypeName(object->cpuType())).arg(cpuTypeName(object->cpuSubType())));
 
+  auto *binaryOpenFolderButton = new QPushButton(tr("Open Folder"));
+  binaryOpenFolderButton->setToolTip(tr("Open folder of binary file."));
+
+  connect(binaryOpenFolderButton, &QPushButton::clicked, this, [binaryFile] {
+    auto folder = QFileInfo(binaryFile).dir().absolutePath();
+    QDesktopServices::openUrl(QUrl::fromLocalFile(folder));
+  });
+
+  auto *binaryButtonLayout = new QHBoxLayout;
+  binaryButtonLayout->setContentsMargins(0, 0, 0, 0);
+  binaryButtonLayout->addStretch();
+  binaryButtonLayout->addWidget(binaryOpenFolderButton);
+  binaryButtonLayout->addStretch();
+
   auto *binaryLayout = new QVBoxLayout;
   binaryLayout->addWidget(binaryLabel);
   binaryLayout->addWidget(sizeLabel);
   binaryLayout->addWidget(archLabel);
+  binaryLayout->addLayout(binaryButtonLayout);
 
   auto *binaryBox = new QGroupBox(tr("Binary"));
   binaryBox->setLayout(binaryLayout);
