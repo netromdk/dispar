@@ -31,7 +31,7 @@ int main(int argc, char **argv)
   QCommandLineParser parser;
   parser.addHelpOption();
   parser.addVersionOption();
-  parser.addPositionalArgument("binary", "Binary file to load.", "(binary)");
+  parser.addPositionalArgument("file", "Project .dispar or binary file to load.", "(file)");
 
   parser.process(app);
   auto posArgs = parser.positionalArguments();
