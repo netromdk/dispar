@@ -37,6 +37,7 @@ MainWindow::~MainWindow()
 {
   QSettings settings;
   settings.setValue("MainWindow.geometry", saveGeometry());
+  settings.setValue("MainWindow.recentProjects", recentProjects);
   settings.setValue("MainWindow.recentBinaries", recentBinaries);
 }
 
@@ -90,7 +91,13 @@ void MainWindow::openProject(const QString &projectFile)
     return;
   }
 
-  // TODO: Add to recent projects list.
+  // Add recent file.
+  if (!recentProjects.contains(file)) {
+    recentProjects << file;
+  }
+  if (recentProjects.size() > 10) {
+    recentProjects.removeFirst();
+  }
 
   loadBinary(project->binary());
 }
@@ -147,6 +154,13 @@ void MainWindow::openBinary()
 
   auto file = diag.selectedFiles().first();
   loadBinary(file);
+}
+
+void MainWindow::onRecentProject()
+{
+  auto *action = qobject_cast<QAction *>(sender());
+  if (!action) return;
+  openProject(action->text());
 }
 
 void MainWindow::onRecentBinary()
@@ -297,6 +311,17 @@ void MainWindow::readSettings()
   QSettings settings;
   geometry = settings.value("MainWindow.geometry").toByteArray();
 
+  // Load recent projects.
+  recentProjects = settings.value("MainWindow.recentProjects", QStringList()).toStringList();
+  for (int i = recentProjects.size() - 1; i >= 0; i--) {
+    if (!QFile::exists(recentProjects[i])) {
+      recentProjects.removeAt(i);
+    }
+  }
+  if (recentProjects.size() > 10) {
+    recentProjects = recentProjects.mid(recentProjects.size() - 10);
+  }
+
   // Load recent binaries.
   recentBinaries = settings.value("MainWindow.recentBinaries", QStringList()).toStringList();
   for (int i = recentBinaries.size() - 1; i >= 0; i--) {
@@ -326,7 +351,12 @@ void MainWindow::createMenu()
 {
   auto *fileMenu = menuBar()->addMenu(tr("&File"));
   fileMenu->addAction(tr("Open project"), this, SLOT(openProject()), QKeySequence::Open);
-  // TODO: Put recent project files here.
+  if (!recentProjects.isEmpty()) {
+    auto *recentMenu = fileMenu->addMenu(tr("Open recent projects"));
+    for (const auto &file : recentProjects) {
+      recentMenu->addAction(file, this, SLOT(onRecentProject()));
+    }
+  }
 
   saveProjectAction =
     fileMenu->addAction(tr("Save project"), this, SLOT(saveProject()), QKeySequence::Save);

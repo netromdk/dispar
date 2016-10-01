@@ -28,9 +28,9 @@ private slots:
   void openProject(const QString &projectFile = QString());
   void saveProject();
   void closeProject();
-
   void openBinary();
 
+  void onRecentProject();
   void onRecentBinary();
   void onConversionHelper();
   void onDisassembler();
@@ -48,7 +48,7 @@ private:
 
   bool modified;
   QString startupFile;
-  QStringList recentBinaries;
+  QStringList recentProjects, recentBinaries;
   QByteArray geometry;
 
   QAction *saveProjectAction, *saveAsProjectAction, *closeProjectAction;
