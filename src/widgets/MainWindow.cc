@@ -74,6 +74,15 @@ void MainWindow::saveProject()
 
 void MainWindow::closeProject()
 {
+  // TODO: Ask to save if project is live and unsaved.
+  Context::get().clearProject();
+
+  saveProjectAction->setEnabled(false);
+  saveAsProjectAction->setEnabled(false);
+  closeProjectAction->setEnabled(false);
+
+  centralWidget()->deleteLater();
+  createLayout();
 }
 
 void MainWindow::openBinary()

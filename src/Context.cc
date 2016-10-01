@@ -59,10 +59,15 @@ std::shared_ptr<Project> Context::project() const
 
 std::shared_ptr<Project> Context::resetProject()
 {
+  clearProject();
+  project_ = std::make_shared<Project>();
+  return project_;
+}
+
+void Context::clearProject()
+{
   if (project_) {
     project_.reset();
   }
-
-  project_ = std::make_shared<Project>();
-  return project_;
+  project_ = nullptr;
 }

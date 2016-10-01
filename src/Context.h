@@ -29,6 +29,8 @@ public:
   /// Reset to empty project state and returns newly created instance.
   std::shared_ptr<Project> resetProject();
 
+  void clearProject();
+
 signals:
   void showMachineCodeChanged(bool show);
 
