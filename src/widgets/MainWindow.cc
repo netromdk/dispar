@@ -55,41 +55,73 @@ void MainWindow::showEvent(QShowEvent *event)
 
   // Load specified files or open file dialog.
   Util::delayFunc([this] {
-    if (startupFile.isEmpty()) {
-      openBinary();
-    }
-    else {
-      loadBinary(startupFile);
+    if (!startupFile.isEmpty()) {
+      if (startupFile.toLower().endsWith(".dispar")) {
+        openProject(startupFile);
+      }
+      else {
+        loadBinary(startupFile);
+      }
     }
   });
 }
 
-void MainWindow::openProject()
+void MainWindow::openProject(const QString &projectFile)
 {
   // TODO: Ask to save if project is live and unsaved!
 
-  QFileDialog diag(this, tr("Open Project"), QDir::homePath());
-  diag.setNameFilters(QStringList{"Dispar project (*.dispar)"});
+  QString file = projectFile;
+  if (file.isEmpty()) {
+    QFileDialog diag(this, tr("Open Project"), QDir::homePath());
+    diag.setNameFilters(QStringList{"Dispar project (*.dispar)"});
 
-  if (!diag.exec()) return;
+    if (!diag.exec()) return;
 
-  auto file = diag.selectedFiles().first();
+    file = diag.selectedFiles().first();
+  }
+
   qDebug() << "Opening project:" << file;
-
   closeProject();
 
-  if (!Context::get().loadProject(file)) {
+  auto project = Context::get().loadProject(file);
+  if (!project) {
     QMessageBox::critical(this, "dispar",
                           tr("Failed to load \"%1\"!\nMake sure file is valid.").arg(file));
     return;
   }
 
   // TODO: Add to recent projects list.
+
+  loadBinary(project->binary());
 }
 
 void MainWindow::saveProject()
 {
   bool saveAs = (sender() == saveAsProjectAction);
+
+  auto project = Context::get().project();
+  Q_ASSERT(project);
+
+  auto ask = project->file().isEmpty() || saveAs;
+
+  bool ret;
+  if (ask) {
+    QString file = QFileDialog::getSaveFileName(this, tr("Save Project"), QDir::homePath(),
+                                                tr("Dispar project (*.dispar)"));
+    if (file.isEmpty()) {
+      QMessageBox::warning(this, "dispar", tr("Project not saved!"));
+      return;
+    }
+
+    ret = project->save(file);
+  }
+  else {
+    ret = project->save();
+  }
+
+  if (!ret) {
+    QMessageBox::critical(this, "dispar", tr("Could not save project!"));
+  }
 }
 
 void MainWindow::closeProject()

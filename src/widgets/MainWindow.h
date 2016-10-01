@@ -25,7 +25,7 @@ protected:
   void showEvent(QShowEvent *event);
 
 private slots:
-  void openProject();
+  void openProject(const QString &projectFile = QString());
   void saveProject();
   void closeProject();
 
