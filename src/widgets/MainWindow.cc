@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 #include "../BinaryObject.h"
 #include "../Context.h"
+#include "../Project.h"
 #include "../Util.h"
 #include "../Version.h"
 #include "../formats/Format.h"
@@ -112,15 +113,19 @@ void MainWindow::onOptions()
 
 void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
 {
+  // If another project was active, or none, then start from scratch now.
+  auto project = Context::get().resetProject();
+  project->setBinary(fmt->file());
+
   Util::delayFunc([this, fmt] {
     auto file = fmt->file();
 
     // Add recent file.
-    if (!recentFiles.contains(file)) {
-      recentFiles << file;
+    if (!recentBinaries.contains(file)) {
+      recentBinaries << file;
     }
-    if (recentFiles.size() > 10) {
-      recentFiles.removeFirst();
+    if (recentBinaries.size() > 10) {
+      recentBinaries.removeFirst();
     }
 
     auto objects = fmt->objects();
