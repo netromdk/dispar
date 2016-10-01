@@ -208,7 +208,7 @@ void BinaryWidget::createLayout()
   binaryLabel->setWordWrap(true);
 
   QFontMetrics metrics(binaryLabel->font());
-  auto elidedText = metrics.elidedText(binaryFile, Qt::ElideLeft, 250);
+  auto elidedText = metrics.elidedText(binaryFile, Qt::ElideLeft, 200);
   binaryLabel->setText(tr("File: %1").arg(elidedText));
   binaryLabel->setToolTip(binaryFile);
 
@@ -266,7 +266,7 @@ void BinaryWidget::createLayout()
   vertSplitter->addWidget(mainView);
   vertSplitter->addWidget(propertiesWidget);
 
-  vertSplitter->setSizes(QList<int>{175, 500, 120});
+  vertSplitter->setSizes(QList<int>{200, 600, 200});
 
   auto *layout = new QHBoxLayout;
   layout->setContentsMargins(5, 5, 5, 5);
