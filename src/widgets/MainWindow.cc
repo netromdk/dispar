@@ -186,8 +186,12 @@ void MainWindow::onOptions()
 
 void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
 {
-  // If another project was active, or none, then start from scratch now.
-  auto project = Context::get().resetProject();
+  // If no project was active then create one, and if a project was not already saved then reset it.
+  auto &ctx = Context::get();
+  auto project = ctx.project();
+  if (!project || project->file().isEmpty()) {
+    project = ctx.resetProject();
+  }
   project->setBinary(fmt->file());
 
   saveProjectAction->setEnabled(true);
