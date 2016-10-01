@@ -1,6 +1,7 @@
 #include "Project.h"
 
 #include <QDebug>
+#include <QSettings>
 
 Project::Project()
 {
@@ -9,17 +10,54 @@ Project::Project()
 
 Project::~Project()
 {
-  qDebug() << "Destroy project" << project() << binary();
+  qDebug() << "Destroy project" << file() << binary();
 }
 
 std::shared_ptr<Project> Project::load(const QString &file)
 {
-  return nullptr;
+  qDebug() << "Loading from" << file;
+
+  auto project = std::make_shared<Project>();
+
+  // TODO: Use another format!
+  QSettings settings(file, QSettings::IniFormat);
+  if (QSettings::NoError != settings.status()) {
+    return nullptr;
+  }
+
+  if (!settings.contains("binary")) {
+    return nullptr;
+  }
+
+  auto binary = settings.value("binary");
+  if (binary.isNull() || binary.type() != QVariant::String) {
+    return nullptr;
+  }
+  project->setBinary(binary.toString());
+
+  return project;
 }
 
-bool Project::save(const QString &file)
+bool Project::save(const QString &path)
 {
-  return false;
+  auto outFile = path;
+  if (outFile.isEmpty()) {
+    outFile = file();
+  }
+
+  qDebug() << "Saving to" << outFile;
+
+  // TODO: Use another format!
+  QSettings settings(outFile, QSettings::IniFormat);
+  settings.setValue("binary", binary());
+  settings.sync();
+
+  if (QSettings::NoError != settings.status()) {
+    return false;
+  }
+
+  file_ = outFile;
+  return true;
 }
 
 QString Project::binary() const
@@ -32,7 +70,7 @@ void Project::setBinary(const QString &file)
   binary_ = file;
 }
 
-QString Project::project() const
+QString Project::file() const
 {
-  return project_;
+  return file_;
 }

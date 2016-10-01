@@ -20,6 +20,8 @@ add_dispar_executable(
 
   Util.cc
 
+  Project.cc
+
   Reader.cc
   CStringReader.cc
 

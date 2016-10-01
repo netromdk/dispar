@@ -17,17 +17,16 @@ public:
   /** Returns \p nullptr if nonexistent or failed. */
   static std::shared_ptr<Project> load(const QString &file);
 
-  /// Save project to \p file, if specified, otherwise save to \p projectFile().
-  /** If no path is resolved then it asks with a dialog. */
+  /// Save project to \p file, if specified, otherwise save to \p file().
   bool save(const QString &file = QString());
 
   QString binary() const;
   void setBinary(const QString &file);
 
-  QString project() const;
+  QString file() const;
 
 private:
-  QString binary_, project_;
+  QString binary_, file_;
 };
 
 #endif // DISPAR_PROJECT_H
