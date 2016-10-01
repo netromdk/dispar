@@ -342,7 +342,8 @@ void MainWindow::createMenu()
 
   fileMenu->addSeparator();
 
-  fileMenu->addAction(tr("Open binary"), this, SLOT(openBinary()));
+  fileMenu->addAction(tr("Open binary"), this, SLOT(openBinary()),
+                      QKeySequence(Qt::SHIFT + Qt::CTRL + Qt::Key_O));
   if (!recentBinaries.isEmpty()) {
     auto *recentMenu = fileMenu->addMenu(tr("Open recent binaries"));
     for (const auto &file : recentBinaries) {
