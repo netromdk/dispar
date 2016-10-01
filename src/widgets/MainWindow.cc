@@ -129,6 +129,10 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
   auto project = Context::get().resetProject();
   project->setBinary(fmt->file());
 
+  saveProjectAction->setEnabled(true);
+  saveAsProjectAction->setEnabled(true);
+  closeProjectAction->setEnabled(true);
+
   Util::delayFunc([this, fmt] {
     auto file = fmt->file();
 
@@ -259,10 +263,17 @@ void MainWindow::createMenu()
   fileMenu->addAction(tr("Open project"), this, SLOT(openProject()), QKeySequence::Open);
   // TODO: Put recent project files here.
 
-  // TODO: Disable when no project is active.
-  fileMenu->addAction(tr("Save project"), this, SLOT(saveProject()), QKeySequence::Save);
-  fileMenu->addAction(tr("Save as.."), this, SLOT(saveProject()), QKeySequence::SaveAs);
-  fileMenu->addAction(tr("Close project"), this, SLOT(closeProject()), QKeySequence::Close);
+  saveProjectAction =
+    fileMenu->addAction(tr("Save project"), this, SLOT(saveProject()), QKeySequence::Save);
+  saveProjectAction->setEnabled(false);
+
+  saveAsProjectAction =
+    fileMenu->addAction(tr("Save as.."), this, SLOT(saveProject()), QKeySequence::SaveAs);
+  saveAsProjectAction->setEnabled(false);
+
+  closeProjectAction =
+    fileMenu->addAction(tr("Close project"), this, SLOT(closeProject()), QKeySequence::Close);
+  closeProjectAction->setEnabled(false);
 
   fileMenu->addSeparator();
 

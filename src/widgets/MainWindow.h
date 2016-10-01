@@ -8,6 +8,8 @@
 
 #include "../CpuType.h"
 
+class QAction;
+
 class Format;
 class FormatLoader;
 class BinaryWidget;
@@ -48,6 +50,8 @@ private:
   QString startupFile;
   QStringList recentBinaries;
   QByteArray geometry;
+
+  QAction *saveProjectAction, *saveAsProjectAction, *closeProjectAction;
 
   std::unique_ptr<FormatLoader> loader;
 };
