@@ -13,9 +13,7 @@ std::unique_ptr<QFile, std::function<void(QFile *)>> tempFile(const QByteArray &
     }
   };
 
-  auto name = QUuid::createUuid().toString();
-  auto *file = new QFile(QDir::temp().absoluteFilePath(name));
-  file->remove();
+  auto *file = new QFile(tempFilePath());
 
   if (!data.isEmpty()) {
     file->open(QIODevice::WriteOnly);
@@ -24,6 +22,14 @@ std::unique_ptr<QFile, std::function<void(QFile *)>> tempFile(const QByteArray &
   }
 
   return std::unique_ptr<QFile, std::function<void(QFile *) >>(file, deleter);
+}
+
+QString tempFilePath()
+{
+  auto name = QUuid::createUuid().toString();
+  auto path = QDir::temp().absoluteFilePath(name);
+  QFile::remove(path);
+  return path;
 }
 
 std::ostream &operator<<(std::ostream &os, const QString &str)

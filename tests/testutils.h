@@ -15,6 +15,9 @@
 std::unique_ptr<QFile, std::function<void(QFile *)>>
 tempFile(const QByteArray &data = QByteArray());
 
+/// Generates a random, temporary file path and makes sure it doesn't exist.
+QString tempFilePath();
+
 std::ostream &operator<<(std::ostream &os, const QString &str);
 
 #endif // DISPAR_TESTUTILS_H
