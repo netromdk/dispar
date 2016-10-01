@@ -23,11 +23,13 @@ protected:
   void showEvent(QShowEvent *event);
 
 private slots:
-  void openBinary();
-  // void saveBinary();
-  // void closeBinary();
+  void openProject();
+  void saveProject();
+  void closeProject();
 
-  void onRecentFile();
+  void openBinary();
+
+  void onRecentBinary();
   void onConversionHelper();
   void onDisassembler();
   void onAbout();
@@ -44,7 +46,7 @@ private:
 
   bool modified;
   QString startupFile;
-  QStringList recentFiles;
+  QStringList recentBinaries;
   QByteArray geometry;
 
   std::unique_ptr<FormatLoader> loader;

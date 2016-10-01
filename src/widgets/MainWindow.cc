@@ -37,7 +37,7 @@ MainWindow::~MainWindow()
 {
   QSettings settings;
   settings.setValue("MainWindow.geometry", saveGeometry());
-  settings.setValue("MainWindow.recentFiles", recentFiles);
+  settings.setValue("MainWindow.recentBinaries", recentBinaries);
 }
 
 void MainWindow::showEvent(QShowEvent *event)
@@ -64,6 +64,18 @@ void MainWindow::showEvent(QShowEvent *event)
   });
 }
 
+void MainWindow::openProject()
+{
+}
+
+void MainWindow::saveProject()
+{
+}
+
+void MainWindow::closeProject()
+{
+}
+
 void MainWindow::openBinary()
 {
   QFileDialog diag(this, tr("Open Binary"), QDir::homePath());
@@ -76,7 +88,7 @@ void MainWindow::openBinary()
   loadBinary(file);
 }
 
-void MainWindow::onRecentFile()
+void MainWindow::onRecentBinary()
 {
   auto *action = qobject_cast<QAction *>(sender());
   if (!action) return;
@@ -216,21 +228,21 @@ void MainWindow::readSettings()
   QSettings settings;
   geometry = settings.value("MainWindow.geometry").toByteArray();
 
-  // Load recent files.
-  recentFiles = settings.value("MainWindow.recentFiles", QStringList()).toStringList();
-  for (int i = recentFiles.size() - 1; i >= 0; i--) {
-    if (!QFile::exists(recentFiles[i])) {
-      recentFiles.removeAt(i);
+  // Load recent binaries.
+  recentBinaries = settings.value("MainWindow.recentBinaries", QStringList()).toStringList();
+  for (int i = recentBinaries.size() - 1; i >= 0; i--) {
+    if (!QFile::exists(recentBinaries[i])) {
+      recentBinaries.removeAt(i);
     }
   }
-  if (recentFiles.size() > 10) {
-    recentFiles = recentFiles.mid(recentFiles.size() - 10);
+  if (recentBinaries.size() > 10) {
+    recentBinaries = recentBinaries.mid(recentBinaries.size() - 10);
   }
 }
 
 void MainWindow::createLayout()
 {
-  auto *label = new QLabel(tr("Load a binary file!"));
+  auto *label = new QLabel(tr("Open a project file or load a binary!"));
   label->setAlignment(Qt::AlignCenter);
 
   auto font = label->font();
@@ -244,12 +256,21 @@ void MainWindow::createLayout()
 void MainWindow::createMenu()
 {
   auto *fileMenu = menuBar()->addMenu(tr("&File"));
-  fileMenu->addAction(tr("Open binary"), this, SLOT(openBinary()), QKeySequence::Open);
+  fileMenu->addAction(tr("Open project"), this, SLOT(openProject()), QKeySequence::Open);
+  // TODO: Put recent project files here.
 
-  if (!recentFiles.isEmpty()) {
-    auto *recentMenu = fileMenu->addMenu(tr("Open recent files"));
-    for (const auto &file : recentFiles) {
-      recentMenu->addAction(file, this, SLOT(onRecentFile()));
+  // TODO: Disable when no project is active.
+  fileMenu->addAction(tr("Save project"), this, SLOT(saveProject()), QKeySequence::Save);
+  fileMenu->addAction(tr("Save as.."), this, SLOT(saveProject()), QKeySequence::SaveAs);
+  fileMenu->addAction(tr("Close project"), this, SLOT(closeProject()), QKeySequence::Close);
+
+  fileMenu->addSeparator();
+
+  fileMenu->addAction(tr("Open binary"), this, SLOT(openBinary()));
+  if (!recentBinaries.isEmpty()) {
+    auto *recentMenu = fileMenu->addMenu(tr("Open recent binaries"));
+    for (const auto &file : recentBinaries) {
+      recentMenu->addAction(file, this, SLOT(onRecentBinary()));
     }
   }
 
@@ -276,6 +297,11 @@ void MainWindow::loadBinary(QString file)
   }
 
   qDebug() << "Loading binary:" << file;
+
+  if (!QFile::exists(file)) {
+    qWarning() << "Does not exist!";
+    return;
+  }
 
   auto *loaderDiag = new QProgressDialog(this);
   loaderDiag->setLabelText(tr("Detecting format.."));
