@@ -6,6 +6,7 @@
 
 #include "../BinaryObject.h"
 
+class QLabel;
 class QListWidget;
 class QPlainTextEdit;
 class QTextDocument;
@@ -43,6 +44,7 @@ private:
   QTextDocument *doc;
   QHash<quint64, int> offsetBlock; // offset -> block
   QList<int> codeBlocks;
+  QLabel *addressLabel, *offsetLabel, *machineCodeLabel;
 };
 
 #endif // DISPAR_BINARY_WIDGET_H

@@ -1,7 +1,9 @@
 #include <QApplication>
 #include <QDebug>
 #include <QFile>
+#include <QGroupBox>
 #include <QHBoxLayout>
+#include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
 #include <QMessageBox>
@@ -74,7 +76,18 @@ void BinaryWidget::onCursorPositionChanged()
 
   auto *userData = dynamic_cast<TextBlockUserData *>(block.userData());
   if (userData) {
-    qDebug() << "address:" << QString::number(userData->address, 16);
+    addressLabel->setText(
+      tr("Address: 0x%1 (%2)").arg(userData->address, 0, 16).arg(userData->address));
+    offsetLabel->setText(
+      tr("Offset: 0x%1 (%2)").arg(userData->offset, 0, 16).arg(userData->offset));
+
+    if (!userData->bytes.isEmpty()) {
+      machineCodeLabel->setText(tr("Assembly: %1").arg(userData->bytes));
+      machineCodeLabel->show();
+    }
+    else {
+      machineCodeLabel->hide();
+    }
   }
 
   // auto text = block.text();
@@ -143,6 +156,7 @@ void BinaryWidget::filterSymbols(const QString &filter)
 
 void BinaryWidget::createLayout()
 {
+  // Symbols left bar.
   symbolList = new QListWidget;
   connect(symbolList, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
 
@@ -169,6 +183,29 @@ void BinaryWidget::createLayout()
   auto *symbolsWidget = new QWidget;
   symbolsWidget->setLayout(symbolsLayout);
 
+  // Position right bar.
+  addressLabel = new QLabel;
+  offsetLabel = new QLabel;
+  machineCodeLabel = new QLabel;
+
+  auto *positionLayout = new QVBoxLayout;
+  positionLayout->addWidget(addressLabel);
+  positionLayout->addWidget(offsetLabel);
+  positionLayout->addWidget(machineCodeLabel);
+
+  auto *positionBox = new QGroupBox(tr("Position"));
+  positionBox->setLayout(positionLayout);
+
+  auto *propertiesLayout = new QVBoxLayout;
+  propertiesLayout->setContentsMargins(0, 0, 0, 0);
+  propertiesLayout->addWidget(positionBox);
+  propertiesLayout->addStretch();
+
+  auto *propertiesWidget = new QWidget;
+  propertiesWidget->setLayout(propertiesLayout);
+
+  // Main center view.
+
   mainView = new QPlainTextEdit;
   mainView->setReadOnly(true);
   mainView->setCenterOnScroll(true);
@@ -182,8 +219,9 @@ void BinaryWidget::createLayout()
   auto *vertSplitter = new PersistentSplitter("BinaryWidget.vertSplitter");
   vertSplitter->addWidget(symbolsWidget);
   vertSplitter->addWidget(mainView);
+  vertSplitter->addWidget(propertiesWidget);
 
-  vertSplitter->setSizes(QList<int>{175, 500});
+  vertSplitter->setSizes(QList<int>{175, 500, 120});
 
   auto *layout = new QHBoxLayout;
   layout->setContentsMargins(5, 5, 5, 5);
