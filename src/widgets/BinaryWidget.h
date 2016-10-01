@@ -44,7 +44,7 @@ private:
   QTextDocument *doc;
   QHash<quint64, int> offsetBlock; // offset -> block
   QList<int> codeBlocks;
-  QLabel *addressLabel, *offsetLabel, *machineCodeLabel;
+  QLabel *addressLabel, *offsetLabel, *machineCodeLabel, *binaryLabel, *sizeLabel, *archLabel;
 };
 
 #endif // DISPAR_BINARY_WIDGET_H

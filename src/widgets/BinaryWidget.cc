@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QFile>
+#include <QFileInfo>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -16,6 +17,7 @@
 #include "../BinaryObject.h"
 #include "../CStringReader.h"
 #include "../Context.h"
+#include "../Project.h"
 #include "../Util.h"
 #include "BinaryWidget.h"
 #include "PersistentSplitter.h"
@@ -154,6 +156,7 @@ void BinaryWidget::filterSymbols(const QString &filter)
 void BinaryWidget::createLayout()
 {
   // Symbols left bar.
+
   symbolList = new QListWidget;
   connect(symbolList, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
 
@@ -181,6 +184,7 @@ void BinaryWidget::createLayout()
   symbolsWidget->setLayout(symbolsLayout);
 
   // Position right bar.
+
   addressLabel = new QLabel;
   offsetLabel = new QLabel;
   machineCodeLabel = new QLabel;
@@ -193,9 +197,35 @@ void BinaryWidget::createLayout()
   auto *positionBox = new QGroupBox(tr("Position"));
   positionBox->setLayout(positionLayout);
 
+  auto &ctx = Context::get();
+  auto binaryFile = ctx.project()->binary();
+  auto binarySize = QFileInfo(binaryFile).size();
+
+  binaryLabel = new QLabel;
+  binaryLabel->setWordWrap(true);
+
+  QFontMetrics metrics(binaryLabel->font());
+  auto elidedText = metrics.elidedText(binaryFile, Qt::ElideLeft, 250);
+  binaryLabel->setText(tr("File: %1").arg(elidedText));
+  binaryLabel->setToolTip(binaryFile);
+
+  sizeLabel = new QLabel(tr("Size: %1").arg(Util::formatSize(binarySize)));
+
+  archLabel = new QLabel(
+    tr("Arch: %1 %2").arg(cpuTypeName(object->cpuType())).arg(cpuTypeName(object->cpuSubType())));
+
+  auto *binaryLayout = new QVBoxLayout;
+  binaryLayout->addWidget(binaryLabel);
+  binaryLayout->addWidget(sizeLabel);
+  binaryLayout->addWidget(archLabel);
+
+  auto *binaryBox = new QGroupBox(tr("Binary"));
+  binaryBox->setLayout(binaryLayout);
+
   auto *propertiesLayout = new QVBoxLayout;
   propertiesLayout->setContentsMargins(0, 0, 0, 0);
   propertiesLayout->addWidget(positionBox);
+  propertiesLayout->addWidget(binaryBox);
   propertiesLayout->addStretch();
 
   auto *propertiesWidget = new QWidget;
