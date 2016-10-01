@@ -72,7 +72,6 @@ void BinaryWidget::onCursorPositionChanged()
 {
   auto cursor = mainView->textCursor();
   auto block = cursor.block();
-  qDebug() << "column:" << cursor.columnNumber() << "block:" << block.blockNumber();
 
   auto *userData = dynamic_cast<TextBlockUserData *>(block.userData());
   if (userData) {
@@ -89,8 +88,6 @@ void BinaryWidget::onCursorPositionChanged()
       machineCodeLabel->hide();
     }
   }
-
-  // auto text = block.text();
 }
 
 void BinaryWidget::onShowMachineCodeChanged(bool show)
