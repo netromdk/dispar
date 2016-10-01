@@ -1,9 +1,10 @@
 #include "Context.h"
+#include "Project.h"
 
 #include <QDebug>
 #include <QSettings>
 
-Context::Context()
+Context::Context() : project_(nullptr)
 {
   qDebug() << "Loading settings";
   QSettings settings;
@@ -49,4 +50,19 @@ Disassembler::Syntax Context::disassemblerSyntax() const
 void Context::setDisassemblerSyntax(Disassembler::Syntax syntax)
 {
   disassemblerSyntax_ = syntax;
+}
+
+std::shared_ptr<Project> Context::project() const
+{
+  return project_;
+}
+
+std::shared_ptr<Project> Context::resetProject()
+{
+  if (project_) {
+    project_.reset();
+  }
+
+  project_ = std::make_shared<Project>();
+  return project_;
 }
