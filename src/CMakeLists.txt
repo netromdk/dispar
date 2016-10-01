@@ -13,6 +13,8 @@ add_library(
 
   Context.h
   Context.cc
+  Project.h
+  Project.cc
 
   Reader.h
   Reader.cc
