@@ -47,6 +47,7 @@ TEST(Project, load)
   auto p2 = Project::load(path);
   ASSERT_NE(p2, nullptr) << "Could not load from: " << path;
   EXPECT_EQ(p2->binary(), p.binary()) << p2->binary() << p.binary();
+  EXPECT_EQ(p2->file(), path) << p2->file();
 }
 
 TEST(Project, loadFromAlreadyKnownFile)

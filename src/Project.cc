@@ -35,6 +35,8 @@ std::shared_ptr<Project> Project::load(const QString &file)
   }
   project->setBinary(binary.toString());
 
+  // Set where file was loaded from.
+  project->file_ = file;
   return project;
 }
 
