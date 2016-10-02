@@ -5,6 +5,12 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
+namespace {
+
+static constexpr int PROJECT_VERSION = 1;
+
+} // anon
+
 Project::Project()
 {
   qDebug() << "Create project";
@@ -34,6 +40,15 @@ std::shared_ptr<Project> Project::load(const QString &file)
   }
 
   auto obj = doc.object();
+  if (!obj.contains("version")) {
+    qCritical() << "Project does not contain project version!";
+    return nullptr;
+  }
+
+  // TODO: Use this when project version is bumped in the future to handle parsing older formats.
+  int version = obj["version"].toInt();
+  qDebug() << "Version:" << version;
+
   if (obj.contains("binary")) {
     project->setBinary(obj["binary"].toString());
   }
@@ -53,6 +68,7 @@ bool Project::save(const QString &path)
   qDebug() << "Saving to" << outFile;
 
   QJsonObject obj;
+  obj["version"] = PROJECT_VERSION;
   obj["binary"] = binary();
 
   QJsonDocument doc;
