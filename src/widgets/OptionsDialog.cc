@@ -16,15 +16,6 @@ OptionsDialog::OptionsDialog(QWidget *parent) : QDialog(parent)
 {
   setWindowTitle(tr("Options"));
   createLayout();
-
-  if (!restoreGeometry(QSettings().value("OptionsDialog.geometry").toByteArray())) {
-    resize(600, 500);
-  }
-}
-
-OptionsDialog::~OptionsDialog()
-{
-  QSettings().setValue("OptionsDialog.geometry", saveGeometry());
 }
 
 void OptionsDialog::onAccept()
