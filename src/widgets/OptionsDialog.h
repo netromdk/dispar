@@ -11,7 +11,6 @@ class OptionsDialog : public QDialog {
 
 public:
   OptionsDialog(QWidget *parent = nullptr);
-  ~OptionsDialog();
 
 private slots:
   void onAccept();
