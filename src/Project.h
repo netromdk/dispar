@@ -2,6 +2,7 @@
 #define DISPAR_PROJECT_H
 
 #include <QHash>
+#include <QObject>
 #include <QString>
 #include <QStringList>
 
@@ -10,7 +11,9 @@
 /// This class represents a project (saved with extension .dispar).
 /** It contains information about the binary, machine code modifications, custom tags, comments
     etc. */
-class Project {
+class Project : public QObject {
+  Q_OBJECT
+
 public:
   Project();
   ~Project();
@@ -30,9 +33,15 @@ public:
   /// Tags for a specified address.
   QStringList addressTags(quint64 address) const;
 
+  /// All tags.
+  const QHash<quint64, QStringList> &tags() const;
+
   /// Associates \p tag with \p address.
   /** Checks if tag is not taken already, too. */
   bool addAddressTag(const QString &tag, quint64 address);
+
+signals:
+  void tagsChanged();
 
 private:
   QString binary_, file_;

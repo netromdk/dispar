@@ -109,6 +109,11 @@ QStringList Project::addressTags(quint64 address) const
   return QStringList();
 }
 
+const QHash<quint64, QStringList> &Project::tags() const
+{
+  return addressTags_;
+}
+
 bool Project::addAddressTag(const QString &tag, quint64 address)
 {
   for (const auto addr : addressTags_.keys()) {
@@ -116,11 +121,14 @@ bool Project::addAddressTag(const QString &tag, quint64 address)
       return false;
     }
   }
+
   if (addressTags_.contains(address)) {
     addressTags_[address].append(tag);
   }
   else {
     addressTags_[address] = QStringList{tag};
   }
+
+  emit tagsChanged();
   return true;
 }
