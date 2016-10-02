@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QFile>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 
@@ -53,6 +54,25 @@ std::shared_ptr<Project> Project::load(const QString &file)
     project->setBinary(obj["binary"].toString());
   }
 
+  if (obj.contains("addressTags")) {
+    auto tmp = obj["addressTags"];
+    if (!tmp.isObject()) return nullptr;
+
+    auto tagsObj = tmp.toObject();
+    for (const auto &key : tagsObj.keys()) {
+      bool ok;
+      quint64 addr = key.toLongLong(&ok);
+      if (!ok) return nullptr;
+
+      auto arr = tagsObj[key];
+      if (!arr.isArray()) return nullptr;
+
+      for (const auto &tag : arr.toArray()) {
+        project->addAddressTag(tag.toString(), addr);
+      }
+    }
+  }
+
   // Set where file was loaded from.
   project->file_ = file;
   return project;
@@ -70,6 +90,12 @@ bool Project::save(const QString &path)
   QJsonObject obj;
   obj["version"] = PROJECT_VERSION;
   obj["binary"] = binary();
+
+  QJsonObject tagsObj;
+  for (const auto addr : addressTags_.keys()) {
+    tagsObj[QString::number(addr)] = QJsonArray::fromStringList(addressTags_[addr]);
+  }
+  obj["addressTags"] = tagsObj;
 
   QJsonDocument doc;
   doc.setObject(obj);

@@ -66,3 +66,27 @@ TEST(Project, loadFromAlreadyKnownFile)
   ASSERT_NE(p2, nullptr) << "Could not load from: " << path;
   EXPECT_EQ(p2->binary(), p.binary()) << p2->binary() << p.binary();
 }
+
+TEST(Project, tags)
+{
+  Project p;
+
+  quint64 addr = 0x1234;
+  QString tag("tag");
+  EXPECT_TRUE(p.addAddressTag(tag, addr));
+  EXPECT_FALSE(p.addAddressTag(tag, addr)); // Ignore existent.
+
+  auto tags = p.addressTags(addr);
+  ASSERT_EQ(tags.size(), 1);
+  EXPECT_EQ(tags[0], tag);
+
+  auto file = tempFile();
+  auto path = file->fileName();
+  ASSERT_TRUE(p.save(path)) << "Could not save to: " << path;
+
+  auto p2 = Project::load(path);
+  ASSERT_NE(p2, nullptr) << "Could not load from: " << path;
+
+  auto tags2 = p2->addressTags(addr);
+  EXPECT_EQ(tags, tags2) << "Tags were not saved/loaded correctly";
+}
