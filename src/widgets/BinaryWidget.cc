@@ -62,6 +62,8 @@ void BinaryWidget::onSymbolChosen(int row)
 
   // If offset is found then select the text block.
   auto *item = list->item(row);
+  if (!item) return;
+
   auto offset = item->data(Qt::UserRole).toLongLong();
   if (offsetBlock.contains(offset)) {
     auto blockNum = offsetBlock[offset];
@@ -141,7 +143,16 @@ void BinaryWidget::onShowMachineCodeChanged(bool show)
 
 void BinaryWidget::filterSymbols(const QString &filter)
 {
-  auto *list = (symbolList->isVisible() ? symbolList : stringList);
+  QListWidget *list = nullptr;
+  if (symbolList->isVisible()) {
+    list = symbolList;
+  }
+  else if (stringList->isVisible()) {
+    list = stringList;
+  }
+  else if (tagList->isVisible()) {
+    list = tagList;
+  }
 
   // Unhide all.
   auto allItems = list->findItems("*", Qt::MatchWildcard);
@@ -169,9 +180,13 @@ void BinaryWidget::createLayout()
   stringList = new QListWidget;
   connect(stringList, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
 
+  tagList = new QListWidget;
+  connect(tagList, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
+
   auto *tabWidget = new QTabWidget;
   tabWidget->addTab(symbolList, tr("Functions"));
   tabWidget->addTab(stringList, tr("Strings"));
+  tabWidget->addTab(tagList, tr("Tags"));
 
   auto *filterSymLine = new QLineEdit;
   filterSymLine->setPlaceholderText(tr("Filter symbols.."));
@@ -288,6 +303,9 @@ void BinaryWidget::createLayout()
   layout->addWidget(vertSplitter);
 
   setLayout(layout);
+
+  connect(Context::get().project().get(), &Project::tagsChanged, this,
+          &BinaryWidget::updateTagList);
 }
 
 void BinaryWidget::setup()
@@ -466,4 +484,19 @@ void BinaryWidget::setup()
 
   auto end = QDateTime::currentDateTime();
   qDebug() << "Setup in" << start.msecsTo(end) << "ms";
+}
+
+void BinaryWidget::updateTagList()
+{
+  tagList->clear();
+
+  const auto &tags = Context::get().project()->tags();
+  for (const auto addr : tags.keys()) {
+    for (const auto &tag : tags[addr]) {
+      auto *item = new QListWidgetItem;
+      item->setText(tag);
+      item->setData(Qt::UserRole, addr);
+      tagList->addItem(item);
+    }
+  }
 }

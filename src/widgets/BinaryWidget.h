@@ -37,11 +37,12 @@ private slots:
 private:
   void createLayout();
   void setup();
+  void updateTagList();
 
   std::shared_ptr<BinaryObject> object;
 
   bool shown;
-  QListWidget *symbolList, *stringList;
+  QListWidget *symbolList, *stringList, *tagList;
   QPlainTextEdit *mainView;
   QTextDocument *doc;
   QHash<quint64, int> offsetBlock; // offset -> block
