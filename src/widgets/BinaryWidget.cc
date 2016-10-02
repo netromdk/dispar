@@ -24,6 +24,7 @@
 #include "../Util.h"
 #include "BinaryWidget.h"
 #include "PersistentSplitter.h"
+#include "TagsEdit.h"
 
 namespace {
 
@@ -92,6 +93,8 @@ void BinaryWidget::onCursorPositionChanged()
     else {
       machineCodeLabel->hide();
     }
+
+    tagsEdit->setAddress(userData->address);
   }
 }
 
@@ -243,10 +246,19 @@ void BinaryWidget::createLayout()
   auto *binaryBox = new QGroupBox(tr("Binary"));
   binaryBox->setLayout(binaryLayout);
 
+  tagsEdit = new TagsEdit;
+
+  auto *tagsLayout = new QVBoxLayout;
+  tagsLayout->addWidget(tagsEdit);
+
+  auto *tagsBox = new QGroupBox(tr("Tags"));
+  tagsBox->setLayout(tagsLayout);
+
   auto *propertiesLayout = new QVBoxLayout;
   propertiesLayout->setContentsMargins(0, 0, 0, 0);
   propertiesLayout->addWidget(positionBox);
   propertiesLayout->addWidget(binaryBox);
+  propertiesLayout->addWidget(tagsBox);
   propertiesLayout->addStretch();
 
   auto *propertiesWidget = new QWidget;

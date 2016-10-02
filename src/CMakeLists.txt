@@ -53,6 +53,8 @@ add_library(
   widgets/DisassemblerDialog.cc
   widgets/OptionsDialog.h
   widgets/OptionsDialog.cc
+  widgets/TagsEdit.h
+  widgets/TagsEdit.cc
 
   formats/Format.h
   formats/Format.cc

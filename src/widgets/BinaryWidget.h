@@ -6,6 +6,8 @@
 
 #include "../BinaryObject.h"
 
+class TagsEdit;
+
 class QLabel;
 class QListWidget;
 class QPlainTextEdit;
@@ -46,6 +48,7 @@ private:
   QList<int> codeBlocks;
   QLabel *addressLabel, *offsetLabel, *machineCodeLabel, *binaryLabel, *sizeLabel, *archLabel,
     *fileTypeLabel;
+  TagsEdit *tagsEdit;
 };
 
 #endif // DISPAR_BINARY_WIDGET_H
