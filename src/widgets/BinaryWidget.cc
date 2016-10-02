@@ -183,6 +183,10 @@ void BinaryWidget::createLayout()
   tagList = new QListWidget;
   connect(tagList, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
 
+  connect(Context::get().project().get(), &Project::tagsChanged, this,
+          &BinaryWidget::updateTagList);
+  updateTagList();
+
   auto *tabWidget = new QTabWidget;
   tabWidget->addTab(symbolList, tr("Functions"));
   tabWidget->addTab(stringList, tr("Strings"));
@@ -303,9 +307,6 @@ void BinaryWidget::createLayout()
   layout->addWidget(vertSplitter);
 
   setLayout(layout);
-
-  connect(Context::get().project().get(), &Project::tagsChanged, this,
-          &BinaryWidget::updateTagList);
 }
 
 void BinaryWidget::setup()
