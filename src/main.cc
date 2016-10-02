@@ -21,6 +21,7 @@ int main(int argc, char **argv)
 {
   QApplication app(argc, argv);
   app.setApplicationName("Dispar");
+  app.setOrganizationName("dispar");
   app.setApplicationVersion(versionString());
 
   // Register software signals.
