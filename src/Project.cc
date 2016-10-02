@@ -1,7 +1,9 @@
 #include "Project.h"
 
 #include <QDebug>
-#include <QSettings>
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 Project::Project()
 {
@@ -19,21 +21,22 @@ std::shared_ptr<Project> Project::load(const QString &file)
 
   auto project = std::make_shared<Project>();
 
-  // TODO: Use another format!
-  QSettings settings(file, QSettings::IniFormat);
-  if (QSettings::NoError != settings.status()) {
+  QFile qfile(file);
+  if (!qfile.open(QIODevice::ReadOnly)) {
+    qCritical() << "Could not read project from" << file;
     return nullptr;
   }
 
-  if (!settings.contains("binary")) {
+  auto doc = QJsonDocument::fromBinaryData(qfile.readAll());
+  if (doc.isNull() || doc.isEmpty() || !doc.isObject()) {
+    qCritical() << "Malformed or empty project file!";
     return nullptr;
   }
 
-  auto binary = settings.value("binary");
-  if (binary.isNull() || binary.type() != QVariant::String) {
-    return nullptr;
+  auto obj = doc.object();
+  if (obj.contains("binary")) {
+    project->setBinary(obj["binary"].toString());
   }
-  project->setBinary(binary.toString());
 
   // Set where file was loaded from.
   project->file_ = file;
@@ -49,14 +52,19 @@ bool Project::save(const QString &path)
 
   qDebug() << "Saving to" << outFile;
 
-  // TODO: Use another format!
-  QSettings settings(outFile, QSettings::IniFormat);
-  settings.setValue("binary", binary());
-  settings.sync();
+  QJsonObject obj;
+  obj["binary"] = binary();
 
-  if (QSettings::NoError != settings.status()) {
+  QJsonDocument doc;
+  doc.setObject(obj);
+
+  auto data = doc.toBinaryData();
+  QFile qfile(outFile);
+  if (!qfile.open(QIODevice::WriteOnly)) {
+    qCritical() << "Could not write project to" << outFile;
     return false;
   }
+  qfile.write(data);
 
   file_ = outFile;
   return true;

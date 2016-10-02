@@ -9,7 +9,7 @@
 
 namespace {
 
-QString settingsPath()
+static QString settingsPath()
 {
   return QDir::home().absoluteFilePath(".dispar");
 }
