@@ -1,7 +1,9 @@
 #ifndef DISPAR_PROJECT_H
 #define DISPAR_PROJECT_H
 
+#include <QHash>
 #include <QString>
+#include <QStringList>
 
 #include <memory>
 
@@ -25,8 +27,16 @@ public:
 
   QString file() const;
 
+  /// Tags for a specified address.
+  QStringList addressTags(quint64 address) const;
+
+  /// Associates \p tag with \p address.
+  /** Checks if tag is not taken already, too. */
+  bool addAddressTag(const QString &tag, quint64 address);
+
 private:
   QString binary_, file_;
+  QHash<quint64, QStringList> addressTags_;
 };
 
 #endif // DISPAR_PROJECT_H
