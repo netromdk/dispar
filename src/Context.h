@@ -24,6 +24,9 @@ public:
   Disassembler::Syntax disassemblerSyntax() const;
   void setDisassemblerSyntax(Disassembler::Syntax syntax);
 
+  void loadSettings();
+  void saveSettings();
+
   std::shared_ptr<Project> project() const;
 
   /// Reset to empty project state and returns newly created instance.

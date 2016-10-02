@@ -2,24 +2,17 @@
 #include "Project.h"
 
 #include <QDebug>
+#include <QFile>
 #include <QSettings>
 
 Context::Context() : project_(nullptr)
 {
-  qDebug() << "Loading settings";
-  QSettings settings;
-  showMachineCode_ = settings.value("Context.showMachineCode", true).toBool();
-  disassemblerSyntax_ = static_cast<Disassembler::Syntax>(
-    settings.value("Context.disassemblerSyntax", static_cast<int>(Disassembler::Syntax::INTEL))
-      .toInt());
+  loadSettings();
 }
 
 Context::~Context()
 {
-  qDebug() << "Saving settings";
-  QSettings settings;
-  settings.setValue("Context.showMachineCode", showMachineCode());
-  settings.setValue("Context.disassemblerSyntax", static_cast<int>(disassemblerSyntax()));
+  saveSettings();
 }
 
 Context &Context::get()
@@ -50,6 +43,24 @@ Disassembler::Syntax Context::disassemblerSyntax() const
 void Context::setDisassemblerSyntax(Disassembler::Syntax syntax)
 {
   disassemblerSyntax_ = syntax;
+}
+
+void Context::loadSettings()
+{
+  qDebug() << "Loading settings";
+  QSettings settings;
+  showMachineCode_ = settings.value("Context.showMachineCode", true).toBool();
+  disassemblerSyntax_ = static_cast<Disassembler::Syntax>(
+    settings.value("Context.disassemblerSyntax", static_cast<int>(Disassembler::Syntax::INTEL))
+      .toInt());
+}
+
+void Context::saveSettings()
+{
+  qDebug() << "Saving settings";
+  QSettings settings;
+  settings.setValue("Context.showMachineCode", showMachineCode());
+  settings.setValue("Context.disassemblerSyntax", static_cast<int>(disassemblerSyntax()));
 }
 
 std::shared_ptr<Project> Context::project() const
