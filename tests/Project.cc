@@ -67,7 +67,42 @@ TEST(Project, loadFromAlreadyKnownFile)
   EXPECT_EQ(p2->binary(), p.binary()) << p2->binary() << p.binary();
 }
 
-TEST(Project, tags)
+TEST(Project, addTag)
+{
+  Project p;
+
+  quint64 addr = 0x1234;
+  QString tag("tag");
+  EXPECT_TRUE(p.addAddressTag(tag, addr));
+  EXPECT_FALSE(p.addAddressTag(tag, addr)); // Ignore existent.
+
+  auto tags = p.addressTags(addr);
+  ASSERT_EQ(tags.size(), 1);
+  EXPECT_EQ(tags[0], tag);
+}
+
+TEST(Project, removeTag)
+{
+  Project p;
+
+  quint64 addr = 0x1234;
+  QString tag("tag");
+  EXPECT_TRUE(p.addAddressTag(tag, addr));
+  EXPECT_FALSE(p.addAddressTag(tag, addr)); // Ignore existent.
+
+  auto tags = p.addressTags(addr);
+  ASSERT_EQ(tags.size(), 1);
+  EXPECT_EQ(tags[0], tag);
+
+  EXPECT_TRUE(p.removeAddressTag(tag, addr));
+
+  // Not removed because already removed.
+  EXPECT_FALSE(p.removeAddressTag(tag, addr));
+
+  EXPECT_EQ(p.addressTags(addr).size(), 0);
+}
+
+TEST(Project, saveLoadTags)
 {
   Project p;
 

@@ -4,6 +4,8 @@
 #include "TagItemDelegate.h"
 
 #include <QDebug>
+#include <QEvent>
+#include <QKeyEvent>
 #include <QLineEdit>
 #include <QListWidget>
 #include <QMessageBox>
@@ -33,6 +35,24 @@ void TagsEdit::setAddress(quint64 address)
   lineEdit->setEnabled(true);
 }
 
+bool TagsEdit::eventFilter(QObject *obj, QEvent *event)
+{
+  if (obj == listWidget) {
+    if (event->type() == QEvent::KeyPress) {
+      auto *keyEvent = static_cast<QKeyEvent *>(event);
+      switch (keyEvent->key()) {
+      case Qt::Key_Backspace:
+      case Qt::Key_Delete:
+        removeTag();
+        break;
+      }
+      return true;
+    }
+  }
+
+  return QObject::eventFilter(obj, event);
+}
+
 void TagsEdit::onReturnPressed()
 {
   auto tag = lineEdit->text().simplified();
@@ -54,6 +74,7 @@ void TagsEdit::createLayout()
   listWidget->setEnabled(false);
   listWidget->setViewMode(QListView::IconMode);
   listWidget->setItemDelegate(itemDelegate);
+  listWidget->installEventFilter(this);
 
   lineEdit = new QLineEdit;
   lineEdit->setEnabled(false);
@@ -66,4 +87,16 @@ void TagsEdit::createLayout()
   layout->addWidget(lineEdit);
 
   setLayout(layout);
+}
+
+void TagsEdit::removeTag()
+{
+  auto *item = listWidget->currentItem();
+  if (!item) return;
+
+  auto tag = item->text();
+  auto project = Context::get().project();
+  project->removeAddressTag(tag, address);
+
+  delete listWidget->takeItem(listWidget->row(item));
 }

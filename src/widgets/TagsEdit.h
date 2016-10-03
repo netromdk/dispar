@@ -17,11 +17,15 @@ public:
 
   void setAddress(quint64 address);
 
+protected:
+  bool eventFilter(QObject *obj, QEvent *event);
+
 private slots:
   void onReturnPressed();
 
 private:
   void createLayout();
+  void removeTag();
 
   quint64 address;
   QListWidget *listWidget;

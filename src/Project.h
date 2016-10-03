@@ -40,6 +40,10 @@ public:
   /** Checks if tag is not taken already, too. */
   bool addAddressTag(const QString &tag, quint64 address);
 
+  /// Removes \p tag associated \p address.
+  /** Returns true if removed. */
+  bool removeAddressTag(const QString &tag, quint64 address);
+
 signals:
   void tagsChanged();
 

@@ -158,3 +158,19 @@ bool Project::addAddressTag(const QString &tag, quint64 address)
   emit tagsChanged();
   return true;
 }
+
+bool Project::removeAddressTag(const QString &tag, quint64 address)
+{
+  if (!addressTags_.contains(address)) {
+    return false;
+  }
+
+  auto &tags = addressTags_[address];
+  if (tags.contains(tag)) {
+    tags.removeAll(tag);
+    emit tagsChanged();
+    return true;
+  }
+
+  return false;
+}
