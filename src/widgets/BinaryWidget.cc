@@ -172,6 +172,9 @@ void BinaryWidget::filterSymbols(const QString &filter)
 
 void BinaryWidget::createLayout()
 {
+  auto &ctx = Context::get();
+  auto project = ctx.project();
+
   // Symbols left bar.
 
   symbolList = new QListWidget;
@@ -183,8 +186,7 @@ void BinaryWidget::createLayout()
   tagList = new QListWidget;
   connect(tagList, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
 
-  connect(Context::get().project().get(), &Project::tagsChanged, this,
-          &BinaryWidget::updateTagList);
+  connect(project.get(), &Project::tagsChanged, this, &BinaryWidget::updateTagList);
   updateTagList();
 
   auto *tabWidget = new QTabWidget;
@@ -222,8 +224,7 @@ void BinaryWidget::createLayout()
   auto *positionBox = new QGroupBox(tr("Position"));
   positionBox->setLayout(positionLayout);
 
-  auto &ctx = Context::get();
-  auto binaryFile = ctx.project()->binary();
+  auto binaryFile = project->binary();
   auto binarySize = QFileInfo(binaryFile).size();
 
   binaryLabel = new QLabel;
