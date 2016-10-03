@@ -55,6 +55,8 @@ add_library(
   widgets/OptionsDialog.cc
   widgets/TagsEdit.h
   widgets/TagsEdit.cc
+  widgets/TagItemDelegate.h
+  widgets/TagItemDelegate.cc
 
   formats/Format.h
   formats/Format.cc

@@ -1,6 +1,7 @@
 #include "TagsEdit.h"
 #include "../Context.h"
 #include "../Project.h"
+#include "TagItemDelegate.h"
 
 #include <QDebug>
 #include <QLineEdit>
@@ -10,7 +11,13 @@
 
 TagsEdit::TagsEdit() : address(0)
 {
+  itemDelegate = new TagItemDelegate;
   createLayout();
+}
+
+TagsEdit::~TagsEdit()
+{
+  itemDelegate->deleteLater();
 }
 
 void TagsEdit::setAddress(quint64 address)
@@ -46,7 +53,7 @@ void TagsEdit::createLayout()
   listWidget = new QListWidget;
   listWidget->setEnabled(false);
   listWidget->setViewMode(QListView::IconMode);
-  // TODO: delegate to draw as "blue bubbles"
+  listWidget->setItemDelegate(itemDelegate);
 
   lineEdit = new QLineEdit;
   lineEdit->setEnabled(false);
