@@ -273,6 +273,7 @@ void BinaryWidget::createLayout()
 
   auto *tagsBox = new QGroupBox(tr("Tags"));
   tagsBox->setLayout(tagsLayout);
+  tagsBox->setMaximumHeight(150);
 
   auto *propertiesLayout = new QVBoxLayout;
   propertiesLayout->setContentsMargins(0, 0, 0, 0);
