@@ -24,7 +24,7 @@ void TagItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
   path.addRoundedRect(lessRect, 10, 10);
 
   QBrush bg("#cce0ff");
-  if (option.state & QStyle::State_Selected) {
+  if (option.state & QStyle::State_Selected && option.state & QStyle::State_HasFocus) {
     bg = QBrush("#80b3ff");
   }
 
