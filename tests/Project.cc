@@ -79,6 +79,10 @@ TEST(Project, addTag)
   auto tags = p.addressTags(addr);
   ASSERT_EQ(tags.size(), 1);
   EXPECT_EQ(tags[0], tag);
+
+  // Can't add same tag to different address.
+  quint64 addr2 = 0x4321;
+  EXPECT_FALSE(p.addAddressTag(tag, addr2));
 }
 
 TEST(Project, removeTag)
