@@ -78,6 +78,7 @@ void TagsEdit::createLayout()
 
   lineEdit = new QLineEdit;
   lineEdit->setEnabled(false);
+  lineEdit->setPlaceholderText(tr("Input tag and press enter.."));
   connect(lineEdit, &QLineEdit::returnPressed, this, &TagsEdit::onReturnPressed);
 
   auto *layout = new QVBoxLayout;
