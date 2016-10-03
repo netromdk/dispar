@@ -45,7 +45,7 @@ void TagsEdit::createLayout()
 {
   listWidget = new QListWidget;
   listWidget->setEnabled(false);
-  // TODO: icon mode = flow layout
+  listWidget->setViewMode(QListView::IconMode);
   // TODO: delegate to draw as "blue bubbles"
 
   lineEdit = new QLineEdit;
@@ -54,6 +54,7 @@ void TagsEdit::createLayout()
 
   auto *layout = new QVBoxLayout;
   layout->setContentsMargins(0, 0, 0, 0);
+  layout->setSpacing(1);
   layout->addWidget(listWidget);
   layout->addWidget(lineEdit);
 
