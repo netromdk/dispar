@@ -60,7 +60,7 @@ void BinaryWidget::onSymbolChosen(int row)
 {
   auto *list = qobject_cast<QListWidget *>(sender());
 
-  // If offset is found then select the text block.
+  // If offset is found then put the cursor at that line.
   auto *item = list->item(row);
   if (!item) return;
 
@@ -70,7 +70,6 @@ void BinaryWidget::onSymbolChosen(int row)
     auto block = doc->findBlockByNumber(blockNum);
     auto cursor = mainView->textCursor();
     cursor.setPosition(block.position());
-    cursor.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
     mainView->setTextCursor(cursor);
     mainView->ensureCursorVisible();
   }
@@ -79,8 +78,17 @@ void BinaryWidget::onSymbolChosen(int row)
 void BinaryWidget::onCursorPositionChanged()
 {
   auto cursor = mainView->textCursor();
-  auto block = cursor.block();
 
+  // Mark the whole line to highlight it.
+  auto highlight = mainView->palette().highlight();
+  highlight.setColor(highlight.color().lighter(120));
+  QTextEdit::ExtraSelection selection;
+  selection.format.setBackground(highlight);
+  selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+  selection.cursor = cursor;
+  mainView->setExtraSelections({selection});
+
+  auto block = cursor.block();
   auto *userData = dynamic_cast<TextBlockUserData *>(block.userData());
   if (userData) {
     addressLabel->setText(
