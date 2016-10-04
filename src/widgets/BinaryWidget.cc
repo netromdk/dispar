@@ -217,6 +217,7 @@ void BinaryWidget::createLayout()
   machineCodeLabel = new QLabel;
 
   auto *positionLayout = new QVBoxLayout;
+  positionLayout->setContentsMargins(5, 5, 5, 5);
   positionLayout->addWidget(addressLabel);
   positionLayout->addWidget(offsetLabel);
   positionLayout->addWidget(machineCodeLabel);
@@ -257,6 +258,7 @@ void BinaryWidget::createLayout()
   binaryButtonLayout->addStretch();
 
   auto *binaryLayout = new QVBoxLayout;
+  binaryLayout->setContentsMargins(5, 5, 5, 5);
   binaryLayout->addWidget(binaryLabel);
   binaryLayout->addWidget(sizeLabel);
   binaryLayout->addWidget(archLabel);
@@ -269,6 +271,7 @@ void BinaryWidget::createLayout()
   tagsEdit = new TagsEdit;
 
   auto *tagsLayout = new QVBoxLayout;
+  tagsLayout->setContentsMargins(5, 5, 5, 5);
   tagsLayout->addWidget(tagsEdit);
 
   auto *tagsBox = new QGroupBox(tr("Tags"));
