@@ -56,6 +56,21 @@ public:
     }
   }
 
+  template <typename Inst, typename MemFunc>
+  static std::shared_ptr<SignalSpy> zero(const char *file, int line, Inst *instance,
+                                         MemFunc Inst::*mf, std::function<void()> slot = []() {})
+  {
+    auto spy = std::make_shared<SignalSpy>(file, line);
+    auto weakSpy = std::weak_ptr<SignalSpy>(spy);
+    QObject::connect(instance, mf, [weakSpy, slot]() {
+      if (auto ptr = weakSpy.lock()) {
+        ptr->increment();
+        slot();
+      }
+    });
+    return spy;
+  }
+
   template <typename Arg, typename Inst, typename MemFunc>
   static std::shared_ptr<SignalSpy> one(const char *file, int line, Inst *instance,
                                         MemFunc Inst::*mf,
@@ -77,6 +92,11 @@ private:
   int line, count_;
   bool expect;
 };
+
+#define SIGNAL_SPY_ZERO(instance, mf) SignalSpy::zero(__FILE__, __LINE__, instance, mf);
+
+#define SIGNAL_SPY_ZERO_FUNC(instance, mf, func)                                                   \
+  SignalSpy::zero(__FILE__, __LINE__, instance, mf, func);
 
 #define SIGNAL_SPY_ONE(ArgType, instance, mf)                                                      \
   SignalSpy::one<ArgType>(__FILE__, __LINE__, instance, mf);
