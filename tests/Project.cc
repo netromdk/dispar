@@ -73,16 +73,30 @@ TEST(Project, addTag)
 
   quint64 addr = 0x1234;
   QString tag("tag");
-  EXPECT_TRUE(p.addAddressTag(tag, addr));
-  EXPECT_FALSE(p.addAddressTag(tag, addr)); // Ignore existent.
+
+  {
+    auto spy = SIGNAL_SPY_ZERO(&p, &Project::tagsChanged);
+    EXPECT_TRUE(p.addAddressTag(tag, addr));
+  }
+
+  {
+    auto spy = SIGNAL_SPY_ZERO(&p, &Project::tagsChanged);
+    spy->setExpect(false);
+    EXPECT_FALSE(p.addAddressTag(tag, addr)); // Ignore existent.
+  }
 
   auto tags = p.addressTags(addr);
   ASSERT_EQ(tags.size(), 1);
   EXPECT_EQ(tags[0], tag);
 
-  // Can't add same tag to different address.
-  quint64 addr2 = 0x4321;
-  EXPECT_FALSE(p.addAddressTag(tag, addr2));
+  {
+    auto spy = SIGNAL_SPY_ZERO(&p, &Project::tagsChanged);
+    spy->setExpect(false);
+
+    // Can't add same tag to different address.
+    quint64 addr2 = 0x4321;
+    EXPECT_FALSE(p.addAddressTag(tag, addr2));
+  }
 }
 
 TEST(Project, removeTag)
@@ -98,10 +112,18 @@ TEST(Project, removeTag)
   ASSERT_EQ(tags.size(), 1);
   EXPECT_EQ(tags[0], tag);
 
-  EXPECT_TRUE(p.removeAddressTag(tag, addr));
+  {
+    auto spy = SIGNAL_SPY_ZERO(&p, &Project::tagsChanged);
+    EXPECT_TRUE(p.removeAddressTag(tag, addr));
+  }
 
-  // Not removed because already removed.
-  EXPECT_FALSE(p.removeAddressTag(tag, addr));
+  {
+    auto spy = SIGNAL_SPY_ZERO(&p, &Project::tagsChanged);
+    spy->setExpect(false);
+
+    // Not removed because already removed.
+    EXPECT_FALSE(p.removeAddressTag(tag, addr));
+  }
 
   EXPECT_EQ(p.addressTags(addr).size(), 0);
 }
