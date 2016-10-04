@@ -23,6 +23,7 @@ public:
 
 protected:
   void showEvent(QShowEvent *event);
+  void closeEvent(QCloseEvent *event);
 
 private slots:
   void openProject(const QString &projectFile = QString());
@@ -36,8 +37,8 @@ private slots:
   void onDisassembler();
   void onAbout();
   void onOptions();
-
   void onLoadSuccess(std::shared_ptr<Format> fmt);
+  void onProjectModified();
 
 private:
   void setTitle(const QString &file = QString());
@@ -45,6 +46,10 @@ private:
   void createLayout();
   void createMenu();
   void loadBinary(QString file);
+
+  /// If modified ask to save.
+  /** Returns false if cancelled. */
+  bool checkSave();
 
   bool modified;
   QString startupFile;

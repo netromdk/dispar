@@ -13,6 +13,7 @@
 #include "OptionsDialog.h"
 
 #include <QApplication>
+#include <QCloseEvent>
 #include <QDebug>
 #include <QDir>
 #include <QFileDialog>
@@ -67,9 +68,23 @@ void MainWindow::showEvent(QShowEvent *event)
   });
 }
 
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+  if (!checkSave()) {
+    event->ignore();
+    return;
+  }
+  else {
+    modified = false;
+    event->accept();
+  }
+
+  QMainWindow::closeEvent(event);
+}
+
 void MainWindow::openProject(const QString &projectFile)
 {
-  // TODO: Ask to save if project is live and unsaved!
+  if (!checkSave()) return;
 
   QString file = projectFile;
   if (file.isEmpty()) {
@@ -86,10 +101,13 @@ void MainWindow::openProject(const QString &projectFile)
 
   auto project = Context::get().loadProject(file);
   if (!project) {
+    modified = false;
     QMessageBox::critical(this, "dispar",
                           tr("Failed to load \"%1\"!\nMake sure file is valid.").arg(file));
     return;
   }
+
+  connect(project.get(), &Project::modified, this, &MainWindow::onProjectModified);
 
   // Add recent file.
   if (!recentProjects.contains(file)) {
@@ -131,15 +149,17 @@ void MainWindow::saveProject()
     return;
   }
 
+  modified = false;
   setTitle(project->file());
 }
 
 void MainWindow::closeProject()
 {
-  // TODO: Ask to save if project is live and unsaved.
+  if (!checkSave()) return;
 
   Context::get().clearProject();
 
+  modified = false;
   setTitle();
 
   saveProjectAction->setEnabled(false);
@@ -211,6 +231,7 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
   auto project = ctx.project();
   if (!project || project->file().isEmpty()) {
     project = ctx.resetProject();
+    connect(project.get(), &Project::modified, this, &MainWindow::onProjectModified);
   }
   project->setBinary(fmt->file());
 
@@ -304,9 +325,18 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
   });
 }
 
+void MainWindow::onProjectModified()
+{
+  modified = true;
+  setTitle(Context::get().project()->file());
+}
+
 void MainWindow::setTitle(const QString &file)
 {
-  setWindowTitle(QString("Dispar v%1%2").arg(versionString()).arg(!file.isEmpty() ? " - " + file : ""));
+  setWindowTitle(QString("Dispar v%1%2%3")
+                   .arg(versionString())
+                   .arg(!file.isEmpty() ? " - " + file : "")
+                   .arg(modified ? " *" : ""));
 }
 
 void MainWindow::readSettings()
@@ -446,4 +476,20 @@ void MainWindow::loadBinary(QString file)
   });
 
   loader->start();
+}
+
+bool MainWindow::checkSave()
+{
+  if (!modified) return true;
+
+  auto ret = QMessageBox::question(this, "dispar", tr("Project modified. Save it first?"),
+                                   QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+  if (QMessageBox::Yes == ret) {
+    saveProject();
+  }
+  else if (QMessageBox::Cancel == ret) {
+    return false;
+  }
+
+  return true;
 }
