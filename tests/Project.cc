@@ -67,6 +67,24 @@ TEST(Project, loadFromAlreadyKnownFile)
   EXPECT_EQ(p2->binary(), p.binary()) << p2->binary() << p.binary();
 }
 
+TEST(Project, setBinary)
+{
+  Project p;
+
+  QString binary("binary.o");
+
+  {
+    auto spy = SIGNAL_SPY_ZERO(&p, &Project::modified);
+    p.setBinary(binary);
+  }
+
+  {
+    auto spy = SIGNAL_SPY_ZERO(&p, &Project::modified);
+    spy->setExpect(false);
+    p.setBinary(binary);
+  }
+}
+
 TEST(Project, addTag)
 {
   Project p;
@@ -76,12 +94,17 @@ TEST(Project, addTag)
 
   {
     auto spy = SIGNAL_SPY_ZERO(&p, &Project::tagsChanged);
+    auto spy2 = SIGNAL_SPY_ZERO(&p, &Project::modified);
     EXPECT_TRUE(p.addAddressTag(tag, addr));
   }
 
   {
     auto spy = SIGNAL_SPY_ZERO(&p, &Project::tagsChanged);
     spy->setExpect(false);
+
+    auto spy2 = SIGNAL_SPY_ZERO(&p, &Project::modified);
+    spy2->setExpect(false);
+
     EXPECT_FALSE(p.addAddressTag(tag, addr)); // Ignore existent.
   }
 
@@ -92,6 +115,9 @@ TEST(Project, addTag)
   {
     auto spy = SIGNAL_SPY_ZERO(&p, &Project::tagsChanged);
     spy->setExpect(false);
+
+    auto spy2 = SIGNAL_SPY_ZERO(&p, &Project::modified);
+    spy2->setExpect(false);
 
     // Can't add same tag to different address.
     quint64 addr2 = 0x4321;
@@ -114,12 +140,16 @@ TEST(Project, removeTag)
 
   {
     auto spy = SIGNAL_SPY_ZERO(&p, &Project::tagsChanged);
+    auto spy2 = SIGNAL_SPY_ZERO(&p, &Project::modified);
     EXPECT_TRUE(p.removeAddressTag(tag, addr));
   }
 
   {
     auto spy = SIGNAL_SPY_ZERO(&p, &Project::tagsChanged);
     spy->setExpect(false);
+
+    auto spy2 = SIGNAL_SPY_ZERO(&p, &Project::modified);
+    spy2->setExpect(false);
 
     // Not removed because already removed.
     EXPECT_FALSE(p.removeAddressTag(tag, addr));

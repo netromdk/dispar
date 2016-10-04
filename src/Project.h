@@ -45,6 +45,10 @@ public:
   bool removeAddressTag(const QString &tag, quint64 address);
 
 signals:
+  /// Whenever something is modified in the project this signal is emitted.
+  void modified();
+
+  /// When tags are added or removed this signal is emitted.
   void tagsChanged();
 
 private:

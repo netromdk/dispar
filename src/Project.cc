@@ -119,7 +119,11 @@ QString Project::binary() const
 
 void Project::setBinary(const QString &file)
 {
+  auto changed = (binary_ != file);
   binary_ = file;
+  if (changed) {
+    emit modified();
+  }
 }
 
 QString Project::file() const
@@ -155,6 +159,7 @@ bool Project::addAddressTag(const QString &tag, quint64 address)
     addressTags_[address] = QStringList{tag};
   }
 
+  emit modified();
   emit tagsChanged();
   return true;
 }
@@ -168,6 +173,7 @@ bool Project::removeAddressTag(const QString &tag, quint64 address)
   auto &tags = addressTags_[address];
   if (tags.contains(tag)) {
     tags.removeAll(tag);
+    emit modified();
     emit tagsChanged();
     return true;
   }
