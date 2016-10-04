@@ -38,6 +38,7 @@ private:
   void createLayout();
   void setup();
   void updateTagList();
+  void addSymbolToList(const QString &text, quint64 address, QListWidget *list);
 
   std::shared_ptr<BinaryObject> object;
 

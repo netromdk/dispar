@@ -444,11 +444,7 @@ void BinaryWidget::setup()
 
       appendString(addr, offset, string);
 
-      auto *item = new QListWidgetItem;
-      item->setText(reader.string());
-      item->setData(Qt::UserRole, addr);
-      item->setToolTip(QString("0x%1").arg(addr, 0, 16));
-      stringList->addItem(item);
+      addSymbolToList(reader.string(), addr, stringList);
     }
 
     cursor.movePosition(QTextCursor::End);
@@ -464,7 +460,6 @@ void BinaryWidget::setup()
   // Fill side bar with function names of the symbol tables.
   for (auto symbol : symbols) {
     if (symbol.value() == 0) continue;
-    auto *item = new QListWidgetItem;
 
     auto func = Util::demangle(symbol.string());
     if (func.isEmpty()) {
@@ -473,11 +468,8 @@ void BinaryWidget::setup()
     if (offsetBlock.contains(symbol.value())) {
       func += " *";
     }
-    item->setText(func);
 
-    item->setData(Qt::UserRole, symbol.value()); // Offset to symbol.
-    item->setToolTip(QString("0x%1").arg(symbol.value(), 0, 16));
-    symbolList->addItem(item);
+    addSymbolToList(func, symbol.value() /* offset to symbol */, symbolList);
   }
 
   cursor.endEditBlock();
@@ -496,10 +488,16 @@ void BinaryWidget::updateTagList()
   const auto &tags = Context::get().project()->tags();
   for (const auto addr : tags.keys()) {
     for (const auto &tag : tags[addr]) {
-      auto *item = new QListWidgetItem;
-      item->setText(tag);
-      item->setData(Qt::UserRole, addr);
-      tagList->addItem(item);
+      addSymbolToList(tag, addr, tagList);
     }
   }
+}
+
+void BinaryWidget::addSymbolToList(const QString &text, quint64 address, QListWidget *list)
+{
+  auto *item = new QListWidgetItem;
+  item->setText(text);
+  item->setData(Qt::UserRole, address);
+  item->setToolTip(QString("0x%1").arg(address, 0, 16));
+  list->addItem(item);
 }
