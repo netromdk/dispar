@@ -119,11 +119,7 @@ QString Project::binary() const
 
 void Project::setBinary(const QString &file)
 {
-  auto changed = (binary_ != file);
   binary_ = file;
-  if (changed) {
-    emit modified();
-  }
 }
 
 QString Project::file() const

@@ -67,24 +67,6 @@ TEST(Project, loadFromAlreadyKnownFile)
   EXPECT_EQ(p2->binary(), p.binary()) << p2->binary() << p.binary();
 }
 
-TEST(Project, setBinary)
-{
-  Project p;
-
-  QString binary("binary.o");
-
-  {
-    auto spy = SIGNAL_SPY_ZERO(&p, &Project::modified);
-    p.setBinary(binary);
-  }
-
-  {
-    auto spy = SIGNAL_SPY_ZERO(&p, &Project::modified);
-    spy->setExpect(false);
-    p.setBinary(binary);
-  }
-}
-
 TEST(Project, addTag)
 {
   Project p;
