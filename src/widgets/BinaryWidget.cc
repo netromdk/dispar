@@ -178,12 +178,15 @@ void BinaryWidget::createLayout()
   // Symbols left bar.
 
   symbolList = new QListWidget;
+  symbolList->setSortingEnabled(true);
   connect(symbolList, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
 
   stringList = new QListWidget;
+  stringList->setSortingEnabled(true);
   connect(stringList, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
 
   tagList = new QListWidget;
+  tagList->setSortingEnabled(true);
   connect(tagList, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
 
   connect(project.get(), &Project::tagsChanged, this, &BinaryWidget::updateTagList);
@@ -498,7 +501,17 @@ void BinaryWidget::updateTagList()
 
 void BinaryWidget::addSymbolToList(const QString &text, quint64 address, QListWidget *list)
 {
-  auto *item = new QListWidgetItem;
+  class ListWidgetItem : public QListWidgetItem {
+  public:
+    bool operator<(const QListWidgetItem &other) const override
+    {
+      auto addr1 = data(Qt::UserRole).toLongLong();
+      auto addr2 = other.data(Qt::UserRole).toLongLong();
+      return addr1 < addr2;
+    }
+  };
+
+  auto *item = new ListWidgetItem;
   item->setText(text);
   item->setData(Qt::UserRole, address);
   item->setToolTip(QString("0x%1").arg(address, 0, 16));
