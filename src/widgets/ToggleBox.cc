@@ -58,13 +58,13 @@ void ToggleBox::createLayout()
           [this](bool checked) { setCollapsed(!checked); });
 
   contentWidget = new QScrollArea;
-  contentWidget->setFrameShadow(QFrame::Plain);
-  contentWidget->setFrameShape(QFrame::NoFrame);
   contentWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-  auto pal = contentWidget->palette();
-  pal.setBrush(QPalette::Window, pal.window().color().darker(105));
-  contentWidget->setPalette(pal);
+  // Draw rounded edges on the content widget using a 5% darker window background color.
+  auto winColor = contentWidget->palette().window().color().darker(105);
+  contentWidget->setStyleSheet(
+    QString("QScrollArea { background: %1; border: 1px solid %1; border-radius: 5px; }")
+      .arg(winColor.name()));
 
   auto *layout = new QVBoxLayout;
   layout->setContentsMargins(0, 0, 0, 0);
