@@ -33,16 +33,30 @@ void ToggleBox::setCollapsed(bool collapsed)
   if (collapsed) {
     contentWidget->setMinimumHeight(0);
     contentWidget->setMaximumHeight(0);
+    emit this->collapsed();
   }
   else {
     contentWidget->setMinimumHeight(minimumHeight());
     contentWidget->setMaximumHeight(maximumHeight());
+    emit expanded();
   }
+
+  emit stateChanged(collapsed);
 }
 
 void ToggleBox::setExpanded(bool expanded)
 {
   setCollapsed(!expanded);
+}
+
+bool ToggleBox::isCollapsed() const
+{
+  return contentWidget->maximumHeight() == 0;
+}
+
+bool ToggleBox::isExpanded() const
+{
+  return !isCollapsed();
 }
 
 void ToggleBox::createLayout()
