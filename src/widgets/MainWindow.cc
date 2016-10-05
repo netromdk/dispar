@@ -51,8 +51,7 @@ void MainWindow::showEvent(QShowEvent *event)
   first = true;
 
   if (!restoreGeometry(geometry)) {
-    resize(900, 500);
-    Util::centerWidget(this);
+    showMaximized();
   }
 
   // Load specified files or open file dialog.
