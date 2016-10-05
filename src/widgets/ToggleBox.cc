@@ -66,10 +66,6 @@ void ToggleBox::createLayout()
   pal.setBrush(QPalette::Window, pal.window().color().darker(105));
   contentWidget->setPalette(pal);
 
-  // Collapsed is initial state.
-  contentWidget->setMinimumHeight(0);
-  contentWidget->setMaximumHeight(0);
-
   auto *layout = new QVBoxLayout;
   layout->setContentsMargins(0, 0, 0, 0);
   layout->setSpacing(0);
