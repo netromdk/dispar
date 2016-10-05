@@ -194,6 +194,7 @@ void MainWindow::closeProject()
   modified = false;
   setTitle();
 
+  newProjectAction->setEnabled(false);
   saveProjectAction->setEnabled(false);
   saveAsProjectAction->setEnabled(false);
   closeProjectAction->setEnabled(false);
@@ -265,7 +266,9 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
     project = ctx.resetProject();
     connect(project.get(), &Project::modified, this, &MainWindow::onProjectModified);
   }
+
   project->setBinary(fmt->file());
+  newProjectAction->setEnabled(true);
 
   setTitle(project->file());
 
@@ -415,8 +418,10 @@ void MainWindow::createLayout()
 void MainWindow::createMenu()
 {
   auto *fileMenu = menuBar()->addMenu(tr("&File"));
+
   newProjectAction =
     fileMenu->addAction(tr("New project"), this, SLOT(newProject()), QKeySequence::New);
+  newProjectAction->setEnabled(false);
 
   fileMenu->addAction(tr("Open project"), this, SLOT(openProject()), QKeySequence::Open);
   if (!recentProjects.isEmpty()) {
