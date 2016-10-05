@@ -57,6 +57,8 @@ add_library(
   widgets/TagsEdit.cc
   widgets/TagItemDelegate.h
   widgets/TagItemDelegate.cc
+  widgets/ToggleBox.h
+  widgets/ToggleBox.cc
 
   formats/Format.h
   formats/Format.cc

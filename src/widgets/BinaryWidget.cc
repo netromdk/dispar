@@ -25,6 +25,7 @@
 #include "BinaryWidget.h"
 #include "PersistentSplitter.h"
 #include "TagsEdit.h"
+#include "ToggleBox.h"
 
 namespace {
 
@@ -226,8 +227,9 @@ void BinaryWidget::createLayout()
   positionLayout->addWidget(offsetLabel);
   positionLayout->addWidget(machineCodeLabel);
 
-  auto *positionBox = new QGroupBox(tr("Position"));
-  positionBox->setLayout(positionLayout);
+  auto *positionBox = new ToggleBox(tr("Position"));
+  positionBox->setContentLayout(positionLayout);
+  positionBox->setExpanded();
 
   auto binaryFile = project->binary();
   auto binarySize = QFileInfo(binaryFile).size();
@@ -269,8 +271,9 @@ void BinaryWidget::createLayout()
   binaryLayout->addWidget(fileTypeLabel);
   binaryLayout->addLayout(binaryButtonLayout);
 
-  auto *binaryBox = new QGroupBox(tr("Binary"));
-  binaryBox->setLayout(binaryLayout);
+  auto *binaryBox = new ToggleBox(tr("Binary"));
+  binaryBox->setContentLayout(binaryLayout);
+  binaryBox->setExpanded();
 
   tagsEdit = new TagsEdit;
 
@@ -278,9 +281,10 @@ void BinaryWidget::createLayout()
   tagsLayout->setContentsMargins(5, 5, 5, 5);
   tagsLayout->addWidget(tagsEdit);
 
-  auto *tagsBox = new QGroupBox(tr("Tags"));
-  tagsBox->setLayout(tagsLayout);
+  auto *tagsBox = new ToggleBox(tr("Tags"));
+  tagsBox->setContentLayout(tagsLayout);
   tagsBox->setMaximumHeight(150);
+  tagsBox->setExpanded();
 
   auto *propertiesLayout = new QVBoxLayout;
   propertiesLayout->setContentsMargins(0, 0, 0, 0);
