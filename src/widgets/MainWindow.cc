@@ -106,6 +106,28 @@ void MainWindow::openProject(const QString &projectFile)
     return;
   }
 
+  auto binary = project->binary();
+  if (!QFile::exists(binary)) {
+    auto ret = QMessageBox::question(
+      this, "dispar", tr("Binary of project does not exist: %1!\n\nDo you want to load another "
+                         "project or choose another binary for this project?")
+                        .arg(binary),
+      QMessageBox::Yes | QMessageBox::Open | QMessageBox::Cancel);
+    switch (ret) {
+    case QMessageBox::Yes:
+      openProject();
+      return;
+
+    case QMessageBox::Open:
+      openBinary();
+      return;
+
+    default:
+    case QMessageBox::Cancel:
+      return;
+    }
+  }
+
   connect(project.get(), &Project::modified, this, &MainWindow::onProjectModified);
 
   // Add recent file.
@@ -116,7 +138,7 @@ void MainWindow::openProject(const QString &projectFile)
     recentProjects.removeFirst();
   }
 
-  loadBinary(project->binary());
+  loadBinary(binary);
 }
 
 void MainWindow::saveProject()
