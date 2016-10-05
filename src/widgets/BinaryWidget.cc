@@ -65,14 +65,7 @@ void BinaryWidget::onSymbolChosen(int row)
   if (!item) return;
 
   auto offset = item->data(Qt::UserRole).toLongLong();
-  if (offsetBlock.contains(offset)) {
-    auto blockNum = offsetBlock[offset];
-    auto block = doc->findBlockByNumber(blockNum);
-    auto cursor = mainView->textCursor();
-    cursor.setPosition(block.position());
-    mainView->setTextCursor(cursor);
-    mainView->ensureCursorVisible();
-  }
+  selectAddress(offset);
 }
 
 void BinaryWidget::onCursorPositionChanged()
@@ -398,6 +391,7 @@ void BinaryWidget::setup()
   qApp->processEvents();
   qDebug() << qPrintable(setupDiag.labelText());
 
+  quint64 firstAddress = 0;
   for (auto &sec : object->sections()) {
     auto disasm = sec->disassembly();
     if (!disasm) continue;
@@ -425,6 +419,10 @@ void BinaryWidget::setup()
           cursor.insertText("\nPROC: " + Util::demangle(symbol.string()) + "\n");
           break;
         }
+      }
+
+      if (firstAddress == 0) {
+        firstAddress = addr;
       }
 
       appendInstruction(addr, offset, Util::bytesToHex(instr->bytes, instr->size), instr->mnemonic,
@@ -493,6 +491,10 @@ void BinaryWidget::setup()
 
   auto end = QDateTime::currentDateTime();
   qDebug() << "Setup in" << start.msecsTo(end) << "ms";
+
+  if (!offsetBlock.isEmpty()) {
+    selectAddress(firstAddress);
+  }
 }
 
 void BinaryWidget::updateTagList()
@@ -524,4 +526,20 @@ void BinaryWidget::addSymbolToList(const QString &text, quint64 address, QListWi
   item->setData(Qt::UserRole, address);
   item->setToolTip(QString("0x%1").arg(address, 0, 16));
   list->addItem(item);
+}
+
+void BinaryWidget::selectAddress(quint64 address)
+{
+  if (!offsetBlock.contains(address)) {
+    return;
+  }
+
+  qDebug() << "selecting address:" << address;
+
+  auto blockNum = offsetBlock[address];
+  auto block = doc->findBlockByNumber(blockNum);
+  auto cursor = mainView->textCursor();
+  cursor.setPosition(block.position());
+  mainView->setTextCursor(cursor);
+  mainView->ensureCursorVisible();
 }
