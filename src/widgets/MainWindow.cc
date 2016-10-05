@@ -81,6 +81,17 @@ void MainWindow::closeEvent(QCloseEvent *event)
   QMainWindow::closeEvent(event);
 }
 
+void MainWindow::newProject()
+{
+  if (!checkSave()) return;
+
+  // Reset modified state so closeProject() doesn't ask to save as well.
+  modified = false;
+  closeProject();
+
+  openBinary();
+}
+
 void MainWindow::openProject(const QString &projectFile)
 {
   if (!checkSave()) return;
@@ -404,6 +415,9 @@ void MainWindow::createLayout()
 void MainWindow::createMenu()
 {
   auto *fileMenu = menuBar()->addMenu(tr("&File"));
+  newProjectAction =
+    fileMenu->addAction(tr("New project"), this, SLOT(newProject()), QKeySequence::New);
+
   fileMenu->addAction(tr("Open project"), this, SLOT(openProject()), QKeySequence::Open);
   if (!recentProjects.isEmpty()) {
     auto *recentMenu = fileMenu->addMenu(tr("Open recent projects"));
@@ -411,6 +425,19 @@ void MainWindow::createMenu()
       recentMenu->addAction(file, this, SLOT(onRecentProject()));
     }
   }
+
+  fileMenu->addSeparator();
+
+  fileMenu->addAction(tr("Open binary"), this, SLOT(openBinary()),
+                      QKeySequence(Qt::SHIFT + Qt::CTRL + Qt::Key_O));
+  if (!recentBinaries.isEmpty()) {
+    auto *recentMenu = fileMenu->addMenu(tr("Open recent binaries"));
+    for (const auto &file : recentBinaries) {
+      recentMenu->addAction(file, this, SLOT(onRecentBinary()));
+    }
+  }
+
+  fileMenu->addSeparator();
 
   saveProjectAction =
     fileMenu->addAction(tr("Save project"), this, SLOT(saveProject()), QKeySequence::Save);
@@ -425,15 +452,6 @@ void MainWindow::createMenu()
   closeProjectAction->setEnabled(false);
 
   fileMenu->addSeparator();
-
-  fileMenu->addAction(tr("Open binary"), this, SLOT(openBinary()),
-                      QKeySequence(Qt::SHIFT + Qt::CTRL + Qt::Key_O));
-  if (!recentBinaries.isEmpty()) {
-    auto *recentMenu = fileMenu->addMenu(tr("Open recent binaries"));
-    for (const auto &file : recentBinaries) {
-      recentMenu->addAction(file, this, SLOT(onRecentBinary()));
-    }
-  }
 
   auto *toolsMenu = menuBar()->addMenu(tr("&Tools"));
   toolsMenu->addAction(tr("Conversion helper"), this, SLOT(onConversionHelper()),

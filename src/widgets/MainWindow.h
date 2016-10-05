@@ -26,6 +26,7 @@ protected:
   void closeEvent(QCloseEvent *event);
 
 private slots:
+  void newProject();
   void openProject(const QString &projectFile = QString());
   void saveProject();
   void closeProject();
@@ -56,7 +57,7 @@ private:
   QStringList recentProjects, recentBinaries;
   QByteArray geometry;
 
-  QAction *saveProjectAction, *saveAsProjectAction, *closeProjectAction;
+  QAction *newProjectAction, *saveProjectAction, *saveAsProjectAction, *closeProjectAction;
 
   std::unique_ptr<FormatLoader> loader;
 };
