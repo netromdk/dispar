@@ -199,7 +199,10 @@ void MainWindow::closeProject()
   saveAsProjectAction->setEnabled(false);
   closeProjectAction->setEnabled(false);
 
-  centralWidget()->deleteLater();
+  if (centralWidget()) {
+    centralWidget()->deleteLater();
+  }
+
   createLayout();
 }
 
