@@ -539,6 +539,13 @@ void BinaryWidget::addSymbolToList(const QString &text, quint64 address, QListWi
     {
       auto addr1 = data(Qt::UserRole).toLongLong();
       auto addr2 = other.data(Qt::UserRole).toLongLong();
+
+      // If same address then sort for tag lexically.
+      if (addr1 == addr2) {
+        return text() < other.text();
+      }
+
+      // Otherwise by address ascending.
       return addr1 < addr2;
     }
   };
