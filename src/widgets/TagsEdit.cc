@@ -101,8 +101,7 @@ void TagsEdit::removeTag()
   if (!item) return;
 
   auto tag = item->text();
-  auto project = Context::get().project();
-  project->removeAddressTag(tag, address);
+  Context::get().project()->removeAddressTag(tag);
 
   delete listWidget->takeItem(listWidget->row(item));
 }

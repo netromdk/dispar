@@ -40,13 +40,13 @@ public:
   /** Checks if tag is not taken already, too. */
   bool addAddressTag(const QString &tag, quint64 address);
 
-  /// Removes \p tag associated \p address.
+  /// Removes \p tag.
   /** Returns true if removed. */
-  bool removeAddressTag(const QString &tag, quint64 address);
+  bool removeAddressTag(const QString &tag);
 
-  /// Removes address tags.
+  /// Removes \p tags.
   /** Returns true if anything was removed. */
-  bool removeAddressTags(const QList<QPair<QString, quint64>> &tags);
+  bool removeAddressTags(const QStringList &tags);
 
 signals:
   /// Whenever something is modified in the project this signal is emitted.

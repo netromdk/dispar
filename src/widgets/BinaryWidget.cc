@@ -566,11 +566,9 @@ void BinaryWidget::selectAddress(quint64 address)
 
 void BinaryWidget::removeSelectedTags()
 {
-  QList<QPair<QString, quint64>> tags;
+  QStringList tags;
   for (auto *item : tagList->selectedItems()) {
-    auto tag = item->text();
-    auto addr = item->data(Qt::UserRole).toLongLong();
-    tags << qMakePair(tag, addr);
+    tags << item->text();
   }
   Context::get().project()->removeAddressTags(tags);
 }

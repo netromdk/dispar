@@ -123,7 +123,7 @@ TEST(Project, removeTag)
   {
     auto spy = SIGNAL_SPY_ZERO(&p, &Project::tagsChanged);
     auto spy2 = SIGNAL_SPY_ZERO(&p, &Project::modified);
-    EXPECT_TRUE(p.removeAddressTag(tag, addr));
+    EXPECT_TRUE(p.removeAddressTag(tag));
   }
 
   {
@@ -134,7 +134,7 @@ TEST(Project, removeTag)
     spy2->setExpect(false);
 
     // Not removed because already removed.
-    EXPECT_FALSE(p.removeAddressTag(tag, addr));
+    EXPECT_FALSE(p.removeAddressTag(tag));
   }
 
   EXPECT_EQ(p.addressTags(addr).size(), 0);
@@ -154,7 +154,7 @@ TEST(Project, removeTags)
   EXPECT_TRUE(p.addAddressTag(tag2, addr2));
   ASSERT_EQ(p.addressTags(addr2).size(), 1);
 
-  QList<QPair<QString, quint64>> tags{qMakePair(tag, addr), qMakePair(tag2, addr2)};
+  QStringList tags{tag, tag2};
   {
     auto spy = SIGNAL_SPY_ZERO(&p, &Project::tagsChanged);
     auto spy2 = SIGNAL_SPY_ZERO(&p, &Project::modified);

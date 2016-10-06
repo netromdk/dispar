@@ -5,7 +5,6 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QSignalBlocker>
 
 namespace {
 
@@ -161,31 +160,26 @@ bool Project::addAddressTag(const QString &tag, quint64 address)
   return true;
 }
 
-bool Project::removeAddressTag(const QString &tag, quint64 address)
+bool Project::removeAddressTag(const QString &tag)
 {
-  if (!addressTags_.contains(address)) {
+  return removeAddressTags({tag});
+}
+
+bool Project::removeAddressTags(const QStringList &tags)
+{
+  if (tags.isEmpty()) {
     return false;
   }
 
-  auto &tags = addressTags_[address];
-  if (tags.contains(tag)) {
-    tags.removeAll(tag);
-    emit modified();
-    emit tagsChanged();
-    return true;
-  }
-
-  return false;
-}
-
-bool Project::removeAddressTags(const QList<QPair<QString, quint64>> &tags)
-{
   bool removed = false;
-
-  {
-    QSignalBlocker blocker(this);
-    for (const auto &pair : tags) {
-      removed |= removeAddressTag(pair.first, pair.second);
+  for (const auto &tag : tags) {
+    for (const auto addr : addressTags_.keys()) {
+      auto &tags_ = addressTags_[addr];
+      if (tags_.contains(tag)) {
+        tags_.removeAll(tag);
+        removed = true;
+        break;
+      }
     }
   }
 
