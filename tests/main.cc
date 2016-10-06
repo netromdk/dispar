@@ -1,11 +1,11 @@
 #include "gtest/gtest.h"
 
+#include <QCoreApplication>
 #include <QTimer>
-#include <QApplication>
 
 int main(int argc, char **argv)
 {
-  QApplication app(argc, argv);
+  QCoreApplication app(argc, argv);
   Q_INIT_RESOURCE(binaries);
   testing::InitGoogleTest(&argc, argv);
   QTimer::singleShot(1, [&app] { app.exit(RUN_ALL_TESTS()); });

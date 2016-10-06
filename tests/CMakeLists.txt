@@ -34,8 +34,6 @@ add_dispar_executable(
   Section.cc
   BinaryObject.cc
 
-  widgets/ToggleBox.cc
-
   formats/Format.cc
   formats/FormatLoader.cc
   formats/MachO.cc
