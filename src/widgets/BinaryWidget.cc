@@ -13,7 +13,6 @@
 #include <QPlainTextEdit>
 #include <QProgressDialog>
 #include <QPushButton>
-#include <QSignalBlocker>
 #include <QTabWidget>
 #include <QTextBlockUserData>
 #include <QTimer>
@@ -567,17 +566,11 @@ void BinaryWidget::selectAddress(quint64 address)
 
 void BinaryWidget::removeSelectedTags()
 {
-  auto project = Context::get().project();
-  {
-    QSignalBlocker blocker(project.get());
-    for (auto *item : tagList->selectedItems()) {
-      auto tag = item->text();
-      auto addr = item->data(Qt::UserRole).toLongLong();
-      project->removeAddressTag(tag, addr);
-    }
+  QList<QPair<QString, quint64>> tags;
+  for (auto *item : tagList->selectedItems()) {
+    auto tag = item->text();
+    auto addr = item->data(Qt::UserRole).toLongLong();
+    tags << qMakePair(tag, addr);
   }
-
-  updateTagList();
-  emit project->tagsChanged();
-  emit project->modified();
+  Context::get().project()->removeAddressTags(tags);
 }
