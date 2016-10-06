@@ -44,6 +44,10 @@ public:
   /** Returns true if removed. */
   bool removeAddressTag(const QString &tag, quint64 address);
 
+  /// Removes address tags.
+  /** Returns true if anything was removed. */
+  bool removeAddressTags(const QList<QPair<QString, quint64>> &tags);
+
 signals:
   /// Whenever something is modified in the project this signal is emitted.
   void modified();

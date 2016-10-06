@@ -5,6 +5,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QSignalBlocker>
 
 namespace {
 
@@ -175,4 +176,23 @@ bool Project::removeAddressTag(const QString &tag, quint64 address)
   }
 
   return false;
+}
+
+bool Project::removeAddressTags(const QList<QPair<QString, quint64>> &tags)
+{
+  bool removed = false;
+
+  {
+    QSignalBlocker blocker(this);
+    for (const auto &pair : tags) {
+      removed |= removeAddressTag(pair.first, pair.second);
+    }
+  }
+
+  if (removed) {
+    emit modified();
+    emit tagsChanged();
+  }
+
+  return removed;
 }
