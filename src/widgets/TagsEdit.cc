@@ -65,7 +65,6 @@ void TagsEdit::onReturnPressed()
   }
 
   lineEdit->clear();
-  listWidget->addItem(tag);
 }
 
 void TagsEdit::updateTags()
