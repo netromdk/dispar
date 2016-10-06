@@ -227,7 +227,7 @@ void BinaryWidget::createLayout()
   positionLayout->addWidget(offsetLabel);
   positionLayout->addWidget(machineCodeLabel);
 
-  auto *positionBox = new ToggleBox(tr("Position"));
+  auto *positionBox = new ToggleBox(tr("Position"), "BinaryWidget.positionBox");
   positionBox->setContentLayout(positionLayout);
   positionBox->setExpanded();
 
@@ -271,7 +271,7 @@ void BinaryWidget::createLayout()
   binaryLayout->addWidget(fileTypeLabel);
   binaryLayout->addLayout(binaryButtonLayout);
 
-  auto *binaryBox = new ToggleBox(tr("Binary"));
+  auto *binaryBox = new ToggleBox(tr("Binary"), "BinaryWidget.binaryBox");
   binaryBox->setContentLayout(binaryLayout);
   binaryBox->setExpanded();
 
@@ -281,7 +281,7 @@ void BinaryWidget::createLayout()
   tagsLayout->setContentsMargins(5, 5, 5, 5);
   tagsLayout->addWidget(tagsEdit);
 
-  auto *tagsBox = new ToggleBox(tr("Tags"));
+  auto *tagsBox = new ToggleBox(tr("Tags"), "BinaryWidget.tagsBox");
   tagsBox->setContentLayout(tagsLayout);
   tagsBox->setMaximumHeight(150);
   tagsBox->setExpanded();

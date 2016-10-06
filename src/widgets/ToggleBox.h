@@ -11,7 +11,8 @@ class ToggleBox : public QWidget {
   Q_OBJECT
 
 public:
-  ToggleBox(const QString &title, QWidget *parent = nullptr);
+  ToggleBox(const QString &title, const QString &settingsKey, QWidget *parent = nullptr);
+  ~ToggleBox();
 
   void setContentLayout(QLayout *layout);
 
@@ -26,10 +27,13 @@ signals:
   void collapsed();
   void stateChanged(bool collapsed);
 
+protected:
+  void showEvent(QShowEvent *event);
+
 private:
   void createLayout();
 
-  QString title;
+  QString title, settingsKey;
   QToolButton *toggleButton;
   QScrollArea *contentWidget;
 };
