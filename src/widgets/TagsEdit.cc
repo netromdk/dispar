@@ -27,9 +27,9 @@ void TagsEdit::setAddress(quint64 address)
   this->address = address;
 
   auto project = Context::get().project();
-  listWidget->clear();
-  listWidget->addItems(project->addressTags(address));
+  connect(project.get(), &Project::tagsChanged, this, &TagsEdit::updateTags);
   listWidget->setEnabled(true);
+  updateTags();
 
   lineEdit->clear();
   lineEdit->setEnabled(true);
@@ -66,6 +66,12 @@ void TagsEdit::onReturnPressed()
 
   lineEdit->clear();
   listWidget->addItem(tag);
+}
+
+void TagsEdit::updateTags()
+{
+  listWidget->clear();
+  listWidget->addItems(Context::get().project()->addressTags(address));
 }
 
 void TagsEdit::createLayout()

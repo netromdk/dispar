@@ -26,6 +26,7 @@ signals:
 
 protected:
   void showEvent(QShowEvent *event);
+  bool eventFilter(QObject *obj, QEvent *event);
 
 private slots:
   void onSymbolChosen(int row);
@@ -40,6 +41,7 @@ private:
   void updateTagList();
   void addSymbolToList(const QString &text, quint64 address, QListWidget *list);
   void selectAddress(quint64 address);
+  void removeSelectedTags();
 
   std::shared_ptr<BinaryObject> object;
 

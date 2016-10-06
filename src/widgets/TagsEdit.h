@@ -23,6 +23,8 @@ protected:
 private slots:
   void onReturnPressed();
 
+  void updateTags();
+
 private:
   void createLayout();
   void removeTag();

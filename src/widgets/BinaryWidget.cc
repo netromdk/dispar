@@ -13,6 +13,7 @@
 #include <QPlainTextEdit>
 #include <QProgressDialog>
 #include <QPushButton>
+#include <QSignalBlocker>
 #include <QTabWidget>
 #include <QTextBlockUserData>
 #include <QTimer>
@@ -55,6 +56,22 @@ void BinaryWidget::showEvent(QShowEvent *event)
     shown = true;
     setup();
   }
+}
+
+bool BinaryWidget::eventFilter(QObject *obj, QEvent *event)
+{
+  if (obj == tagList && event->type() == QEvent::KeyPress) {
+    auto *keyEvent = static_cast<QKeyEvent *>(event);
+    switch (keyEvent->key()) {
+    case Qt::Key_Backspace:
+    case Qt::Key_Delete:
+      removeSelectedTags();
+      break;
+    }
+    return true;
+  }
+
+  return QWidget::eventFilter(obj, event);
 }
 
 void BinaryWidget::onSymbolChosen(int row)
@@ -189,6 +206,8 @@ void BinaryWidget::createLayout()
 
   tagList = new QListWidget;
   tagList->setSortingEnabled(true);
+  tagList->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  tagList->installEventFilter(this);
   connect(tagList, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
 
   connect(project.get(), &Project::tagsChanged, this, &BinaryWidget::updateTagList);
@@ -538,12 +557,27 @@ void BinaryWidget::selectAddress(quint64 address)
     return;
   }
 
-  qDebug() << "selecting address:" << address;
-
   auto blockNum = offsetBlock[address];
   auto block = doc->findBlockByNumber(blockNum);
   auto cursor = mainView->textCursor();
   cursor.setPosition(block.position());
   mainView->setTextCursor(cursor);
   mainView->ensureCursorVisible();
+}
+
+void BinaryWidget::removeSelectedTags()
+{
+  auto project = Context::get().project();
+  {
+    QSignalBlocker blocker(project.get());
+    for (auto *item : tagList->selectedItems()) {
+      auto tag = item->text();
+      auto addr = item->data(Qt::UserRole).toLongLong();
+      project->removeAddressTag(tag, addr);
+    }
+  }
+
+  updateTagList();
+  emit project->tagsChanged();
+  emit project->modified();
 }
