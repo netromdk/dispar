@@ -168,7 +168,7 @@ void BinaryWidget::filterSymbols(const QString &filter)
   else if (stringList->isVisible()) {
     list = stringList;
   }
-  else if (tagList->isVisible()) {
+  else {
     list = tagList;
   }
 
