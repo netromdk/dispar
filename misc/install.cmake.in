@@ -1,0 +1,22 @@
+include(BundleUtilities)
+
+if (APPLE)
+  set(bundle "@INSTALL_DIR@") # points to the .app
+else()
+  set(bundle "@INSTALL_BIN_DIR@@INSTALL_TARGET_NAME@@CMAKE_EXECUTABLE_SUFFIX@")
+endif()
+
+#other dylibs used, that can not be found be dependency analysis
+set(other_libs "")
+
+# List of directories where other libraries can be found
+set(
+  dirs
+  @CMAKE_RUNTIME_OUTPUT_DIRECTORY@
+  @CMAKE_LIBRARY_OUTPUT_DIRECTORY@
+
+  # The general Qt lib folder.
+  @Qt5Core_DIR@/../../
+  )
+
+fixup_bundle("${bundle}" "${other_libs}" "${dirs}")

@@ -87,7 +87,40 @@ add_dispar_executable(
   main.cc
   )
 
+# Create bundle on Mac.
+set_target_properties(
+  ${binName}
+  PROPERTIES MACOSX_BUNDLE TRUE
+  )
+
 target_link_libraries(
   ${binName}
   ${libName}
+  )
+
+# Installation definitions.
+install(
+  TARGETS ${binName}
+  BUNDLE DESTINATION . # Mac
+  RUNTIME DESTINATION bin # Win + Linux
+  )
+
+if (APPLE)
+  set(INSTALL_BIN_DIR "${CMAKE_INSTALL_PREFIX}/${binName}.app/Contents/MacOS/")
+  set(INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/${binName}.app")
+else()
+  set(INSTALL_BIN_DIR "${CMAKE_INSTALL_PREFIX}/${binName}/bin/")
+  set(INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/${binName}/")
+endif()
+
+set(INSTALL_TARGET_NAME "${binName}")
+
+configure_file(
+  ${CMAKE_SOURCE_DIR}/misc/install.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/install.cmake
+  @ONLY
+  )
+
+install(
+  SCRIPT ${CMAKE_CURRENT_BINARY_DIR}/install.cmake
   )

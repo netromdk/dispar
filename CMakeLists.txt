@@ -102,6 +102,8 @@ add_custom_target(
 
 message(STATUS "--------------------------------------------------")
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
+
 if (APPLE)
   message(STATUS "Mac SDK: ${DEV_SDK}")
 endif()
