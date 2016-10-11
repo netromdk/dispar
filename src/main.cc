@@ -1,6 +1,8 @@
 #include <QApplication>
 #include <QCommandLineParser>
 #include <QDebug>
+#include <QDir>
+#include <QFileInfo>
 #include <QStringList>
 #include <QTimer>
 
@@ -19,6 +21,16 @@ void signalHandler(int sig)
 
 int main(int argc, char **argv)
 {
+  // Reset library paths to look for Qt plugins in the binary folder and not any system paths. But
+  // only when plugins are found inside the binary folder because otherwise it's before install is
+  // run.
+  QDir curDir(QDir::current());
+  QFileInfo fi(argv[0]);
+  auto path = curDir.absoluteFilePath(fi.dir().absolutePath());
+  if (QFile::exists(QDir(path).absoluteFilePath("platforms"))) {
+    QCoreApplication::setLibraryPaths({path});
+  }
+
   QApplication app(argc, argv);
   app.setApplicationName("Dispar");
   app.setOrganizationName("dispar");
