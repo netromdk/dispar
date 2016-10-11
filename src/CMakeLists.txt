@@ -114,6 +114,19 @@ else()
 endif()
 
 set(INSTALL_TARGET_NAME "${binName}")
+set(plugin_dir "${Qt5Core_DIR}/../../../plugins/")
+
+if (APPLE)
+  install(
+    FILES "${plugin_dir}/platforms/libqcocoa.dylib"
+    DESTINATION "${INSTALL_BIN_DIR}/platforms/"
+    )
+elseif (WIN32)
+  install(
+    FILES "${plugin_dir}/platforms/qwindows.dll"
+    DESTINATION "${INSTALL_BIN_DIR}/platforms/"
+    )
+endif()
 
 configure_file(
   ${CMAKE_SOURCE_DIR}/misc/install.cmake.in
