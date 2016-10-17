@@ -178,6 +178,9 @@ void Util::scrollToTop(QAbstractScrollArea *widget)
 
 QString Util::demangle(const QString &name)
 {
+#ifdef WIN
+  return name;
+#else
   if (name.isEmpty()) {
     return name;
   }
@@ -204,6 +207,7 @@ QString Util::demangle(const QString &name)
   auto output = QString::fromUtf8(res);
   free(res);
   return output;
+#endif
 }
 
 void Util::delayFunc(std::function<void()> func)
