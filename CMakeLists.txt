@@ -20,6 +20,8 @@ endif()
 # Output compile_commands.json (Ninja generator only!)
 set(CMAKE_EXPORT_COMPILE_COMMANDS YES)
 
+set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}")
+
 include(misc)
 include(platform)
 include(target)
