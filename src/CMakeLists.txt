@@ -99,12 +99,6 @@ target_link_libraries(
   )
 
 # Installation definitions.
-install(
-  TARGETS ${binName}
-  BUNDLE DESTINATION . # Mac
-  RUNTIME DESTINATION bin # Win + Linux
-  )
-
 if (APPLE)
   set(INSTALL_BIN_DIR "${CMAKE_INSTALL_PREFIX}/${binName}.app/Contents/MacOS/")
   set(INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/${binName}.app")
@@ -112,6 +106,12 @@ else()
   set(INSTALL_BIN_DIR "${CMAKE_INSTALL_PREFIX}/${binName}/bin/")
   set(INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/${binName}/")
 endif()
+
+install(
+  TARGETS ${binName}
+  BUNDLE DESTINATION . # Mac
+  RUNTIME DESTINATION ${INSTALL_BIN_DIR} # Win + Linux
+  )
 
 set(INSTALL_TARGET_NAME "${binName}")
 set(plugin_dir "${Qt5Core_DIR}/../../../plugins/")
