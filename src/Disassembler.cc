@@ -64,6 +64,7 @@ Disassembler::Disassembler(std::shared_ptr<BinaryObject> object, Syntax syntax) 
     csSyntax = cs_opt_value::CS_OPT_SYNTAX_ATT;
     break;
 
+  default:
   case Syntax::INTEL:
     csSyntax = cs_opt_value::CS_OPT_SYNTAX_INTEL;
     break;
