@@ -126,6 +126,11 @@ elseif (WIN32)
     FILES "${plugin_dir}/platforms/qwindows.dll"
     DESTINATION "${INSTALL_BIN_DIR}/platforms/"
     )
+elseif (LINUX)
+  install(
+    FILES "${plugin_dir}/platforms/libqxcb.so"
+    DESTINATION "${INSTALL_BIN_DIR}/platforms/"
+    )
 endif()
 
 configure_file(

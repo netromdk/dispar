@@ -13,6 +13,8 @@ if (APPLE)
   set(other_libs "${other_libs};@INSTALL_BIN_DIR@/platforms/libqcocoa.dylib")
 elseif (WIN32)
   set(other_libs "${other_libs};@INSTALL_BIN_DIR@/platforms/qwindows.dll")
+elseif (LINUX)
+  set(other_libs "${other_libs};@INSTALL_BIN_DIR@/platforms/libqxcb.so")
 endif()
 
 # List of directories where other libraries can be found
