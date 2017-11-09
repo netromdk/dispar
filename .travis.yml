@@ -1,0 +1,34 @@
+language: cpp
+
+matrix:
+  include:
+    # works on Precise and Trusty
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+            - cmake-data
+            - cmake
+      env:
+        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+
+before_install:
+  - echo $LANG
+  - echo $LC_ALL
+  - eval "${MATRIX_EVAL}"
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo add-apt-repository --yes ppa:beineri/opt-qt562-trusty; sudo apt-get update -qq; fi
+
+install:
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get install -qq qt56base; source /opt/qt56/bin/qt56-env.sh; fi
+
+script:
+  - cmake .
+  - VERBOSE=1 make
+  - ./bin/tests
+
+branches:
+  only:
+    - master

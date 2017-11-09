@@ -5,6 +5,13 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/lib/capstone/include
   )
 
+if (NOT WIN)
+  include_directories(
+    /usr/include
+    /usr/local/include
+    )
+endif()
+
 add_library(
   gtest
   gtest/src/gtest-all.cc
