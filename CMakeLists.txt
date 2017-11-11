@@ -31,6 +31,14 @@ if (CODE_COVERAGE)
     message(FATAL_ERROR "Clang is required to do code coverage!")
   endif()
 
+  if (NOT LLVM_PROFDATA)
+    set(LLVM_PROFDATA llvm-profdata)
+  endif()
+
+  if (NOT LLVM_COV)
+    set(LLVM_COV llvm-cov)
+  endif()
+
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-instr-generate -fcoverage-mapping")
 endif()
 
@@ -80,12 +88,12 @@ add_subdirectory(lib)
 add_subdirectory(src)
 
 # Requires llvm/clang v4+!
-# Setup: CC=clang-mp-devel CXX=clang++-mp-devel cmake -G Ninja -DCODE_COVERAGE=ON ../../
+# Setup: CC=clang-mp-5.0 CXX=clang++-mp-5.0 cmake -G Ninja -DCODE_COVERAGE=ON -DLLVM_PROFDATA=llvm-profdata-mp-5.0 -DLLVM_COV=llvm-cov-mp-5.0 ../../
 if (CODE_COVERAGE)
   add_custom_target(
     codecov
 
-    rm -fr report.dir \; LLVM_PROFILE_FILE=tests.profraw $<TARGET_FILE:${testName}> >/dev/null && llvm-profdata merge -sparse tests.profraw -o tests.profdata && llvm-cov show $<TARGET_FILE:${testName}> -instr-profile=tests.profdata -format html -o report.dir -Xdemangler c++filt -Xdemangler -n -show-line-counts-or-regions && llvm-cov report $<TARGET_FILE:${testName}> -instr-profile=tests.profdata -Xdemangler c++filt -Xdemangler -n -use-color && echo '============================\\nReport at: report.dir/index.html\\n============================'
+    rm -fr report.dir \; LLVM_PROFILE_FILE=tests.profraw $<TARGET_FILE:${testName}> >/dev/null && ${LLVM_PROFDATA} merge -sparse tests.profraw -o tests.profdata && ${LLVM_COV} show $<TARGET_FILE:${testName}> -instr-profile=tests.profdata -format html -o report.dir -Xdemangler c++filt -Xdemangler -n -show-line-counts-or-regions && ${LLVM_COV} report $<TARGET_FILE:${testName}> -instr-profile=tests.profdata -Xdemangler c++filt -Xdemangler -n -use-color && echo '============================\\nReport at: report.dir/index.html\\n============================'
 
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating test code coverage report"
