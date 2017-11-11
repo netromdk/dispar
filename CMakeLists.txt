@@ -20,6 +20,9 @@ endif()
 # Output compile_commands.json (Ninja generator only!)
 set(CMAKE_EXPORT_COMPILE_COMMANDS YES)
 
+# Use C++14 standard.
+set(CMAKE_CXX_STANDARD 14)
+
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}")
 
 include(misc)
