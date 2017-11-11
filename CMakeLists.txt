@@ -27,15 +27,27 @@ include(platform)
 include(target)
 
 if (CODE_COVERAGE)
+  if (NOT "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    message(FATAL_ERROR "Clang is required to do code coverage!")
+  endif()
+
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-instr-generate -fcoverage-mapping")
 endif()
 
 if (ADDRESS_SANITIZER)
+  if (NOT "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    message(FATAL_ERROR "Clang is required to use address sanitizer to detect memory errors!")
+  endif()
+
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -g -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls")
   set(CMAKE_BUILD_TYPE Debug)
 endif()
 
 if (STATIC_ANALYZER)
+  if (NOT "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    message(FATAL_ERROR "Clang is required to do static analysis!")
+  endif()
+
   set(CMAKE_BUILD_TYPE Debug)
 endif()
 
