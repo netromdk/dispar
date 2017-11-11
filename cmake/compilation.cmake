@@ -19,11 +19,14 @@ if (NOT WIN32)
   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ${REL_OPTS}")
 endif()
 
+message("Compiler ID: ${CMAKE_CXX_COMPILER_ID}")
+
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
   execute_process(
     COMMAND ${CMAKE_CXX_COMPILER} -dumpversion
     OUTPUT_VARIABLE GCC_VERSION
     )
+  message("Compiler version: ${GCC_VERSION}")
   if (NOT (GCC_VERSION VERSION_GREATER 4.9 OR GCC_VERSION VERSION_EQUAL 4.9))
     MESSAGE(FATAL_ERROR "Requires GCC >= 4.9.")
   endif()
@@ -32,6 +35,7 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     COMMAND ${CMAKE_CXX_COMPILER} -dumpversion
     OUTPUT_VARIABLE CLANG_VERSION
     )
+   message("Compiler version: ${CLANG_VERSION}")
   if (NOT (CLANG_VERSION VERSION_GREATER 3.7 OR CLANG_VERSION VERSION_EQUAL 3.7))
     message(FATAL_ERROR "Requires Clang >= 3.7.")
   else()
