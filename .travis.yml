@@ -35,4 +35,4 @@ before_script:
   - cmake .
 
 script:
-  - VERBOSE=1 make && ./bin/tests
+  - VERBOSE=1 make -j2 && ./bin/tests
