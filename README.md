@@ -16,7 +16,7 @@ Dependencies
 There are both external and internal libraries and tools required to build and run this program.
 
 ### External
-* CMake 3+
+* CMake 3.1+
 * Qt 5+
   * QtCore
   * QtGui
