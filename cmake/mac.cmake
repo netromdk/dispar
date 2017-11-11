@@ -1,7 +1,7 @@
 set(SDK_MIN 10.8)
 
 # Try to pick the newest!
-set(SDKS 10.12 10.11 10.10 10.9 10.8)
+set(SDKS 10.13 10.12 10.11 10.10 10.9 10.8)
 
 foreach (sdk ${SDKS})
   set(DEV_SDK "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX${sdk}.sdk")
@@ -18,7 +18,7 @@ foreach (sdk ${SDKS})
 endforeach()
 
 if (NOT found_sdk)
-  message(FATAL_ERROR "Could not find Mac OS X SDK version 10.8 - 10.12!")
+  message(FATAL_ERROR "Could not find Mac OS X SDK version 10.8 - 10.13!")
 endif()
 
 add_definitions(
