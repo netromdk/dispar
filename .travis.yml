@@ -4,31 +4,35 @@ matrix:
   include:
     # works on Precise and Trusty
     - os: linux
+      sudo: required
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
           packages:
             - g++-6
-            - cmake-data
-            - cmake
       env:
         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+
+    - os: osx
+      compiler: clang
+      osx_image: xcode9.1
+      env:
+        - MATRIX_EVAL="CC=clang && CXX=clang++"
 
 before_install:
   - echo $LANG
   - echo $LC_ALL
   - eval "${MATRIX_EVAL}"
-  - if [ $TRAVIS_OS_NAME == linux ]; then sudo add-apt-repository --yes ppa:beineri/opt-qt562-trusty; sudo apt-get update -qq; fi
+  - ./scripts/travis/before_install.sh
 
 install:
-  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get install -qq qt56base; source /opt/qt56/bin/qt56-env.sh; fi
+  - ./scripts/travis/install.sh
+  - if [ $TRAVIS_OS_NAME == linux ]; then source /opt/qt56/bin/qt56-env.sh; fi
+
+before_script:
+  - cmake --system-information info.txt && cat info.txt
+  - cmake .
 
 script:
-  - cmake .
-  - VERBOSE=1 make
-  - ./bin/tests
-
-branches:
-  only:
-    - master
+  - VERBOSE=1 make && ./bin/tests
