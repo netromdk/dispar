@@ -56,6 +56,10 @@ if (STATIC_ANALYZER)
     message(FATAL_ERROR "Clang is required to do static analysis!")
   endif()
 
+  if (NOT SCAN_BUILD)
+    set(SCAN_BUILD scan-build)
+  endif()
+
   set(CMAKE_BUILD_TYPE Debug)
 endif()
 
@@ -101,12 +105,12 @@ if (CODE_COVERAGE)
     )
 endif()
 
-# Setup: scan-build cmake -G Ninja -DSTATIC_ANALYZER=ON ../../
+# Setup: scan-build-mp-5.0 cmake -DSTATIC_ANALYZER=ON -DSCAN_BUILD=scan-build-mp-5.0 ../../
 if (STATIC_ANALYZER)
   add_custom_target(
     sa
 
-    sh ${CMAKE_SOURCE_DIR}/scripts/static_analysis.sh ${CMAKE_CURRENT_BINARY_DIR} ${Qt5Core_DIR}/../../ ${binName}
+    sh ${CMAKE_SOURCE_DIR}/scripts/static_analysis.sh ${SCAN_BUILD} ${CMAKE_CURRENT_BINARY_DIR} ${Qt5Core_DIR}/../../ ${binName}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Doing static analysis"
     )
