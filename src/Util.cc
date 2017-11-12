@@ -8,6 +8,7 @@
 #include <QFileInfo>
 #include <QScrollBar>
 #include <QTimer>
+#include <QXmlStreamReader>
 
 #include "libiberty/demangle.h"
 
@@ -114,16 +115,62 @@ QString Util::resolveAppBinary(QString path)
     path.chop(1);
   }
   if (!path.toLower().endsWith(".app")) {
-    return QString();
+    return {};
   }
+
   QDir dir(path);
-  if (dir.exists() && dir.cd("Contents") && dir.cd("MacOS")) {
-    QFileInfo fi(path);
-    if (dir.exists(fi.baseName())) {
-      return dir.absoluteFilePath(fi.baseName());
+  if (!dir.exists() || !dir.cd("Contents")) {
+    return {};
+  }
+
+  const auto plistFile = dir.absoluteFilePath("Info.plist");
+
+  if (!dir.cd("MacOS")) {
+    return {};
+  }
+
+  // Try using the name of the app itself without the ".app".
+  QFileInfo fi(path);
+  if (dir.exists(fi.baseName())) {
+    return dir.absoluteFilePath(fi.baseName());
+  }
+
+  // Detect the value of "CFBundleExecutable" in "Info.plist".
+  // The format is:
+  //   <key>CFBundleExecutable</key>
+  //   <string>THENAME</string>
+  if (!QFile::exists(plistFile)) {
+    return {};
+  }
+
+  QFile file(plistFile);
+  if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    return {};
+  }
+
+  QXmlStreamReader reader(&file);
+  bool nextString = false;
+  while (!reader.atEnd()) {
+    if (!reader.readNextStartElement()) {
+      continue;
+    }
+
+    const auto name = reader.name().toString().toLower();
+    if (name == "key" && reader.readElementText().toLower() == "cfbundleexecutable") {
+      nextString = true;
+      continue;
+    }
+
+    if (name == "string" && nextString) {
+      const auto execName = reader.readElementText();
+      if (!dir.exists(execName)) {
+        return {};
+      }
+      return dir.absoluteFilePath(execName);
     }
   }
-  return QString();
+
+  return {};
 }
 
 void Util::centerWidget(QWidget *widget)

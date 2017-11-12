@@ -120,9 +120,10 @@ void MainWindow::openProject(const QString &projectFile)
   auto binary = project->binary();
   if (!QFile::exists(binary)) {
     auto ret = QMessageBox::question(
-      this, "dispar", tr("Binary of project does not exist: %1!\n\nDo you want to load another "
-                         "project or choose another binary for this project?")
-                        .arg(binary),
+      this, "dispar",
+      tr("Binary of project does not exist: %1!\n\nDo you want to load another "
+         "project or choose another binary for this project?")
+        .arg(binary),
       QMessageBox::Yes | QMessageBox::Open | QMessageBox::Cancel);
     switch (ret) {
     case QMessageBox::Yes:
@@ -209,8 +210,7 @@ void MainWindow::closeProject()
 void MainWindow::openBinary()
 {
   QFileDialog diag(this, tr("Open Binary"), QDir::homePath());
-  diag.setNameFilters(
-    QStringList{"Mach-O binary (*.o *.dylib *.dylinker *.bundle *.app *)", "Any file (*)"});
+  diag.setNameFilters({"Mach-O binary (*.o *.dylib *.dylinker *.bundle *.app *)", "Any file (*)"});
 
   if (!diag.exec()) return;
 
@@ -478,7 +478,7 @@ void MainWindow::loadBinary(QString file)
   file = QFileInfo(file).absoluteFilePath();
 
   // If .app then resolve the internal binary file.
-  QString appBin = Util::resolveAppBinary(file);
+  const auto appBin = Util::resolveAppBinary(file);
   if (!appBin.isEmpty()) {
     file = appBin;
   }
