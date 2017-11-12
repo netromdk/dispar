@@ -12,6 +12,7 @@ Dispar is short for "[Dis]assemling binary [Par]ser" written in C++14. The whole
 * [Debugging](#debugging)
 * [Code Coverage](#code-coverage)
 * [Static Analysis](#static-analysis)
+* [Troubleshooting](#troubleshooting)
 * [Contributions](#contributions)
 
 # Dependencies
@@ -95,6 +96,13 @@ When your binaries are named differently, cmake can be configured in the followi
   scan-build-mp-5.0 \
   cmake -DSTATIC_ANALYZER=ON -DSCAN_BUILD=scan-build-mp-5.0 ..
 ```
+
+# Troubleshooting
+If for any reason a specific macOS SDK is required, tell cmake this way:
+```
+% cmake -DFORCE_MAC_SDK=X.Y .
+```
+Where "X.Y" is the version of the SDK, like "10.8".
 
 # Contributions
 Contributions are very welcome for bug fixes particularly but also features that make sense to the project. Any existing issues labeled ["help wanted"](https://github.com/netromdk/dispar/labels/help%20wanted) are free to be pursued. And don't hesitate to open new issues.
