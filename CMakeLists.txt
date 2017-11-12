@@ -97,8 +97,7 @@ if (CODE_COVERAGE)
   add_custom_target(
     codecov
 
-    rm -fr report.dir \; LLVM_PROFILE_FILE=tests.profraw $<TARGET_FILE:${testName}> >/dev/null && ${LLVM_PROFDATA} merge -sparse tests.profraw -o tests.profdata && ${LLVM_COV} show $<TARGET_FILE:${testName}> -instr-profile=tests.profdata -format html -o report.dir -Xdemangler c++filt -Xdemangler -n -show-line-counts-or-regions && ${LLVM_COV} report $<TARGET_FILE:${testName}> -instr-profile=tests.profdata -Xdemangler c++filt -Xdemangler -n -use-color && echo '============================\\nReport at: report.dir/index.html\\n============================'
-
+    sh ${CMAKE_SOURCE_DIR}/scripts/code_coverage.sh "${CMAKE_CURRENT_BINARY_DIR}" "$<TARGET_FILE:${testName}>" "${LLVM_PROFDATA}" "${LLVM_COV}"
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating test code coverage report"
     DEPENDS ${testName}
