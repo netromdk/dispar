@@ -125,7 +125,7 @@ add_custom_target(
   COMMENT "Running cppcheck"
   )
 
-message(STATUS "--------------------------------------------------")
+message(STATUS "====================================================================")
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
 
@@ -154,4 +154,11 @@ if (FOUND_QT)
   message(STATUS "  Qt5Gui_DIR            ${Qt5Gui_DIR}")
   message(STATUS "  Qt5Widgets_DIR        ${Qt5Widgets_DIR}")
 endif()
-message(STATUS "--------------------------------------------------")
+
+if (CCACHE)
+  message(STATUS "CCache: ${CCACHE} (using to speed up compile + link)")
+else()
+  message(STATUS "CCache: OFF")
+endif()
+
+message(STATUS "====================================================================")

@@ -39,7 +39,7 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     COMMAND ${CMAKE_CXX_COMPILER} -dumpversion
     OUTPUT_VARIABLE CLANG_VERSION
     )
-   message("Compiler version: ${CLANG_VERSION}")
+  message("Compiler version: ${CLANG_VERSION}")
   if (NOT (CLANG_VERSION VERSION_GREATER 3.7 OR CLANG_VERSION VERSION_EQUAL 3.7))
     message(FATAL_ERROR "Requires Clang >= 3.7.")
   else()
@@ -49,4 +49,14 @@ elseif (MSVC AND MSVC14)
   # C++14 support is implicitly enabled.
 else()
   message(FATAL_ERROR "Your compiler does not support C++14 - aborting!")
+endif()
+
+# Detect if ccache is installed and use if it is the case.
+if (NOT DISABLE_CCACHE)
+  find_program(CCACHE ccache)
+  if (CCACHE)
+    # Specify to launch ccache for compilation and linking globally.
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+  endif()
 endif()
