@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QClipboard>
 #include <QDebug>
 #include <QDesktopServices>
 #include <QDir>
@@ -9,6 +10,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
+#include <QMenu>
 #include <QMessageBox>
 #include <QPlainTextEdit>
 #include <QProgressDialog>
@@ -26,6 +28,7 @@
 #include "PersistentSplitter.h"
 #include "TagsEdit.h"
 #include "ToggleBox.h"
+#include "widgets/DisassemblerDialog.h"
 
 namespace {
 
@@ -38,7 +41,7 @@ public:
   QString bytes;
 };
 
-} // anon
+} // namespace
 
 BinaryWidget::BinaryWidget(std::shared_ptr<BinaryObject> &object)
   : object(object), shown(false), doc(nullptr)
@@ -157,6 +160,34 @@ void BinaryWidget::onShowMachineCodeChanged(bool show)
 
   auto end = QDateTime::currentDateTime();
   qDebug() << "Modified machine code visibility in" << start.msecsTo(end) << "ms";
+}
+
+void BinaryWidget::onCustomContextMenuRequested(const QPoint &pos)
+{
+  const auto selected = mainView->textCursor().selectedText();
+  if (selected.isEmpty()) return;
+
+  // See if selection is convertible to a number, possibly an address.
+  bool isAddress = false;
+  const auto address = Util::convertAddress(selected, &isAddress);
+
+  QMenu menu(mainView);
+
+  menu.addAction(tr("Copy"), this, [&selected] { QApplication::clipboard()->setText(selected); },
+                 QKeySequence::Copy);
+
+  menu.addSeparator();
+
+  menu.addAction(tr("Disassemble"), this, [this, &selected] {
+    DisassemblerDialog diag(this, object->cpuType(), selected);
+    diag.exec();
+  });
+
+  auto *jumpAction =
+    menu.addAction(tr("Jump to Address"), this, [this, address] { selectAddress(address); });
+  jumpAction->setEnabled(isAddress);
+
+  menu.exec(mainView->mapToGlobal(pos));
 }
 
 void BinaryWidget::filterSymbols(const QString &filter)
@@ -320,9 +351,12 @@ void BinaryWidget::createLayout()
   mainView->setReadOnly(true);
   mainView->setCenterOnScroll(true);
   mainView->setLineWrapMode(QPlainTextEdit::NoWrap);
+  mainView->setContextMenuPolicy(Qt::CustomContextMenu);
   mainView->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
   connect(mainView, &QPlainTextEdit::cursorPositionChanged, this,
           &BinaryWidget::onCursorPositionChanged);
+  connect(mainView, &QWidget::customContextMenuRequested, this,
+          &BinaryWidget::onCustomContextMenuRequested);
 
   doc = mainView->document();
 

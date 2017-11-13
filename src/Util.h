@@ -49,6 +49,11 @@ public:
   static void delayFunc(std::function<void()> func);
 
   static CpuType currentCpuType();
+
+  /// Try to convert \p input to an address and write status to \p ok, if specified.
+  /** It will remove all white space from \p input and try to convert using base 16 if it starts
+      with "0x", base 8 if it starts with "0", and otherwise base 10. */
+  static quint64 convertAddress(QString input, bool *ok = nullptr);
 };
 
 #endif // DISPAR_UTIL_H

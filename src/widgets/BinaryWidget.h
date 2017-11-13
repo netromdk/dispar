@@ -32,6 +32,7 @@ private slots:
   void onSymbolChosen(int row);
   void onCursorPositionChanged();
   void onShowMachineCodeChanged(bool show);
+  void onCustomContextMenuRequested(const QPoint &pos);
 
   void filterSymbols(const QString &filter);
 
