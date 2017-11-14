@@ -1,6 +1,6 @@
-#include "OptionsDialog.h"
-#include "../Context.h"
-#include "../Disassembler.h"
+#include "widgets/OptionsDialog.h"
+#include "Context.h"
+#include "Disassembler.h"
 
 #include <QCheckBox>
 #include <QComboBox>

@@ -8,8 +8,8 @@
 #include <QPushButton>
 #include <QTextEdit>
 
-#include "../Util.h"
-#include "ConversionHelper.h"
+#include "Util.h"
+#include "widgets/ConversionHelper.h"
 
 ConversionHelper::ConversionHelper(QWidget *parent) : QDialog(parent)
 {

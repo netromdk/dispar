@@ -3,10 +3,10 @@
 
 #include <cmath>
 
-#include "../BinaryObject.h"
-#include "../Reader.h"
-#include "../Util.h"
-#include "MachO.h"
+#include "BinaryObject.h"
+#include "Reader.h"
+#include "Util.h"
+#include "formats/MachO.h"
 
 MachO::MachO(const QString &file) : Format(Format::Type::MACH_O), file_{file}
 {

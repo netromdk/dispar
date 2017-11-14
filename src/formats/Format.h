@@ -2,14 +2,14 @@
 #define DISPAR_FORMAT_H
 
 #include <QList>
-#include <QString>
 #include <QMetaType>
+#include <QString>
 
 #include <memory>
 
-#include "../CpuType.h"
-#include "../FileType.h"
-#include "../Section.h"
+#include "CpuType.h"
+#include "FileType.h"
+#include "Section.h"
 
 class BinaryObject;
 

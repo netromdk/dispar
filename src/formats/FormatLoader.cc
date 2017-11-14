@@ -1,6 +1,6 @@
-#include "FormatLoader.h"
-#include "../BinaryObject.h"
-#include "Format.h"
+#include "formats/FormatLoader.h"
+#include "BinaryObject.h"
+#include "formats/Format.h"
 
 #include <QDateTime>
 #include <QDebug>

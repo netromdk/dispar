@@ -1,7 +1,7 @@
-#include "TagsEdit.h"
-#include "../Context.h"
-#include "../Project.h"
-#include "TagItemDelegate.h"
+#include "widgets/TagsEdit.h"
+#include "Context.h"
+#include "Project.h"
+#include "widgets/TagItemDelegate.h"
 
 #include <QDebug>
 #include <QEvent>

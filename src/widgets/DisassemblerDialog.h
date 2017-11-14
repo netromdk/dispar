@@ -3,8 +3,8 @@
 
 #include <QDialog>
 
-#include "../CpuType.h"
-#include "../Disassembler.h"
+#include "CpuType.h"
+#include "Disassembler.h"
 
 class QTextEdit;
 class QSplitter;

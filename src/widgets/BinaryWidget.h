@@ -4,7 +4,7 @@
 #include <QHash>
 #include <QWidget>
 
-#include "../BinaryObject.h"
+#include "BinaryObject.h"
 
 class TagsEdit;
 

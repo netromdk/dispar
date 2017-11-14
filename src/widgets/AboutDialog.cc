@@ -1,5 +1,5 @@
-#include "AboutDialog.h"
-#include "../Version.h"
+#include "widgets/AboutDialog.h"
+#include "Version.h"
 
 #include <QLabel>
 

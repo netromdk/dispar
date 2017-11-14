@@ -1,7 +1,7 @@
 #ifndef DISPAR_MACHO_FORMAT_H
 #define DISPAR_MACHO_FORMAT_H
 
-#include "Format.h"
+#include "formats/Format.h"
 
 class Reader;
 

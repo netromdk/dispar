@@ -1,4 +1,4 @@
-#include "ToggleBox.h"
+#include "widgets/ToggleBox.h"
 
 #include <QScrollArea>
 #include <QSettings>

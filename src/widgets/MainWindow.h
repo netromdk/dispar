@@ -6,7 +6,7 @@
 
 #include <memory>
 
-#include "../CpuType.h"
+#include "CpuType.h"
 
 class QAction;
 

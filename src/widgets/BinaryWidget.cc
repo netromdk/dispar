@@ -19,16 +19,16 @@
 #include <QTextBlockUserData>
 #include <QTimer>
 
-#include "../BinaryObject.h"
-#include "../CStringReader.h"
-#include "../Context.h"
-#include "../Project.h"
-#include "../Util.h"
-#include "BinaryWidget.h"
-#include "PersistentSplitter.h"
-#include "TagsEdit.h"
-#include "ToggleBox.h"
+#include "BinaryObject.h"
+#include "CStringReader.h"
+#include "Context.h"
+#include "Project.h"
+#include "Util.h"
+#include "widgets/BinaryWidget.h"
 #include "widgets/DisassemblerDialog.h"
+#include "widgets/PersistentSplitter.h"
+#include "widgets/TagsEdit.h"
+#include "widgets/ToggleBox.h"
 
 namespace {
 

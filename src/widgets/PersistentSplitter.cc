@@ -1,4 +1,4 @@
-#include "PersistentSplitter.h"
+#include "widgets/PersistentSplitter.h"
 
 #include <QDebug>
 #include <QSettings>

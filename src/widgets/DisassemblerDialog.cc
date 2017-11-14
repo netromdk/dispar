@@ -9,11 +9,11 @@
 #include <QTextEdit>
 #include <QVBoxLayout>
 
-#include "../cxx.h"
-#include "../BinaryObject.h"
-#include "../Disassembler.h"
-#include "../Util.h"
-#include "DisassemblerDialog.h"
+#include "BinaryObject.h"
+#include "Disassembler.h"
+#include "Util.h"
+#include "cxx.h"
+#include "widgets/DisassemblerDialog.h"
 
 DisassemblerDialog::DisassemblerDialog(QWidget *parent, CpuType cpuType, const QString &data,
                                        quint64 offset, Disassembler::Syntax syntax)
