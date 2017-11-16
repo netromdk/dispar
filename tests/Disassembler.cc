@@ -6,26 +6,21 @@
 
 TEST(Disassembler, instantiate)
 {
-  auto obj = std::make_shared<BinaryObject>();
-  Disassembler dis(obj);
+  auto obj = std::make_unique<BinaryObject>();
+  Disassembler dis(*obj.get());
 }
 
 TEST(Disassembler, valid)
 {
   {
-    Disassembler dis(nullptr);
-    EXPECT_FALSE(dis.valid());
-  }
-
-  {
-    auto obj = std::make_shared<BinaryObject>();
-    Disassembler dis(obj);
+    auto obj = std::make_unique<BinaryObject>();
+    Disassembler dis(*obj.get());
     EXPECT_TRUE(dis.valid());
   }
 
   {
-    auto obj = std::make_shared<BinaryObject>(CpuType::X86_64, CpuType::I386, true, 64);
-    Disassembler dis(obj);
+    auto obj = std::make_unique<BinaryObject>(CpuType::X86_64, CpuType::I386, true, 64);
+    Disassembler dis(*obj.get());
     EXPECT_TRUE(dis.valid());
   }
 }
@@ -34,8 +29,8 @@ TEST(Disassembler, disassembleData)
 {
   {
     // x86 32-bit
-    auto obj = std::make_shared<BinaryObject>();
-    Disassembler dis(obj, Disassembler::Syntax::INTEL);
+    auto obj = std::make_unique<BinaryObject>();
+    Disassembler dis(*obj.get(), Disassembler::Syntax::INTEL);
     ASSERT_TRUE(dis.valid());
 
     // dec eax
@@ -58,8 +53,8 @@ TEST(Disassembler, disassembleData)
 
   {
     // x86 32-bit
-    auto obj = std::make_shared<BinaryObject>();
-    Disassembler dis(obj, Disassembler::Syntax::ATT);
+    auto obj = std::make_unique<BinaryObject>();
+    Disassembler dis(*obj.get(), Disassembler::Syntax::ATT);
     ASSERT_TRUE(dis.valid());
 
     // decl %eax
@@ -82,10 +77,10 @@ TEST(Disassembler, disassembleData)
 
   {
     // x86 64-bit
-    auto obj = std::make_shared<BinaryObject>();
+    auto obj = std::make_unique<BinaryObject>();
     obj->setCpuType(CpuType::X86_64);
 
-    Disassembler dis(obj, Disassembler::Syntax::INTEL);
+    Disassembler dis(*obj.get(), Disassembler::Syntax::INTEL);
     ASSERT_TRUE(dis.valid());
 
     // sub rsp, 0x70
@@ -102,10 +97,10 @@ TEST(Disassembler, disassembleData)
 
   {
     // x86 64-bit
-    auto obj = std::make_shared<BinaryObject>();
+    auto obj = std::make_unique<BinaryObject>();
     obj->setCpuType(CpuType::X86_64);
 
-    Disassembler dis(obj, Disassembler::Syntax::ATT);
+    Disassembler dis(*obj.get(), Disassembler::Syntax::ATT);
     ASSERT_TRUE(dis.valid());
 
     // subq $0x70, %rsp
@@ -121,8 +116,8 @@ TEST(Disassembler, disassembleData)
   }
 
   {
-    auto obj = std::make_shared<BinaryObject>();
-    Disassembler dis(obj);
+    auto obj = std::make_unique<BinaryObject>();
+    Disassembler dis(*obj.get());
     ASSERT_TRUE(dis.valid());
 
     auto res = dis.disassemble(QByteArray(nullptr));
@@ -133,8 +128,8 @@ TEST(Disassembler, disassembleData)
 TEST(Disassembler, disassembleText)
 {
   {
-    auto obj = std::make_shared<BinaryObject>();
-    Disassembler dis(obj);
+    auto obj = std::make_unique<BinaryObject>();
+    Disassembler dis(*obj.get());
     ASSERT_TRUE(dis.valid());
 
     auto res = dis.disassemble(QString("90 90 90"));

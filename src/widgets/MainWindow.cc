@@ -109,7 +109,7 @@ void MainWindow::openProject(const QString &projectFile)
   qDebug() << "Opening project:" << file;
   closeProject();
 
-  auto project = Context::get().loadProject(file);
+  auto *project = Context::get().loadProject(file);
   if (!project) {
     modified = false;
     QMessageBox::critical(this, "dispar",
@@ -140,7 +140,7 @@ void MainWindow::openProject(const QString &projectFile)
     }
   }
 
-  connect(project.get(), &Project::modified, this, &MainWindow::onProjectModified);
+  connect(project, &Project::modified, this, &MainWindow::onProjectModified);
 
   // Add recent file.
   if (!recentProjects.contains(file)) {
@@ -262,12 +262,14 @@ void MainWindow::onOptions()
 
 void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
 {
+  format = fmt;
+
   // If no project was active then create one, and if a project was not already saved then reset it.
   auto &ctx = Context::get();
-  auto project = ctx.project();
+  auto *project = ctx.project();
   if (!project || project->file().isEmpty()) {
     project = ctx.resetProject();
-    connect(project.get(), &Project::modified, this, &MainWindow::onProjectModified);
+    connect(project, &Project::modified, this, &MainWindow::onProjectModified);
   }
 
   project->setBinary(fmt->file());
@@ -291,7 +293,7 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
     }
 
     auto objects = fmt->objects();
-    std::shared_ptr<BinaryObject> object = nullptr;
+    BinaryObject *object = nullptr;
     if (objects.size() == 1) {
       object = objects.first();
     }
@@ -302,7 +304,7 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
       QStringList items;
       int current = 0;
       for (int i = 0; i < objects.size(); i++) {
-        auto &obj = objects[i];
+        auto *obj = objects[i];
         items << QString("%1, %2 (%3-bit)")
                    .arg(cpuTypeName(obj->cpuType()))
                    .arg(cpuTypeName(obj->cpuSubType()))
@@ -335,7 +337,7 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
     qApp->processEvents();
     qDebug() << qPrintable(disDiag.labelText());
 
-    Disassembler dis(object, Context::get().disassemblerSyntax());
+    Disassembler dis(*object, Context::get().disassemblerSyntax());
     if (dis.valid()) {
       for (auto &sec : object->sections()) {
         switch (sec->type()) {
@@ -343,7 +345,7 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
         case Section::Type::SYMBOL_STUBS: {
           auto res = dis.disassemble(sec->data());
           if (res) {
-            sec->setDisassembly(res);
+            sec->setDisassembly(std::move(res));
           }
           break;
         }

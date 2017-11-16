@@ -100,14 +100,18 @@ bool MachO::parse()
   return true;
 }
 
-QList<std::shared_ptr<BinaryObject>> MachO::objects() const
+QList<BinaryObject *> MachO::objects() const
 {
-  return objects_;
+  QList<BinaryObject *> res;
+  for (auto &object : objects_) {
+    res << object.get();
+  }
+  return res;
 }
 
 bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
 {
-  auto binaryObject = std::make_shared<BinaryObject>();
+  auto binaryObject = std::make_unique<BinaryObject>();
 
   r.seek(offset);
   r.setLittleEndian(true);
@@ -433,26 +437,26 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
           // Store needed sections.
           if (segname == "__TEXT") {
             if (secname == "__text") {
-              auto sec = std::make_shared<Section>(Section::Type::TEXT, QObject::tr("Program"),
+              auto sec = std::make_unique<Section>(Section::Type::TEXT, QObject::tr("Program"),
                                                    addr, secsize, offset + secfileoff);
-              binaryObject->addSection(sec);
+              binaryObject->addSection(std::move(sec));
             }
             else if (secname == "__symbol_stub" || secname == "__stubs") {
               auto sec =
-                std::make_shared<Section>(Section::Type::SYMBOL_STUBS, QObject::tr("Symbol Stubs"),
+                std::make_unique<Section>(Section::Type::SYMBOL_STUBS, QObject::tr("Symbol Stubs"),
                                           addr, secsize, offset + secfileoff);
-              binaryObject->addSection(sec);
+              binaryObject->addSection(std::move(sec));
             }
             else if (secname == "__cstring") {
-              auto sec = std::make_shared<Section>(Section::Type::CSTRING, QObject::tr("C-Strings"),
+              auto sec = std::make_unique<Section>(Section::Type::CSTRING, QObject::tr("C-Strings"),
                                                    addr, secsize, offset + secfileoff);
-              binaryObject->addSection(sec);
+              binaryObject->addSection(std::move(sec));
             }
             else if (secname == "__objc_methname") {
               auto sec =
-                std::make_shared<Section>(Section::Type::CSTRING, QObject::tr("ObjC Method Names"),
+                std::make_unique<Section>(Section::Type::CSTRING, QObject::tr("ObjC Method Names"),
                                           addr, secsize, offset + secfileoff);
-              binaryObject->addSection(sec);
+              binaryObject->addSection(std::move(sec));
             }
           }
         }
@@ -520,9 +524,9 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
       quint32 strsize = r.getUInt32(&ok);
       if (!ok) return false;
 
-      auto sec = std::make_shared<Section>(Section::Type::STRING, QObject::tr("String Table"),
+      auto sec = std::make_unique<Section>(Section::Type::STRING, QObject::tr("String Table"),
                                            stroff, strsize, offset + stroff);
-      binaryObject->addSection(sec);
+      binaryObject->addSection(std::move(sec));
     }
 
     // LC_DYSYMTAB
@@ -678,16 +682,16 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
 
       // LC_FUNCTION_STARTS
       if (type == 0x26) {
-        auto sec = std::make_shared<Section>(
+        auto sec = std::make_unique<Section>(
           Section::Type::FUNC_STARTS, QObject::tr("Function Starts"), off, siz, offset + off);
-        binaryObject->addSection(sec);
+        binaryObject->addSection(std::move(sec));
       }
 
       // LC_CODE_SIGNATURE
       else if (type == 0x1D) {
-        auto sec = std::make_shared<Section>(Section::Type::CODE_SIG, QObject::tr("Code Signature"),
+        auto sec = std::make_unique<Section>(Section::Type::CODE_SIG, QObject::tr("Code Signature"),
                                              off, siz, offset + off);
-        binaryObject->addSection(sec);
+        binaryObject->addSection(std::move(sec));
       }
     }
 
@@ -774,9 +778,9 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
       symsize += (r.pos() - pos);
     }
 
-    auto sec = std::make_shared<Section>(Section::Type::SYMBOLS, QObject::tr("Symbol Table"),
+    auto sec = std::make_unique<Section>(Section::Type::SYMBOLS, QObject::tr("Symbol Table"),
                                          symoff, symsize, offset + symoff);
-    binaryObject->addSection(sec);
+    binaryObject->addSection(std::move(sec));
   }
 
   // Parse dynamic symbol table if found. Store the offsets into the
@@ -797,9 +801,9 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
     }
 
     auto sec =
-      std::make_shared<Section>(Section::Type::DYN_SYMBOLS, QObject::tr("Dynamic Symbol Table"),
+      std::make_unique<Section>(Section::Type::DYN_SYMBOLS, QObject::tr("Dynamic Symbol Table"),
                                 indirsymoff, dynsymsize, offset + indirsymoff);
-    binaryObject->addSection(sec);
+    binaryObject->addSection(std::move(sec));
   }
 
   // Fill data of stored sections.
@@ -850,6 +854,6 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
     binaryObject->setDynSymbolTable(dynsymTable);
   }
 
-  objects_ << binaryObject;
+  objects_.emplace_back(std::move(binaryObject));
   return true;
 }

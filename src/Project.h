@@ -20,7 +20,7 @@ public:
 
   /// Load project from \p file.
   /** Returns \p nullptr if nonexistent or failed. */
-  static std::shared_ptr<Project> load(const QString &file);
+  static std::unique_ptr<Project> load(const QString &file);
 
   /// Save project to \p file, if specified, otherwise save to \p file().
   bool save(const QString &file = QString());

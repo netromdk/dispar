@@ -31,7 +31,8 @@ public:
   virtual bool parse() = 0;
 
   /// Get the list of probed binary objects of the file.
-  virtual QList<std::shared_ptr<BinaryObject>> objects() const = 0;
+  /** Format keeps ownership of objects. */
+  virtual QList<BinaryObject *> objects() const = 0;
 
   /// Try each of the known formats and see if any of them are compatible with the file.
   static std::shared_ptr<Format> detect(const QString &file);

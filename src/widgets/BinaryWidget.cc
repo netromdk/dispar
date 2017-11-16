@@ -43,9 +43,9 @@ public:
 
 } // namespace
 
-BinaryWidget::BinaryWidget(std::shared_ptr<BinaryObject> &object)
-  : object(object), shown(false), doc(nullptr)
+BinaryWidget::BinaryWidget(BinaryObject *object) : object(object), shown(false), doc(nullptr)
 {
+  Q_ASSERT(object);
   createLayout();
 
   auto &ctx = Context::get();
@@ -222,7 +222,8 @@ void BinaryWidget::filterSymbols(const QString &filter)
 void BinaryWidget::createLayout()
 {
   auto &ctx = Context::get();
-  auto project = ctx.project();
+  auto *project = ctx.project();
+  Q_ASSERT(project);
 
   // Symbols left bar.
 
@@ -240,7 +241,7 @@ void BinaryWidget::createLayout()
   tagList->installEventFilter(this);
   connect(tagList, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
 
-  connect(project.get(), &Project::tagsChanged, this, &BinaryWidget::updateTagList);
+  connect(project, &Project::tagsChanged, this, &BinaryWidget::updateTagList);
   updateTagList();
 
   auto *tabWidget = new QTabWidget;
@@ -448,8 +449,8 @@ void BinaryWidget::setup()
   qDebug() << qPrintable(setupDiag.labelText());
 
   quint64 firstAddress = 0;
-  for (auto &sec : object->sections()) {
-    auto disasm = sec->disassembly();
+  for (auto *section : object->sections()) {
+    auto disasm = section->disassembly();
     if (!disasm) continue;
 
     cursor.movePosition(QTextCursor::End);
@@ -459,13 +460,13 @@ void BinaryWidget::setup()
       cursor.insertBlock();
     }
 
-    auto secName = Section::typeName(sec->type());
+    auto secName = Section::typeName(section->type());
     cursor.insertText("===== " + secName + " =====");
 
     for (size_t i = 0; i < disasm->count(); i++) {
       auto *instr = disasm->instructions(i);
       auto offset = instr->address;
-      auto addr = offset + sec->address();
+      auto addr = offset + section->address();
 
       // Check if address is the start of a procedure.
       for (const auto &symbol : symbols) {
@@ -498,16 +499,16 @@ void BinaryWidget::setup()
   // Show cstring+string sections.
   auto stringSecs = object->sectionsByType(Section::Type::CSTRING);
   stringSecs << object->sectionsByType(Section::Type::STRING);
-  for (auto &sec : stringSecs) {
+  for (auto *section : stringSecs) {
     cursor.movePosition(QTextCursor::End);
     cursor.insertBlock();
-    auto secName = Section::typeName(sec->type());
+    auto secName = Section::typeName(section->type());
     cursor.insertText("===== " + secName + " =====\n");
 
-    CStringReader reader(sec->data());
+    CStringReader reader(section->data());
     while (reader.next()) {
       auto offset = reader.offset();
-      auto addr = offset + sec->address();
+      auto addr = offset + section->address();
       auto string = reader.string();
 
       appendString(addr, offset, string);
@@ -526,7 +527,7 @@ void BinaryWidget::setup()
   qDebug() << qPrintable(setupDiag.labelText());
 
   // Fill side bar with function names of the symbol tables.
-  for (auto symbol : symbols) {
+  for (const auto &symbol : symbols) {
     if (symbol.value() == 0) continue;
 
     auto func = Util::demangle(symbol.string());

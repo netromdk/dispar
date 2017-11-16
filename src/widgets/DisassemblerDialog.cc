@@ -42,8 +42,8 @@ void DisassemblerDialog::onConvert()
 
   quint64 offset = offsetEdit->text().toULongLong(nullptr, 16);
 
-  auto obj = std::make_shared<BinaryObject>(cpuType);
-  Disassembler dis(obj, syntax);
+  auto obj = std::make_unique<BinaryObject>(cpuType);
+  Disassembler dis(*obj.get(), syntax);
 
   auto result = dis.disassemble(text, offset);
   if (result) {

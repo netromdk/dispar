@@ -43,8 +43,9 @@ public:
   QDateTime modifiedWhen() const;
   const QList<QPair<int, int>> &modifiedRegions() const;
 
-  void setDisassembly(std::shared_ptr<Disassembler::Result> disasm);
-  std::shared_ptr<Disassembler::Result> disassembly() const;
+  /// Takes ownership of \p disasm.
+  void setDisassembly(std::unique_ptr<Disassembler::Result> disasm);
+  Disassembler::Result *disassembly() const;
 
 private:
   Type type_;
@@ -54,7 +55,7 @@ private:
   QByteArray data_;
   QList<QPair<int, int>> modifiedRegions_;
   QDateTime modified;
-  std::shared_ptr<Disassembler::Result> disasm;
+  std::unique_ptr<Disassembler::Result> disasm;
 };
 
 #endif // DISPAR_SECTION_H

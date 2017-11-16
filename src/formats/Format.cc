@@ -1,4 +1,5 @@
 #include "formats/Format.h"
+#include "BinaryObject.h"
 #include "formats/MachO.h"
 
 Format::Format(Type type) : type_(type)

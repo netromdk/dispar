@@ -4,6 +4,7 @@
 #include <QList>
 
 #include <memory>
+#include <vector>
 
 #include "CpuType.h"
 #include "FileType.h"
@@ -31,10 +32,15 @@ public:
   FileType fileType() const;
   void setFileType(FileType type);
 
-  QList<std::shared_ptr<Section>> sections() const;
-  QList<std::shared_ptr<Section>> sectionsByType(Section::Type type) const;
-  std::shared_ptr<Section> section(Section::Type type) const;
-  void addSection(std::shared_ptr<Section> &ptr);
+  /// Takes ownership of \p section.
+  void addSection(std::unique_ptr<Section> section);
+
+  QList<Section *> sections() const;
+  QList<Section *> sectionsByType(Section::Type type) const;
+
+  /// First section of \p type.
+  /** Returns \p nullptr if none were found. */
+  Section *section(Section::Type type) const;
 
   void setSymbolTable(const SymbolTable &tbl);
   const SymbolTable &symbolTable() const;
@@ -47,7 +53,7 @@ private:
   bool littleEndian;
   int systemBits_;
   FileType fileType_;
-  QList<std::shared_ptr<Section>> sections_;
+  std::vector<std::unique_ptr<Section>> sections_;
   SymbolTable symTable, dynsymTable;
 };
 

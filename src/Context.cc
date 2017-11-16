@@ -105,28 +105,27 @@ void Context::saveSettings()
   file.write(data);
 }
 
-std::shared_ptr<Project> Context::project() const
+Project *Context::project() const
 {
-  return project_;
+  return project_.get();
 }
 
-std::shared_ptr<Project> Context::resetProject()
+Project *Context::resetProject()
 {
   clearProject();
-  project_ = std::make_shared<Project>();
-  return project_;
+  project_ = std::make_unique<Project>();
+  return project();
 }
 
 void Context::clearProject()
 {
   if (project_) {
-    project_.reset();
+    project_.reset(nullptr);
   }
-  project_ = nullptr;
 }
 
-std::shared_ptr<Project> Context::loadProject(const QString &file)
+Project *Context::loadProject(const QString &file)
 {
   project_ = Project::load(file);
-  return project_;
+  return project();
 }

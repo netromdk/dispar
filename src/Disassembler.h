@@ -27,11 +27,11 @@ public:
     size_t count_;
   };
 
-  Disassembler(std::shared_ptr<BinaryObject> object, Syntax syntax = Syntax::INTEL);
+  Disassembler(const BinaryObject &object, Syntax syntax = Syntax::INTEL);
   ~Disassembler();
 
-  std::shared_ptr<Result> disassemble(const QByteArray &data, quint64 baseAddr = 0);
-  std::shared_ptr<Result> disassemble(const QString &text, quint64 baseAddr = 0);
+  std::unique_ptr<Result> disassemble(const QByteArray &data, quint64 baseAddr = 0);
+  std::unique_ptr<Result> disassemble(const QString &text, quint64 baseAddr = 0);
 
   bool valid() const;
 

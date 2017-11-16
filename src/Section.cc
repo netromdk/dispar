@@ -102,12 +102,12 @@ const QList<QPair<int, int>> &Section::modifiedRegions() const
   return modifiedRegions_;
 }
 
-void Section::setDisassembly(std::shared_ptr<Disassembler::Result> disasm)
+void Section::setDisassembly(std::unique_ptr<Disassembler::Result> disasm)
 {
-  this->disasm = disasm;
+  this->disasm = std::move(disasm);
 }
 
-std::shared_ptr<Disassembler::Result> Section::disassembly() const
+Disassembler::Result *Section::disassembly() const
 {
-  return disasm;
+  return disasm.get();
 }

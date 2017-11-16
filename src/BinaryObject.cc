@@ -2,8 +2,8 @@
 
 BinaryObject::BinaryObject(CpuType cpuType, CpuType cpuSubType, bool littleEndian, int systemBits,
                            FileType fileType)
-  : cpuType_{cpuType}, cpuSubType_{cpuSubType}, littleEndian{littleEndian}, systemBits_{systemBits},
-    fileType_{fileType}
+  : cpuType_{cpuType}, cpuSubType_{cpuSubType}, littleEndian{littleEndian},
+    systemBits_{systemBits}, fileType_{fileType}
 {
   setCpuType(cpuType);
 }
@@ -61,35 +61,39 @@ void BinaryObject::setFileType(FileType type)
   fileType_ = type;
 }
 
-QList<std::shared_ptr<Section>> BinaryObject::sections() const
+QList<Section *> BinaryObject::sections() const
 {
-  return sections_;
+  QList<Section *> res;
+  for (auto &section : sections_) {
+    res << section.get();
+  }
+  return res;
 }
 
-QList<std::shared_ptr<Section>> BinaryObject::sectionsByType(Section::Type type) const
+QList<Section *> BinaryObject::sectionsByType(Section::Type type) const
 {
-  QList<std::shared_ptr<Section>> res;
-  for (auto &sec : sections_) {
-    if (sec->type() == type) {
-      res << sec;
+  QList<Section *> res;
+  for (auto &section : sections_) {
+    if (section->type() == type) {
+      res << section.get();
     }
   }
   return res;
 }
 
-std::shared_ptr<Section> BinaryObject::section(Section::Type type) const
+Section *BinaryObject::section(Section::Type type) const
 {
-  for (auto &sec : sections_) {
-    if (sec->type() == type) {
-      return sec;
+  for (auto &section : sections_) {
+    if (section->type() == type) {
+      return section.get();
     }
   }
   return nullptr;
 }
 
-void BinaryObject::addSection(std::shared_ptr<Section> &ptr)
+void BinaryObject::addSection(std::unique_ptr<Section> section)
 {
-  sections_ << ptr;
+  sections_.emplace_back(std::move(section));
 }
 
 void BinaryObject::setSymbolTable(const SymbolTable &tbl)

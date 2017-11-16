@@ -26,8 +26,8 @@ void TagsEdit::setAddress(quint64 address)
 {
   this->address = address;
 
-  auto project = Context::get().project();
-  connect(project.get(), &Project::tagsChanged, this, &TagsEdit::updateTags);
+  auto *project = Context::get().project();
+  connect(project, &Project::tagsChanged, this, &TagsEdit::updateTags);
   listWidget->setEnabled(true);
   updateTags();
 

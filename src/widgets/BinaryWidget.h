@@ -17,7 +17,7 @@ class BinaryWidget : public QWidget {
   Q_OBJECT
 
 public:
-  BinaryWidget(std::shared_ptr<BinaryObject> &object);
+  BinaryWidget(BinaryObject *object);
 
   // void commit();
 
@@ -44,7 +44,7 @@ private:
   void selectAddress(quint64 address);
   void removeSelectedTags();
 
-  std::shared_ptr<BinaryObject> object;
+  BinaryObject *object;
 
   bool shown;
   QListWidget *symbolList, *stringList, *tagList;

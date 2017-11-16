@@ -22,11 +22,11 @@ Project::~Project()
   qDebug() << "Destroy project" << file() << binary();
 }
 
-std::shared_ptr<Project> Project::load(const QString &file)
+std::unique_ptr<Project> Project::load(const QString &file)
 {
   qDebug() << "Loading from" << file;
 
-  auto project = std::make_shared<Project>();
+  auto project = std::make_unique<Project>();
 
   QFile qfile(file);
   if (!qfile.open(QIODevice::ReadOnly)) {

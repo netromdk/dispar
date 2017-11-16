@@ -27,15 +27,18 @@ public:
   void loadSettings();
   void saveSettings();
 
-  std::shared_ptr<Project> project() const;
+  /// Keeps ownership.
+  Project *project() const;
 
   /// Reset to empty project state and returns newly created instance.
-  std::shared_ptr<Project> resetProject();
+  /** Keeps ownership. */
+  Project *resetProject();
 
   void clearProject();
 
   /// Tries to load a project from \p file.
-  std::shared_ptr<Project> loadProject(const QString &file);
+  /** Keeps ownership. */
+  Project *loadProject(const QString &file);
 
 signals:
   void showMachineCodeChanged(bool show);
@@ -46,7 +49,7 @@ private:
   bool showMachineCode_;
   Disassembler::Syntax disassemblerSyntax_;
 
-  std::shared_ptr<Project> project_;
+  std::unique_ptr<Project> project_;
 };
 
 #endif // DISPAR_CONTEXT_H

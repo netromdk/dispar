@@ -58,9 +58,14 @@ TEST(BinaryObject, section)
   BinaryObject b;
   EXPECT_EQ(b.section(Section::Type::TEXT), nullptr);
 
-  auto sec = std::make_shared<Section>(Section::Type::TEXT, "name", 0x1, 1);
-  b.addSection(sec);
-  EXPECT_EQ(b.section(Section::Type::TEXT), sec);
+  auto sec = std::make_unique<Section>(Section::Type::TEXT, "name", 0x1, 1);
+  b.addSection(std::move(sec));
+
+  auto *sec2 = b.section(Section::Type::TEXT);
+  EXPECT_EQ(sec2->type(), Section::Type::TEXT);
+  EXPECT_EQ(sec2->name(), "name");
+  EXPECT_EQ(sec2->address(), 0x1);
+  EXPECT_EQ(sec2->size(), 1);
 }
 
 TEST(BinaryObject, sectionsByType)
@@ -68,12 +73,17 @@ TEST(BinaryObject, sectionsByType)
   BinaryObject b;
   EXPECT_EQ(b.sectionsByType(Section::Type::TEXT).size(), 0);
 
-  auto sec = std::make_shared<Section>(Section::Type::TEXT, "name", 0x1, 1);
-  b.addSection(sec);
+  auto sec = std::make_unique<Section>(Section::Type::TEXT, "name", 0x1, 1);
+  b.addSection(std::move(sec));
 
   auto secs = b.sectionsByType(Section::Type::TEXT);
-  EXPECT_EQ(secs.size(), 1);
-  EXPECT_EQ(secs[0], sec);
+  ASSERT_EQ(secs.size(), 1);
+
+  auto *sec2 = secs[0];
+  EXPECT_EQ(sec2->type(), Section::Type::TEXT);
+  EXPECT_EQ(sec2->name(), "name");
+  EXPECT_EQ(sec2->address(), 0x1);
+  EXPECT_EQ(sec2->size(), 1);
 }
 
 TEST(BinaryObject, symbolTable)

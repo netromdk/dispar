@@ -27,27 +27,22 @@ cs_insn *Disassembler::Result::instructions(size_t pos) const
   return insn + pos;
 }
 
-Disassembler::Disassembler(std::shared_ptr<BinaryObject> object, Syntax syntax) : valid_(false)
+Disassembler::Disassembler(const BinaryObject &object, Syntax syntax) : valid_(false)
 {
-  if (!object) {
-    qCritical() << "Null binary object!";
-    return;
-  }
-
   cs_arch arch;
-  switch (object->cpuType()) {
+  switch (object.cpuType()) {
   case CpuType::X86:
   case CpuType::X86_64:
     arch = cs_arch::CS_ARCH_X86;
     break;
 
   default:
-    qCritical() << "Invalid arch:" << cpuTypeName(object->cpuType());
+    qCritical() << "Invalid arch:" << cpuTypeName(object.cpuType());
     return;
   }
 
-  int mode = (object->systemBits() == 32 ? cs_mode::CS_MODE_32 : cs_mode::CS_MODE_64);
-  mode += (object->isLittleEndian() ? cs_mode::CS_MODE_LITTLE_ENDIAN : cs_mode::CS_MODE_BIG_ENDIAN);
+  int mode = (object.systemBits() == 32 ? cs_mode::CS_MODE_32 : cs_mode::CS_MODE_64);
+  mode += (object.isLittleEndian() ? cs_mode::CS_MODE_LITTLE_ENDIAN : cs_mode::CS_MODE_BIG_ENDIAN);
 
   cs_err err = cs_open(arch, static_cast<cs_mode>(mode), &handle);
   if (err) {
@@ -80,7 +75,7 @@ Disassembler::~Disassembler()
   }
 }
 
-std::shared_ptr<Disassembler::Result> Disassembler::disassemble(const QByteArray &data,
+std::unique_ptr<Disassembler::Result> Disassembler::disassemble(const QByteArray &data,
                                                                 quint64 baseAddr)
 {
   const void *code = data.constData();
@@ -90,10 +85,10 @@ std::shared_ptr<Disassembler::Result> Disassembler::disassemble(const QByteArray
   if (count == 0) {
     return nullptr;
   }
-  return std::make_shared<Result>(insn, count);
+  return std::make_unique<Result>(insn, count);
 }
 
-std::shared_ptr<Disassembler::Result> Disassembler::disassemble(const QString &text,
+std::unique_ptr<Disassembler::Result> Disassembler::disassemble(const QString &text,
                                                                 quint64 baseAddr)
 {
   auto input = Util::hexToData(text.simplified().trimmed().replace(" ", ""));

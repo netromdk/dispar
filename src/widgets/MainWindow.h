@@ -60,6 +60,7 @@ private:
   QAction *newProjectAction, *saveProjectAction, *saveAsProjectAction, *closeProjectAction;
 
   std::unique_ptr<FormatLoader> loader;
+  std::shared_ptr<Format> format;
 };
 
 #endif // DISPAR_MAIN_WINDOW_H
