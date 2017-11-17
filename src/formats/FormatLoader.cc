@@ -2,8 +2,8 @@
 #include "BinaryObject.h"
 #include "formats/Format.h"
 
-#include <QDateTime>
 #include <QDebug>
+#include <QElapsedTimer>
 
 FormatLoader::FormatLoader(const QString &file) : file(file)
 {
@@ -11,7 +11,8 @@ FormatLoader::FormatLoader(const QString &file) : file(file)
 
 void FormatLoader::run()
 {
-  auto start = QDateTime::currentDateTime();
+  QElapsedTimer elapsedTimer;
+  elapsedTimer.start();
 
   auto fmt = Format::detect(file);
   if (fmt == nullptr) {
@@ -31,8 +32,6 @@ void FormatLoader::run()
   emit progress(1);
   emit status(tr("Success!"));
 
-  auto end = QDateTime::currentDateTime();
-  qDebug() << "Loaded in" << start.msecsTo(end) << "ms";
-
+  qDebug() << elapsedTimer.restart() << "ms";
   emit success(fmt);
 }

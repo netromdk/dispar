@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QDesktopServices>
 #include <QDir>
+#include <QElapsedTimer>
 #include <QFile>
 #include <QFileInfo>
 #include <QGroupBox>
@@ -132,7 +133,8 @@ void BinaryWidget::onShowMachineCodeChanged(bool show)
   qApp->processEvents();
   qDebug() << qPrintable(progDiag.labelText());
 
-  auto start = QDateTime::currentDateTime();
+  QElapsedTimer elapsedTimer;
+  elapsedTimer.start();
 
   auto cursor = mainView->textCursor();
   cursor.beginEditBlock();
@@ -158,8 +160,7 @@ void BinaryWidget::onShowMachineCodeChanged(bool show)
 
   cursor.endEditBlock();
 
-  auto end = QDateTime::currentDateTime();
-  qDebug() << "Modified machine code visibility in" << start.msecsTo(end) << "ms";
+  qDebug() << "Modified machine code visibility in" << elapsedTimer.restart() << "ms";
 }
 
 void BinaryWidget::onCustomContextMenuRequested(const QPoint &pos)
@@ -377,7 +378,8 @@ void BinaryWidget::createLayout()
 
 void BinaryWidget::setup()
 {
-  auto start = QDateTime::currentDateTime();
+  QElapsedTimer elapsedTimer;
+  elapsedTimer.start();
 
   QProgressDialog setupDiag(this);
   setupDiag.setLabelText(tr("Setting up for binary data.."));
@@ -441,6 +443,9 @@ void BinaryWidget::setup()
     offsetBlock[userData->address] = block.blockNumber();
   };
 
+  const auto presetupTime = elapsedTimer.restart();
+  qDebug() << presetupTime << "ms";
+
   cursor.beginEditBlock();
 
   setupDiag.setValue(1);
@@ -491,6 +496,9 @@ void BinaryWidget::setup()
     cursor.insertText("\n===== /" + secName + " =====\n");
   }
 
+  const auto disSectionsTime = elapsedTimer.restart();
+  qDebug() << disSectionsTime << "ms";
+
   setupDiag.setValue(2);
   setupDiag.setLabelText(tr("Generating UI for string sections.."));
   qApp->processEvents();
@@ -521,6 +529,9 @@ void BinaryWidget::setup()
     cursor.insertText("\n===== /" + secName + " =====\n");
   }
 
+  const auto stringSectionsTime = elapsedTimer.restart();
+  qDebug() << stringSectionsTime << "ms";
+
   setupDiag.setValue(3);
   setupDiag.setLabelText(tr("Generating sidebar with functions and strings.."));
   qApp->processEvents();
@@ -541,13 +552,17 @@ void BinaryWidget::setup()
     addSymbolToList(func, symbol.value() /* offset to symbol */, symbolList);
   }
 
+  const auto sidebarTime = elapsedTimer.restart();
+  qDebug() << sidebarTime << "ms";
+
   cursor.endEditBlock();
   setupDiag.setValue(4);
 
   Util::scrollToTop(mainView);
 
-  auto end = QDateTime::currentDateTime();
-  qDebug() << "Setup in" << start.msecsTo(end) << "ms";
+  const auto totalTime =
+    presetupTime + disSectionsTime + stringSectionsTime + sidebarTime + elapsedTimer.restart();
+  qDebug() << "Setup in" << totalTime << "ms";
 
   if (!offsetBlock.isEmpty()) {
     selectAddress(firstAddress);

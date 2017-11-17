@@ -16,6 +16,7 @@
 #include <QCloseEvent>
 #include <QDebug>
 #include <QDir>
+#include <QElapsedTimer>
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QLabel>
@@ -329,6 +330,9 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
     }
     Q_ASSERT(object);
 
+    QElapsedTimer elapsedTimer;
+    elapsedTimer.start();
+
     QProgressDialog disDiag(this);
     disDiag.setLabelText(tr("Disassembling code sections.."));
     disDiag.setCancelButton(nullptr);
@@ -357,6 +361,7 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
     }
 
     disDiag.close();
+    qDebug() << elapsedTimer.restart() << "ms";
 
     if (centralWidget()) {
       centralWidget()->deleteLater();
