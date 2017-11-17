@@ -2,9 +2,23 @@
 
 #include <QHash>
 
+SymbolEntry::SymbolEntry() : index_(0), value_(0), strValue()
+{
+}
+
 SymbolEntry::SymbolEntry(quint32 index, quint64 value, const QString &strValue)
   : index_{index}, value_{value}, strValue{strValue}
 {
+}
+
+SymbolEntry::SymbolEntry(SymbolEntry &&other) : SymbolEntry()
+{
+  *this = std::move(other);
+}
+
+SymbolEntry::SymbolEntry(const SymbolEntry &other)
+{
+  *this = other;
 }
 
 quint32 SymbolEntry::index() const
@@ -30,6 +44,22 @@ void SymbolEntry::setString(const QString &str)
 const QString &SymbolEntry::string() const
 {
   return strValue;
+}
+
+SymbolEntry &SymbolEntry::operator=(const SymbolEntry &other)
+{
+  index_ = other.index_;
+  value_ = other.value_;
+  strValue = other.strValue;
+  return *this;
+}
+
+SymbolEntry &SymbolEntry::operator=(SymbolEntry &&other)
+{
+  std::swap(index_, other.index_);
+  std::swap(value_, other.value_);
+  strValue = std::move(other.strValue);
+  return *this;
 }
 
 bool SymbolEntry::operator==(const SymbolEntry &other) const

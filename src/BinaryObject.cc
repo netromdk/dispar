@@ -96,9 +96,14 @@ void BinaryObject::addSection(std::unique_ptr<Section> section)
   sections_.emplace_back(std::move(section));
 }
 
-void BinaryObject::setSymbolTable(const SymbolTable &tbl)
+void BinaryObject::setSymbolTable(const SymbolTable &table)
 {
-  symTable = tbl;
+  symTable = table;
+}
+
+void BinaryObject::setSymbolTable(SymbolTable &&table)
+{
+  symTable = std::move(table);
 }
 
 const SymbolTable &BinaryObject::symbolTable() const
@@ -106,9 +111,14 @@ const SymbolTable &BinaryObject::symbolTable() const
   return symTable;
 }
 
-void BinaryObject::setDynSymbolTable(const SymbolTable &tbl)
+void BinaryObject::setDynSymbolTable(const SymbolTable &table)
 {
-  dynsymTable = tbl;
+  dynsymTable = table;
+}
+
+void BinaryObject::setDynSymbolTable(SymbolTable &&table)
+{
+  dynsymTable = std::move(table);
 }
 
 const SymbolTable &BinaryObject::dynSymbolTable() const

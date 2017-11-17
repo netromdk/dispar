@@ -829,6 +829,8 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
         symbol.setString(QString::fromUtf8(tmp));
       }
     }
+
+    // This table isn't moved because it is still needed below.
     binaryObject->setSymbolTable(symTable);
   }
 
@@ -851,7 +853,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
         }
       }
     }
-    binaryObject->setDynSymbolTable(dynsymTable);
+    binaryObject->setDynSymbolTable(std::move(dynsymTable));
   }
 
   objects_.emplace_back(std::move(binaryObject));

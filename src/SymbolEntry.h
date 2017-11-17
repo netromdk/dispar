@@ -5,7 +5,10 @@
 
 class SymbolEntry {
 public:
-  SymbolEntry(quint32 index, quint64 value, const QString &strValue = QString());
+  SymbolEntry();
+  SymbolEntry(quint32 index, quint64 value, const QString &strValue = {});
+  SymbolEntry(const SymbolEntry &other);
+  SymbolEntry(SymbolEntry &&other);
 
   quint32 index() const;
 
@@ -15,6 +18,8 @@ public:
   void setString(const QString &str);
   const QString &string() const;
 
+  SymbolEntry &operator=(const SymbolEntry &other);
+  SymbolEntry &operator=(SymbolEntry &&other);
   bool operator==(const SymbolEntry &other) const;
   bool operator!=(const SymbolEntry &other) const;
 

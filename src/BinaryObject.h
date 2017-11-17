@@ -42,10 +42,12 @@ public:
   /** Returns \p nullptr if none were found. */
   Section *section(Section::Type type) const;
 
-  void setSymbolTable(const SymbolTable &tbl);
+  void setSymbolTable(const SymbolTable &table);
+  void setSymbolTable(SymbolTable &&table);
   const SymbolTable &symbolTable() const;
 
-  void setDynSymbolTable(const SymbolTable &tbl);
+  void setDynSymbolTable(const SymbolTable &table);
+  void setDynSymbolTable(SymbolTable &&table);
   const SymbolTable &dynSymbolTable() const;
 
 private:

@@ -67,3 +67,25 @@ TEST(Util, convertAddress)
   ASSERT_TRUE(ok);
   EXPECT_EQ(addr, 0);
 }
+
+TEST(Util, moveTo)
+{
+  auto count = 10;
+  auto value = 42;
+  std::vector<decltype(value)> v1(count, value);
+  const auto v1Copy = v1;
+  decltype(v1) v2;
+  Util::moveTo(v1, v2);
+  EXPECT_TRUE(v1.empty());
+  EXPECT_EQ(v2, v1Copy);
+}
+
+TEST(Util, copyTo)
+{
+  auto count = 10;
+  auto value = 42;
+  std::vector<decltype(value)> v1(count, value);
+  decltype(v1) v2;
+  Util::copyTo(v1, v2);
+  EXPECT_EQ(v2, v1);
+}

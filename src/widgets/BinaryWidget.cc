@@ -388,7 +388,7 @@ void BinaryWidget::setup()
   qDebug() << qPrintable(setupDiag.labelText());
 
   auto symbols = object->symbolTable().symbols();
-  symbols.append(object->dynSymbolTable().symbols());
+  Util::copyTo(object->dynSymbolTable().symbols(), symbols);
 
   // Create text edit of all binary contents.
   QTextCursor cursor(doc);

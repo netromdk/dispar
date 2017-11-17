@@ -5,7 +5,9 @@
 #include <QString>
 #include <QWidget>
 
+#include <algorithm>
 #include <functional>
+#include <iterator>
 
 #include "CpuType.h"
 
@@ -54,6 +56,28 @@ public:
   /** It will remove all white space from \p input and try to convert using base 16 if it starts
       with "0x", base 8 if it starts with "0", and otherwise base 10. */
   static quint64 convertAddress(QString input, bool *ok = nullptr);
+
+  /// Moves values from \p src to \p dst but preserves any values in \p dst.
+  template <typename Container>
+  static void moveTo(Container &src, Container &dst)
+  {
+    if (dst.empty()) {
+      dst = std::move(src);
+      return;
+    }
+
+    dst.reserve(dst.size() + src.size());
+    std::move(std::begin(src), std::end(src), std::back_inserter(dst));
+    src.clear();
+  }
+
+  /// Append values from \p src to \p dst.
+  template <typename Container>
+  static void copyTo(const Container &src, Container &dst)
+  {
+    dst.reserve(dst.size() + src.size());
+    std::copy(std::cbegin(src), std::cend(src), std::back_inserter(dst));
+  }
 };
 
 #endif // DISPAR_UTIL_H

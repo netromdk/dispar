@@ -94,12 +94,30 @@ TEST(BinaryObject, symbolTable)
   EXPECT_EQ(b.symbolTable(), st);
 }
 
+TEST(BinaryObject, symbolTableMove)
+{
+  SymbolTable st;
+  const auto copy = st;
+  BinaryObject b;
+  b.setSymbolTable(std::move(st));
+  EXPECT_EQ(b.symbolTable(), copy);
+}
+
 TEST(BinaryObject, dynSymbolTable)
 {
   SymbolTable st;
   BinaryObject b;
   b.setDynSymbolTable(st);
   EXPECT_EQ(b.dynSymbolTable(), st);
+}
+
+TEST(BinaryObject, dynSymbolTableMove)
+{
+  SymbolTable st;
+  const auto copy = st;
+  BinaryObject b;
+  b.setDynSymbolTable(std::move(st));
+  EXPECT_EQ(b.dynSymbolTable(), copy);
 }
 
 TEST(BinaryObject, cpuTypeX8664SystemBits64)

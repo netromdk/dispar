@@ -1,8 +1,27 @@
 #include "SymbolTable.h"
 
+SymbolTable::SymbolTable()
+{
+}
+
+SymbolTable::SymbolTable(const SymbolTable &other)
+{
+  *this = other;
+}
+
+SymbolTable::SymbolTable(SymbolTable &&other) : SymbolTable()
+{
+  *this = std::move(other);
+}
+
 void SymbolTable::addSymbol(const SymbolEntry &entry)
 {
-  entries << entry;
+  entries.push_back(entry);
+}
+
+void SymbolTable::addSymbol(SymbolEntry &&entry)
+{
+  entries.emplace_back(std::move(entry));
 }
 
 bool SymbolTable::string(quint64 value, QString &str) const
@@ -18,14 +37,26 @@ bool SymbolTable::string(quint64 value, QString &str) const
   return false;
 }
 
-QList<SymbolEntry> &SymbolTable::symbols()
+SymbolTable::EntryList &SymbolTable::symbols()
 {
   return entries;
 }
 
-const QList<SymbolEntry> &SymbolTable::symbols() const
+const SymbolTable::EntryList &SymbolTable::symbols() const
 {
   return entries;
+}
+
+SymbolTable &SymbolTable::operator=(const SymbolTable &other)
+{
+  entries = other.entries;
+  return *this;
+}
+
+SymbolTable &SymbolTable::operator=(SymbolTable &&other)
+{
+  entries = std::move(other.entries);
+  return *this;
 }
 
 bool SymbolTable::operator==(const SymbolTable &other) const
