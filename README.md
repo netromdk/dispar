@@ -13,7 +13,7 @@ Dispar is short for "[Dis]assemling binary [Par]ser" written in C++14. The whole
 * [Code Coverage](#code-coverage)
 * [Static Analysis](#static-analysis)
 * [Troubleshooting](#troubleshooting)
-* [Contributions](#contributions)
+* [Contributing](#contributing)
 
 # Dependencies
 There are both external and internal libraries and tools required to build and run this program.
@@ -104,7 +104,5 @@ If for any reason a specific macOS SDK is required, tell cmake this way:
 ```
 Where "X.Y" is the version of the SDK, like "10.8".
 
-# Contributions
-Contributions are very welcome for bug fixes particularly but also features that make sense to the project. Any existing issues labeled ["help wanted"](https://github.com/netromdk/dispar/labels/help%20wanted) are free to be pursued. And don't hesitate to open new issues.
-
-Before opening a pull request, please first run [clang format](https://clang.llvm.org/docs/ClangFormat.html) on the code, then make sure that all tests pass and to add new tests where appropriate. See [Testing](#testing).
+# Contributing
+See [CONTRIBUTING.md](CONTRIBUTING.md).
