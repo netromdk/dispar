@@ -16,6 +16,7 @@
 #include <QPlainTextEdit>
 #include <QProgressDialog>
 #include <QPushButton>
+#include <QSet>
 #include <QTabWidget>
 #include <QTextBlockUserData>
 #include <QTimer>
@@ -64,7 +65,7 @@ void BinaryWidget::showEvent(QShowEvent *event)
 bool BinaryWidget::eventFilter(QObject *obj, QEvent *event)
 {
   if (obj == tagList && event->type() == QEvent::KeyPress) {
-    auto *keyEvent = static_cast<QKeyEvent *>(event);
+    const auto *keyEvent = static_cast<QKeyEvent *>(event);
     switch (keyEvent->key()) {
     case Qt::Key_Backspace:
     case Qt::Key_Delete:
@@ -79,10 +80,10 @@ bool BinaryWidget::eventFilter(QObject *obj, QEvent *event)
 
 void BinaryWidget::onSymbolChosen(int row)
 {
-  auto *list = qobject_cast<QListWidget *>(sender());
+  const auto *list = qobject_cast<QListWidget *>(sender());
 
   // If offset is found then put the cursor at that line.
-  auto *item = list->item(row);
+  const auto *item = list->item(row);
   if (!item) return;
 
   auto offset = item->data(Qt::UserRole).toLongLong();
@@ -91,7 +92,7 @@ void BinaryWidget::onSymbolChosen(int row)
 
 void BinaryWidget::onCursorPositionChanged()
 {
-  auto cursor = mainView->textCursor();
+  const auto cursor = mainView->textCursor();
 
   // Mark the whole line to highlight it.
   auto highlight = mainView->palette().highlight();
@@ -102,8 +103,8 @@ void BinaryWidget::onCursorPositionChanged()
   selection.cursor = cursor;
   mainView->setExtraSelections({selection});
 
-  auto block = cursor.block();
-  auto *userData = dynamic_cast<TextBlockUserData *>(block.userData());
+  const auto block = cursor.block();
+  const auto *userData = dynamic_cast<TextBlockUserData *>(block.userData());
   if (userData) {
     addressLabel->setText(
       tr("Address: 0x%1 (%2)").arg(userData->address, 0, 16).arg(userData->address));
@@ -210,7 +211,7 @@ void BinaryWidget::filterSymbols(const QString &filter)
     item->setHidden(false);
   }
 
-  auto matches = list->findItems(filter, Qt::MatchContains);
+  const auto matches = list->findItems(filter, Qt::MatchContains);
 
   // Hide all that are not matches.
   for (auto *item : allItems) {
@@ -381,6 +382,10 @@ void BinaryWidget::setup()
   QElapsedTimer elapsedTimer;
   elapsedTimer.start();
 
+  symbolList->setEnabled(false);
+  stringList->setEnabled(false);
+  tagList->setEnabled(false);
+
   QProgressDialog setupDiag(this);
   setupDiag.setLabelText(tr("Setting up for binary data.."));
   setupDiag.setCancelButton(nullptr);
@@ -391,6 +396,14 @@ void BinaryWidget::setup()
 
   auto symbols = object->symbolTable().symbols();
   Util::copyTo(object->dynSymbolTable().symbols(), symbols);
+
+  // Create temporary procedure name lookup map.
+  QHash<quint64, QString> procNameMap;
+  for (const auto &symbol : symbols) {
+    if (symbol.value() > 0 && !symbol.string().isEmpty()) {
+      procNameMap[symbol.value()] = Util::demangle(symbol.string());
+    }
+  }
 
   // Create text edit of all binary contents.
   QTextCursor cursor(doc);
@@ -455,7 +468,7 @@ void BinaryWidget::setup()
 
   quint64 firstAddress = 0;
   for (auto *section : object->sections()) {
-    auto disasm = section->disassembly();
+    const auto *disasm = section->disassembly();
     if (!disasm) continue;
 
     cursor.movePosition(QTextCursor::End);
@@ -473,18 +486,15 @@ void BinaryWidget::setup()
     sectionTimer.start();
 
     for (std::size_t i = 0; i < disasm->count(); i++) {
-      auto *instr = disasm->instructions(i);
-      auto offset = instr->address;
-      auto addr = offset + section->address();
+      const auto *instr = disasm->instructions(i);
+      const auto offset = instr->address;
+      const auto addr = offset + section->address();
 
       // Check if address is the start of a procedure.
-      for (const auto &symbol : symbols) {
-        if (symbol.value() == addr && !symbol.string().isEmpty()) {
-          cursor.movePosition(QTextCursor::End);
-          cursor.insertBlock();
-          cursor.insertText("\nPROC: " + Util::demangle(symbol.string()) + "\n");
-          break;
-        }
+      const auto it = procNameMap.find(addr);
+      if (it != procNameMap.end()) {
+        cursor.insertBlock();
+        cursor.insertText("\nPROC: " + *it + "\n");
       }
 
       if (firstAddress == 0) {
@@ -517,7 +527,7 @@ void BinaryWidget::setup()
     cursor.movePosition(QTextCursor::End);
     cursor.insertBlock();
 
-    auto secName = Section::typeName(section->type());
+    const auto secName = Section::typeName(section->type());
     qDebug() << "" << secName << "section..";
     cursor.insertText("===== " + secName + " =====\n");
 
@@ -526,10 +536,9 @@ void BinaryWidget::setup()
 
     CStringReader reader(section->data());
     while (reader.next()) {
-      auto offset = reader.offset();
-      auto addr = offset + section->address();
-      auto string = reader.string();
-
+      const auto offset = reader.offset();
+      const auto addr = offset + section->address();
+      const auto string = reader.string();
       appendString(addr, offset, string);
       addSymbolToList(reader.string(), addr, stringList);
     }
@@ -550,8 +559,13 @@ void BinaryWidget::setup()
   qDebug() << qPrintable(setupDiag.labelText());
 
   // Fill side bar with function names of the symbol tables.
+  QSet<quint64> seenSymbols;
   for (const auto &symbol : symbols) {
-    if (symbol.value() == 0) continue;
+    if (symbol.value() == 0 || seenSymbols.contains(symbol.value())) {
+      continue;
+    }
+
+    seenSymbols << symbol.value();
 
     auto func = Util::demangle(symbol.string());
     if (func.isEmpty()) {
@@ -576,6 +590,10 @@ void BinaryWidget::setup()
     presetupTime + disSectionsTime + stringSectionsTime + sidebarTime + elapsedTimer.restart();
   qDebug() << "Setup in" << totalTime << "ms";
 
+  symbolList->setEnabled(true);
+  stringList->setEnabled(true);
+  tagList->setEnabled(true);
+
   if (!offsetBlock.isEmpty()) {
     selectAddress(firstAddress);
   }
@@ -599,8 +617,8 @@ void BinaryWidget::addSymbolToList(const QString &text, quint64 address, QListWi
   public:
     bool operator<(const QListWidgetItem &other) const override
     {
-      auto addr1 = data(Qt::UserRole).toLongLong();
-      auto addr2 = other.data(Qt::UserRole).toLongLong();
+      const auto addr1 = data(Qt::UserRole).toLongLong();
+      const auto addr2 = other.data(Qt::UserRole).toLongLong();
 
       // If same address then sort for tag lexically.
       if (addr1 == addr2) {

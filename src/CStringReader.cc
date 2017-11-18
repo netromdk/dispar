@@ -18,12 +18,12 @@ bool CStringReader::next()
     offset_ = pos;
   }
 
-  for (; pos < size; pos++) {
-    int ch = data[pos];
-    if (ch == 0) break;
-    string_.append((char) ch);
-  }
+  // Count the length of the string until \0.
+  int len = 0;
+  for (; pos < size && data[pos] != 0; pos++, len++)
+    ;
 
+  string_ = QString::fromUtf8(data.mid(offset_, len));
   return !string_.isEmpty();
 }
 

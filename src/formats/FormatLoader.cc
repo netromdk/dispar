@@ -20,7 +20,7 @@ void FormatLoader::run()
     return;
   }
 
-  auto typeName = Format::typeName(fmt->type());
+  const auto typeName = Format::typeName(fmt->type());
   emit status(tr("Detected %1 - Reading and parsing binary..").arg(typeName));
   emit progress(0.5);
 
