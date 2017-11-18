@@ -32,6 +32,6 @@ void FormatLoader::run()
   emit progress(1);
   emit status(tr("Success!"));
 
-  qDebug() << elapsedTimer.restart() << "ms";
+  qDebug() << ">" << elapsedTimer.restart() << "ms";
   emit success(fmt);
 }

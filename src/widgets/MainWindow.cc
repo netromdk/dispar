@@ -361,7 +361,7 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
     }
 
     disDiag.close();
-    qDebug() << elapsedTimer.restart() << "ms";
+    qDebug() << ">" << elapsedTimer.restart() << "ms";
 
     if (centralWidget()) {
       centralWidget()->deleteLater();

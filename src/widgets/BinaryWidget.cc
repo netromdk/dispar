@@ -444,7 +444,7 @@ void BinaryWidget::setup()
   };
 
   const auto presetupTime = elapsedTimer.restart();
-  qDebug() << presetupTime << "ms";
+  qDebug() << ">" << presetupTime << "ms";
 
   cursor.beginEditBlock();
 
@@ -466,9 +466,13 @@ void BinaryWidget::setup()
     }
 
     auto secName = Section::typeName(section->type());
+    qDebug() << "" << secName << "section..";
     cursor.insertText("===== " + secName + " =====");
 
-    for (size_t i = 0; i < disasm->count(); i++) {
+    QElapsedTimer sectionTimer;
+    sectionTimer.start();
+
+    for (std::size_t i = 0; i < disasm->count(); i++) {
       auto *instr = disasm->instructions(i);
       auto offset = instr->address;
       auto addr = offset + section->address();
@@ -491,13 +495,15 @@ void BinaryWidget::setup()
                         instr->op_str);
     }
 
+    qDebug() << " >" << sectionTimer.restart() << "ms";
+
     cursor.movePosition(QTextCursor::End);
     cursor.insertBlock();
     cursor.insertText("\n===== /" + secName + " =====\n");
   }
 
   const auto disSectionsTime = elapsedTimer.restart();
-  qDebug() << disSectionsTime << "ms";
+  qDebug() << ">" << disSectionsTime << "ms";
 
   setupDiag.setValue(2);
   setupDiag.setLabelText(tr("Generating UI for string sections.."));
@@ -510,8 +516,13 @@ void BinaryWidget::setup()
   for (auto *section : stringSecs) {
     cursor.movePosition(QTextCursor::End);
     cursor.insertBlock();
+
     auto secName = Section::typeName(section->type());
+    qDebug() << "" << secName << "section..";
     cursor.insertText("===== " + secName + " =====\n");
+
+    QElapsedTimer sectionTimer;
+    sectionTimer.start();
 
     CStringReader reader(section->data());
     while (reader.next()) {
@@ -520,9 +531,10 @@ void BinaryWidget::setup()
       auto string = reader.string();
 
       appendString(addr, offset, string);
-
       addSymbolToList(reader.string(), addr, stringList);
     }
+
+    qDebug() << " >" << sectionTimer.restart() << "ms";
 
     cursor.movePosition(QTextCursor::End);
     cursor.insertBlock();
@@ -530,7 +542,7 @@ void BinaryWidget::setup()
   }
 
   const auto stringSectionsTime = elapsedTimer.restart();
-  qDebug() << stringSectionsTime << "ms";
+  qDebug() << ">" << stringSectionsTime << "ms";
 
   setupDiag.setValue(3);
   setupDiag.setLabelText(tr("Generating sidebar with functions and strings.."));
@@ -553,7 +565,7 @@ void BinaryWidget::setup()
   }
 
   const auto sidebarTime = elapsedTimer.restart();
-  qDebug() << sidebarTime << "ms";
+  qDebug() << ">" << sidebarTime << "ms";
 
   cursor.endEditBlock();
   setupDiag.setValue(4);
