@@ -10,6 +10,7 @@
 #include <iterator>
 
 #include "CpuType.h"
+#include "cxx.h"
 
 class QAbstractScrollArea;
 
@@ -67,7 +68,7 @@ public:
     }
 
     dst.reserve(dst.size() + src.size());
-    std::move(std::begin(src), std::end(src), std::back_inserter(dst));
+    cxx::move(src, std::back_inserter(dst));
     src.clear();
   }
 
@@ -76,7 +77,7 @@ public:
   static void copyTo(const Container &src, Container &dst)
   {
     dst.reserve(dst.size() + src.size());
-    std::copy(std::cbegin(src), std::cend(src), std::back_inserter(dst));
+    cxx::copy(src, std::back_inserter(dst));
   }
 };
 

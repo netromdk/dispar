@@ -128,7 +128,7 @@ void DisassemblerDialog::createLayout()
     cpuTypeBox->setCurrentIndex(idx);
   }
 
-  connect(cpuTypeBox, Use<int>::overloadOf(&QComboBox::currentIndexChanged), this,
+  connect(cpuTypeBox, cxx::Use<int>::overloadOf(&QComboBox::currentIndexChanged), this,
           &DisassemblerDialog::onCpuTypeIndexChanged);
 
   syntaxBox = new QComboBox;
@@ -140,7 +140,7 @@ void DisassemblerDialog::createLayout()
     syntaxBox->setCurrentIndex(idx);
   }
 
-  connect(syntaxBox, Use<int>::overloadOf(&QComboBox::currentIndexChanged), this,
+  connect(syntaxBox, cxx::Use<int>::overloadOf(&QComboBox::currentIndexChanged), this,
           &DisassemblerDialog::onSyntaxIndexChanged);
 
   convertBtn = new QPushButton(tr("Disassemble"));

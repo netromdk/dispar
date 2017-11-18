@@ -35,6 +35,8 @@ public:
   quint64 size() const;
   quint32 offset() const;
 
+  QString toString() const;
+
   const QByteArray &data() const;
   void setData(const QByteArray &data);
 

@@ -1,5 +1,7 @@
 #include "Section.h"
 
+#include <QObject>
+
 Section::Section(Section::Type type, const QString &name, quint64 addr, quint64 size,
                  quint32 offset)
   : type_{type}, name_{name}, addr{addr}, size_{size}, offset_{offset}, disasm(nullptr)
@@ -10,31 +12,31 @@ QString Section::typeName(Type type)
 {
   switch (type) {
   case Section::Type::TEXT:
-    return "Text";
+    return QObject::tr("Text");
 
   case Section::Type::SYMBOL_STUBS:
-    return "Symbol Stubs";
+    return QObject::tr("Symbol Stubs");
 
   case Section::Type::SYMBOLS:
-    return "Symbols";
+    return QObject::tr("Symbols");
 
   case Section::Type::DYN_SYMBOLS:
-    return "Dynamic Symbols";
+    return QObject::tr("Dynamic Symbols");
 
   case Section::Type::CSTRING:
-    return "CString";
+    return QObject::tr("CString");
 
   case Section::Type::STRING:
-    return "String";
+    return QObject::tr("String");
 
   case Section::Type::FUNC_STARTS:
-    return "Function Starts";
+    return QObject::tr("Function Starts");
 
   case Section::Type::CODE_SIG:
-    return "Code Signatures";
+    return QObject::tr("Code Signatures");
   }
 
-  return "";
+  return {};
 }
 
 Section::Type Section::type() const
@@ -60,6 +62,11 @@ quint64 Section::size() const
 quint32 Section::offset() const
 {
   return offset_;
+}
+
+QString Section::toString() const
+{
+  return QString("%1 (%2)").arg(name()).arg(typeName(type()));
 }
 
 const QByteArray &Section::data() const

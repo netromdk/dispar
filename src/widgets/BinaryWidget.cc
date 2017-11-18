@@ -26,6 +26,7 @@
 #include "Context.h"
 #include "Project.h"
 #include "Util.h"
+#include "cxx.h"
 #include "widgets/BinaryWidget.h"
 #include "widgets/DisassemblerDialog.h"
 #include "widgets/PersistentSplitter.h"
@@ -166,28 +167,37 @@ void BinaryWidget::onShowMachineCodeChanged(bool show)
 
 void BinaryWidget::onCustomContextMenuRequested(const QPoint &pos)
 {
-  const auto selected = mainView->textCursor().selectedText();
-  if (selected.isEmpty()) return;
-
-  // See if selection is convertible to a number, possibly an address.
-  bool isAddress = false;
-  const auto address = Util::convertAddress(selected, &isAddress);
-
   QMenu menu(mainView);
 
-  menu.addAction(tr("Copy"), this, [&selected] { QApplication::clipboard()->setText(selected); },
-                 QKeySequence::Copy);
+  // Jump to sections.
+  auto *sectionMenu = menu.addMenu(tr("Sections"));
+  auto sortedSections = sectionBlock.keys();
+  cxx::sort(sortedSections, [](const auto *s1, const auto *s2) { return s1->type() < s2->type(); });
+  for (const auto *section : sortedSections) {
+    sectionMenu->addAction(section->toString(), this,
+                           [this, section] { selectBlock(sectionBlock[section]); });
+  }
 
-  menu.addSeparator();
+  const auto selected = mainView->textCursor().selectedText();
+  if (!selected.isEmpty()) {
+    // See if selection is convertible to a number, possibly an address.
+    bool isAddress = false;
+    const auto address = Util::convertAddress(selected, &isAddress);
 
-  menu.addAction(tr("Disassemble"), this, [this, &selected] {
-    DisassemblerDialog diag(this, object->cpuType(), selected);
-    diag.exec();
-  });
+    menu.addSeparator();
+    menu.addAction(tr("Copy"), this, [&selected] { QApplication::clipboard()->setText(selected); },
+                   QKeySequence::Copy);
 
-  auto *jumpAction =
-    menu.addAction(tr("Jump to Address"), this, [this, address] { selectAddress(address); });
-  jumpAction->setEnabled(isAddress);
+    menu.addSeparator();
+    menu.addAction(tr("Disassemble"), this, [this, &selected] {
+      DisassemblerDialog diag(this, object->cpuType(), selected);
+      diag.exec();
+    });
+
+    auto *jumpAction =
+      menu.addAction(tr("Jump to Address"), this, [this, address] { selectAddress(address); });
+    jumpAction->setEnabled(isAddress);
+  }
 
   menu.exec(mainView->mapToGlobal(pos));
 }
@@ -478,7 +488,10 @@ void BinaryWidget::setup()
       cursor.insertBlock();
     }
 
-    auto secName = Section::typeName(section->type());
+    // Save section to block number.
+    sectionBlock[section] = cursor.blockNumber();
+
+    const auto secName = section->toString();
     qDebug() << "" << secName << "section..";
     cursor.insertText("===== " + secName + " =====");
 
@@ -527,7 +540,10 @@ void BinaryWidget::setup()
     cursor.movePosition(QTextCursor::End);
     cursor.insertBlock();
 
-    const auto secName = Section::typeName(section->type());
+    // Save section to block number.
+    sectionBlock[section] = cursor.blockNumber();
+
+    const auto secName = section->toString();
     qDebug() << "" << secName << "section..";
     cursor.insertText("===== " + secName + " =====\n");
 
@@ -644,7 +660,12 @@ void BinaryWidget::selectAddress(quint64 address)
   }
 
   auto blockNum = offsetBlock[address];
-  auto block = doc->findBlockByNumber(blockNum);
+  selectBlock(blockNum);
+}
+
+void BinaryWidget::selectBlock(int number)
+{
+  auto block = doc->findBlockByNumber(number);
   auto cursor = mainView->textCursor();
   cursor.setPosition(block.position());
   mainView->setTextCursor(cursor);

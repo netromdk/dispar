@@ -42,6 +42,7 @@ private:
   void updateTagList();
   void addSymbolToList(const QString &text, quint64 address, QListWidget *list);
   void selectAddress(quint64 address);
+  void selectBlock(int number);
   void removeSelectedTags();
 
   BinaryObject *object;
@@ -50,7 +51,8 @@ private:
   QListWidget *symbolList, *stringList, *tagList;
   QPlainTextEdit *mainView;
   QTextDocument *doc;
-  QHash<quint64, int> offsetBlock; // offset -> block
+  QHash<quint64, int> offsetBlock;          ///< Offset -> block
+  QHash<const Section *, int> sectionBlock; ///< Section -> block
   QList<int> codeBlocks;
   QLabel *addressLabel, *offsetLabel, *machineCodeLabel, *binaryLabel, *sizeLabel, *archLabel,
     *fileTypeLabel;
