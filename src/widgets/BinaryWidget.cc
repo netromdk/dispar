@@ -410,7 +410,7 @@ void BinaryWidget::setup()
   // Create temporary procedure name lookup map.
   QHash<quint64, QString> procNameMap;
   for (const auto &symbol : symbols) {
-    if (symbol.value() > 0 && !symbol.string().isEmpty()) {
+    if (!symbol.string().isEmpty()) {
       procNameMap[symbol.value()] = Util::demangle(symbol.string());
     }
   }
@@ -577,7 +577,7 @@ void BinaryWidget::setup()
   // Fill side bar with function names of the symbol tables.
   QSet<quint64> seenSymbols;
   for (const auto &symbol : symbols) {
-    if (symbol.value() == 0 || seenSymbols.contains(symbol.value())) {
+    if (seenSymbols.contains(symbol.value())) {
       continue;
     }
 
