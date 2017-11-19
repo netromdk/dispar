@@ -224,7 +224,11 @@ void MainWindow::openBinary()
 
 void MainWindow::saveBinary()
 {
-  // TODO: Handle binary backups!
+  auto &ctx = Context::get();
+
+  if (ctx.backupEnabled()) {
+    saveBackup(format->file());
+  }
 
   QFile f(format->file());
   if (!f.open(QIODevice::ReadWrite)) {
@@ -250,6 +254,7 @@ void MainWindow::saveBinary()
   }
 
   binaryModified = false;
+  saveBinaryAction->setEnabled(false);
   setTitle(Context::get().project()->file());
 }
 
@@ -583,6 +588,43 @@ void MainWindow::loadBinary(QString file)
   });
 
   loader->start();
+}
+
+void MainWindow::saveBackup(const QString &file)
+{
+  // Determine if prior backups have been made and, if so, how many.
+  QFileInfo fi(file);
+  auto dir = fi.dir();
+  int bakCount = 0, bakNum = 0;
+  QStringList files;
+  const auto entries = dir.entryInfoList(QStringList{QString("%1.bak*").arg(fi.fileName())},
+                                         QDir::Files | QDir::Hidden, QDir::Name);
+  for (const auto &entry : entries) {
+    files << entry.absoluteFilePath();
+    bakCount++;
+    const auto ext = entry.suffix();
+    static QRegExp re("bak([\\d]+)$");
+    if (re.indexIn(ext) != -1 && re.captureCount() == 1) {
+      bakNum = re.capturedTexts()[1].toUInt();
+    }
+  }
+
+  // Remove previous backups if not unlimited. And remove one due to
+  // the file that will be created beneath.
+  auto &ctx = Context::get();
+  const auto maxAmount = ctx.backupAmount();
+  if (maxAmount > 0 && bakCount >= maxAmount - 1) {
+    for (int i = 0; i < bakCount - (maxAmount - 1); i++) {
+      QFile::remove(files[i]);
+    }
+  }
+
+  const auto num = Util::padString(QString::number(++bakNum), 4),
+             dest = QString("%1.bak%2").arg(file).arg(num);
+  qDebug() << "Saving backup of" << file << "to" << dest;
+  if (!QFile::copy(file, dest)) {
+    QMessageBox::warning(this, "", tr("Could not save backup to \"%1\"!").arg(dest));
+  }
 }
 
 bool MainWindow::checkSave()

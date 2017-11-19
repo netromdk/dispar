@@ -49,6 +49,7 @@ private:
   void createLayout();
   void createMenu();
   void loadBinary(QString file);
+  void saveBackup(const QString &file);
 
   /// If modified ask to save.
   /** Returns false if cancelled. */
