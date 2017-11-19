@@ -16,8 +16,11 @@ public:
 
   void showUpdateButton();
 
+public slots:
+  void done(int result) override;
+
 protected:
-  void showEvent(QShowEvent *event);
+  void showEvent(QShowEvent *event) override;
 
 private slots:
   void updateDisassembly();

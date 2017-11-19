@@ -134,6 +134,16 @@ void DisassemblyEditor::showUpdateButton()
   updateButton->show();
 }
 
+void DisassemblyEditor::done(int result)
+{
+  // Update disassembly if changed before closing dialog.
+  if (section->isModified()) {
+    updateDisassembly();
+  }
+
+  QDialog::done(result);
+}
+
 void DisassemblyEditor::showEvent(QShowEvent *event)
 {
   QDialog::showEvent(event);
@@ -165,8 +175,6 @@ void DisassemblyEditor::updateDisassembly()
 
   section->setDisassembly(std::move(result));
   qDebug() << ">" << elapsedTimer.restart() << "ms";
-
-  setup();
 }
 
 void DisassemblyEditor::createLayout()
@@ -175,7 +183,10 @@ void DisassemblyEditor::createLayout()
 
   updateButton = new QPushButton(tr("Update disassembly"));
   updateButton->hide();
-  connect(updateButton, &QPushButton::clicked, this, &DisassemblyEditor::updateDisassembly);
+  connect(updateButton, &QPushButton::clicked, this, [this] {
+    updateDisassembly();
+    setup();
+  });
 
   auto *topLayout = new QHBoxLayout;
   topLayout->setContentsMargins(5, 5, 5, 5);
