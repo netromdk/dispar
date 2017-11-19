@@ -29,6 +29,7 @@
 #include "cxx.h"
 #include "widgets/BinaryWidget.h"
 #include "widgets/DisassemblerDialog.h"
+#include "widgets/DisassemblyEditor.h"
 #include "widgets/PersistentSplitter.h"
 #include "widgets/TagsEdit.h"
 #include "widgets/ToggleBox.h"
@@ -170,7 +171,7 @@ void BinaryWidget::onCustomContextMenuRequested(const QPoint &pos)
   QMenu menu(mainView);
 
   // Jump to sections.
-  auto *sectionMenu = menu.addMenu(tr("Sections"));
+  auto *sectionMenu = menu.addMenu(tr("Jump to Section"));
   auto sortedSections = sectionBlock.keys();
   cxx::sort(sortedSections, [](const auto *s1, const auto *s2) { return s1->type() < s2->type(); });
   for (const auto *section : sortedSections) {
@@ -178,7 +179,20 @@ void BinaryWidget::onCustomContextMenuRequested(const QPoint &pos)
                            [this, section] { selectBlock(sectionBlock[section]); });
   }
 
-  const auto selected = mainView->textCursor().selectedText();
+  auto cursor = mainView->textCursor();
+  const auto *userData = dynamic_cast<TextBlockUserData *>(cursor.block().userData());
+  if (userData) {
+    for (auto *section : object->sections()) {
+      if (section->type() == Section::Type::TEXT && section->hasAddress(userData->address)) {
+        menu.addAction(tr("Edit %1").arg(section->toString()), this, [this, section] {
+          DisassemblyEditor editor(section, object, this);
+          editor.exec();
+        });
+      }
+    }
+  }
+
+  const auto selected = cursor.selectedText();
   if (!selected.isEmpty()) {
     // See if selection is convertible to a number, possibly an address.
     bool isAddress = false;
