@@ -87,7 +87,7 @@ public:
 
     // Update disassembly.
     Disassembler dis(*object, Context::get().disassemblerSyntax());
-    const auto result = dis.disassemble(data, pos);
+    const auto result = dis.disassemble(data, addr);
     if (!result) {
       item->setText(2, tr("Could not disassemble!"));
     }
@@ -156,7 +156,7 @@ void DisassemblyEditor::updateDisassembly()
   qDebug() << "Re-dissassembling..";
 
   Disassembler dis(*object, Context::get().disassemblerSyntax());
-  auto result = dis.disassemble(section->data(), section->offset());
+  auto result = dis.disassemble(section->data());
   if (!result) {
     QMessageBox::critical(this, "", tr("Could not disassemble machine code!"));
     return;
