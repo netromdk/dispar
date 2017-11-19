@@ -69,6 +69,11 @@ QString Section::toString() const
   return QString("%1 (%2)").arg(name()).arg(typeName(type()));
 }
 
+bool Section::hasAddress(quint64 addr) const
+{
+  return addr >= address() && addr < address() + size();
+}
+
 const QByteArray &Section::data() const
 {
   return data_;

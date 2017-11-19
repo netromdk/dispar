@@ -37,6 +37,8 @@ public:
 
   QString toString() const;
 
+  bool hasAddress(quint64 address) const;
+
   const QByteArray &data() const;
   void setData(const QByteArray &data);
 
