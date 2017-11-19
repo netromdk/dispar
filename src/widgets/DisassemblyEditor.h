@@ -25,6 +25,8 @@ private slots:
 private:
   void createLayout();
   void setup();
+  void createEntries();
+  void markModifiedRegions();
 
   Section *section;
   BinaryObject *object;
