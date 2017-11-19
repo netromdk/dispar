@@ -412,9 +412,21 @@ void BinaryWidget::setup()
   QElapsedTimer elapsedTimer;
   elapsedTimer.start();
 
+  // Make sure we start from a clean slate.
+  mainView->clear();
+
+  symbolList->clear();
   symbolList->setEnabled(false);
+
+  stringList->clear();
   stringList->setEnabled(false);
+
+  tagList->clear();
   tagList->setEnabled(false);
+
+  offsetBlock.clear();
+  sectionBlock.clear();
+  codeBlocks.clear();
 
   QProgressDialog setupDiag(this);
   setupDiag.setLabelText(tr("Setting up for binary data.."));
