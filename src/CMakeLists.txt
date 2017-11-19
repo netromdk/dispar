@@ -61,6 +61,8 @@ add_library(
   widgets/ToggleBox.cc
   widgets/LineEdit.h
   widgets/LineEdit.cc
+  widgets/TreeWidget.h
+  widgets/TreeWidget.cc
 
   formats/Format.h
   formats/Format.cc
