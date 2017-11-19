@@ -19,10 +19,8 @@ class BinaryWidget : public QWidget {
 public:
   BinaryWidget(BinaryObject *object);
 
-  // void commit();
-
 signals:
-  // void modified();
+  void modified();
 
 protected:
   void showEvent(QShowEvent *event);

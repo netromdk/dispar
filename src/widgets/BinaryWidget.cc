@@ -185,8 +185,14 @@ void BinaryWidget::onCustomContextMenuRequested(const QPoint &pos)
     for (auto *section : object->sections()) {
       if (section->type() == Section::Type::TEXT && section->hasAddress(userData->address)) {
         menu.addAction(tr("Edit %1").arg(section->toString()), this, [this, section] {
+          const auto priorModRegions = section->modifiedRegions();
           DisassemblyEditor editor(section, object, this);
           editor.exec();
+
+          // Only emit modified if new changes were made.
+          if (section->isModified() && section->modifiedRegions() != priorModRegions) {
+            emit modified();
+          }
         });
       }
     }
