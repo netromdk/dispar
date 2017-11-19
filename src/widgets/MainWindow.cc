@@ -27,7 +27,8 @@
 #include <QSettings>
 #include <QVBoxLayout>
 
-MainWindow::MainWindow(const QString &file) : modified(false), startupFile(file)
+MainWindow::MainWindow(const QString &file)
+  : modified(false), binaryModified(false), startupFile(file)
 {
   setTitle();
   readSettings();
@@ -194,12 +195,14 @@ void MainWindow::closeProject()
   Context::get().clearProject();
 
   modified = false;
+  binaryModified = false;
   setTitle();
 
   newProjectAction->setEnabled(false);
   saveProjectAction->setEnabled(false);
   saveAsProjectAction->setEnabled(false);
   closeProjectAction->setEnabled(false);
+  saveBinaryAction->setEnabled(false);
 
   if (centralWidget()) {
     centralWidget()->deleteLater();
@@ -217,6 +220,37 @@ void MainWindow::openBinary()
 
   auto file = diag.selectedFiles().first();
   loadBinary(file);
+}
+
+void MainWindow::saveBinary()
+{
+  // TODO: Handle binary backups!
+
+  QFile f(format->file());
+  if (!f.open(QIODevice::ReadWrite)) {
+    QMessageBox::critical(this, "",
+                          tr("Could not open binary file for writing: %1").arg(f.fileName()));
+    return;
+  }
+
+  qDebug() << "Committing modified regions to binary:" << format->file();
+
+  for (const auto *object : format->objects()) {
+    for (const auto *section : object->sections()) {
+      if (!section->isModified()) {
+        continue;
+      }
+
+      const auto &data = section->data();
+      for (const auto &region : section->modifiedRegions()) {
+        f.seek(section->offset() + region.first);
+        f.write(data.mid(region.first, region.second));
+      }
+    }
+  }
+
+  binaryModified = false;
+  setTitle(Context::get().project()->file());
 }
 
 void MainWindow::onRecentProject()
@@ -276,11 +310,13 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
   project->setBinary(fmt->file());
   newProjectAction->setEnabled(true);
 
+  binaryModified = false;
   setTitle(project->file());
 
   saveProjectAction->setEnabled(true);
   saveAsProjectAction->setEnabled(true);
   closeProjectAction->setEnabled(true);
+  saveBinaryAction->setEnabled(false);
 
   Util::delayFunc([this, fmt] {
     auto file = fmt->file();
@@ -366,7 +402,11 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
     if (centralWidget()) {
       centralWidget()->deleteLater();
     }
-    setCentralWidget(new BinaryWidget(object));
+
+    auto *binaryWidget = new BinaryWidget(object);
+    connect(binaryWidget, &BinaryWidget::modified, this, &MainWindow::onBinaryModified);
+
+    setCentralWidget(binaryWidget);
   });
 }
 
@@ -376,12 +416,20 @@ void MainWindow::onProjectModified()
   setTitle(Context::get().project()->file());
 }
 
+void MainWindow::onBinaryModified()
+{
+  binaryModified = true;
+  saveBinaryAction->setEnabled(true);
+  setTitle(Context::get().project()->file());
+}
+
 void MainWindow::setTitle(const QString &file)
 {
-  setWindowTitle(QString("Dispar v%1%2%3")
+  setWindowTitle(QString("Dispar v%1%2%3%4")
                    .arg(versionString())
                    .arg(!file.isEmpty() ? " - " + file : "")
-                   .arg(modified ? " *" : ""));
+                   .arg(modified ? " *" : "")
+                   .arg(binaryModified ? " (" + tr("BINARY CHANGES PENDING") + ")" : ""));
 }
 
 void MainWindow::readSettings()
@@ -444,13 +492,18 @@ void MainWindow::createMenu()
   fileMenu->addSeparator();
 
   fileMenu->addAction(tr("Open binary"), this, SLOT(openBinary()),
-                      QKeySequence(Qt::SHIFT + Qt::CTRL + Qt::Key_O));
+                      QKeySequence(Qt::ALT + Qt::CTRL + Qt::Key_O));
+
   if (!recentBinaries.isEmpty()) {
     auto *recentMenu = fileMenu->addMenu(tr("Open recent binaries"));
     for (const auto &file : recentBinaries) {
       recentMenu->addAction(file, this, SLOT(onRecentBinary()));
     }
   }
+
+  saveBinaryAction = fileMenu->addAction(tr("Save binary"), this, SLOT(saveBinary()),
+                                         QKeySequence(Qt::ALT + Qt::CTRL + Qt::Key_S));
+  saveBinaryAction->setEnabled(false);
 
   fileMenu->addSeparator();
 
