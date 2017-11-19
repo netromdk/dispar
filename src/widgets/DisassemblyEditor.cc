@@ -254,42 +254,49 @@ void DisassemblyEditor::setup()
     treeWidget->addTopLevelItem(item);
   }
 
+  qDebug() << ">" << elapsedTimer.restart() << "ms";
+
   // Mark items as modified if a region states it.
   const auto &modRegs = section->modifiedRegions();
-  int rows = treeWidget->topLevelItemCount();
-  quint64 offset = section->address();
-  quint64 addr = 0;
-  for (int row = 0; row < rows; row++) {
-    auto *item = treeWidget->topLevelItem(row);
+  if (!modRegs.isEmpty()) {
+    qDebug() << "Marking modified regions in UI..";
 
-    // Skip procedure starts.
-    if (item->text(0).isEmpty()) {
-      continue;
-    }
+    int rows = treeWidget->topLevelItemCount();
+    quint64 offset = section->address();
+    quint64 addr = 0;
+    for (int row = 0; row < rows; row++) {
+      auto *item = treeWidget->topLevelItem(row);
 
-    addr = item->text(0).toULongLong(nullptr, 16) - offset;
-    int size = item->text(1).split(" ", QString::SkipEmptyParts).size();
-    for (const auto &reg : modRegs) {
-      if (reg.first >= addr && reg.first < addr + size) {
-        setTreeItemMarked(item, 1);
-        int excess = (reg.first + reg.second) - (addr + size);
-        if (excess == 0) continue;
+      // Skip procedure starts.
+      if (item->text(0).isEmpty()) {
+        continue;
+      }
 
-        for (int row2 = row + 1; row2 < rows; row2++) {
-          auto *item2 = treeWidget->topLevelItem(row2);
-          if (item2) {
-            int size2 = item2->text(1).split(" ", QString::SkipEmptyParts).size();
-            setTreeItemMarked(item2, 1);
-            excess -= size2;
-            if (excess <= 0) break;
+      addr = item->text(0).toULongLong(nullptr, 16) - offset;
+      int size = item->text(1).split(" ", QString::SkipEmptyParts).size();
+      for (const auto &reg : modRegs) {
+        if (reg.first >= addr && reg.first < addr + size) {
+          setTreeItemMarked(item, 1);
+          int excess = (reg.first + reg.second) - (addr + size);
+          if (excess == 0) continue;
+
+          for (int row2 = row + 1; row2 < rows; row2++) {
+            auto *item2 = treeWidget->topLevelItem(row2);
+            if (item2) {
+              int size2 = item2->text(1).split(" ", QString::SkipEmptyParts).size();
+              setTreeItemMarked(item2, 1);
+              excess -= size2;
+              if (excess <= 0) break;
+            }
+            else
+              break;
           }
-          else
-            break;
         }
       }
     }
+
+    qDebug() << ">" << elapsedTimer.restart() << "ms";
   }
 
-  qDebug() << ">" << elapsedTimer.restart() << "ms";
   treeWidget->setFocus();
 }
