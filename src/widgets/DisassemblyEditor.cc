@@ -125,6 +125,7 @@ DisassemblyEditor::DisassemblyEditor(Section *section, BinaryObject *object, QWi
   Q_ASSERT(section->disassembly());
   Q_ASSERT(object);
 
+  setWindowTitle(tr("Disassembly Editor: %1").arg(section->toString()));
   createLayout();
 }
 
