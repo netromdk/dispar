@@ -14,10 +14,11 @@ static QString settingsPath()
   return QDir::home().absoluteFilePath(".dispar");
 }
 
-} // anon
+} // namespace
 
 Context::Context()
-  : showMachineCode_(true), disassemblerSyntax_(Disassembler::Syntax::INTEL), project_(nullptr)
+  : showMachineCode_(true), disassemblerSyntax_(Disassembler::Syntax::INTEL), backupEnabled_(true),
+    backupAmount_(5), project_(nullptr)
 {
   loadSettings();
 }
@@ -57,6 +58,26 @@ void Context::setDisassemblerSyntax(Disassembler::Syntax syntax)
   disassemblerSyntax_ = syntax;
 }
 
+bool Context::backupEnabled() const
+{
+  return backupEnabled_;
+}
+
+void Context::setBackupEnabled(bool enabled)
+{
+  backupEnabled_ = enabled;
+}
+
+int Context::backupAmount() const
+{
+  return backupAmount_;
+}
+
+void Context::setBackupAmount(int amount)
+{
+  backupAmount_ = amount;
+}
+
 void Context::loadSettings()
 {
   auto path = settingsPath();
@@ -78,9 +99,24 @@ void Context::loadSettings()
   if (obj.contains("showMachineCode")) {
     showMachineCode_ = obj["showMachineCode"].toBool(true);
   }
+
   if (obj.contains("disassemblerSyntax")) {
     disassemblerSyntax_ = static_cast<Disassembler::Syntax>(
       obj["disassemblerSyntax"].toInt(static_cast<int>(Disassembler::Syntax::INTEL)));
+  }
+
+  if (obj.contains("backup")) {
+    const auto backupValue = obj["backup"];
+    if (backupValue.isObject()) {
+      const auto backupObj = backupValue.toObject();
+      if (backupObj.contains("enabled")) {
+        backupEnabled_ = backupObj["enabled"].toBool(true);
+      }
+
+      if (backupObj.contains("amount")) {
+        backupAmount_ = backupObj["amount"].toInt(5);
+      }
+    }
   }
 }
 
@@ -89,9 +125,14 @@ void Context::saveSettings()
   auto path = settingsPath();
   qDebug() << "Saving settings to" << path;
 
+  QJsonObject backupObj;
+  backupObj["enabled"] = backupEnabled();
+  backupObj["amount"] = backupAmount();
+
   QJsonObject obj;
   obj["showMachineCode"] = showMachineCode();
   obj["disassemblerSyntax"] = static_cast<int>(disassemblerSyntax());
+  obj["backup"] = backupObj;
 
   QJsonDocument doc;
   doc.setObject(obj);
