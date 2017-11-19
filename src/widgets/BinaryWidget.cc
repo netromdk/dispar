@@ -191,6 +191,7 @@ void BinaryWidget::onCustomContextMenuRequested(const QPoint &pos)
 
           // Only emit modified if new changes were made.
           if (section->isModified() && section->modifiedRegions() != priorModRegions) {
+            setup(); // Reload UI.
             emit modified();
           }
         });
