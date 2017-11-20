@@ -27,7 +27,8 @@
 #include <QSettings>
 #include <QVBoxLayout>
 
-MainWindow::MainWindow(const QString &file) : modified(false), startupFile(file)
+MainWindow::MainWindow(const QString &file)
+  : modified(false), binaryModified(false), startupFile(file)
 {
   setTitle();
   readSettings();
@@ -194,12 +195,14 @@ void MainWindow::closeProject()
   Context::get().clearProject();
 
   modified = false;
+  binaryModified = false;
   setTitle();
 
   newProjectAction->setEnabled(false);
   saveProjectAction->setEnabled(false);
   saveAsProjectAction->setEnabled(false);
   closeProjectAction->setEnabled(false);
+  saveBinaryAction->setEnabled(false);
 
   if (centralWidget()) {
     centralWidget()->deleteLater();
@@ -217,6 +220,42 @@ void MainWindow::openBinary()
 
   auto file = diag.selectedFiles().first();
   loadBinary(file);
+}
+
+void MainWindow::saveBinary()
+{
+  auto &ctx = Context::get();
+
+  if (ctx.backupEnabled()) {
+    saveBackup(format->file());
+  }
+
+  QFile f(format->file());
+  if (!f.open(QIODevice::ReadWrite)) {
+    QMessageBox::critical(this, "",
+                          tr("Could not open binary file for writing: %1").arg(f.fileName()));
+    return;
+  }
+
+  qDebug() << "Committing modified regions to binary:" << format->file();
+
+  for (const auto *object : format->objects()) {
+    for (const auto *section : object->sections()) {
+      if (!section->isModified()) {
+        continue;
+      }
+
+      const auto &data = section->data();
+      for (const auto &region : section->modifiedRegions()) {
+        f.seek(section->offset() + region.first);
+        f.write(data.mid(region.first, region.second));
+      }
+    }
+  }
+
+  binaryModified = false;
+  saveBinaryAction->setEnabled(false);
+  setTitle(Context::get().project()->file());
 }
 
 void MainWindow::onRecentProject()
@@ -276,11 +315,13 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
   project->setBinary(fmt->file());
   newProjectAction->setEnabled(true);
 
+  binaryModified = false;
   setTitle(project->file());
 
   saveProjectAction->setEnabled(true);
   saveAsProjectAction->setEnabled(true);
   closeProjectAction->setEnabled(true);
+  saveBinaryAction->setEnabled(false);
 
   Util::delayFunc([this, fmt] {
     auto file = fmt->file();
@@ -366,7 +407,11 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
     if (centralWidget()) {
       centralWidget()->deleteLater();
     }
-    setCentralWidget(new BinaryWidget(object));
+
+    auto *binaryWidget = new BinaryWidget(object);
+    connect(binaryWidget, &BinaryWidget::modified, this, &MainWindow::onBinaryModified);
+
+    setCentralWidget(binaryWidget);
   });
 }
 
@@ -376,12 +421,20 @@ void MainWindow::onProjectModified()
   setTitle(Context::get().project()->file());
 }
 
+void MainWindow::onBinaryModified()
+{
+  binaryModified = true;
+  saveBinaryAction->setEnabled(true);
+  setTitle(Context::get().project()->file());
+}
+
 void MainWindow::setTitle(const QString &file)
 {
-  setWindowTitle(QString("Dispar v%1%2%3")
+  setWindowTitle(QString("Dispar v%1%2%3%4")
                    .arg(versionString())
                    .arg(!file.isEmpty() ? " - " + file : "")
-                   .arg(modified ? " *" : ""));
+                   .arg(modified ? " *" : "")
+                   .arg(binaryModified ? " (" + tr("BINARY CHANGES PENDING") + ")" : ""));
 }
 
 void MainWindow::readSettings()
@@ -444,13 +497,18 @@ void MainWindow::createMenu()
   fileMenu->addSeparator();
 
   fileMenu->addAction(tr("Open binary"), this, SLOT(openBinary()),
-                      QKeySequence(Qt::SHIFT + Qt::CTRL + Qt::Key_O));
+                      QKeySequence(Qt::ALT + Qt::CTRL + Qt::Key_O));
+
   if (!recentBinaries.isEmpty()) {
     auto *recentMenu = fileMenu->addMenu(tr("Open recent binaries"));
     for (const auto &file : recentBinaries) {
       recentMenu->addAction(file, this, SLOT(onRecentBinary()));
     }
   }
+
+  saveBinaryAction = fileMenu->addAction(tr("Save binary"), this, SLOT(saveBinary()),
+                                         QKeySequence(Qt::ALT + Qt::CTRL + Qt::Key_S));
+  saveBinaryAction->setEnabled(false);
 
   fileMenu->addSeparator();
 
@@ -530,6 +588,43 @@ void MainWindow::loadBinary(QString file)
   });
 
   loader->start();
+}
+
+void MainWindow::saveBackup(const QString &file)
+{
+  // Determine if prior backups have been made and, if so, how many.
+  QFileInfo fi(file);
+  auto dir = fi.dir();
+  int bakCount = 0, bakNum = 0;
+  QStringList files;
+  const auto entries = dir.entryInfoList(QStringList{QString("%1.bak*").arg(fi.fileName())},
+                                         QDir::Files | QDir::Hidden, QDir::Name);
+  for (const auto &entry : entries) {
+    files << entry.absoluteFilePath();
+    bakCount++;
+    const auto ext = entry.suffix();
+    static QRegExp re("bak([\\d]+)$");
+    if (re.indexIn(ext) != -1 && re.captureCount() == 1) {
+      bakNum = re.capturedTexts()[1].toUInt();
+    }
+  }
+
+  // Remove previous backups if not unlimited. And remove one due to
+  // the file that will be created beneath.
+  auto &ctx = Context::get();
+  const auto maxAmount = ctx.backupAmount();
+  if (maxAmount > 0 && bakCount >= maxAmount - 1) {
+    for (int i = 0; i < bakCount - (maxAmount - 1); i++) {
+      QFile::remove(files[i]);
+    }
+  }
+
+  const auto num = Util::padString(QString::number(++bakNum), 4),
+             dest = QString("%1.bak%2").arg(file).arg(num);
+  qDebug() << "Saving backup of" << file << "to" << dest;
+  if (!QFile::copy(file, dest)) {
+    QMessageBox::warning(this, "", tr("Could not save backup to \"%1\"!").arg(dest));
+  }
 }
 
 bool MainWindow::checkSave()

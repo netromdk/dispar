@@ -59,6 +59,12 @@ add_library(
   widgets/TagItemDelegate.cc
   widgets/ToggleBox.h
   widgets/ToggleBox.cc
+  widgets/DisassemblyEditor.h
+  widgets/DisassemblyEditor.cc
+  widgets/LineEdit.h
+  widgets/LineEdit.cc
+  widgets/TreeWidget.h
+  widgets/TreeWidget.cc
 
   formats/Format.h
   formats/Format.cc

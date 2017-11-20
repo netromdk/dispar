@@ -31,6 +31,7 @@ private slots:
   void saveProject();
   void closeProject();
   void openBinary();
+  void saveBinary();
 
   void onRecentProject();
   void onRecentBinary();
@@ -40,6 +41,7 @@ private slots:
   void onOptions();
   void onLoadSuccess(std::shared_ptr<Format> fmt);
   void onProjectModified();
+  void onBinaryModified();
 
 private:
   void setTitle(const QString &file = QString());
@@ -47,17 +49,19 @@ private:
   void createLayout();
   void createMenu();
   void loadBinary(QString file);
+  void saveBackup(const QString &file);
 
   /// If modified ask to save.
   /** Returns false if cancelled. */
   bool checkSave();
 
-  bool modified;
+  bool modified, binaryModified;
   QString startupFile;
   QStringList recentProjects, recentBinaries;
   QByteArray geometry;
 
-  QAction *newProjectAction, *saveProjectAction, *saveAsProjectAction, *closeProjectAction;
+  QAction *newProjectAction, *saveProjectAction, *saveAsProjectAction, *closeProjectAction,
+    *saveBinaryAction;
 
   std::unique_ptr<FormatLoader> loader;
   std::shared_ptr<Format> format;

@@ -24,6 +24,12 @@ public:
   Disassembler::Syntax disassemblerSyntax() const;
   void setDisassemblerSyntax(Disassembler::Syntax syntax);
 
+  bool backupEnabled() const;
+  void setBackupEnabled(bool enabled);
+
+  int backupAmount() const;
+  void setBackupAmount(int amount);
+
   void loadSettings();
   void saveSettings();
 
@@ -48,6 +54,9 @@ private:
 
   bool showMachineCode_;
   Disassembler::Syntax disassemblerSyntax_;
+
+  bool backupEnabled_;
+  int backupAmount_;
 
   std::unique_ptr<Project> project_;
 };

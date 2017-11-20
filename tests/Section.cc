@@ -113,3 +113,13 @@ TEST(Section, setSubData)
     EXPECT_EQ(pair.second, 1);
   }
 }
+
+TEST(Section, hasAddress)
+{
+  Section s(Section::Type::TEXT, "test", 1, 10, 10);
+  EXPECT_FALSE(s.hasAddress(0));
+  EXPECT_TRUE(s.hasAddress(1));
+  EXPECT_TRUE(s.hasAddress(9));
+  EXPECT_TRUE(s.hasAddress(10));
+  EXPECT_FALSE(s.hasAddress(11));
+}
