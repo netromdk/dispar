@@ -65,6 +65,8 @@ add_library(
   widgets/LineEdit.cc
   widgets/TreeWidget.h
   widgets/TreeWidget.cc
+  widgets/HexEditor.h
+  widgets/HexEditor.cc
 
   formats/Format.h
   formats/Format.cc

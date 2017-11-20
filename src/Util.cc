@@ -8,6 +8,7 @@
 #include <QFileInfo>
 #include <QScrollBar>
 #include <QTimer>
+#include <QTreeWidgetItem>
 #include <QXmlStreamReader>
 
 #include "libiberty/demangle.h"
@@ -314,4 +315,12 @@ quint64 Util::convertAddress(QString input, bool *ok)
 
   if (ok) *ok = false;
   return 0;
+}
+
+void Util::setTreeItemMarked(QTreeWidgetItem *item, int column)
+{
+  auto font = item->font(column);
+  font.setBold(true);
+  item->setFont(column, font);
+  item->setForeground(column, Qt::red);
 }

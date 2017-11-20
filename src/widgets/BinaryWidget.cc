@@ -30,6 +30,7 @@
 #include "widgets/BinaryWidget.h"
 #include "widgets/DisassemblerDialog.h"
 #include "widgets/DisassemblyEditor.h"
+#include "widgets/HexEditor.h"
 #include "widgets/PersistentSplitter.h"
 #include "widgets/TagsEdit.h"
 #include "widgets/ToggleBox.h"
@@ -183,26 +184,28 @@ void BinaryWidget::onCustomContextMenuRequested(const QPoint &pos)
   const auto *userData = dynamic_cast<TextBlockUserData *>(cursor.block().userData());
   if (userData) {
     for (auto *section : object->sections()) {
-      if ((section->type() == Section::Type::TEXT ||
-           section->type() == Section::Type::SYMBOL_STUBS) &&
-          section->hasAddress(userData->address)) {
+      if (!section->hasAddress(userData->address)) {
+        continue;
+      }
+
+      if (section->type() == Section::Type::TEXT ||
+          section->type() == Section::Type::SYMBOL_STUBS) {
         menu.addAction(tr("Edit %1").arg(section->toString()), this, [this, section] {
           const auto priorModRegions = section->modifiedRegions();
           DisassemblyEditor editor(section, object, this);
           editor.exec();
 
-          // Only emit modified if new changes were made.
-          if (section->isModified() && section->modifiedRegions() != priorModRegions) {
-            emit modified();
-
-            auto ret = QMessageBox::question(this, "dispar", tr("Binary was modified. Reload UI?"),
-                                             QMessageBox::Yes | QMessageBox::No);
-            if (QMessageBox::Yes == ret) {
-              setup(); // Reload UI.
-            }
-          }
+          checkModified(section, priorModRegions);
         });
       }
+
+      menu.addAction(tr("Hex edit %1").arg(section->toString()), this, [this, section] {
+        const auto priorModRegions = section->modifiedRegions();
+        HexEditor editor(section, object, this);
+        editor.exec();
+
+        checkModified(section, priorModRegions);
+      });
     }
   }
 
@@ -719,4 +722,19 @@ void BinaryWidget::removeSelectedTags()
     tags << item->text();
   }
   Context::get().project()->removeAddressTags(tags);
+}
+
+void BinaryWidget::checkModified(const Section *section,
+                                 const QList<QPair<int, int>> &priorModifications)
+{
+  // Only emit modified if new changes were made.
+  if (section->isModified() && section->modifiedRegions() != priorModifications) {
+    emit modified();
+
+    auto ret = QMessageBox::question(this, "dispar", tr("Binary was modified. Reload UI?"),
+                                     QMessageBox::Yes | QMessageBox::No);
+    if (QMessageBox::Yes == ret) {
+      setup(); // Reload UI.
+    }
+  }
 }

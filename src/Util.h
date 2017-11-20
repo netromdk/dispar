@@ -12,6 +12,7 @@
 #include "CpuType.h"
 #include "cxx.h"
 
+class QTreeWidgetItem;
 class QAbstractScrollArea;
 
 class Util {
@@ -79,6 +80,9 @@ public:
     dst.reserve(dst.size() + src.size());
     cxx::copy(src, std::back_inserter(dst));
   }
+
+  /// Set item as marked by using bold font and red text on \p column.
+  static void setTreeItemMarked(QTreeWidgetItem *item, int column);
 };
 
 #endif // DISPAR_UTIL_H

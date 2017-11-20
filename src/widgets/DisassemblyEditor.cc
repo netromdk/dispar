@@ -20,14 +20,6 @@
 
 namespace {
 
-void setTreeItemMarked(QTreeWidgetItem *item, int column)
-{
-  auto font = item->font(column);
-  font.setBold(true);
-  item->setFont(column, font);
-  item->setForeground(column, Qt::red);
-}
-
 class ItemDelegate : public QStyledItemDelegate {
 public:
   ItemDelegate(DisassemblyEditor *editor, QTreeWidget *tree, BinaryObject *object, Section *section)
@@ -77,7 +69,7 @@ public:
     model->setData(index, newStr);
     auto *item = tree->topLevelItem(index.row());
     if (!item) return;
-    setTreeItemMarked(item, index.column());
+    Util::setTreeItemMarked(item, index.column());
 
     // Change region.
     const auto addr = item->text(0).toULongLong(nullptr, 16);
@@ -301,7 +293,7 @@ void DisassemblyEditor::markModifiedRegions()
     int size = item->text(1).split(" ", QString::SkipEmptyParts).size();
     for (const auto &reg : modRegs) {
       if (reg.first >= addr && reg.first < addr + size) {
-        setTreeItemMarked(item, 1);
+        Util::setTreeItemMarked(item, 1);
         int excess = (reg.first + reg.second) - (addr + size);
         if (excess == 0) continue;
 
@@ -309,7 +301,7 @@ void DisassemblyEditor::markModifiedRegions()
           auto *item2 = treeWidget->topLevelItem(row2);
           if (item2) {
             int size2 = item2->text(1).split(" ", QString::SkipEmptyParts).size();
-            setTreeItemMarked(item2, 1);
+            Util::setTreeItemMarked(item2, 1);
             excess -= size2;
             if (excess <= 0) break;
           }
