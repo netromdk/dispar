@@ -191,8 +191,13 @@ void BinaryWidget::onCustomContextMenuRequested(const QPoint &pos)
 
           // Only emit modified if new changes were made.
           if (section->isModified() && section->modifiedRegions() != priorModRegions) {
-            setup(); // Reload UI.
             emit modified();
+
+            auto ret = QMessageBox::question(this, "dispar", tr("Binary was modified. Reload UI?"),
+                                             QMessageBox::Yes | QMessageBox::No);
+            if (QMessageBox::Yes == ret) {
+              setup(); // Reload UI.
+            }
           }
         });
       }
