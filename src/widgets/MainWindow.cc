@@ -155,7 +155,7 @@ void MainWindow::openProject(const QString &projectFile)
   loadBinary(binary);
 }
 
-void MainWindow::saveProject()
+bool MainWindow::saveProject()
 {
   bool saveAs = (sender() == saveAsProjectAction);
 
@@ -170,7 +170,7 @@ void MainWindow::saveProject()
                                                 tr("Dispar project (*.dispar)"));
     if (file.isEmpty()) {
       QMessageBox::warning(this, "dispar", tr("Project not saved!"));
-      return;
+      return false;
     }
 
     ret = project->save(file);
@@ -181,11 +181,12 @@ void MainWindow::saveProject()
 
   if (!ret) {
     QMessageBox::critical(this, "dispar", tr("Could not save project!"));
-    return;
+    return false;
   }
 
   modified = false;
   setTitle(project->file());
+  return true;
 }
 
 void MainWindow::closeProject()
@@ -203,6 +204,7 @@ void MainWindow::closeProject()
   saveAsProjectAction->setEnabled(false);
   closeProjectAction->setEnabled(false);
   saveBinaryAction->setEnabled(false);
+  reloadBinaryAction->setEnabled(false);
 
   if (centralWidget()) {
     centralWidget()->deleteLater();
@@ -222,10 +224,9 @@ void MainWindow::openBinary()
   loadBinary(file);
 }
 
-void MainWindow::saveBinary()
+bool MainWindow::saveBinary()
 {
   auto &ctx = Context::get();
-
   if (ctx.backupEnabled()) {
     saveBackup(format->file());
   }
@@ -234,7 +235,7 @@ void MainWindow::saveBinary()
   if (!f.open(QIODevice::ReadWrite)) {
     QMessageBox::critical(this, "",
                           tr("Could not open binary file for writing: %1").arg(f.fileName()));
-    return;
+    return false;
   }
 
   qDebug() << "Committing modified regions to binary:" << format->file();
@@ -256,6 +257,14 @@ void MainWindow::saveBinary()
   binaryModified = false;
   saveBinaryAction->setEnabled(false);
   setTitle(Context::get().project()->file());
+  return true;
+}
+
+void MainWindow::reloadBinary()
+{
+  if (!checkSave()) return;
+  if (!checkSaveBinary()) return;
+  loadBinary(Context::get().project()->binary());
 }
 
 void MainWindow::onRecentProject()
@@ -322,6 +331,7 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
   saveAsProjectAction->setEnabled(true);
   closeProjectAction->setEnabled(true);
   saveBinaryAction->setEnabled(false);
+  reloadBinaryAction->setEnabled(true);
 
   Util::delayFunc([this, fmt] {
     auto file = fmt->file();
@@ -510,6 +520,10 @@ void MainWindow::createMenu()
                                          QKeySequence(Qt::ALT + Qt::CTRL + Qt::Key_S));
   saveBinaryAction->setEnabled(false);
 
+  reloadBinaryAction = fileMenu->addAction(tr("Reload binary"), this, SLOT(reloadBinary()),
+                                           QKeySequence(Qt::ALT + Qt::CTRL + Qt::Key_R));
+  reloadBinaryAction->setEnabled(false);
+
   fileMenu->addSeparator();
 
   saveProjectAction =
@@ -634,7 +648,23 @@ bool MainWindow::checkSave()
   auto ret = QMessageBox::question(this, "dispar", tr("Project modified. Save it first?"),
                                    QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
   if (QMessageBox::Yes == ret) {
-    saveProject();
+    return saveProject();
+  }
+  else if (QMessageBox::Cancel == ret) {
+    return false;
+  }
+
+  return true;
+}
+
+bool MainWindow::checkSaveBinary()
+{
+  if (!binaryModified) return true;
+
+  auto ret = QMessageBox::question(this, "dispar", tr("Binary modified. Save it first?"),
+                                   QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+  if (QMessageBox::Yes == ret) {
+    return saveBinary();
   }
   else if (QMessageBox::Cancel == ret) {
     return false;

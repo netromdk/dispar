@@ -28,10 +28,19 @@ protected:
 private slots:
   void newProject();
   void openProject(const QString &projectFile = QString());
-  void saveProject();
+
+  /// Saves/saves as project to file.
+  /** Returns true if it was saved to file and not canceled or failed to. */
+  bool saveProject();
+
   void closeProject();
   void openBinary();
-  void saveBinary();
+
+  /// Commits modified regions to the binary file.
+  /** Returns true if it was saved to file and not canceled or failed to. */
+  bool saveBinary();
+
+  void reloadBinary();
 
   void onRecentProject();
   void onRecentBinary();
@@ -51,9 +60,13 @@ private:
   void loadBinary(QString file);
   void saveBackup(const QString &file);
 
-  /// If modified ask to save.
-  /** Returns false if cancelled. */
+  /// If project is modified ask to save.
+  /** Returns false if canceled. */
   bool checkSave();
+
+  /// If binary is modified ask to save.
+  /** Returns false if canceled. */
+  bool checkSaveBinary();
 
   bool modified, binaryModified;
   QString startupFile;
@@ -61,7 +74,7 @@ private:
   QByteArray geometry;
 
   QAction *newProjectAction, *saveProjectAction, *saveAsProjectAction, *closeProjectAction,
-    *saveBinaryAction;
+    *saveBinaryAction, *reloadBinaryAction;
 
   std::unique_ptr<FormatLoader> loader;
   std::shared_ptr<Format> format;
