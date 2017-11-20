@@ -183,7 +183,9 @@ void BinaryWidget::onCustomContextMenuRequested(const QPoint &pos)
   const auto *userData = dynamic_cast<TextBlockUserData *>(cursor.block().userData());
   if (userData) {
     for (auto *section : object->sections()) {
-      if (section->type() == Section::Type::TEXT && section->hasAddress(userData->address)) {
+      if ((section->type() == Section::Type::TEXT ||
+           section->type() == Section::Type::SYMBOL_STUBS) &&
+          section->hasAddress(userData->address)) {
         menu.addAction(tr("Edit %1").arg(section->toString()), this, [this, section] {
           const auto priorModRegions = section->modifiedRegions();
           DisassemblyEditor editor(section, object, this);
