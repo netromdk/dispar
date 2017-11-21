@@ -199,3 +199,36 @@ TEST(Project, saveLoadTags)
   auto tags2 = p2->addressTags(addr);
   EXPECT_EQ(tags, tags2) << "Tags were not saved/loaded correctly";
 }
+
+TEST(Project, saveLoadModifiesRegions)
+{
+  Project p;
+
+  quint64 addr = 0x1234;
+  QByteArray data("1234");
+  p.addModifiedRegion(addr, data);
+
+  quint64 addr2 = 0x10304;
+  QByteArray data2("Hello, World!");
+  p.addModifiedRegion(addr2, data2);
+
+  auto &modRegs = p.modifiedRegions();
+  ASSERT_EQ(modRegs.size(), 2);
+  ASSERT_TRUE(modRegs.contains(addr));
+  EXPECT_EQ(modRegs[addr], data);
+  ASSERT_TRUE(modRegs.contains(addr2));
+  EXPECT_EQ(modRegs[addr2], data2);
+
+  auto file = tempFile();
+  auto path = file->fileName();
+  ASSERT_TRUE(p.save(path)) << "Could not save to: " << path;
+
+  auto p2 = Project::load(path);
+  ASSERT_NE(p2, nullptr) << "Could not load from: " << path;
+
+  auto modRegs2 = p2->modifiedRegions();
+  EXPECT_EQ(modRegs, modRegs2) << "Modified regions were not saved/loaded correctly";
+
+  p2->clearModifiedRegions();
+  EXPECT_EQ(p2->modifiedRegions().size(), 0);
+}

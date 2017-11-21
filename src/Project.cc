@@ -10,7 +10,7 @@ namespace {
 
 static constexpr int PROJECT_VERSION = 1;
 
-} // anon
+} // namespace
 
 Project::Project()
 {
@@ -73,6 +73,24 @@ std::unique_ptr<Project> Project::load(const QString &file)
     }
   }
 
+  if (obj.contains("modifiedRegions")) {
+    const auto tmp = obj["modifiedRegions"];
+    if (!tmp.isObject()) return nullptr;
+
+    const auto modsObj = tmp.toObject();
+    for (const auto &key : modsObj.keys()) {
+      bool ok;
+      auto const addr = key.toLongLong(&ok);
+      if (!ok) return nullptr;
+
+      const auto val = modsObj[key];
+      if (!val.isString()) return nullptr;
+
+      const auto data = QByteArray::fromHex(val.toString().toUtf8());
+      project->addModifiedRegion(addr, data);
+    }
+  }
+
   // Set where file was loaded from.
   project->file_ = file;
   return project;
@@ -96,6 +114,12 @@ bool Project::save(const QString &path)
     tagsObj[QString::number(addr)] = QJsonArray::fromStringList(addressTags_[addr]);
   }
   obj["addressTags"] = tagsObj;
+
+  QJsonObject modsObj;
+  for (const auto addr : modifiedRegions_.keys()) {
+    modsObj[QString::number(addr)] = QString::fromUtf8(modifiedRegions_[addr].toHex());
+  }
+  obj["modifiedRegions"] = modsObj;
 
   QJsonDocument doc;
   doc.setObject(obj);
@@ -189,4 +213,19 @@ bool Project::removeAddressTags(const QStringList &tags)
   }
 
   return removed;
+}
+
+const QMap<quint64, QByteArray> &Project::modifiedRegions() const
+{
+  return modifiedRegions_;
+}
+
+void Project::addModifiedRegion(const quint64 address, const QByteArray &data)
+{
+  modifiedRegions_[address] = data;
+}
+
+void Project::clearModifiedRegions()
+{
+  modifiedRegions_.clear();
 }

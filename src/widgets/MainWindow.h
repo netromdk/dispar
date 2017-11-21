@@ -13,6 +13,7 @@ class QAction;
 class Format;
 class FormatLoader;
 class BinaryWidget;
+class BinaryObject;
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -67,6 +68,9 @@ private:
   /// If binary is modified ask to save.
   /** Returns false if canceled. */
   bool checkSaveBinary();
+
+  /// Apply any saved modified regions from project to \p object.
+  void applyModifiedRegions(BinaryObject *object);
 
   bool modified, binaryModified;
   QString startupFile;

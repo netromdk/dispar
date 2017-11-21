@@ -1,7 +1,9 @@
 #ifndef DISPAR_PROJECT_H
 #define DISPAR_PROJECT_H
 
+#include <QByteArray>
 #include <QHash>
+#include <QMap>
 #include <QObject>
 #include <QString>
 #include <QStringList>
@@ -48,6 +50,16 @@ public:
   /** Returns true if anything was removed. */
   bool removeAddressTags(const QStringList &tags);
 
+  /// All modified regions.
+  const QMap<quint64, QByteArray> &modifiedRegions() const;
+
+  /// Add modified region \p data at absolute \p address.
+  /** This is only used to be able to save to project file. */
+  void addModifiedRegion(const quint64 address, const QByteArray &data);
+
+  /// Remove all modified regions from project.
+  void clearModifiedRegions();
+
 signals:
   /// Whenever something is modified in the project this signal is emitted.
   void modified();
@@ -58,6 +70,10 @@ signals:
 private:
   QString binary_, file_;
   QHash<quint64, QStringList> addressTags_;
+
+  // Absolute binary address and the data to write from there. The use of QMap is intentional for
+  // sorted of keys to write data linearly.
+  QMap<quint64, QByteArray> modifiedRegions_;
 };
 
 #endif // DISPAR_PROJECT_H

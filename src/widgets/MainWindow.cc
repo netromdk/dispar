@@ -164,22 +164,33 @@ bool MainWindow::saveProject()
 
   auto ask = project->file().isEmpty() || saveAs;
 
-  bool ret;
+  QString saveToFile; ///< Empty means use existing file name.
   if (ask) {
-    QString file = QFileDialog::getSaveFileName(this, tr("Save Project"), QDir::homePath(),
-                                                tr("Dispar project (*.dispar)"));
-    if (file.isEmpty()) {
+    saveToFile = QFileDialog::getSaveFileName(this, tr("Save Project"), QDir::homePath(),
+                                              tr("Dispar project (*.dispar)"));
+    if (saveToFile.isEmpty()) {
       QMessageBox::warning(this, "dispar", tr("Project not saved!"));
       return false;
     }
-
-    ret = project->save(file);
-  }
-  else {
-    ret = project->save();
   }
 
-  if (!ret) {
+  // Attach all modified regions before saving.
+  project->clearModifiedRegions();
+  for (const auto *object : format->objects()) {
+    for (const auto *section : object->sections()) {
+      if (!section->isModified()) {
+        continue;
+      }
+
+      const auto &data = section->data();
+      for (const auto &region : section->modifiedRegions()) {
+        project->addModifiedRegion(section->offset() + region.first,
+                                   data.mid(region.first, region.second));
+      }
+    }
+  }
+
+  if (!project->save(saveToFile)) {
     QMessageBox::critical(this, "dispar", tr("Could not save project!"));
     return false;
   }
@@ -380,6 +391,8 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
       object = objects[idx];
     }
     Q_ASSERT(object);
+
+    applyModifiedRegions(object);
 
     QElapsedTimer elapsedTimer;
     elapsedTimer.start();
@@ -671,4 +684,36 @@ bool MainWindow::checkSaveBinary()
   }
 
   return true;
+}
+
+void MainWindow::applyModifiedRegions(BinaryObject *object)
+{
+  auto project = Context::get().project();
+  const auto &modifiedRegions = project->modifiedRegions();
+  if (modifiedRegions.isEmpty()) {
+    return;
+  }
+
+  bool match = false;
+  for (auto *section : object->sections()) {
+    for (const auto addr : modifiedRegions.keys()) {
+      const auto &data = modifiedRegions[addr];
+      if (addr >= section->offset() && addr + data.size() < section->offset() + section->size()) {
+        // Make sure the region hasn't already been written to the binary. The binary thus wouldn't
+        // be modified in that case.
+        const auto pos = addr - section->offset();
+        if (data != section->data().mid(pos, data.size())) {
+          section->setSubData(data, pos);
+          match = true;
+        }
+      }
+    }
+  }
+
+  // The modified regions are no longer needed in the project.
+  project->clearModifiedRegions();
+
+  if (match) {
+    onBinaryModified();
+  }
 }

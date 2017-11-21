@@ -599,7 +599,7 @@ void BinaryWidget::setup()
       const auto addr = offset + section->address();
       const auto string = reader.string();
       appendString(addr, offset, string);
-      addSymbolToList(reader.string(), addr, stringList);
+      addSymbolToList(string, addr, stringList);
     }
 
     qDebug() << " >" << sectionTimer.restart() << "ms";
