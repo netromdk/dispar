@@ -87,3 +87,34 @@ TEST(CStringReader, readAll)
     EXPECT_EQ(strings[2], "three");
   }
 }
+
+TEST(CStringReader, dataWithConsecutiveNullBytes)
+{
+  QFile f(":strings.bin");
+  ASSERT_TRUE(f.open(QIODevice::ReadOnly));
+  const auto data = f.readAll();
+  f.close();
+
+  {
+    CStringReader reader(data);
+    ASSERT_TRUE(reader.next());
+    EXPECT_EQ(reader.string(), "_InternalFlxGetInitStatus");
+    ASSERT_TRUE(reader.next());
+    EXPECT_EQ(reader.string(), "_Java_com_macrovision_flexlm_HostId_lGetNativeHostId");
+    ASSERT_TRUE(reader.next());
+    EXPECT_EQ(reader.string(), "_NSGLGetProcAddress");
+    ASSERT_TRUE(reader.next());
+    EXPECT_EQ(reader.string(), "_Ox3496");
+    ASSERT_FALSE(reader.next());
+  }
+
+  {
+    CStringReader reader(data);
+    const auto strings = reader.readAll();
+    ASSERT_EQ(strings.size(), 4);
+    EXPECT_EQ(strings[0], "_InternalFlxGetInitStatus");
+    EXPECT_EQ(strings[1], "_Java_com_macrovision_flexlm_HostId_lGetNativeHostId");
+    EXPECT_EQ(strings[2], "_NSGLGetProcAddress");
+    EXPECT_EQ(strings[3], "_Ox3496");
+  }
+}

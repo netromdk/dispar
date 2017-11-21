@@ -8,9 +8,6 @@ CStringReader::CStringReader(const QByteArray &data) : data(data), pos(0), offse
 
 bool CStringReader::next()
 {
-  auto size = data.size();
-  if (pos == size - 1) return false;
-
   // Clear when trying to read next string, and jump over the \0.
   if (!string_.isEmpty()) {
     string_.clear();
@@ -18,12 +15,23 @@ bool CStringReader::next()
     offset_ = pos;
   }
 
-  // Count the length of the string until \0.
-  int len = 0;
-  for (; pos < size && data[pos] != 0; pos++, len++)
-    ;
+  auto it = data.cbegin() + offset_;
+  if (it >= data.cend()) return false;
 
-  string_ = QString::fromUtf8(data.mid(offset_, len));
+  // Read until null byte but skip for empty strings until at least one character is read or the end
+  // is reached.
+  for (; it != data.cend(); it++, pos++) {
+    const auto ch = *it;
+    if (ch == 0) {
+      if (!string_.isEmpty()) {
+        break;
+      }
+    }
+    else {
+      string_ += ch;
+    }
+  }
+
   return !string_.isEmpty();
 }
 
