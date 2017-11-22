@@ -1,6 +1,7 @@
 #ifndef DISPAR_CONTEXT_H
 #define DISPAR_CONTEXT_H
 
+#include <QHash>
 #include <QObject>
 
 #include <memory>
@@ -30,6 +31,15 @@ public:
   int backupAmount() const;
   void setBackupAmount(int amount);
 
+  void setGeometry(const QString &key, const QByteArray &geometry);
+  QByteArray geometry(const QString &key) const;
+
+  const QStringList &recentProjects();
+  void addRecentProject(const QString &project);
+
+  const QStringList &recentBinaries();
+  void addRecentBinary(const QString &binary);
+
   void loadSettings();
   void saveSettings();
 
@@ -57,6 +67,9 @@ private:
 
   bool backupEnabled_;
   int backupAmount_;
+
+  QHash<QString, QByteArray> geometries;
+  QStringList recentProjects_, recentBinaries_;
 
   std::unique_ptr<Project> project_;
 };

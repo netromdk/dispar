@@ -55,7 +55,6 @@ private slots:
 
 private:
   void setTitle(const QString &file = QString());
-  void readSettings();
   void createLayout();
   void createMenu();
   void loadBinary(QString file);
@@ -74,8 +73,6 @@ private:
 
   bool modified, binaryModified;
   QString startupFile;
-  QStringList recentProjects, recentBinaries;
-  QByteArray geometry;
 
   QAction *newProjectAction, *saveProjectAction, *saveAsProjectAction, *closeProjectAction,
     *saveBinaryAction, *reloadBinaryAction;

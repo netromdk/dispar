@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QFile>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 
@@ -78,6 +79,56 @@ void Context::setBackupAmount(int amount)
   backupAmount_ = amount;
 }
 
+void Context::setGeometry(const QString &key, const QByteArray &geometry)
+{
+  geometries[key] = geometry;
+}
+
+QByteArray Context::geometry(const QString &key) const
+{
+  return geometries.value(key);
+}
+
+const QStringList &Context::recentProjects()
+{
+  for (int i = recentProjects_.size() - 1; i >= 0; i--) {
+    if (!QFile::exists(recentProjects_[i])) {
+      recentProjects_.removeAt(i);
+    }
+  }
+  return recentProjects_;
+}
+
+void Context::addRecentProject(const QString &project)
+{
+  if (!recentProjects_.contains(project)) {
+    recentProjects_ << project;
+  }
+  if (recentProjects_.size() > 10) {
+    recentProjects_.removeFirst();
+  }
+}
+
+const QStringList &Context::recentBinaries()
+{
+  for (int i = recentBinaries_.size() - 1; i >= 0; i--) {
+    if (!QFile::exists(recentBinaries_[i])) {
+      recentBinaries_.removeAt(i);
+    }
+  }
+  return recentBinaries_;
+}
+
+void Context::addRecentBinary(const QString &binary)
+{
+  if (!recentBinaries_.contains(binary)) {
+    recentBinaries_ << binary;
+  }
+  if (recentBinaries_.size() > 10) {
+    recentBinaries_.removeFirst();
+  }
+}
+
 void Context::loadSettings()
 {
   auto path = settingsPath();
@@ -118,6 +169,45 @@ void Context::loadSettings()
       }
     }
   }
+
+  if (obj.contains("geometry")) {
+    const auto geometryValue = obj["geometry"];
+    if (geometryValue.isObject()) {
+      const auto geometryObj = geometryValue.toObject();
+      for (const auto &key : geometryObj.keys()) {
+        const auto val = geometryObj[key];
+        if (!val.isString()) continue;
+
+        const auto geometry = QByteArray::fromHex(val.toString().toUtf8());
+        setGeometry(key, geometry);
+      }
+    }
+  }
+
+  if (obj.contains("recent")) {
+    const auto recentValue = obj["recent"];
+    if (recentValue.isObject()) {
+      const auto recentObj = recentValue.toObject();
+
+      if (recentObj.contains("projects")) {
+        const auto projectsValue = recentObj["projects"];
+        if (projectsValue.isArray()) {
+          for (const auto &value : projectsValue.toArray().toVariantList()) {
+            addRecentProject(value.toString());
+          }
+        }
+      }
+
+      if (recentObj.contains("binaries")) {
+        const auto binariesValue = recentObj["binaries"];
+        if (binariesValue.isArray()) {
+          for (const auto &value : binariesValue.toArray().toVariantList()) {
+            addRecentBinary(value.toString());
+          }
+        }
+      }
+    }
+  }
 }
 
 void Context::saveSettings()
@@ -129,10 +219,21 @@ void Context::saveSettings()
   backupObj["enabled"] = backupEnabled();
   backupObj["amount"] = backupAmount();
 
+  QJsonObject geometryObj;
+  for (const auto &key : geometries.keys()) {
+    geometryObj[key] = QString::fromUtf8(geometries[key].toHex());
+  }
+
+  QJsonObject recentObj;
+  recentObj["projects"] = QJsonArray::fromStringList(recentProjects());
+  recentObj["binaries"] = QJsonArray::fromStringList(recentBinaries());
+
   QJsonObject obj;
   obj["showMachineCode"] = showMachineCode();
   obj["disassemblerSyntax"] = static_cast<int>(disassemblerSyntax());
   obj["backup"] = backupObj;
+  obj["geometry"] = geometryObj;
+  obj["recent"] = recentObj;
 
   QJsonDocument doc;
   doc.setObject(obj);

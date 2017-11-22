@@ -31,17 +31,13 @@ MainWindow::MainWindow(const QString &file)
   : modified(false), binaryModified(false), startupFile(file)
 {
   setTitle();
-  readSettings();
   createLayout();
   createMenu();
 }
 
 MainWindow::~MainWindow()
 {
-  QSettings settings;
-  settings.setValue("MainWindow.geometry", saveGeometry());
-  settings.setValue("MainWindow.recentProjects", recentProjects);
-  settings.setValue("MainWindow.recentBinaries", recentBinaries);
+  Context::get().setGeometry("MainWindow", saveGeometry());
 }
 
 void MainWindow::showEvent(QShowEvent *event)
@@ -52,7 +48,7 @@ void MainWindow::showEvent(QShowEvent *event)
   if (!first) return;
   first = true;
 
-  if (!restoreGeometry(geometry)) {
+  if (!restoreGeometry(Context::get().geometry("MainWindow"))) {
     Util::resizeRatioOfScreen(this, 0.7);
     Util::centerWidget(this);
   }
@@ -146,12 +142,7 @@ void MainWindow::openProject(const QString &projectFile)
   connect(project, &Project::modified, this, &MainWindow::onProjectModified);
 
   // Add recent file.
-  if (!recentProjects.contains(file)) {
-    recentProjects << file;
-  }
-  if (recentProjects.size() > 10) {
-    recentProjects.removeFirst();
-  }
+  Context::get().addRecentProject(file);
 
   loadBinary(binary);
 }
@@ -349,12 +340,7 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
     auto file = fmt->file();
 
     // Add recent file.
-    if (!recentBinaries.contains(file)) {
-      recentBinaries << file;
-    }
-    if (recentBinaries.size() > 10) {
-      recentBinaries.removeFirst();
-    }
+    Context::get().addRecentBinary(file);
 
     auto objects = fmt->objects();
     BinaryObject *object = nullptr;
@@ -461,34 +447,6 @@ void MainWindow::setTitle(const QString &file)
                    .arg(binaryModified ? " (" + tr("BINARY CHANGES PENDING") + ")" : ""));
 }
 
-void MainWindow::readSettings()
-{
-  QSettings settings;
-  geometry = settings.value("MainWindow.geometry").toByteArray();
-
-  // Load recent projects.
-  recentProjects = settings.value("MainWindow.recentProjects", QStringList()).toStringList();
-  for (int i = recentProjects.size() - 1; i >= 0; i--) {
-    if (!QFile::exists(recentProjects[i])) {
-      recentProjects.removeAt(i);
-    }
-  }
-  if (recentProjects.size() > 10) {
-    recentProjects = recentProjects.mid(recentProjects.size() - 10);
-  }
-
-  // Load recent binaries.
-  recentBinaries = settings.value("MainWindow.recentBinaries", QStringList()).toStringList();
-  for (int i = recentBinaries.size() - 1; i >= 0; i--) {
-    if (!QFile::exists(recentBinaries[i])) {
-      recentBinaries.removeAt(i);
-    }
-  }
-  if (recentBinaries.size() > 10) {
-    recentBinaries = recentBinaries.mid(recentBinaries.size() - 10);
-  }
-}
-
 void MainWindow::createLayout()
 {
   auto *label = new QLabel(tr("Open a project file or load a binary!"));
@@ -504,6 +462,7 @@ void MainWindow::createLayout()
 
 void MainWindow::createMenu()
 {
+  auto &ctx = Context::get();
   auto *fileMenu = menuBar()->addMenu(tr("&File"));
 
   newProjectAction =
@@ -511,6 +470,7 @@ void MainWindow::createMenu()
   newProjectAction->setEnabled(false);
 
   fileMenu->addAction(tr("Open project"), this, SLOT(openProject()), QKeySequence::Open);
+  const auto recentProjects = ctx.recentProjects();
   if (!recentProjects.isEmpty()) {
     auto *recentMenu = fileMenu->addMenu(tr("Open recent projects"));
     for (const auto &file : recentProjects) {
@@ -523,6 +483,7 @@ void MainWindow::createMenu()
   fileMenu->addAction(tr("Open binary"), this, SLOT(openBinary()),
                       QKeySequence(Qt::ALT + Qt::CTRL + Qt::Key_O));
 
+  const auto recentBinaries = ctx.recentBinaries();
   if (!recentBinaries.isEmpty()) {
     auto *recentMenu = fileMenu->addMenu(tr("Open recent binaries"));
     for (const auto &file : recentBinaries) {
