@@ -179,6 +179,23 @@ void Util::centerWidget(QWidget *widget)
   widget->move(QApplication::desktop()->screen()->rect().center() - widget->rect().center());
 }
 
+void Util::resizeRatioOfScreen(QWidget *widget, float percentage, const QSize &minimum)
+{
+  auto rect = QApplication::desktop()->availableGeometry();
+  rect.setWidth(static_cast<float>(rect.width()) * percentage);
+  rect.setHeight(static_cast<float>(rect.height()) * percentage);
+
+  auto size = rect.size();
+  if (size.width() < minimum.width()) {
+    size.setWidth(minimum.width());
+  }
+  if (size.height() < minimum.height()) {
+    size.setHeight(minimum.height());
+  }
+
+  widget->resize(size);
+}
+
 QString Util::addrDataString(quint64 addr, QByteArray data)
 {
   // Pad data to a multiple of 16.

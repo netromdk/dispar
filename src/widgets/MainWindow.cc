@@ -53,7 +53,8 @@ void MainWindow::showEvent(QShowEvent *event)
   first = true;
 
   if (!restoreGeometry(geometry)) {
-    showMaximized();
+    Util::resizeRatioOfScreen(this, 0.7);
+    Util::centerWidget(this);
   }
 
   // Load specified files or open file dialog.

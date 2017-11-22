@@ -33,6 +33,11 @@ public:
 
   static void centerWidget(QWidget *widget);
 
+  /// Resize \p widget to \p percentage of the default screen.
+  /** Percentage is ]0, 1]. */
+  static void resizeRatioOfScreen(QWidget *widget, float percentage,
+                                  const QSize &minimum = QSize(800, 600));
+
   /**
    * Generate string of format:
    *
