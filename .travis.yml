@@ -1,4 +1,4 @@
-# Not using "cpp" because the defaults are really old.
+# Not using "cpp" because the default tools are so old!
 language: generic
 
 matrix:
@@ -15,6 +15,32 @@ matrix:
       env:
         - CC=gcc-6
         - CXX=g++-6
+
+    # works on Precise and Trusty
+    - os: linux
+      sudo: required
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+      env:
+        - CC=gcc-7
+        - CXX=g++-7
+
+    # # works on Trusty
+    # - os: linux
+    #   sudo: required
+    #   addons:
+    #     apt:
+    #       sources:
+    #         - llvm-toolchain-trusty-5.0
+    #       packages:
+    #         - clang-5.0
+    #   env:
+    #     - CC=clang-5.0
+    #     - CXX=clang++-5.0
 
     # Disabled Mac for now because it's too slow to allocate and sometimes times out.
     # - os: osx
@@ -41,4 +67,4 @@ before_script:
   - cmake -DDISABLE_CCACHE=ON ..
 
 script:
-  - VERBOSE=1 make && ./bin/tests
+  - VERBOSE=1 make -j2 && ./bin/tests
