@@ -1,4 +1,5 @@
-language: cpp
+# Not using "cpp" because the defaults are really old.
+language: generic
 
 matrix:
   include:
@@ -12,18 +13,21 @@ matrix:
           packages:
             - g++-6
       env:
-        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+        - CC=gcc-6
+        - CXX=g++-6
 
-    - os: osx
-      compiler: clang
-      osx_image: xcode9.1
-      env:
-        - MATRIX_EVAL="CC=clang && CXX=clang++"
+    # Disabled Mac for now because it's too slow to allocate and sometimes times out.
+    # - os: osx
+    #   compiler: clang
+    #   osx_image: xcode9.1
+    #   env:
+    #     - MATRIX_EVAL="CC=clang && CXX=clang++"
 
 before_install:
   - echo $LANG
   - echo $LC_ALL
-  - eval "${MATRIX_EVAL}"
+  - echo $CC
+  - echo $CXX
   - ./scripts/travis/before_install.sh
 
 install:
@@ -32,8 +36,9 @@ install:
 
 before_script:
   - cmake --system-information info.txt && cat info.txt
-  - cmake .
+  - mkdir build
+  - cd build
+  - cmake -DDISABLE_CCACHE=ON ..
 
 script:
-  - VERBOSE=1 make -j2
-  - ./bin/tests
+  - VERBOSE=1 make && ./bin/tests
