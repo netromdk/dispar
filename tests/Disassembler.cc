@@ -136,7 +136,7 @@ TEST(Disassembler, disassembleText)
     ASSERT_NE(res, nullptr);
     ASSERT_EQ(res->count(), 3);
 
-    for (int i = 0; i < res->count(); i++) {
+    for (std::size_t i = 0; i < res->count(); i++) {
       auto *instr = res->instructions(i);
       ASSERT_NE(instr, nullptr);
       EXPECT_EQ(std::string(instr->mnemonic), std::string("nop")) << instr->mnemonic;

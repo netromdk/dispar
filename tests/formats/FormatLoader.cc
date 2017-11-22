@@ -37,10 +37,10 @@ TEST(FormatLoader, failedCouldNotParse)
   // Put MachO magic code: 0xFEEDFACE
 
   QByteArray data;
-  data.append(0xCE);
-  data.append(0xFA);
-  data.append(0xED);
-  data.append(0xFE);
+  data.append(static_cast<char>(0xCE));
+  data.append(static_cast<char>(0xFA));
+  data.append(static_cast<char>(0xED));
+  data.append(static_cast<char>(0xFE));
 
   auto file = tempFile(data);
   FormatLoader loader(file->fileName());

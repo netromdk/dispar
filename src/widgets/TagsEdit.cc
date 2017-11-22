@@ -11,7 +11,7 @@
 #include <QMessageBox>
 #include <QVBoxLayout>
 
-TagsEdit::TagsEdit() : address(0)
+TagsEdit::TagsEdit() : address_(0)
 {
   itemDelegate = new TagItemDelegate;
   createLayout();
@@ -24,7 +24,7 @@ TagsEdit::~TagsEdit()
 
 void TagsEdit::setAddress(quint64 address)
 {
-  this->address = address;
+  address_ = address;
 
   auto *project = Context::get().project();
   connect(project, &Project::tagsChanged, this, &TagsEdit::updateTags);
@@ -59,7 +59,7 @@ void TagsEdit::onReturnPressed()
   if (tag.isEmpty()) return;
 
   auto project = Context::get().project();
-  if (!project->addAddressTag(tag, address)) {
+  if (!project->addAddressTag(tag, address_)) {
     QMessageBox::warning(this, "dispar", tr("Tag is already used!"));
     return;
   }
@@ -70,7 +70,7 @@ void TagsEdit::onReturnPressed()
 void TagsEdit::updateTags()
 {
   listWidget->clear();
-  listWidget->addItems(Context::get().project()->addressTags(address));
+  listWidget->addItems(Context::get().project()->addressTags(address_));
 }
 
 void TagsEdit::createLayout()

@@ -40,12 +40,12 @@ void DisassemblerDialog::onConvert()
     return;
   }
 
-  quint64 offset = offsetEdit->text().toULongLong(nullptr, 16);
+  const auto textOffset = offsetEdit->text().toULongLong(nullptr, 16);
 
   auto obj = std::make_unique<BinaryObject>(cpuType);
   Disassembler dis(*obj.get(), syntax);
 
-  auto result = dis.disassemble(text, offset);
+  auto result = dis.disassemble(text, textOffset);
   if (result) {
     QStringList lines;
     for (size_t i = 0; i < result->count(); i++) {

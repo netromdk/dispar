@@ -46,6 +46,6 @@ private:
   Type type_;
 };
 
-Q_DECLARE_METATYPE(std::shared_ptr<Format>);
+Q_DECLARE_METATYPE(std::shared_ptr<Format>)
 
 #endif // DISPAR_FORMAT_H

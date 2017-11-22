@@ -17,8 +17,7 @@ namespace {
 
 class ItemDelegate : public QStyledItemDelegate {
 public:
-  ItemDelegate(HexEditor *widget, QTreeWidget *tree, Section *section)
-    : widget(widget), tree(tree), section(section)
+  ItemDelegate(QTreeWidget *tree, Section *section) : tree(tree), section(section)
   {
   }
 
@@ -87,7 +86,6 @@ public:
   }
 
 private:
-  HexEditor *widget;
   QTreeWidget *tree;
   Section *section;
 };
@@ -129,7 +127,7 @@ void HexEditor::createLayout()
   treeWidget->setColumnWidth(1, 200);
   treeWidget->setColumnWidth(2, 200);
   treeWidget->setColumnWidth(3, 110);
-  treeWidget->setItemDelegate(new ItemDelegate(this, treeWidget, section));
+  treeWidget->setItemDelegate(new ItemDelegate(treeWidget, section));
   treeWidget->setMachineCodeColumns(QList<int>{1, 2});
   treeWidget->setCpuType(object->cpuType());
   treeWidget->setAddressColumn(0);

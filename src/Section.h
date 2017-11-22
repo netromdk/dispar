@@ -59,7 +59,7 @@ private:
   QByteArray data_;
   QList<QPair<int, int>> modifiedRegions_;
   QDateTime modified;
-  std::unique_ptr<Disassembler::Result> disasm;
+  std::unique_ptr<Disassembler::Result> disasm_;
 };
 
 #endif // DISPAR_SECTION_H

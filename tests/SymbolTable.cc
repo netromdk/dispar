@@ -24,8 +24,8 @@ TEST(SymbolTable, symbols)
   public:
     static void test(const SymbolTable &table)
     {
-      const auto &syms = table.symbols();
-      ASSERT_EQ(syms.size(), 1);
+      const auto &syms2 = table.symbols();
+      ASSERT_EQ(syms2.size(), 1);
     }
   };
   A::test(st);

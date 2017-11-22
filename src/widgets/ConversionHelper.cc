@@ -48,7 +48,7 @@ void ConversionHelper::onTextEdited(const QString &text)
     // ACSII
     else if (i == 3) {
       if (text.size() == 1) {
-        val = (int) (char) text[0].toLatin1();
+        val = static_cast<quint64>(text[0].toLatin1());
       }
     }
   }

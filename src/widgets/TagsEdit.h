@@ -29,7 +29,7 @@ private:
   void createLayout();
   void removeTag();
 
-  quint64 address;
+  quint64 address_;
   QListWidget *listWidget;
   QLineEdit *lineEdit;
   TagItemDelegate *itemDelegate;

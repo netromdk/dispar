@@ -13,21 +13,21 @@
 
 class SignalSpy {
 public:
-  SignalSpy(const char *file, int line) : file(file), line(line), count_(0), expect(true)
+  SignalSpy(const char *file, int line) : file(file), line(line), count_(0), expect_(true)
   {
   }
 
   ~SignalSpy()
   {
-    if (expect != wasTriggered()) {
+    if (expect_ != wasTriggered()) {
       ADD_FAILURE_AT(file, line) << "SignalSpy was triggered: " << wasTriggered()
-                                 << " Expect trigger: " << expect;
+                                 << " Expect trigger: " << expect_;
     }
   }
 
   void setExpect(bool expect)
   {
-    this->expect = expect;
+    expect_ = expect;
   }
 
   bool wasTriggered()
@@ -90,7 +90,7 @@ public:
 private:
   const char *file;
   int line, count_;
-  bool expect;
+  bool expect_;
 };
 
 #define SIGNAL_SPY_ZERO(instance, mf) SignalSpy::zero(__FILE__, __LINE__, instance, mf);

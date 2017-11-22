@@ -4,7 +4,7 @@
 
 Section::Section(Section::Type type, const QString &name, quint64 addr, quint64 size,
                  quint32 offset)
-  : type_{type}, name_{name}, addr{addr}, size_{size}, offset_{offset}, disasm(nullptr)
+  : type_{type}, name_{name}, addr{addr}, size_{size}, offset_{offset}, disasm_(nullptr)
 {
 }
 
@@ -69,9 +69,9 @@ QString Section::toString() const
   return QString("%1 (%2)").arg(name()).arg(typeName(type()));
 }
 
-bool Section::hasAddress(quint64 addr) const
+bool Section::hasAddress(quint64 address) const
 {
-  return addr >= address() && addr < address() + size();
+  return address >= this->address() && address < this->address() + size();
 }
 
 const QByteArray &Section::data() const
@@ -116,10 +116,10 @@ const QList<QPair<int, int>> &Section::modifiedRegions() const
 
 void Section::setDisassembly(std::unique_ptr<Disassembler::Result> disasm)
 {
-  this->disasm = std::move(disasm);
+  disasm_ = std::move(disasm);
 }
 
 Disassembler::Result *Section::disassembly() const
 {
-  return disasm.get();
+  return disasm_.get();
 }

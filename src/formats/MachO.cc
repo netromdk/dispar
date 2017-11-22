@@ -818,7 +818,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
     if (strTable) {
       auto &data = strTable->data();
       auto &symbols = symTable.symbols();
-      for (int h = 0; h < symbols.size(); h++) {
+      for (std::size_t h = 0; h < symbols.size(); h++) {
         auto &symbol = symbols[h];
         QByteArray tmp;
         for (int i = symbol.index(); i < data.size(); i++) {
@@ -841,7 +841,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
       quint64 stubAddr = stubs->address();
       const auto &symbols = symTable.symbols();
       auto &dynsymbols = dynsymTable.symbols();
-      for (int h = 0; h < dynsymbols.size(); h++) {
+      for (std::size_t h = 0; h < dynsymbols.size(); h++) {
         auto &symbol = dynsymbols[h];
         auto idx = symbol.index();
         if (idx < symnum) {

@@ -22,8 +22,9 @@ namespace {
 
 class ItemDelegate : public QStyledItemDelegate {
 public:
-  ItemDelegate(DisassemblyEditor *editor, QTreeWidget *tree, BinaryObject *object, Section *section)
-    : editor(editor), tree(tree), object(object), section(section)
+  ItemDelegate(DisassemblyEditor *disasmEditor, QTreeWidget *tree, BinaryObject *object,
+               Section *section)
+    : disasmEditor(disasmEditor), tree(tree), object(object), section(section)
   {
   }
 
@@ -92,7 +93,7 @@ public:
       item->setText(2, lines.join("   "));
 
       if (result->count() > 1) {
-        this->editor->showUpdateButton();
+        disasmEditor->showUpdateButton();
         QMessageBox::information(nullptr, "",
                                  tr("Changes implied new instructions.") + "\n" +
                                    tr("Disassemble again for clear representation."));
@@ -101,7 +102,7 @@ public:
   }
 
 private:
-  DisassemblyEditor *editor;
+  DisassemblyEditor *disasmEditor;
   QTreeWidget *tree;
   BinaryObject *object;
   Section *section;
@@ -292,9 +293,10 @@ void DisassemblyEditor::markModifiedRegions()
     addr = item->text(0).toULongLong(nullptr, 16) - offset;
     int size = item->text(1).split(" ", QString::SkipEmptyParts).size();
     for (const auto &reg : modRegs) {
-      if (reg.first >= addr && reg.first < addr + size) {
+      const auto first = static_cast<quint64>(reg.first);
+      if (first >= addr && first < addr + size) {
         Util::setTreeItemMarked(item, 1);
-        int excess = (reg.first + reg.second) - (addr + size);
+        auto excess = static_cast<quint64>(reg.first + reg.second) - (addr + size);
         if (excess == 0) continue;
 
         for (int row2 = row + 1; row2 < rows; row2++) {
