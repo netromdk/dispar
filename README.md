@@ -36,6 +36,7 @@ Located in the [lib](lib) folder:
 
 # Building The Program
 ```
+% ./init_repo.sh        # Only needed after first git clone!
 % mkdir build
 % cd build
 % cmake ..
