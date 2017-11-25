@@ -40,4 +40,12 @@ macro(add_dispar_executable name)
   if (WIN32)
     prepare_win_executable(${name})
   endif()
+
+  # Strip *nix binaries in Release/Minsizerel.
+  if (NOT WIN AND ${CMAKE_BUILD_TYPE} MATCHES "Release" OR ${CMAKE_BUILD_TYPE} MATCHES "Minsizerel")
+    add_custom_command(
+      TARGET ${name}
+      POST_BUILD COMMAND ${CMAKE_STRIP} $<TARGET_FILE:${name}>
+      )
+  endif()
 endmacro()
