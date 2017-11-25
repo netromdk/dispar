@@ -64,7 +64,7 @@ before_script:
   - cmake --system-information info.txt && cat info.txt
   - mkdir build
   - cd build
-  - cmake -DDISABLE_CCACHE=ON ..
+  - cmake -DBUILD_TESTS=ON ..
 
 script:
   - VERBOSE=1 make -j2 && ./bin/tests
