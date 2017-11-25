@@ -61,7 +61,7 @@ else()
 endif()
 
 # Detect if ccache is installed and use if it is the case.
-if (NOT DISABLE_CCACHE)
+if (USE_CCACHE)
   find_program(CCACHE ccache)
   if (CCACHE)
     # Specify to launch ccache for compilation and linking globally.

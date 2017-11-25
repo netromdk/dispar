@@ -3,11 +3,12 @@
 # dispar
 Dispar is short for "[Dis]assemling binary [Par]ser" written in C++14. The whole concept of the project is to load binaries, like executables, libraries, core dumps etc., and do analysis of their structure and data; most notably their strings, symbols, and functions. Currently, it supports only 32+64 bit [Mach-O](https://en.wikipedia.org/wiki/Mach-O) binaries (including [universal binaries](https://en.wikipedia.org/wiki/Universal_binary)) but there are plans for supporting [ELF](https://en.wikipedia.org/wiki/Executable_and_Linkable_Format) and [PE/PE+](https://en.wikipedia.org/wiki/Portable_Executable) later on.
 
-# Table of contents
+# Table of Contents
 * [Dependencies](#dependencies)
   * [External](#external)
   * [Internal](#internal)
 * [Building The Program](#building-the-program)
+  * [CCache](#ccache)
 * [Testing](#testing)
 * [Debugging](#debugging)
 * [Code Coverage](#code-coverage)
@@ -43,24 +44,30 @@ Located in the [lib](lib) folder:
 
 This will create the dispar executable in "./bin/".
 
+## CCache
+If you find yourself building and rebuilding often then ccache can speed up both compilation and linking significantly. For this project I get ~15X speed up.
+```
+% cmake -DUSE_CCACHE=ON .
+% make
+```
+
+Note that you will get the speed up after compiling the second time because the first time ccache hasn't cached the compiled objects yet.
+
 **NOTE: In the following all cmake invocations assume they're being run from the "./build" folder!**
 
 # Testing
-A suite of software tests can be run in two ways:
+A suite of software tests can be run like this:
 ```
-% make && make test
-```
-
-Or:
-```
-% make && ./bin/tests
+% cmake -DBUILD_TESTS=ON .
+% make
+% ./bin/tests
 ```
 
 # Debugging
 When debugging a bug or a weird scenario, it is often a good idea to use Clang's [Address Sanitizer](https://clang.llvm.org/docs/AddressSanitizer.html) that is great at detecting memory errors:
 
 ```
-% cmake -DADDRESS_SANITIZER=ON ..
+% cmake -DADDRESS_SANITIZER=ON .
 % make
 % # Run program or tests from terminal to get stdout/stderr output
 ```
@@ -69,7 +76,7 @@ Note that enabling `ADDRESS_SANITIZER` will automatically switch to debug build 
 # Code Coverage
 Code coverage via tests can be run via the following (*Clang 4+ is required*):
 ```
-% cmake -DCODE_COVERAGE=ON ..
+% cmake -DCODE_COVERAGE=ON .
 % make codecov
 ```
 

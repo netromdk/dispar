@@ -9,6 +9,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 include(policies NO_POLICY_SCOPE)
 
+option(BUILD_TESTS "Build test suite" OFF)
+option(USE_CCACHE "Use ccache (if found) to speed up compile and link" OFF)
 option(CODE_COVERAGE "Instrument for code coverage (clang only!)" OFF)
 option(ADDRESS_SANITIZER "Use memory error detector  (clang only and implies debug mode!)" OFF)
 option(STATIC_ANALYZER "Do static analysis (clang only and implies debug mode!)" OFF)
@@ -68,9 +70,11 @@ set(libName core)
 set(binName dispar)
 set(testName tests)
 
-include(CTest)
-enable_testing()
-add_subdirectory(tests)
+if (BUILD_TESTS)
+  include(CTest)
+  enable_testing()
+  add_subdirectory(tests)
+endif()
 
 # Add a target to generate API documentation with Doxygen.
 # find_package(Doxygen)
@@ -133,6 +137,14 @@ if (APPLE)
   message(STATUS "Mac SDK: ${DEV_SDK}")
 endif()
 
+message(STATUS "Building test suite: ${BUILD_TESTS}")
+
+if (CCACHE)
+  message(STATUS "CCache: ${CCACHE} (using to speed up compile + link)")
+else()
+  message(STATUS "CCache: OFF")
+endif()
+
 if (CODE_COVERAGE)
   message(STATUS "Code coverage: ${CODE_COVERAGE} (target: codecov)")
 else()
@@ -140,7 +152,6 @@ else()
 endif()
 
 message(STATUS "Address sanitizer: ${ADDRESS_SANITIZER}")
-
 
 if (STATIC_ANALYZER)
   message(STATUS "Static analyzer: ${STATIC_ANALYZER} (target: sa)")
@@ -153,12 +164,6 @@ if (FOUND_QT)
   message(STATUS "  Qt5Core_DIR           ${Qt5Core_DIR}")
   message(STATUS "  Qt5Gui_DIR            ${Qt5Gui_DIR}")
   message(STATUS "  Qt5Widgets_DIR        ${Qt5Widgets_DIR}")
-endif()
-
-if (CCACHE)
-  message(STATUS "CCache: ${CCACHE} (using to speed up compile + link)")
-else()
-  message(STATUS "CCache: OFF")
 endif()
 
 message(STATUS "====================================================================")
