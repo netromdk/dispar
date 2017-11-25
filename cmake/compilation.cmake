@@ -25,6 +25,10 @@ if (NOT WIN32)
   # GCC only
   if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
     set(REL_OPTS "${REL_OPTS} -fno-implement-inlines")
+
+  # Clang only
+  elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    set(REL_OPTS "${REL_OPTS} -Ofast")
   endif()
 
   set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} ${REL_OPTS}")
@@ -50,8 +54,8 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     OUTPUT_VARIABLE CLANG_VERSION
     )
   message("Compiler version: ${CLANG_VERSION}")
-  if (NOT (CLANG_VERSION VERSION_GREATER 3.7 OR CLANG_VERSION VERSION_EQUAL 3.7))
-    message(FATAL_ERROR "Requires Clang >= 3.7.")
+  if (NOT (CLANG_VERSION VERSION_GREATER 3.8 OR CLANG_VERSION VERSION_EQUAL 3.8))
+    message(FATAL_ERROR "Requires Clang >= 3.8.")
   endif()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++ ${CLANG_WARNINGS} ${CLANG_ERRORS}")
 elseif (MSVC AND MSVC14)
