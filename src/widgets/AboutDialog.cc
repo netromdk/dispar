@@ -1,9 +1,8 @@
 #include "widgets/AboutDialog.h"
+#include "Constants.h"
 #include "Version.h"
 
 #include <QLabel>
-
-#include <capstone.h>
 
 AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent)
 {
@@ -23,20 +22,28 @@ void AboutDialog::createLayout()
   auto *versionLabel = new QLabel(QString("v. %1").arg(versionString()), this);
   versionLabel->move(260, 30);
 
-  int yPos = titleLabel->pos().y() + titleLabel->height() + 15;
+  yPos = titleLabel->pos().y() + titleLabel->height() + 15;
 
-  auto addDep = [this, &yPos](const QString &name, const QString &version, const QString &link) {
-    auto *label =
-      new QLabel(QString("%1 %2 - <a href=\"%3\">%3</a>").arg(name).arg(version).arg(link), this);
-    label->setTextFormat(Qt::RichText);
-    label->setTextInteractionFlags(Qt::TextBrowserInteraction);
-    label->setOpenExternalLinks(true);
-    label->move(20, yPos);
-    yPos += label->height();
-  };
+  using namespace Constants;
+  addLinkLabel(PROJECT_URL, PROJECT_URL);
 
-  addDep("Qt", QT_VERSION_STR, "https://www.qt.io");
-  addDep("Capstone", QString("%1.%2").arg(CS_API_MAJOR).arg(CS_API_MINOR),
-         "http://www.capstone-engine.org");
-  addDep("libiberty", "2.27", "https://www.gnu.org/software/binutils");
+  addDep(Deps::Qt::NAME, Deps::Qt::VERSION, Deps::Qt::URL);
+  addDep(Deps::Capstone::NAME, Deps::Capstone::VERSION, Deps::Capstone::URL);
+  addDep(Deps::Libiberty::NAME, Deps::Libiberty::VERSION, Deps::Libiberty::URL);
+}
+
+void AboutDialog::addLinkLabel(const QString &url, const QString &text, const QString &pretext)
+{
+  auto *label =
+    new QLabel(QString("%3<a href=\"%1\">%2</a>").arg(url).arg(text).arg(pretext), this);
+  label->setTextFormat(Qt::RichText);
+  label->setTextInteractionFlags(Qt::TextBrowserInteraction);
+  label->setOpenExternalLinks(true);
+  label->move(20, yPos);
+  yPos += label->height();
+}
+
+void AboutDialog::addDep(const QString &name, const QString &version, const QString &url)
+{
+  addLinkLabel(url, url, QString("%1 %2 - ").arg(name).arg(version));
 }
