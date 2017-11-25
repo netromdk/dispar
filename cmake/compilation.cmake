@@ -20,7 +20,7 @@ set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
 # Some release optimization flags for GCC/Clang.
 if (NOT WIN32)
   # Clang/GCC
-  set(REL_OPTS "-pipe -fvisibility=hidden -fvisibility-inlines-hidden -ffast-math -funroll-loops")
+  set(REL_OPTS "-pipe -fno-exceptions -fvisibility=hidden -fvisibility-inlines-hidden -ffast-math -funroll-loops")
 
   # GCC only
   if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
