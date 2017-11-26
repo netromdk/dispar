@@ -159,7 +159,7 @@ else()
   message(STATUS "Static analyzer: ${STATIC_ANALYZER}")
 endif()
 
-message(STATUS "Found Qt: ${FOUND_QT}")
+message(STATUS "Found Qt: ${FOUND_QT} (min. v. ${QT_MINIMUM_VERSION})")
 if (FOUND_QT)
   message(STATUS "  Qt5Core_DIR           ${Qt5Core_DIR}")
   message(STATUS "  Qt5Gui_DIR            ${Qt5Gui_DIR}")
