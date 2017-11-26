@@ -1,7 +1,7 @@
 #include "widgets/PersistentSplitter.h"
+#include "Context.h"
 
 #include <QDebug>
-#include <QSettings>
 #include <QShowEvent>
 
 PersistentSplitter::PersistentSplitter(const QString &settingsKey, Qt::Orientation orientation,
@@ -16,28 +16,23 @@ PersistentSplitter::~PersistentSplitter()
   for (const auto &size : sizes()) {
     var << size;
   }
-  QSettings().setValue(settingsKey, var);
+  Context::get().setValue(settingsKey, var);
 }
 
 void PersistentSplitter::showEvent(QShowEvent *event)
 {
   QSplitter::showEvent(event);
 
-  QSettings settings;
-  if (settings.contains(settingsKey)) {
-    auto var = settings.value(settingsKey);
-    if (var.type() == QVariant::List) {
-      QList<int> sizes;
-      bool ok;
-      for (const auto &elm : var.toList()) {
-        auto tmp = elm.toInt(&ok);
-        if (ok) {
-          sizes << tmp;
-        }
-      }
-      if (!sizes.isEmpty()) {
-        setSizes(sizes);
-      }
+  const auto list = Context::get().value(settingsKey, QVariantList()).toList();
+  QList<int> sizes;
+  bool ok;
+  for (const auto &elm : list) {
+    auto tmp = elm.toInt(&ok);
+    if (ok) {
+      sizes << tmp;
     }
+  }
+  if (!sizes.isEmpty()) {
+    setSizes(sizes);
   }
 }

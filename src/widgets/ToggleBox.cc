@@ -1,7 +1,7 @@
 #include "widgets/ToggleBox.h"
+#include "Context.h"
 
 #include <QScrollArea>
-#include <QSettings>
 #include <QToolButton>
 #include <QVBoxLayout>
 
@@ -14,7 +14,7 @@ ToggleBox::ToggleBox(const QString &title, const QString &settingsKey, QWidget *
 
 ToggleBox::~ToggleBox()
 {
-  QSettings().setValue(settingsKey, isCollapsed());
+  Context::get().setValue(settingsKey, isCollapsed());
 }
 
 void ToggleBox::setContentLayout(QLayout *layout)
@@ -69,12 +69,7 @@ bool ToggleBox::isExpanded() const
 void ToggleBox::showEvent(QShowEvent *event)
 {
   QWidget::showEvent(event);
-
-  QSettings settings;
-  if (settings.contains(settingsKey)) {
-    auto var = settings.value(settingsKey);
-    setCollapsed(var.toBool());
-  }
+  setCollapsed(Context::get().value(settingsKey, false).toBool());
 }
 
 void ToggleBox::createLayout()

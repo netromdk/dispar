@@ -24,7 +24,6 @@
 #include <QMessageBox>
 #include <QProgressDialog>
 #include <QSet>
-#include <QSettings>
 #include <QVBoxLayout>
 
 MainWindow::MainWindow(const QString &file)
@@ -37,7 +36,7 @@ MainWindow::MainWindow(const QString &file)
 
 MainWindow::~MainWindow()
 {
-  Context::get().setGeometry("MainWindow", saveGeometry());
+  Context::get().setValue("MainWindow.geometry", Util::byteArrayString(saveGeometry()));
 }
 
 void MainWindow::showEvent(QShowEvent *event)
@@ -48,7 +47,7 @@ void MainWindow::showEvent(QShowEvent *event)
   if (!first) return;
   first = true;
 
-  if (!restoreGeometry(Context::get().geometry("MainWindow"))) {
+  if (!restoreGeometry(Util::byteArray(Context::get().value("MainWindow.geometry").toString()))) {
     Util::resizeRatioOfScreen(this, 0.7);
     Util::centerWidget(this);
   }

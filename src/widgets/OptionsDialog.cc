@@ -10,7 +10,6 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QMessageBox>
-#include <QSettings>
 #include <QSpinBox>
 #include <QVBoxLayout>
 

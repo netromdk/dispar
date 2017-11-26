@@ -32,9 +32,6 @@ public:
   int backupAmount() const;
   void setBackupAmount(int amount);
 
-  void setGeometry(const QString &key, const QByteArray &geometry);
-  QByteArray geometry(const QString &key) const;
-
   const QStringList &recentProjects();
   void addRecentProject(const QString &project);
 
@@ -72,7 +69,6 @@ private:
   bool backupEnabled_;
   int backupAmount_;
 
-  QHash<QString, QByteArray> geometries;
   QStringList recentProjects_, recentBinaries_;
   QVariantHash values;
 
