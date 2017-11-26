@@ -3,7 +3,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(COMMON_COMPILER_WARNINGS "-Wno-unused-parameter -Wempty-body -Woverloaded-virtual -Wtautological-compare")
-set(CLANG_WARNINGS "-Wnull-arithmetic -Woverriding-method-mismatch -Wshadow")
+set(CLANG_WARNINGS "-Wnull-arithmetic -Woverriding-method-mismatch")
 set(GCC_WARNINGS "-Wuseless-cast")
 
 # Warnings turned into errors.
