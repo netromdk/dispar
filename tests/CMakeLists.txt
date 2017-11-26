@@ -17,6 +17,8 @@ add_library(
   gtest/src/gtest-all.cc
   )
 
+disable_all_warnings(gtest)
+
 add_dispar_executable(
   ${testName}
 
