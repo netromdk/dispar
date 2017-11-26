@@ -89,3 +89,11 @@ TEST(Util, copyTo)
   Util::copyTo(v1, v2);
   EXPECT_EQ(v2, v1);
 }
+
+TEST(Util, serializeByteArray)
+{
+  const QByteArray array("hello\nworld\t!");
+  const auto string = Util::byteArrayString(array);
+  const auto array2 = Util::byteArray(string);
+  EXPECT_EQ(array, array2);
+}

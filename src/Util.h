@@ -88,6 +88,12 @@ public:
 
   /// Set item as marked by using bold font and red text on \p column.
   static void setTreeItemMarked(QTreeWidgetItem *item, int column);
+
+  /// Convert byte \p array safely into hex-encoded string.
+  static QString byteArrayString(const QByteArray &array);
+
+  /// Convert hex-encoded \p value into byte array.
+  static QByteArray byteArray(const QString &value);
 };
 
 #endif // DISPAR_UTIL_H

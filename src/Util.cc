@@ -341,3 +341,13 @@ void Util::setTreeItemMarked(QTreeWidgetItem *item, int column)
   item->setFont(column, font);
   item->setForeground(column, Qt::red);
 }
+
+QString Util::byteArrayString(const QByteArray &array)
+{
+  return QString::fromLatin1(array.toHex());
+}
+
+QByteArray Util::byteArray(const QString &value)
+{
+  return QByteArray::fromHex(value.toLatin1());
+}
