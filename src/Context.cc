@@ -129,6 +129,16 @@ void Context::addRecentBinary(const QString &binary)
   }
 }
 
+void Context::setValue(const QString &key, const QVariant &value)
+{
+  values[key] = value;
+}
+
+QVariant Context::value(const QString &key, const QVariant &defaultValue) const
+{
+  return values.value(key, defaultValue);
+}
+
 void Context::loadSettings()
 {
   auto path = settingsPath();
@@ -208,6 +218,13 @@ void Context::loadSettings()
       }
     }
   }
+
+  if (obj.contains("values")) {
+    const auto valuesValue = obj["values"];
+    if (valuesValue.isObject()) {
+      values = valuesValue.toObject().toVariantHash();
+    }
+  }
 }
 
 void Context::saveSettings()
@@ -234,6 +251,7 @@ void Context::saveSettings()
   obj["backup"] = backupObj;
   obj["geometry"] = geometryObj;
   obj["recent"] = recentObj;
+  obj["values"] = QJsonValue::fromVariant(values);
 
   QJsonDocument doc;
   doc.setObject(obj);

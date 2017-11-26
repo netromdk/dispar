@@ -3,6 +3,7 @@
 
 #include <QHash>
 #include <QObject>
+#include <QVariantHash>
 
 #include <memory>
 
@@ -40,6 +41,9 @@ public:
   const QStringList &recentBinaries();
   void addRecentBinary(const QString &binary);
 
+  void setValue(const QString &key, const QVariant &value);
+  QVariant value(const QString &key, const QVariant &defaultValue = {}) const;
+
   void loadSettings();
   void saveSettings();
 
@@ -70,6 +74,7 @@ private:
 
   QHash<QString, QByteArray> geometries;
   QStringList recentProjects_, recentBinaries_;
+  QVariantHash values;
 
   std::unique_ptr<Project> project_;
 };
