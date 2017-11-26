@@ -10,6 +10,8 @@
 
 class QAction;
 
+namespace dispar {
+
 class Format;
 class FormatLoader;
 class BinaryWidget;
@@ -80,5 +82,7 @@ private:
   std::unique_ptr<FormatLoader> loader;
   std::shared_ptr<Format> format;
 };
+
+} // namespace dispar
 
 #endif // DISPAR_MAIN_WINDOW_H

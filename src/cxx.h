@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <iterator>
 
+namespace dispar {
 namespace cxx {
 
 /// When a member function has muliple overloads and you need to use just one of them.
@@ -47,5 +48,6 @@ OutputIt copy(const Container &src, OutputIt dstFirst)
 }
 
 } // namespace cxx
+} // namespace dispar
 
 #endif // DISPAR_CXX_H

@@ -6,12 +6,14 @@
 
 #include "BinaryObject.h"
 
-class TagsEdit;
-
 class QLabel;
 class QListWidget;
 class QPlainTextEdit;
 class QTextDocument;
+
+namespace dispar {
+
+class TagsEdit;
 
 class BinaryWidget : public QWidget {
   Q_OBJECT
@@ -60,5 +62,7 @@ private:
     *fileTypeLabel;
   TagsEdit *tagsEdit;
 };
+
+} // namespace dispar
 
 #endif // DISPAR_BINARY_WIDGET_H

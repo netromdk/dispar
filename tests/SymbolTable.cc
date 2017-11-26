@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "SymbolTable.h"
+using namespace dispar;
 
 TEST(SymbolTable, instantiate)
 {

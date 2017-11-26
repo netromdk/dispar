@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "Reader.h"
+using namespace dispar;
 
 #include <QBuffer>
 

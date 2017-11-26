@@ -4,6 +4,8 @@
 #include <QSplitter>
 #include <QString>
 
+namespace dispar {
+
 class PersistentSplitter : public QSplitter {
 public:
   PersistentSplitter(const QString &settingsKey, Qt::Orientation = Qt::Horizontal,
@@ -16,5 +18,7 @@ protected:
 private:
   QString settingsKey;
 };
+
+} // namespace dispar
 
 #endif // DISPAR_PERSISTENT_SPLITTER_H

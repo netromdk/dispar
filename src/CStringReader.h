@@ -6,6 +6,8 @@
 
 class QByteArray;
 
+namespace dispar {
+
 class CStringReader {
 public:
   CStringReader(const QByteArray &data);
@@ -28,5 +30,7 @@ private:
   QString string_;
   quint64 offset_;
 };
+
+} // namespace dispar
 
 #endif // DISPAR_CSTRING_READER_H

@@ -1,5 +1,7 @@
 #include "BinaryObject.h"
 
+namespace dispar {
+
 BinaryObject::BinaryObject(CpuType cpuType, CpuType cpuSubType, bool littleEndian, int systemBits,
                            FileType fileType)
   : cpuType_{cpuType}, cpuSubType_{cpuSubType}, littleEndian{littleEndian},
@@ -125,3 +127,5 @@ const SymbolTable &BinaryObject::dynSymbolTable() const
 {
   return dynsymTable;
 }
+
+} // namespace dispar

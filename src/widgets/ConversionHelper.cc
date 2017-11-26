@@ -11,6 +11,8 @@
 #include "Util.h"
 #include "widgets/ConversionHelper.h"
 
+namespace dispar {
+
 ConversionHelper::ConversionHelper(QWidget *parent) : QDialog(parent)
 {
   setWindowTitle(tr("Conversion Helper"));
@@ -195,3 +197,5 @@ void ConversionHelper::createLayout()
 
   setLayout(layout);
 }
+
+} // namespace dispar

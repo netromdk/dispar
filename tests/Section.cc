@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "Section.h"
+using namespace dispar;
 
 TEST(Section, instantiate)
 {

@@ -11,6 +11,8 @@
 #include <QMessageBox>
 #include <QVBoxLayout>
 
+namespace dispar {
+
 TagsEdit::TagsEdit() : address_(0)
 {
   itemDelegate = new TagItemDelegate;
@@ -105,3 +107,5 @@ void TagsEdit::removeTag()
 
   delete listWidget->takeItem(listWidget->row(item));
 }
+
+} // namespace dispar

@@ -8,6 +8,8 @@ class QLineEdit;
 class QTextEdit;
 class QComboBox;
 
+namespace dispar {
+
 class ConversionHelper : public QDialog {
   Q_OBJECT
 
@@ -26,5 +28,7 @@ private:
   QTextEdit *hexEdit, *textEdit;
   QComboBox *encBox;
 };
+
+} // namespace dispar
 
 #endif // DISPAR_CONVERSION_HELPER_H

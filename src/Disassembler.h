@@ -8,6 +8,9 @@
 #include <capstone.h>
 
 class QByteArray;
+
+namespace dispar {
+
 class BinaryObject;
 
 class Disassembler {
@@ -39,5 +42,7 @@ private:
   csh handle;
   bool valid_;
 };
+
+} // namespace dispar
 
 #endif // DISPAR_DISASSEMBLER_H

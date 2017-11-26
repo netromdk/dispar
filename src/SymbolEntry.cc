@@ -2,6 +2,8 @@
 
 #include <QHash>
 
+namespace dispar {
+
 SymbolEntry::SymbolEntry() : index_(0), value_(0), strValue()
 {
 }
@@ -72,7 +74,9 @@ bool SymbolEntry::operator!=(const SymbolEntry &other) const
   return !(*this == other);
 }
 
-uint qHash(const SymbolEntry &entry, uint seed)
+} // namespace dispar
+
+uint qHash(const dispar::SymbolEntry &entry, uint seed)
 {
   return qHash(QString("%1,%2,%3").arg(entry.index()).arg(entry.value()).arg(entry.string()), seed);
 }

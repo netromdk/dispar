@@ -5,6 +5,8 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
+namespace dispar {
+
 FormatLoader::FormatLoader(const QString &file) : file(file)
 {
 }
@@ -35,3 +37,5 @@ void FormatLoader::run()
   qDebug() << ">" << elapsedTimer.restart() << "ms";
   emit success(fmt);
 }
+
+} // namespace dispar

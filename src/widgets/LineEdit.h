@@ -3,6 +3,8 @@
 
 #include <QLineEdit>
 
+namespace dispar {
+
 class LineEdit : public QLineEdit {
   Q_OBJECT
 
@@ -18,5 +20,7 @@ protected:
   void focusOutEvent(QFocusEvent *event);
   void keyPressEvent(QKeyEvent *event);
 };
+
+} // namespace dispar
 
 #endif // SRC_WIDGETS_LINEEDIT_H

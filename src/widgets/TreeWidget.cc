@@ -11,6 +11,8 @@
 #include <QMenu>
 #include <QMessageBox>
 
+namespace dispar {
+
 TreeWidget::TreeWidget(QWidget *parent)
   : QTreeWidget(parent), cpuType(CpuType::X86), ctxItem(nullptr), ctxCol(-1), addrColumn(-1),
     curCol(0), curItem(0), cur(0), total(0)
@@ -375,3 +377,5 @@ void TreeWidget::showSearchText(const QString &text)
   searchLabel->move(1, searchEdit->pos().y());
   searchLabel->show();
 }
+
+} // namespace dispar

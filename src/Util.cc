@@ -13,6 +13,8 @@
 
 #include "libiberty/demangle.h"
 
+namespace dispar {
+
 QString Util::formatSize(qint64 bytes, int digits)
 {
   constexpr double KB = 1024, MB = 1024 * KB, GB = 1024 * MB, TB = 1024 * GB;
@@ -351,3 +353,5 @@ QByteArray Util::byteArray(const QString &value)
 {
   return QByteArray::fromHex(value.toLatin1());
 }
+
+} // namespace dispar

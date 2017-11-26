@@ -17,6 +17,8 @@ static QString settingsPath()
 
 } // namespace
 
+namespace dispar {
+
 Context::Context()
   : showMachineCode_(true), disassemblerSyntax_(Disassembler::Syntax::INTEL), backupEnabled_(true),
     backupAmount_(5), project_(nullptr)
@@ -272,3 +274,5 @@ Project *Context::loadProject(const QString &file)
   project_ = Project::load(file);
   return project();
 }
+
+} // namespace dispar

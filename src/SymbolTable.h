@@ -7,6 +7,8 @@
 
 #include <QString>
 
+namespace dispar {
+
 class SymbolTable {
 public:
   using EntryList = std::vector<SymbolEntry>;
@@ -31,5 +33,7 @@ public:
 private:
   EntryList entries;
 };
+
+} // namespace dispar
 
 #endif // DISPAR_SYMBOL_TABLE_H

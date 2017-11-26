@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "CpuType.h"
+using namespace dispar;
 
 TEST(CpuType, types)
 {

@@ -10,6 +10,8 @@
 
 #include <memory>
 
+namespace dispar {
+
 /// This class represents a project (saved with extension .dispar).
 /** It contains information about the binary, machine code modifications, custom tags, comments
     etc. */
@@ -75,5 +77,7 @@ private:
   // sorted of keys to write data linearly.
   QMap<quint64, QByteArray> modifiedRegions_;
 };
+
+} // namespace dispar
 
 #endif // DISPAR_PROJECT_H

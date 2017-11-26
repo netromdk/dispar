@@ -15,6 +15,8 @@
 class QTreeWidgetItem;
 class QAbstractScrollArea;
 
+namespace dispar {
+
 class Util {
 public:
   static QString formatSize(qint64 bytes, int digits = 1);
@@ -95,5 +97,7 @@ public:
   /// Convert hex-encoded \p value into byte array.
   static QByteArray byteArray(const QString &value);
 };
+
+} // namespace dispar
 
 #endif // DISPAR_UTIL_H

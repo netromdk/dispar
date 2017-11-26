@@ -2,6 +2,8 @@
 
 #include "LineEdit.h"
 
+namespace dispar {
+
 LineEdit::LineEdit(QWidget *parent) : QLineEdit(parent)
 {
 }
@@ -24,3 +26,5 @@ void LineEdit::keyPressEvent(QKeyEvent *event)
     QLineEdit::keyPressEvent(event);
   }
 }
+
+} // namespace dispar

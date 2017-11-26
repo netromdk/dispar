@@ -8,6 +8,8 @@
 #include "Util.h"
 #include "formats/MachO.h"
 
+namespace dispar {
+
 MachO::MachO(const QString &file) : Format(Format::Type::MACH_O), file_{file}
 {
 }
@@ -859,3 +861,5 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
   objects_.emplace_back(std::move(binaryObject));
   return true;
 }
+
+} // namespace dispar

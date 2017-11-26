@@ -3,6 +3,7 @@
 #include "testutils.h"
 
 #include "formats/Format.h"
+using namespace dispar;
 
 TEST(Format, types)
 {

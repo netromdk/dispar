@@ -11,6 +11,8 @@
 #include "FileType.h"
 #include "Section.h"
 
+namespace dispar {
+
 class BinaryObject;
 
 class Format {
@@ -46,6 +48,8 @@ private:
   Type type_;
 };
 
-Q_DECLARE_METATYPE(std::shared_ptr<Format>)
+} // namespace dispar
+
+Q_DECLARE_METATYPE(std::shared_ptr<dispar::Format>)
 
 #endif // DISPAR_FORMAT_H

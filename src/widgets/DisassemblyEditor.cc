@@ -18,6 +18,8 @@
 #include <QStyledItemDelegate>
 #include <QVBoxLayout>
 
+namespace dispar {
+
 namespace {
 
 class ItemDelegate : public QStyledItemDelegate {
@@ -316,3 +318,5 @@ void DisassemblyEditor::markModifiedRegions()
 
   qDebug() << ">" << elapsedTimer.restart() << "ms";
 }
+
+} // namespace dispar

@@ -12,6 +12,7 @@
 #include "Version.h"
 #include "formats/Format.h"
 #include "widgets/MainWindow.h"
+using namespace dispar;
 
 void signalHandler(int sig)
 {

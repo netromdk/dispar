@@ -1,5 +1,7 @@
 #include "CpuType.h"
 
+namespace dispar {
+
 QString cpuTypeName(CpuType type)
 {
   switch (type) {
@@ -86,3 +88,5 @@ QString cpuTypeName(CpuType type)
     return "Xeon MP";
   }
 }
+
+} // namespace dispar

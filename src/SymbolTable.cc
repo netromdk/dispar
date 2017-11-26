@@ -1,5 +1,7 @@
 #include "SymbolTable.h"
 
+namespace dispar {
+
 SymbolTable::SymbolTable()
 {
 }
@@ -68,3 +70,5 @@ bool SymbolTable::operator!=(const SymbolTable &other) const
 {
   return !(*this == other);
 }
+
+} // namespace dispar

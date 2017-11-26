@@ -8,6 +8,9 @@
 #include <QTreeWidget>
 
 class QLabel;
+
+namespace dispar {
+
 class LineEdit;
 
 class TreeWidget : public QTreeWidget {
@@ -59,5 +62,7 @@ private:
   LineEdit *searchEdit;
   QLabel *searchLabel;
 };
+
+} // namespace dispar
 
 #endif // SRC_WIDGETS_TREEWIDGET_H

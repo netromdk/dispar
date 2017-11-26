@@ -4,6 +4,8 @@
 
 #include <QLabel>
 
+namespace dispar {
+
 AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent)
 {
   setWindowTitle(tr("About Dispar"));
@@ -47,3 +49,5 @@ void AboutDialog::addDep(const QString &name, const QString &version, const QStr
 {
   addLinkLabel(url, url, QString("%1 %2 - ").arg(name).arg(version));
 }
+
+} // namespace dispar

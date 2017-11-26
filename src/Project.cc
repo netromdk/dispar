@@ -12,6 +12,8 @@ static constexpr int PROJECT_VERSION = 1;
 
 } // namespace
 
+namespace dispar {
+
 Project::Project()
 {
   qDebug() << "Create project";
@@ -229,3 +231,5 @@ void Project::clearModifiedRegions()
 {
   modifiedRegions_.clear();
 }
+
+} // namespace dispar

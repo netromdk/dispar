@@ -15,6 +15,8 @@
 #include "cxx.h"
 #include "widgets/DisassemblerDialog.h"
 
+namespace dispar {
+
 DisassemblerDialog::DisassemblerDialog(QWidget *parent, CpuType cpuType, const QString &data,
                                        quint64 offset, Disassembler::Syntax syntax)
   : QDialog(parent), cpuType(cpuType), offset(offset), syntax(syntax)
@@ -167,3 +169,5 @@ void DisassemblerDialog::setAsmVisible(bool visible)
   splitter->setSizes(QList<int>{1, visible ? 1 : 0});
   if (!visible) asmText->clear();
 }
+
+} // namespace dispar

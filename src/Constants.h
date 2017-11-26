@@ -5,6 +5,7 @@
 
 #include <capstone.h>
 
+namespace dispar {
 namespace Constants {
 
 static const QString PROJECT_URL("https://github.com/netromdk/dispar");
@@ -38,5 +39,6 @@ static const QString VERSION("2.27");
 } // namespace Deps
 
 } // namespace Constants
+} // namespace dispar
 
 #endif // SRC_CONSTANTS_H

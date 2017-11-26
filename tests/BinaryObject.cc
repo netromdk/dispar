@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "BinaryObject.h"
+using namespace dispar;
 
 TEST(BinaryObject, instantiate)
 {

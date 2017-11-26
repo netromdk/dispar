@@ -3,6 +3,8 @@
 
 #include <QString>
 
+namespace dispar {
+
 enum class CpuType : int {
   X86, ///< Same as I386
   X86_64,
@@ -37,5 +39,7 @@ enum class CpuType : int {
 };
 
 QString cpuTypeName(CpuType type);
+
+} // namespace dispar
 
 #endif // DISPAR_CPU_TYPE_H

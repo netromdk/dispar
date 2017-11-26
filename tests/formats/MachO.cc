@@ -2,9 +2,10 @@
 
 #include "testutils.h"
 
-#include "CStringReader.h"
 #include "BinaryObject.h"
+#include "CStringReader.h"
 #include "formats/MachO.h"
+using namespace dispar;
 
 TEST(MachO, instantiate)
 {

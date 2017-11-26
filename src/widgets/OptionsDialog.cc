@@ -13,6 +13,8 @@
 #include <QSpinBox>
 #include <QVBoxLayout>
 
+namespace dispar {
+
 OptionsDialog::OptionsDialog(QWidget *parent) : QDialog(parent)
 {
   setWindowTitle(tr("Options"));
@@ -122,3 +124,5 @@ void OptionsDialog::createLayout()
 
   setLayout(layout);
 }
+
+} // namespace dispar

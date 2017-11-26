@@ -5,6 +5,8 @@
 
 #include <vector>
 
+namespace dispar {
+
 class Reader;
 
 class MachO : public Format {
@@ -24,5 +26,7 @@ private:
   QString file_;
   std::vector<std::unique_ptr<BinaryObject>> objects_;
 };
+
+} // namespace dispar
 
 #endif // DISPAR_MACHO_FORMAT_H

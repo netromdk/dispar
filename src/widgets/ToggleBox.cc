@@ -5,6 +5,8 @@
 #include <QToolButton>
 #include <QVBoxLayout>
 
+namespace dispar {
+
 ToggleBox::ToggleBox(const QString &title, const QString &settingsKey, QWidget *parent)
   : QWidget(parent), title(title), settingsKey(settingsKey)
 {
@@ -101,3 +103,5 @@ void ToggleBox::createLayout()
 
   setLayout(layout);
 }
+
+} // namespace dispar

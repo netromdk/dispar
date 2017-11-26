@@ -11,6 +11,8 @@
 
 #include "Disassembler.h"
 
+namespace dispar {
+
 class Section {
 public:
   enum class Type : int {
@@ -61,5 +63,7 @@ private:
   QDateTime modified;
   std::unique_ptr<Disassembler::Result> disasm_;
 };
+
+} // namespace dispar
 
 #endif // DISPAR_SECTION_H

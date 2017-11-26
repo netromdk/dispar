@@ -2,6 +2,8 @@
 #include "BinaryObject.h"
 #include "formats/MachO.h"
 
+namespace dispar {
+
 Format::Format(Type type) : type_(type)
 {
 }
@@ -35,3 +37,5 @@ void Format::registerType()
 {
   qRegisterMetaType<std::shared_ptr<Format>>("std::shared_ptr<Format>");
 }
+
+} // namespace dispar

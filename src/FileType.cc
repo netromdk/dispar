@@ -1,5 +1,7 @@
 #include "FileType.h"
 
+namespace dispar {
+
 QString fileTypeName(FileType type)
 {
   switch (type) {
@@ -26,3 +28,5 @@ QString fileTypeName(FileType type)
     return "Bundle";
   }
 }
+
+} // namespace dispar

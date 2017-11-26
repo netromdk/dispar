@@ -3,6 +3,8 @@
 
 #include <QString>
 
+namespace dispar {
+
 enum class FileType : int {
   OBJECT,   ///< Intermediate object file (.o).
   EXECUTE,  ///< Executable file.
@@ -14,5 +16,7 @@ enum class FileType : int {
 };
 
 QString fileTypeName(FileType type);
+
+} // namespace dispar
 
 #endif // DISPAR_FILE_TYPE_H

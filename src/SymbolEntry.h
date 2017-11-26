@@ -3,6 +3,8 @@
 
 #include <QString>
 
+namespace dispar {
+
 class SymbolEntry {
 public:
   SymbolEntry();
@@ -29,6 +31,8 @@ private:
   QString strValue; // String table value
 };
 
-uint qHash(const SymbolEntry &entry, uint seed = 0);
+} // namespace dispar
+
+uint qHash(const dispar::SymbolEntry &entry, uint seed = 0);
 
 #endif // DISPAR_SYMBOL_ENTRY_H

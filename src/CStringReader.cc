@@ -2,6 +2,8 @@
 
 #include <QByteArray>
 
+namespace dispar {
+
 CStringReader::CStringReader(const QByteArray &data) : data(data), pos(0), offset_(0)
 {
 }
@@ -53,3 +55,5 @@ QStringList CStringReader::readAll()
   }
   return res;
 }
+
+} // namespace dispar

@@ -2,6 +2,8 @@
 
 #include <QObject>
 
+namespace dispar {
+
 Section::Section(Section::Type type, const QString &name, quint64 addr, quint64 size,
                  quint32 offset)
   : type_{type}, name_{name}, addr{addr}, size_{size}, offset_{offset}, disasm_(nullptr)
@@ -123,3 +125,5 @@ Disassembler::Result *Section::disassembly() const
 {
   return disasm_.get();
 }
+
+} // namespace dispar

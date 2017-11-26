@@ -5,6 +5,8 @@
 #include <QByteArray>
 #include <QDebug>
 
+namespace dispar {
+
 Disassembler::Result::Result(cs_insn *insn, size_t count) : insn(insn), count_(count)
 {
 }
@@ -99,3 +101,5 @@ bool Disassembler::valid() const
 {
   return valid_;
 }
+
+} // namespace dispar

@@ -6,6 +6,8 @@
 class QIODevice;
 class QByteArray;
 
+namespace dispar {
+
 class Reader {
 public:
   Reader(QIODevice &dev, bool littleEndian = true);
@@ -42,5 +44,7 @@ private:
   QIODevice &dev;
   bool littleEndian;
 };
+
+} // namespace dispar
 
 #endif // DISPAR_READER_H

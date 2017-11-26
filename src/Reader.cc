@@ -3,6 +3,8 @@
 #include <QByteArray>
 #include <QIODevice>
 
+namespace dispar {
+
 Reader::Reader(QIODevice &dev, bool littleEndian) : dev(dev), littleEndian(littleEndian)
 {
 }
@@ -118,3 +120,5 @@ T Reader::getUInt(bool *ok)
   if (ok) *ok = true;
   return res;
 }
+
+} // namespace dispar

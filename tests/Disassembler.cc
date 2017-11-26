@@ -3,6 +3,7 @@
 #include "BinaryObject.h"
 #include "CpuType.h"
 #include "Disassembler.h"
+using namespace dispar;
 
 TEST(Disassembler, instantiate)
 {

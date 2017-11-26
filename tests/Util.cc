@@ -3,6 +3,7 @@
 #include "testutils.h"
 
 #include "Util.h"
+using namespace dispar;
 
 TEST(Util, padString)
 {

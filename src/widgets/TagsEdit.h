@@ -6,6 +6,8 @@
 class QLineEdit;
 class QListWidget;
 
+namespace dispar {
+
 class TagItemDelegate;
 
 class TagsEdit : public QWidget {
@@ -34,5 +36,7 @@ private:
   QLineEdit *lineEdit;
   TagItemDelegate *itemDelegate;
 };
+
+} // namespace dispar
 
 #endif // DISPAR_TAGS_EDIT_H

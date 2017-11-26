@@ -3,6 +3,8 @@
 
 #include <QDialog>
 
+namespace dispar {
+
 class AboutDialog : public QDialog {
 public:
   AboutDialog(QWidget *parent = nullptr);
@@ -14,5 +16,7 @@ private:
 
   int yPos = 0;
 };
+
+} // namespace dispar
 
 #endif // DISPAR_ABOUT_DIALOG_H

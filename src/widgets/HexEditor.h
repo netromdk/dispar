@@ -7,10 +7,12 @@
 #include "BinaryObject.h"
 #include "Section.h"
 
-class TreeWidget;
-
 class QLabel;
 class QTreeWidgetItem;
+
+namespace dispar {
+
+class TreeWidget;
 
 class HexEditor : public QDialog {
 public:
@@ -33,5 +35,7 @@ private:
   QLabel *label;
   TreeWidget *treeWidget;
 };
+
+} // namespace dispar
 
 #endif // SRC_WIDGETS_HEXEDITOR_H

@@ -11,6 +11,8 @@
 #include "Section.h"
 #include "SymbolTable.h"
 
+namespace dispar {
+
 class BinaryObject {
 public:
   BinaryObject(CpuType cpuType = CpuType::X86, CpuType cpuSubType = CpuType::I386,
@@ -58,5 +60,7 @@ private:
   std::vector<std::unique_ptr<Section>> sections_;
   SymbolTable symTable, dynsymTable;
 };
+
+} // namespace dispar
 
 #endif // DISPAR_BINARY_OBJECT_H

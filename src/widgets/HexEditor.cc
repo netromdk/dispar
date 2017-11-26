@@ -13,6 +13,8 @@
 #include <QTreeWidget>
 #include <QVBoxLayout>
 
+namespace dispar {
+
 namespace {
 
 class ItemDelegate : public QStyledItemDelegate {
@@ -258,3 +260,5 @@ void HexEditor::markModifiedRegions()
 
   qDebug() << ">" << elapsedTimer.restart() << "ms";
 }
+
+} // namespace dispar

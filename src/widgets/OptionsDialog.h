@@ -6,6 +6,8 @@
 class QCheckBox;
 class QComboBox;
 
+namespace dispar {
+
 class OptionsDialog : public QDialog {
   Q_OBJECT
 
@@ -21,5 +23,7 @@ private:
   QCheckBox *showMachineCode;
   QComboBox *disAsmSyntax;
 };
+
+} // namespace dispar
 
 #endif // DISPAR_OPTIONS_DIALOG_H

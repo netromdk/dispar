@@ -48,6 +48,8 @@ public:
 
 } // namespace
 
+namespace dispar {
+
 BinaryWidget::BinaryWidget(BinaryObject *object) : object(object), shown(false), doc(nullptr)
 {
   Q_ASSERT(object);
@@ -738,3 +740,5 @@ void BinaryWidget::checkModified(const Section *section,
     }
   }
 }
+
+} // namespace dispar

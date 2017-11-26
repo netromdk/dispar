@@ -9,6 +9,8 @@
 
 #include "Disassembler.h"
 
+namespace dispar {
+
 class Project;
 
 class Context : public QObject {
@@ -74,5 +76,7 @@ private:
 
   std::unique_ptr<Project> project_;
 };
+
+} // namespace dispar
 
 #endif // DISPAR_CONTEXT_H

@@ -4,6 +4,8 @@
 #include <QDebug>
 #include <QShowEvent>
 
+namespace dispar {
+
 PersistentSplitter::PersistentSplitter(const QString &settingsKey, Qt::Orientation orientation,
                                        QWidget *parent)
   : QSplitter(orientation, parent), settingsKey(settingsKey)
@@ -36,3 +38,5 @@ void PersistentSplitter::showEvent(QShowEvent *event)
     setSizes(sizes);
   }
 }
+
+} // namespace dispar

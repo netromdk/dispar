@@ -7,6 +7,8 @@ class QScrollArea;
 class QLayout;
 class QToolButton;
 
+namespace dispar {
+
 class ToggleBox : public QWidget {
   Q_OBJECT
 
@@ -37,5 +39,7 @@ private:
   QToolButton *toggleButton;
   QScrollArea *contentWidget;
 };
+
+} // namespace dispar
 
 #endif // DISPAR_TOGGLE_BOX_H

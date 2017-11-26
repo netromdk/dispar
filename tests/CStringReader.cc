@@ -3,6 +3,7 @@
 #include "testutils.h"
 
 #include "CStringReader.h"
+using namespace dispar;
 
 TEST(CStringReader, instantiate)
 {

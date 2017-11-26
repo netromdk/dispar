@@ -26,6 +26,8 @@
 #include <QSet>
 #include <QVBoxLayout>
 
+namespace dispar {
+
 MainWindow::MainWindow(const QString &file)
   : modified(false), binaryModified(false), startupFile(file)
 {
@@ -678,3 +680,5 @@ void MainWindow::applyModifiedRegions(BinaryObject *object)
     onBinaryModified();
   }
 }
+
+} // namespace dispar

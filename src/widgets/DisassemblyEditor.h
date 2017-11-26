@@ -3,12 +3,14 @@
 
 #include <QDialog>
 
+class QLabel;
+class QPushButton;
+
+namespace dispar {
+
 class Section;
 class TreeWidget;
 class BinaryObject;
-
-class QLabel;
-class QPushButton;
 
 class DisassemblyEditor : public QDialog {
 public:
@@ -39,5 +41,7 @@ private:
   QPushButton *updateButton;
   TreeWidget *treeWidget;
 };
+
+} // namespace dispar
 
 #endif // SRC_WIDGETS_DISASSEMBLYEDITOR_H

@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "SymbolEntry.h"
+using namespace dispar;
 
 TEST(SymbolEntry, instantiate)
 {

@@ -4,10 +4,12 @@
 #include <QString>
 #include <QVersionNumber>
 
+// TODO: MAke thede defines into static constexpr!
 #define MAJOR_VERSION 0
 #define MINOR_VERSION 2
-
 #define VERSION_DATE "November 23, 2017"
+
+namespace dispar {
 
 static inline QString versionString(int major, int minor, bool showDate = false)
 {
@@ -19,5 +21,7 @@ static inline QString versionString(bool showDate = false)
 {
   return versionString(MAJOR_VERSION, MINOR_VERSION, showDate);
 }
+
+} // namespace dispar
 
 #endif // DISPAR_VERSION_H

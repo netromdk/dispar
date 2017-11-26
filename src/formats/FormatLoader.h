@@ -5,6 +5,8 @@
 
 #include <memory>
 
+namespace dispar {
+
 class Format;
 
 class FormatLoader : public QThread {
@@ -25,5 +27,7 @@ protected:
 private:
   QString file;
 };
+
+} // namespace dispar
 
 #endif // DISPAR_FORMAT_LOADER_H

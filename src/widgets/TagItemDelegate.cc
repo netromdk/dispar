@@ -2,6 +2,8 @@
 
 #include <QPainter>
 
+namespace dispar {
+
 void TagItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
                             const QModelIndex &index) const
 {
@@ -47,3 +49,5 @@ QSize TagItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModel
   QFontMetrics fm(option.font);
   return QSize(float(fm.width(tag)) * 1.3, float(fm.height()) * 1.5);
 }
+
+} // namespace dispar

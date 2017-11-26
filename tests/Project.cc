@@ -3,6 +3,7 @@
 #include "testutils.h"
 
 #include "Project.h"
+using namespace dispar;
 
 TEST(Project, instantiate)
 {

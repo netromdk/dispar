@@ -12,6 +12,8 @@ class QLineEdit;
 class QComboBox;
 class QPushButton;
 
+namespace dispar {
+
 class DisassemblerDialog : public QDialog {
   Q_OBJECT
 
@@ -39,5 +41,7 @@ private:
   QComboBox *cpuTypeBox, *syntaxBox;
   QPushButton *convertBtn;
 };
+
+} // namespace dispar
 
 #endif // DISPAR_DISASSEMBLER_DIALOG_H
