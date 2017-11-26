@@ -39,7 +39,7 @@ TEST(Disassembler, disassembleData)
     const char *code = "\x48\x83\xec\x70";
     auto res = dis.disassemble(QByteArray(code));
     ASSERT_NE(res, nullptr);
-    EXPECT_EQ(res->count(), 2);
+    EXPECT_EQ(res->count(), std::size_t(2));
 
     auto *instr = res->instructions(0);
     ASSERT_NE(instr, nullptr);
@@ -63,7 +63,7 @@ TEST(Disassembler, disassembleData)
     const char *code = "\x48\x83\xec\x70";
     auto res = dis.disassemble(QByteArray(code));
     ASSERT_NE(res, nullptr);
-    EXPECT_EQ(res->count(), 2);
+    EXPECT_EQ(res->count(), std::size_t(2));
 
     auto *instr = res->instructions(0);
     ASSERT_NE(instr, nullptr);
@@ -88,7 +88,7 @@ TEST(Disassembler, disassembleData)
     const char *code = "\x48\x83\xec\x70";
     auto res = dis.disassemble(QByteArray(code));
     ASSERT_NE(res, nullptr);
-    EXPECT_EQ(res->count(), 1);
+    EXPECT_EQ(res->count(), std::size_t(1));
 
     auto *instr = res->instructions(0);
     ASSERT_NE(instr, nullptr);
@@ -108,7 +108,7 @@ TEST(Disassembler, disassembleData)
     const char *code = "\x48\x83\xec\x70";
     auto res = dis.disassemble(QByteArray(code));
     ASSERT_NE(res, nullptr);
-    EXPECT_EQ(res->count(), 1);
+    EXPECT_EQ(res->count(), std::size_t(1));
 
     auto *instr = res->instructions(0);
     ASSERT_NE(instr, nullptr);
@@ -135,7 +135,7 @@ TEST(Disassembler, disassembleText)
 
     auto res = dis.disassemble(QString("90 90 90"));
     ASSERT_NE(res, nullptr);
-    ASSERT_EQ(res->count(), 3);
+    ASSERT_EQ(res->count(), std::size_t(3));
 
     for (std::size_t i = 0; i < res->count(); i++) {
       auto *instr = res->instructions(i);

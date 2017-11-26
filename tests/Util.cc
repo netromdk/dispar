@@ -32,41 +32,41 @@ TEST(Util, convertAddress)
   bool ok = false;
   auto addr = Util::convertAddress("     1\n2\t3\r  ", &ok);
   ASSERT_TRUE(ok);
-  EXPECT_EQ(addr, 123);
+  EXPECT_EQ(addr, static_cast<quint64>(123));
 
   // Hexadecimal.
   addr = Util::convertAddress("0xFACE", &ok);
   ASSERT_TRUE(ok);
-  EXPECT_EQ(addr, 0xFACE);
+  EXPECT_EQ(addr, static_cast<quint64>(0xFACE));
 
   // Detect hexadecimal even without "0x" in front.
   addr = Util::convertAddress("FACE", &ok);
   ASSERT_TRUE(ok);
-  EXPECT_EQ(addr, 0xFACE);
+  EXPECT_EQ(addr, static_cast<quint64>(0xFACE));
 
   // Octal.
   addr = Util::convertAddress("0777", &ok);
   ASSERT_TRUE(ok);
-  EXPECT_EQ(addr, 0777);
+  EXPECT_EQ(addr, static_cast<quint64>(0777));
 
   // Decimal.
   addr = Util::convertAddress("9886", &ok);
   ASSERT_TRUE(ok);
-  EXPECT_EQ(addr, 9886);
+  EXPECT_EQ(addr, static_cast<quint64>(9886));
 
   // Invalid text input.
   addr = Util::convertAddress("FACE of testing", &ok);
   ASSERT_FALSE(ok);
-  EXPECT_EQ(addr, 0);
+  EXPECT_EQ(addr, static_cast<quint64>(0));
 
   addr = Util::convertAddress("Hello, World!", &ok);
   ASSERT_FALSE(ok);
-  EXPECT_EQ(addr, 0);
+  EXPECT_EQ(addr, static_cast<quint64>(0));
 
   // Zero is zero!
   addr = Util::convertAddress("0", &ok);
   ASSERT_TRUE(ok);
-  EXPECT_EQ(addr, 0);
+  EXPECT_EQ(addr, static_cast<quint64>(0));
 }
 
 TEST(Util, moveTo)

@@ -48,19 +48,19 @@ TEST(Section, name)
 TEST(Section, address)
 {
   Section s(Section::Type::TEXT, "test", 0x1, 1);
-  EXPECT_EQ(s.address(), 0x1);
+  EXPECT_EQ(s.address(), static_cast<quint64>(0x1));
 }
 
 TEST(Section, size)
 {
   Section s(Section::Type::TEXT, "test", 0x1, 1);
-  EXPECT_EQ(s.size(), 1);
+  EXPECT_EQ(s.size(), static_cast<quint64>(1));
 }
 
 TEST(Section, offset)
 {
   Section s(Section::Type::TEXT, "test", 0x1, 1, 10);
-  EXPECT_EQ(s.offset(), 10);
+  EXPECT_EQ(s.offset(), static_cast<quint32>(10));
 }
 
 TEST(Section, data)

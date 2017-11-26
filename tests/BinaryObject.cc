@@ -65,8 +65,8 @@ TEST(BinaryObject, section)
   auto *sec2 = b.section(Section::Type::TEXT);
   EXPECT_EQ(sec2->type(), Section::Type::TEXT);
   EXPECT_EQ(sec2->name(), "name");
-  EXPECT_EQ(sec2->address(), 0x1);
-  EXPECT_EQ(sec2->size(), 1);
+  EXPECT_EQ(sec2->address(), static_cast<quint64>(0x1));
+  EXPECT_EQ(sec2->size(), static_cast<quint64>(1));
 }
 
 TEST(BinaryObject, sectionsByType)
@@ -83,8 +83,8 @@ TEST(BinaryObject, sectionsByType)
   auto *sec2 = secs[0];
   EXPECT_EQ(sec2->type(), Section::Type::TEXT);
   EXPECT_EQ(sec2->name(), "name");
-  EXPECT_EQ(sec2->address(), 0x1);
-  EXPECT_EQ(sec2->size(), 1);
+  EXPECT_EQ(sec2->address(), static_cast<quint64>(0x1));
+  EXPECT_EQ(sec2->size(), static_cast<quint64>(1));
 }
 
 TEST(BinaryObject, symbolTable)

@@ -12,16 +12,16 @@ TEST(SymbolEntry, instantiate)
 TEST(SymbolEntry, index)
 {
   SymbolEntry se(42, 0);
-  EXPECT_EQ(se.index(), 42);
+  EXPECT_EQ(se.index(), static_cast<quint32>(42));
 }
 
 TEST(SymbolEntry, value)
 {
   SymbolEntry se(0, 42);
-  EXPECT_EQ(se.value(), 42);
+  EXPECT_EQ(se.value(), static_cast<quint64>(42));
 
   se.setValue(82);
-  EXPECT_EQ(se.value(), 82);
+  EXPECT_EQ(se.value(), static_cast<quint64>(82));
 }
 
 TEST(SymbolEntry, string)

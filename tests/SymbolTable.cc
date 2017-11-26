@@ -17,7 +17,7 @@ TEST(SymbolTable, symbols)
 
   // QList<SymbolEntry> &symbols()
   const auto &syms = st.symbols();
-  ASSERT_EQ(syms.size(), 1);
+  ASSERT_EQ(syms.size(), std::size_t(1));
   EXPECT_EQ(syms[0], sym);
 
   // const QList<SymbolEntry> &symbols() const
@@ -26,7 +26,7 @@ TEST(SymbolTable, symbols)
     static void test(const SymbolTable &table)
     {
       const auto &syms2 = table.symbols();
-      ASSERT_EQ(syms2.size(), 1);
+      ASSERT_EQ(syms2.size(), std::size_t(1));
     }
   };
   A::test(st);
