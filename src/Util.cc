@@ -354,4 +354,13 @@ QByteArray Util::byteArray(const QString &value)
   return QByteArray::fromHex(value.toLatin1());
 }
 
+QString Util::escapeWhitespace(QString value)
+{
+  return value.replace("\n", "\\n")
+    .replace("\t", "\\t")
+    .replace("\r", "\\r")
+    .replace("\v", "\\v")
+    .replace("\f", "\\f");
+}
+
 } // namespace dispar

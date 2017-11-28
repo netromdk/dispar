@@ -98,3 +98,9 @@ TEST(Util, serializeByteArray)
   const auto array2 = Util::byteArray(string);
   EXPECT_EQ(array, array2);
 }
+
+TEST(Util, escapeWhitespace)
+{
+  EXPECT_EQ(Util::escapeWhitespace("hello\nthere\rhello\fworld!\v"),
+            "hello\\nthere\\rhello\\fworld!\\v");
+}

@@ -514,7 +514,7 @@ void BinaryWidget::setup()
     cursor.insertBlock();
     cursor.insertText(QString("%1%2%3")
                         .arg(QString("0x%1").arg(address, 0, 16), -20)
-                        .arg(QString("\"%1\"").arg(string))
+                        .arg(QString("\"%1\"").arg(Util::escapeWhitespace(string)))
                         .arg(tr("; size=%1").arg(string.size()), 11));
 
     auto *userData = new TextBlockUserData;

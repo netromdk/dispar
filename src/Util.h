@@ -96,6 +96,10 @@ public:
 
   /// Convert hex-encoded \p value into byte array.
   static QByteArray byteArray(const QString &value);
+
+  /// Escapes all whitespace in \p value.
+  /** So "\n" will be "\\n", for instance. */
+  static QString escapeWhitespace(QString value);
 };
 
 } // namespace dispar
