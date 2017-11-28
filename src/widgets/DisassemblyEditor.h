@@ -1,6 +1,7 @@
 #ifndef SRC_WIDGETS_DISASSEMBLYEDITOR_H
 #define SRC_WIDGETS_DISASSEMBLYEDITOR_H
 
+#include <QDateTime>
 #include <QDialog>
 
 class QLabel;
@@ -17,6 +18,7 @@ public:
   DisassemblyEditor(Section *section, BinaryObject *object, QWidget *parent = nullptr);
 
   void showUpdateButton();
+  void updateModified();
 
 public slots:
   void done(int result) override;
@@ -35,6 +37,7 @@ private:
 
   Section *section;
   BinaryObject *object;
+  QDateTime sectionModified, lastModified;
 
   bool shown;
   QLabel *label;

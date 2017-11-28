@@ -18,6 +18,8 @@ class HexEditor : public QDialog {
 public:
   HexEditor(Section *section, BinaryObject *object, QWidget *parent = nullptr);
 
+  void updateModified();
+
 protected:
   void showEvent(QShowEvent *event) override;
 
@@ -29,6 +31,7 @@ private:
 
   Section *section;
   BinaryObject *object;
+  QDateTime sectionModified;
 
   bool shown;
   int rows;

@@ -19,7 +19,8 @@ namespace {
 
 class ItemDelegate : public QStyledItemDelegate {
 public:
-  ItemDelegate(QTreeWidget *tree, Section *section) : tree(tree), section(section)
+  ItemDelegate(HexEditor *widget, QTreeWidget *tree, Section *section)
+    : widget(widget), tree(tree), section(section)
   {
   }
 
@@ -85,9 +86,12 @@ public:
     quint64 pos = (addr - section->address()) + (col - 1) * 8;
     QByteArray data = Util::hexToData(newStr.replace(" ", ""));
     section->setSubData(data, pos);
+
+    widget->updateModified();
   }
 
 private:
+  HexEditor *widget;
   QTreeWidget *tree;
   Section *section;
 };
@@ -111,12 +115,20 @@ void HexEditor::showEvent(QShowEvent *event)
   if (!shown) {
     shown = true;
     setup();
-  }
 
-  Util::delayFunc([this] {
-    resize(800, 600);
-    Util::centerWidget(this);
-  });
+    // TODO: remember geometry like MainWindow
+    Util::delayFunc([this] {
+      resize(800, 600);
+      Util::centerWidget(this);
+    });
+  }
+  else if (section->isModified()) {
+    const auto mod = section->modifiedWhen();
+    if (sectionModified.isNull() || mod != sectionModified) {
+      sectionModified = mod;
+      setup();
+    }
+  }
 }
 
 void HexEditor::createLayout()
@@ -129,7 +141,7 @@ void HexEditor::createLayout()
   treeWidget->setColumnWidth(1, 200);
   treeWidget->setColumnWidth(2, 200);
   treeWidget->setColumnWidth(3, 110);
-  treeWidget->setItemDelegate(new ItemDelegate(treeWidget, section));
+  treeWidget->setItemDelegate(new ItemDelegate(this, treeWidget, section));
   treeWidget->setMachineCodeColumns(QList<int>{1, 2});
   treeWidget->setCpuType(object->cpuType());
   treeWidget->setAddressColumn(0);
@@ -259,6 +271,13 @@ void HexEditor::markModifiedRegions()
   }
 
   qDebug() << ">" << elapsedTimer.restart() << "ms";
+}
+
+// *************************************************************************************************
+void HexEditor::updateModified()
+// *************************************************************************************************
+{
+  sectionModified = QDateTime::currentDateTime();
 }
 
 } // namespace dispar

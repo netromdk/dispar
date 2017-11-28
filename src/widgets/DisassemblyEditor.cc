@@ -80,6 +80,8 @@ public:
     const auto data = Util::hexToData(newStr.replace(" ", ""));
     section->setSubData(data, pos);
 
+    disasmEditor->updateModified();
+
     // Update disassembly.
     Disassembler dis(*object, Context::get().disassemblerSyntax());
     const auto result = dis.disassemble(data, addr);
@@ -129,10 +131,17 @@ void DisassemblyEditor::showUpdateButton()
   updateButton->show();
 }
 
+void DisassemblyEditor::updateModified()
+{
+  lastModified = sectionModified;
+  sectionModified = QDateTime::currentDateTime();
+}
+
 void DisassemblyEditor::done(int result)
 {
   // Update disassembly if changed before closing dialog.
-  if (section->isModified()) {
+  if (section->isModified() && sectionModified != lastModified) {
+    lastModified = sectionModified;
     updateDisassembly();
   }
 
@@ -146,12 +155,21 @@ void DisassemblyEditor::showEvent(QShowEvent *event)
   if (!shown) {
     shown = true;
     setup();
-  }
 
-  Util::delayFunc([this] {
-    resize(800, 600);
-    Util::centerWidget(this);
-  });
+    // TODO: remember geometry like MainWindow
+    Util::delayFunc([this] {
+      resize(800, 600);
+      Util::centerWidget(this);
+    });
+  }
+  else if (section->isModified()) {
+    const auto mod = section->modifiedWhen();
+    if (sectionModified.isNull() || mod != sectionModified) {
+      sectionModified = mod;
+      updateDisassembly();
+      setup();
+    }
+  }
 }
 
 void DisassemblyEditor::updateDisassembly()
