@@ -126,6 +126,11 @@ DisassemblyEditor::DisassemblyEditor(Section *section, BinaryObject *object, QWi
   createLayout();
 }
 
+DisassemblyEditor::~DisassemblyEditor()
+{
+  Context::get().setValue("DisassemblyEditor.geometry", Util::byteArrayString(saveGeometry()));
+}
+
 void DisassemblyEditor::showUpdateButton()
 {
   updateButton->show();
@@ -156,11 +161,11 @@ void DisassemblyEditor::showEvent(QShowEvent *event)
     shown = true;
     setup();
 
-    // TODO: remember geometry like MainWindow
-    Util::delayFunc([this] {
+    if (!restoreGeometry(
+          Util::byteArray(Context::get().value("DisassemblyEditor.geometry").toString()))) {
       resize(800, 600);
       Util::centerWidget(this);
-    });
+    }
   }
   else if (section->isModified()) {
     const auto mod = section->modifiedWhen();

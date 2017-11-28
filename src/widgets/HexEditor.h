@@ -17,6 +17,7 @@ class TreeWidget;
 class HexEditor : public QDialog {
 public:
   HexEditor(Section *section, BinaryObject *object, QWidget *parent = nullptr);
+  virtual ~HexEditor();
 
   void updateModified();
 

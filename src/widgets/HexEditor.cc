@@ -1,4 +1,5 @@
 #include "widgets/HexEditor.h"
+#include "Context.h"
 #include "Util.h"
 #include "widgets/TreeWidget.h"
 
@@ -108,6 +109,11 @@ HexEditor::HexEditor(Section *section, BinaryObject *object, QWidget *parent)
   createLayout();
 }
 
+HexEditor::~HexEditor()
+{
+  Context::get().setValue("HexEditor.geometry", Util::byteArrayString(saveGeometry()));
+}
+
 void HexEditor::showEvent(QShowEvent *event)
 {
   QDialog::showEvent(event);
@@ -116,11 +122,10 @@ void HexEditor::showEvent(QShowEvent *event)
     shown = true;
     setup();
 
-    // TODO: remember geometry like MainWindow
-    Util::delayFunc([this] {
+    if (!restoreGeometry(Util::byteArray(Context::get().value("HexEditor.geometry").toString()))) {
       resize(800, 600);
       Util::centerWidget(this);
-    });
+    }
   }
   else if (section->isModified()) {
     const auto mod = section->modifiedWhen();
