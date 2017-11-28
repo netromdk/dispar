@@ -59,6 +59,12 @@ BinaryWidget::BinaryWidget(BinaryObject *object) : object(object), shown(false),
   connect(&ctx, &Context::showMachineCodeChanged, this, &BinaryWidget::onShowMachineCodeChanged);
 }
 
+BinaryWidget::~BinaryWidget()
+{
+  qDeleteAll(disassemblyEditors.values());
+  qDeleteAll(hexEditors.values());
+}
+
 void BinaryWidget::showEvent(QShowEvent *event)
 {
   if (!shown) {
@@ -192,20 +198,30 @@ void BinaryWidget::onCustomContextMenuRequested(const QPoint &pos)
 
       if (section->type() == Section::Type::TEXT ||
           section->type() == Section::Type::SYMBOL_STUBS) {
-        menu.addAction(tr("Edit %1").arg(section->toString()), this, [this, section] {
+        menu.addAction(tr("Edit '%1'").arg(section->toString()), this, [this, section] {
           const auto priorModRegions = section->modifiedRegions();
-          DisassemblyEditor editor(section, object, this);
-          editor.exec();
 
+          auto *editor = disassemblyEditors.value(section, nullptr);
+          if (!editor) {
+            editor = new DisassemblyEditor(section, object, this);
+            disassemblyEditors[section] = editor;
+          }
+
+          editor->exec();
           checkModified(section, priorModRegions);
         });
       }
 
-      menu.addAction(tr("Hex edit %1").arg(section->toString()), this, [this, section] {
+      menu.addAction(tr("Hex edit '%1'").arg(section->toString()), this, [this, section] {
         const auto priorModRegions = section->modifiedRegions();
-        HexEditor editor(section, object, this);
-        editor.exec();
 
+        auto *editor = hexEditors.value(section, nullptr);
+        if (!editor) {
+          editor = new HexEditor(section, object, this);
+          hexEditors[section] = editor;
+        }
+
+        editor->exec();
         checkModified(section, priorModRegions);
       });
     }

@@ -14,12 +14,15 @@ class QTextDocument;
 namespace dispar {
 
 class TagsEdit;
+class HexEditor;
+class DisassemblyEditor;
 
 class BinaryWidget : public QWidget {
   Q_OBJECT
 
 public:
   BinaryWidget(BinaryObject *object);
+  virtual ~BinaryWidget();
 
 signals:
   void modified();
@@ -61,6 +64,8 @@ private:
   QLabel *addressLabel, *offsetLabel, *machineCodeLabel, *binaryLabel, *sizeLabel, *archLabel,
     *fileTypeLabel;
   TagsEdit *tagsEdit;
+  QHash<Section *, DisassemblyEditor *> disassemblyEditors;
+  QHash<Section *, HexEditor *> hexEditors;
 };
 
 } // namespace dispar
