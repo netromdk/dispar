@@ -253,6 +253,10 @@ void BinaryWidget::onCustomContextMenuRequested(const QPoint &pos)
 
 void BinaryWidget::filterSymbols(const QString &filter)
 {
+  QElapsedTimer elapsedTimer;
+  elapsedTimer.start();
+  qDebug() << "Filter using:" << filter;
+
   QListWidget *list = nullptr;
   if (symbolList->isVisible()) {
     list = symbolList;
@@ -264,20 +268,37 @@ void BinaryWidget::filterSymbols(const QString &filter)
     list = tagList;
   }
 
-  // Unhide all.
-  auto allItems = list->findItems("*", Qt::MatchWildcard);
-  for (auto *item : allItems) {
-    item->setHidden(false);
-  }
+  // Disable sorting while filtering to improve speed.
+  list->setSortingEnabled(false);
 
+  // Remember filter used for this list.
+  listFilters[list] = filter;
+
+  qDebug() << " Hiding all elements";
+  const auto allItems = list->findItems("*", Qt::MatchWildcard);
+  for (auto *item : allItems) {
+    item->setHidden(true);
+  }
+  const auto hideTime = elapsedTimer.restart();
+  qDebug() << " >" << hideTime << "ms";
+
+  qDebug() << " Find all matches";
   const auto matches = list->findItems(filter, Qt::MatchContains);
+  const auto matchingTime = elapsedTimer.restart();
+  qDebug() << " >" << matchingTime << "ms";
 
   // Hide all that are not matches.
-  for (auto *item : allItems) {
-    if (!matches.contains(item)) {
-      item->setHidden(true);
-    }
+  qDebug() << " Show all matches";
+  for (auto *item : matches) {
+    item->setHidden(false);
   }
+  const auto hideNonMatchTime = elapsedTimer.restart();
+  qDebug() << " >" << hideNonMatchTime << "ms";
+
+  list->setSortingEnabled(true);
+
+  const auto total = hideTime + matchingTime + hideNonMatchTime + elapsedTimer.restart();
+  qDebug() << "Filter in" << total << "ms";
 }
 
 void BinaryWidget::createLayout()
@@ -289,15 +310,18 @@ void BinaryWidget::createLayout()
   // Symbols left bar.
 
   symbolList = new QListWidget;
-  symbolList->setSortingEnabled(true);
+  symbolList->setSortingEnabled(false);
+  symbolList->setUniformItemSizes(true);
   connect(symbolList, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
 
   stringList = new QListWidget;
-  stringList->setSortingEnabled(true);
+  stringList->setSortingEnabled(false);
+  stringList->setUniformItemSizes(true);
   connect(stringList, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
 
   tagList = new QListWidget;
-  tagList->setSortingEnabled(true);
+  tagList->setSortingEnabled(false);
+  tagList->setUniformItemSizes(true);
   tagList->setSelectionMode(QAbstractItemView::ExtendedSelection);
   tagList->installEventFilter(this);
   connect(tagList, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
@@ -310,18 +334,31 @@ void BinaryWidget::createLayout()
   tabWidget->addTab(stringList, tr("Strings"));
   tabWidget->addTab(tagList, tr("Tags"));
 
+  symbolLists << symbolList << stringList << tagList;
+  Q_ASSERT(symbolLists.size() == 3);
+
   auto *filterSymLine = new QLineEdit;
   filterSymLine->setPlaceholderText(tr("Filter symbols.."));
 
-  connect(tabWidget, &QTabWidget::currentChanged, this,
-          [filterSymLine](int index) { filterSymLine->clear(); });
+  connect(tabWidget, &QTabWidget::currentChanged, this, [this, filterSymLine](int index) {
+    filterSymLine->setText(listFilters.value(symbolLists[index]));
+  });
 
-  connect(filterSymLine, &QLineEdit::textEdited, this, &BinaryWidget::filterSymbols);
+  auto *filterButton = new QPushButton(tr("Filter"));
+  connect(filterButton, &QPushButton::clicked, this,
+          [this, filterSymLine] { filterSymbols(filterSymLine->text()); });
+
+  connect(filterSymLine, &QLineEdit::returnPressed, filterButton, &QPushButton::click);
+
+  auto *filterLayout = new QHBoxLayout;
+  filterLayout->setContentsMargins(0, 0, 0, 0);
+  filterLayout->addWidget(filterSymLine);
+  filterLayout->addWidget(filterButton);
 
   auto *symbolsLayout = new QVBoxLayout;
   symbolsLayout->setContentsMargins(0, 0, 0, 0);
   symbolsLayout->addWidget(tabWidget);
-  symbolsLayout->addWidget(filterSymLine);
+  symbolsLayout->addLayout(filterLayout);
 
   auto *symbolsWidget = new QWidget;
   symbolsWidget->setLayout(symbolsLayout);
@@ -667,8 +704,13 @@ void BinaryWidget::setup()
     presetupTime + disSectionsTime + stringSectionsTime + sidebarTime + elapsedTimer.restart();
   qDebug() << "Setup in" << totalTime << "ms";
 
+  symbolList->setSortingEnabled(true);
   symbolList->setEnabled(true);
+
+  stringList->setSortingEnabled(true);
   stringList->setEnabled(true);
+
+  tagList->setSortingEnabled(true);
   tagList->setEnabled(true);
 
   if (!offsetBlock.isEmpty()) {

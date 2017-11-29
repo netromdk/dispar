@@ -56,6 +56,8 @@ private:
 
   bool shown;
   QListWidget *symbolList, *stringList, *tagList;
+  QList<QListWidget *> symbolLists;
+  QHash<QListWidget *, QString> listFilters;
   QPlainTextEdit *mainView;
   QTextDocument *doc;
   QHash<quint64, int> offsetBlock;          ///< Offset -> block
