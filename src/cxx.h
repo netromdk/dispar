@@ -47,6 +47,12 @@ OutputIt copy(const Container &src, OutputIt dstFirst)
   return std::copy(std::cbegin(src), std::cend(src), dstFirst);
 }
 
+template <typename Container, typename OutputIt, typename UnaryPredicate>
+OutputIt copy_if(const Container &src, OutputIt dstFirst, UnaryPredicate pred)
+{
+  return std::copy_if(std::cbegin(src), std::cend(src), dstFirst, pred);
+}
+
 } // namespace cxx
 } // namespace dispar
 
