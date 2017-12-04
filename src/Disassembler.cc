@@ -2,6 +2,8 @@
 #include "BinaryObject.h"
 #include "Util.h"
 
+#include <cassert>
+
 #include <QByteArray>
 #include <QDebug>
 
@@ -25,7 +27,7 @@ size_t Disassembler::Result::count() const
 
 cs_insn *Disassembler::Result::instructions(size_t pos) const
 {
-  Q_ASSERT(pos < count());
+  assert(pos < count());
   return insn + pos;
 }
 

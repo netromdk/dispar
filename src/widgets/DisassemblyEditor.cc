@@ -5,6 +5,7 @@
 #include "Util.h"
 #include "widgets/TreeWidget.h"
 
+#include <cassert>
 #include <memory>
 
 #include <QDebug>
@@ -118,9 +119,9 @@ DisassemblyEditor::DisassemblyEditor(Section *section, BinaryObject *object, QWi
   : QDialog(parent), section(section), object(object), shown(false), label(nullptr),
     treeWidget(nullptr)
 {
-  Q_ASSERT(section);
-  Q_ASSERT(section->disassembly());
-  Q_ASSERT(object);
+  assert(section);
+  assert(section->disassembly());
+  assert(object);
 
   setWindowTitle(tr("Disassembly Editor: %1").arg(section->toString()));
   createLayout();

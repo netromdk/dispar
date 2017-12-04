@@ -12,6 +12,8 @@
 #include "widgets/DisassemblerDialog.h"
 #include "widgets/OptionsDialog.h"
 
+#include <cassert>
+
 #include <QApplication>
 #include <QCloseEvent>
 #include <QDebug>
@@ -153,7 +155,7 @@ bool MainWindow::saveProject()
   bool saveAs = (sender() == saveAsProjectAction);
 
   auto project = Context::get().project();
-  Q_ASSERT(project);
+  assert(project);
 
   auto ask = project->file().isEmpty() || saveAs;
 
@@ -375,10 +377,10 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
       }
 
       int idx = items.indexOf(choice);
-      Q_ASSERT(idx != -1);
+      assert(idx != -1);
       object = objects[idx];
     }
-    Q_ASSERT(object);
+    assert(object);
 
     applyModifiedRegions(object);
 

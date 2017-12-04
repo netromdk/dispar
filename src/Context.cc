@@ -1,6 +1,8 @@
 #include "Context.h"
 #include "Project.h"
 
+#include <cassert>
+
 #include <QDebug>
 #include <QDir>
 #include <QFile>
@@ -124,18 +126,18 @@ void Context::addRecentBinary(const QString &binary)
 void Context::setValue(const QString &key, const QVariant &value)
 {
   // Only allow types that are handled by JSON.
-  Q_ASSERT(static_cast<QMetaType::Type>(value.type()) == QMetaType::Bool ||
-           static_cast<QMetaType::Type>(value.type()) == QMetaType::Int ||
-           static_cast<QMetaType::Type>(value.type()) == QMetaType::UInt ||
-           static_cast<QMetaType::Type>(value.type()) == QMetaType::LongLong ||
-           static_cast<QMetaType::Type>(value.type()) == QMetaType::ULongLong ||
-           static_cast<QMetaType::Type>(value.type()) == QMetaType::Float ||
-           static_cast<QMetaType::Type>(value.type()) == QMetaType::Double ||
-           static_cast<QMetaType::Type>(value.type()) == QMetaType::QString ||
-           static_cast<QMetaType::Type>(value.type()) == QMetaType::QStringList ||
-           static_cast<QMetaType::Type>(value.type()) == QMetaType::QVariantList ||
-           static_cast<QMetaType::Type>(value.type()) == QMetaType::QVariantMap ||
-           static_cast<QMetaType::Type>(value.type()) == QMetaType::QVariantHash);
+  assert(static_cast<QMetaType::Type>(value.type()) == QMetaType::Bool ||
+         static_cast<QMetaType::Type>(value.type()) == QMetaType::Int ||
+         static_cast<QMetaType::Type>(value.type()) == QMetaType::UInt ||
+         static_cast<QMetaType::Type>(value.type()) == QMetaType::LongLong ||
+         static_cast<QMetaType::Type>(value.type()) == QMetaType::ULongLong ||
+         static_cast<QMetaType::Type>(value.type()) == QMetaType::Float ||
+         static_cast<QMetaType::Type>(value.type()) == QMetaType::Double ||
+         static_cast<QMetaType::Type>(value.type()) == QMetaType::QString ||
+         static_cast<QMetaType::Type>(value.type()) == QMetaType::QStringList ||
+         static_cast<QMetaType::Type>(value.type()) == QMetaType::QVariantList ||
+         static_cast<QMetaType::Type>(value.type()) == QMetaType::QVariantMap ||
+         static_cast<QMetaType::Type>(value.type()) == QMetaType::QVariantHash);
   values[key] = value;
 }
 

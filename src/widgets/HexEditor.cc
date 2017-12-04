@@ -3,6 +3,8 @@
 #include "Util.h"
 #include "widgets/TreeWidget.h"
 
+#include <cassert>
+
 #include <QApplication>
 #include <QDebug>
 #include <QElapsedTimer>
@@ -102,8 +104,8 @@ private:
 HexEditor::HexEditor(Section *section, BinaryObject *object, QWidget *parent)
   : QDialog(parent), section(section), object(object), shown(false), rows(0)
 {
-  Q_ASSERT(section);
-  Q_ASSERT(object);
+  assert(section);
+  assert(object);
 
   setWindowTitle(tr("Hex Editor: %1").arg(section->toString()));
   createLayout();

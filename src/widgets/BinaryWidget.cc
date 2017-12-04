@@ -21,6 +21,8 @@
 #include <QTextBlockUserData>
 #include <QTimer>
 
+#include <cassert>
+
 #include "BinaryObject.h"
 #include "CStringReader.h"
 #include "Context.h"
@@ -52,7 +54,7 @@ namespace dispar {
 
 BinaryWidget::BinaryWidget(BinaryObject *object) : object(object), shown(false), doc(nullptr)
 {
-  Q_ASSERT(object);
+  assert(object);
   createLayout();
 
   auto &ctx = Context::get();
@@ -305,7 +307,7 @@ void BinaryWidget::createLayout()
 {
   auto &ctx = Context::get();
   auto *project = ctx.project();
-  Q_ASSERT(project);
+  assert(project);
 
   // Symbols left bar.
 
@@ -335,7 +337,7 @@ void BinaryWidget::createLayout()
   tabWidget->addTab(tagList, tr("Tags"));
 
   symbolLists << symbolList << stringList << tagList;
-  Q_ASSERT(symbolLists.size() == 3);
+  assert(symbolLists.size() == 3);
 
   auto *filterSymLine = new QLineEdit;
   filterSymLine->setPlaceholderText(tr("Filter symbols.."));

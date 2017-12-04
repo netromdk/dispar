@@ -1,6 +1,8 @@
 #include "widgets/ToggleBox.h"
 #include "Context.h"
 
+#include <cassert>
+
 #include <QScrollArea>
 #include <QToolButton>
 #include <QVBoxLayout>
@@ -21,7 +23,7 @@ ToggleBox::~ToggleBox()
 
 void ToggleBox::setContentLayout(QLayout *layout)
 {
-  Q_ASSERT(layout);
+  assert(layout);
   if (contentWidget->layout()) {
     delete contentWidget->layout();
   }
