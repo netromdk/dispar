@@ -47,6 +47,8 @@ add_dispar_executable(
   formats/FormatLoader.cc
   formats/MachO.cc
 
+  Debugger.cc
+
   binaries.qrc
   )
 

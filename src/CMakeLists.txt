@@ -39,6 +39,9 @@ add_library(
   SymbolTable.h
   SymbolTable.cc
 
+  Debugger.h
+  Debugger.cc
+
   widgets/MainWindow.h
   widgets/MainWindow.cc
   widgets/BinaryWidget.h
