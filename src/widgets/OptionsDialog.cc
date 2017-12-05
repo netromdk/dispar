@@ -6,10 +6,14 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialogButtonBox>
+#include <QFormLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
+#include <QInputDialog>
 #include <QLabel>
+#include <QLineEdit>
 #include <QMessageBox>
+#include <QPushButton>
 #include <QSpinBox>
 #include <QVBoxLayout>
 
@@ -19,6 +23,52 @@ OptionsDialog::OptionsDialog(QWidget *parent) : QDialog(parent)
 {
   setWindowTitle(tr("Options"));
   createLayout();
+}
+
+void OptionsDialog::onTestDebugger()
+{
+  const auto dbg = currentDebugger();
+  if (!dbg.valid()) {
+    QMessageBox::warning(this, "", tr("Debugger is not valid! Specify all values."));
+    return;
+  }
+  if (dbg.runnable()) {
+    QMessageBox::information(this, "", tr("Debugger \"%1\" is working!").arg(dbg.program()));
+  }
+  else {
+    QMessageBox::warning(this, "", tr("Could not run \"%1\"!").arg(dbg.program()));
+  }
+}
+
+void OptionsDialog::onDetectInstalledDebuggers()
+{
+  const auto dbgs = Debugger::detect();
+  if (dbgs.isEmpty()) {
+    QMessageBox::warning(this, "",
+                         tr("No installed debuggers were found! Make sure they are in PATH."));
+    return;
+  }
+
+  QStringList items;
+  for (const auto &dbg : dbgs) {
+    items << dbg.program();
+  }
+
+  bool ok;
+  const auto chosenDbg =
+    QInputDialog::getItem(this, tr("Select debugger"), tr("Debugger:"), items, 0, false, &ok);
+  if (!ok || chosenDbg.isEmpty()) {
+    return;
+  }
+
+  for (const auto &dbg : dbgs) {
+    if (chosenDbg == dbg.program()) {
+      debuggerEdit->setText(dbg.program());
+      launchPatternEdit->setText(dbg.launchPattern());
+      versionArgumentEdit->setText(dbg.versionArgument());
+      return;
+    }
+  }
 }
 
 void OptionsDialog::onAccept()
@@ -36,6 +86,11 @@ void OptionsDialog::onAccept()
       this, "dispar", tr("Disassembler syntax won't change until the program has been restarted!"));
   }
   ctx.setDisassemblerSyntax(syntax);
+
+  const auto dbg = currentDebugger();
+  if (dbg.valid()) {
+    ctx.setDebugger(dbg);
+  }
 
   accept();
 }
@@ -110,6 +165,57 @@ void OptionsDialog::createLayout()
   backupGroup->setLayout(backupLayout);
   connect(backupGroup, &QGroupBox::toggled, this, [&ctx](bool on) { ctx.setBackupEnabled(on); });
 
+  ///// Debugger
+
+  debuggerEdit = new QLineEdit;
+  debuggerEdit->setPlaceholderText("lldb");
+  debuggerEdit->setMinimumWidth(200);
+  debuggerEdit->setToolTip(tr("Debugger program name or full path."));
+
+  launchPatternEdit = new QLineEdit;
+  launchPatternEdit->setPlaceholderText("-- {{BINARY}} {{ARGS}}");
+  launchPatternEdit->setMinimumWidth(200);
+  launchPatternEdit->setToolTip(tr(
+    "Launch pattern to invoke the debugger with in order to pass "
+    "the binary to run and possible extra arguments.\nIt must at least include \"{{BINARY}}\" to "
+    "signify the binary, and optionally also \"{{ARGS}}\" to specify how arguments are passed."));
+
+  versionArgumentEdit = new QLineEdit;
+  versionArgumentEdit->setPlaceholderText("--version");
+  versionArgumentEdit->setMinimumWidth(200);
+  versionArgumentEdit->setToolTip(
+    tr("Version argument passed to debugger that will make the program exit successfully.\nIt can "
+       "by anything that makes it exit with code 0, like \"--help\", for instance."));
+
+  const auto dbg = ctx.debugger();
+  if (dbg.valid()) {
+    debuggerEdit->setText(dbg.program());
+    launchPatternEdit->setText(dbg.launchPattern());
+    versionArgumentEdit->setText(dbg.versionArgument());
+  }
+
+  auto *testDebuggerButton = new QPushButton(tr("Test Debugger"));
+  connect(testDebuggerButton, &QPushButton::clicked, this, &OptionsDialog::onTestDebugger);
+
+  auto *detectDebuggersButton = new QPushButton(tr("Detect Installed Debuggers"));
+  connect(detectDebuggersButton, &QPushButton::clicked, this,
+          &OptionsDialog::onDetectInstalledDebuggers);
+
+  auto *debuggerButtonsLayout = new QHBoxLayout;
+  debuggerButtonsLayout->addStretch();
+  debuggerButtonsLayout->addWidget(testDebuggerButton);
+  debuggerButtonsLayout->addWidget(detectDebuggersButton);
+  debuggerButtonsLayout->addStretch();
+
+  auto *debuggerLayout = new QFormLayout;
+  debuggerLayout->addRow(tr("Debugger:"), debuggerEdit);
+  debuggerLayout->addRow(tr("Launch Pattern:"), launchPatternEdit);
+  debuggerLayout->addRow(tr("Version Argument:"), versionArgumentEdit);
+  debuggerLayout->addRow(debuggerButtonsLayout);
+
+  auto *debuggerGroup = new QGroupBox(tr("Debugger"));
+  debuggerGroup->setLayout(debuggerLayout);
+
   ///// Buttons and overall layout.
 
   auto *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
@@ -119,10 +225,16 @@ void OptionsDialog::createLayout()
   auto *layout = new QVBoxLayout;
   layout->addWidget(mainGroup);
   layout->addWidget(backupGroup);
+  layout->addWidget(debuggerGroup);
   layout->addStretch();
   layout->addWidget(buttonBox);
 
   setLayout(layout);
+}
+
+Debugger OptionsDialog::currentDebugger() const
+{
+  return {debuggerEdit->text(), versionArgumentEdit->text(), launchPatternEdit->text()};
 }
 
 } // namespace dispar
