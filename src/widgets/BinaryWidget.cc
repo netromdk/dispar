@@ -407,10 +407,28 @@ void BinaryWidget::createLayout()
     QDesktopServices::openUrl(QUrl::fromLocalFile(folder));
   });
 
+  auto *binaryRunDebuggerButton = new QPushButton(tr("Run In Debugger"));
+  binaryRunDebuggerButton->setToolTip(tr("Run binary in debugger."));
+
+  connect(binaryRunDebuggerButton, &QPushButton::clicked, this, [this, binaryFile] {
+    const auto dbg = Context::get().debugger();
+    if (!dbg.valid()) {
+      QMessageBox::warning(this, "",
+                           tr("No valid debugger is specified! Do so in the Options Dialog."));
+      return;
+    }
+    if (!dbg.runnable()) {
+      QMessageBox::warning(this, "", tr("Could not run debugger \"%1\"!").arg(dbg.program()));
+      return;
+    }
+    dbg.detachStart(binaryFile);
+  });
+
   auto *binaryButtonLayout = new QHBoxLayout;
   binaryButtonLayout->setContentsMargins(0, 0, 0, 0);
   binaryButtonLayout->addStretch();
   binaryButtonLayout->addWidget(binaryOpenFolderButton);
+  binaryButtonLayout->addWidget(binaryRunDebuggerButton);
   binaryButtonLayout->addStretch();
 
   auto *binaryLayout = new QVBoxLayout;
