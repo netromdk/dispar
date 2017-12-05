@@ -146,6 +146,16 @@ QVariant Context::value(const QString &key, const QVariant &defaultValue) const
   return values.value(key, defaultValue);
 }
 
+void Context::setDebugger(const Debugger &debugger)
+{
+  debugger_ = debugger;
+}
+
+Debugger Context::debugger() const
+{
+  return debugger_;
+}
+
 void Context::loadSettings()
 {
   auto path = settingsPath();
@@ -218,6 +228,29 @@ void Context::loadSettings()
       values = valuesValue.toObject().toVariantHash();
     }
   }
+
+  if (obj.contains("debugger")) {
+    const auto debuggerValue = obj["debugger"];
+    if (debuggerValue.isObject()) {
+      const auto debuggerObj = debuggerValue.toObject();
+
+      QString program, launchPattern, versionArgument;
+      if (debuggerObj.contains("program")) {
+        program = debuggerObj["program"].toString();
+      }
+      if (debuggerObj.contains("launchPattern")) {
+        launchPattern = debuggerObj["launchPattern"].toString();
+      }
+      if (debuggerObj.contains("versionArgument")) {
+        versionArgument = debuggerObj["versionArgument"].toString();
+      }
+
+      Debugger dbg(program, versionArgument, launchPattern);
+      if (dbg.valid()) {
+        setDebugger(dbg);
+      }
+    }
+  }
 }
 
 void Context::saveSettings()
@@ -233,12 +266,20 @@ void Context::saveSettings()
   recentObj["projects"] = QJsonArray::fromStringList(recentProjects());
   recentObj["binaries"] = QJsonArray::fromStringList(recentBinaries());
 
+  QJsonObject debuggerObj;
+  if (debugger_.valid()) {
+    debuggerObj["program"] = debugger_.program();
+    debuggerObj["launchPattern"] = debugger_.launchPattern();
+    debuggerObj["versionArgument"] = debugger_.versionArgument();
+  }
+
   QJsonObject obj;
   obj["showMachineCode"] = showMachineCode();
   obj["disassemblerSyntax"] = static_cast<int>(disassemblerSyntax());
   obj["backup"] = backupObj;
   obj["recent"] = recentObj;
   obj["values"] = QJsonValue::fromVariant(values);
+  obj["debugger"] = debuggerObj;
 
   QJsonDocument doc;
   doc.setObject(obj);

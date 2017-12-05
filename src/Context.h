@@ -7,6 +7,7 @@
 
 #include <memory>
 
+#include "Debugger.h"
 #include "Disassembler.h"
 
 namespace dispar {
@@ -43,6 +44,9 @@ public:
   void setValue(const QString &key, const QVariant &value);
   QVariant value(const QString &key, const QVariant &defaultValue = {}) const;
 
+  void setDebugger(const Debugger &debugger);
+  Debugger debugger() const;
+
   void loadSettings();
   void saveSettings();
 
@@ -73,6 +77,8 @@ private:
 
   QStringList recentProjects_, recentBinaries_;
   QVariantHash values;
+
+  Debugger debugger_;
 
   std::unique_ptr<Project> project_;
 };
