@@ -31,3 +31,9 @@ TEST(Debugger, substituteLaunchPattern)
   EXPECT_EQ(dbg.substituteLaunchPattern(binary, args),
             QString("-- %1 %2").arg(binary).arg(args.join(" ")));
 }
+
+TEST(Debugger, runnableTimeout)
+{
+  Debugger dbg("somethingirrelevant", "--blarg", "-- {{BINARY}} {{ARGS}}");
+  EXPECT_FALSE(dbg.runnable(1));
+}

@@ -10,6 +10,13 @@ namespace Constants {
 
 static const QString PROJECT_URL("https://github.com/netromdk/dispar");
 
+namespace Debugger {
+
+/// Timeout in milliseconds when testing if debugger is runnable.
+static constexpr int runnableTimeout = 1000;
+
+} // namespace Debugger
+
 namespace Deps {
 
 namespace Qt {

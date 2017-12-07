@@ -2,8 +2,10 @@
 #include "cxx.h"
 
 #include <QDir>
+#include <QEventLoop>
 #include <QFile>
 #include <QProcess>
+#include <QTimer>
 
 namespace dispar {
 
@@ -65,9 +67,24 @@ bool Debugger::valid() const
   return !program().isEmpty() && !versionArgument().isEmpty() && !launchPattern().isEmpty();
 }
 
-bool Debugger::runnable() const
+bool Debugger::runnable(int timeout) const
 {
-  return 0 == QProcess::execute(program(), {versionArgument()});
+  QProcess proc;
+
+  QEventLoop loop;
+  QObject::connect(&proc, cxx::Use<int, QProcess::ExitStatus>::overloadOf(&QProcess::finished),
+                   &loop, &QEventLoop::quit);
+
+  bool timedOut = false;
+  QTimer::singleShot(timeout, &loop, [&] {
+    timedOut = true;
+    loop.quit();
+  });
+
+  proc.start(program(), {versionArgument()});
+  loop.exec();
+
+  return !timedOut && proc.exitCode() == 0 && proc.exitStatus() == QProcess::NormalExit;
 }
 
 bool Debugger::detachStart(const QString &binary, const QStringList &args) const

@@ -1,6 +1,8 @@
 #ifndef SRC_DEBUGGER_H
 #define SRC_DEBUGGER_H
 
+#include "Constants.h"
+
 #include <QDebug>
 #include <QList>
 #include <QStringList>
@@ -36,7 +38,8 @@ public:
   bool valid() const;
 
   /// Checks if the debugger is runnable on the system.
-  bool runnable() const;
+  /** It will \p timeout in milliseconds if program doesn't exit before that. */
+  bool runnable(int timeout = Constants::Debugger::runnableTimeout) const;
 
   /// Start debugger detached to execute \p binary with optional \p args.
   /** Returns true if the debugger was started successfully. */
