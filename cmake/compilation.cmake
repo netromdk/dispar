@@ -56,8 +56,11 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
   message("Compiler version: ${CLANG_VERSION}")
   if (NOT (CLANG_VERSION VERSION_GREATER 3.8 OR CLANG_VERSION VERSION_EQUAL 3.8))
     message(FATAL_ERROR "Requires Clang >= 3.8.")
+  elseif (APPLE)
+    # Use libstdc++ on Linux but libc++ on macOS.
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
   endif()
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++ ${CLANG_WARNINGS} ${CLANG_ERRORS}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CLANG_WARNINGS} ${CLANG_ERRORS}")
 elseif (MSVC AND MSVC14)
   # C++14 support is implicitly enabled.
 else()
