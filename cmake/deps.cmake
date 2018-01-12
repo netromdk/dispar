@@ -10,6 +10,7 @@ if (NOT WIN32)
     "/usr/local/opt"
     "/usr/local/opt/qt5"
     "/opt/local/libexec/qt5"
+    "/opt/qt56"
     )
 else()
   set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}
