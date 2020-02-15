@@ -70,6 +70,8 @@ add_library(
   widgets/TreeWidget.cc
   widgets/HexEditor.h
   widgets/HexEditor.cc
+  widgets/NumberValidator.h
+  widgets/NumberValidator.cc
   widgets/AsciiValidator.h
   widgets/AsciiValidator.cc
 

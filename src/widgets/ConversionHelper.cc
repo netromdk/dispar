@@ -12,6 +12,7 @@
 
 #include "widgets/AsciiValidator.h"
 #include "widgets/ConversionHelper.h"
+#include "widgets/NumberValidator.h"
 
 namespace dispar {
 
@@ -155,7 +156,16 @@ void ConversionHelper::createLayout()
     auto *edit = new QLineEdit;
     connect(edit, &QLineEdit::textEdited, this, &ConversionHelper::onTextEdited);
 
-    if (i == 3) {
+    if (i == 0) {
+      edit->setValidator(new NumberValidator(8, this));
+    }
+    else if (i == 1) {
+      edit->setValidator(new NumberValidator(10, this));
+    }
+    else if (i == 2) {
+      edit->setValidator(new NumberValidator(16, this));
+    }
+    else if (i == 3) {
       edit->setMaxLength(1);
       edit->setValidator(new AsciiValidator(this));
     }
