@@ -110,7 +110,7 @@ void ConversionHelper::onTextToHex()
   bool unicode = (encBox->currentIndex() == 1);
 
   QString hex;
-  foreach (auto c, text) {
+  for (const auto &c : text) {
     int ic;
     if (unicode) {
       ic = c.unicode();

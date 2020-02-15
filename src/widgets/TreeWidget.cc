@@ -55,7 +55,7 @@ void TreeWidget::setMachineCodeColumns(const QList<int> &columns)
   }
 
   int cols = columnCount();
-  foreach (int col, columns) {
+  for (const int col : columns) {
     if (col < cols) {
       machineCodeColumns << col;
     }
