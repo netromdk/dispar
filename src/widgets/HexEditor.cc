@@ -149,7 +149,7 @@ void HexEditor::createLayout()
   treeWidget->setColumnWidth(2, 200);
   treeWidget->setColumnWidth(3, 110);
   treeWidget->setItemDelegate(new ItemDelegate(this, treeWidget, section));
-  treeWidget->setMachineCodeColumns(QList<int>{1, 2});
+  treeWidget->setMachineCodeColumns({1, 2});
   treeWidget->setCpuType(object->cpuType());
   treeWidget->setAddressColumn(0);
 

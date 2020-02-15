@@ -219,7 +219,7 @@ void DisassemblyEditor::createLayout()
   treeWidget->setColumnWidth(1, 200);
   treeWidget->setColumnWidth(2, 200);
   treeWidget->setItemDelegate(new ItemDelegate(this, treeWidget, object, section));
-  treeWidget->setMachineCodeColumns(QList<int>{1});
+  treeWidget->setMachineCodeColumns({1});
   treeWidget->setCpuType(object->cpuType());
   treeWidget->setAddressColumn(0);
 
