@@ -26,7 +26,9 @@ public:
   static QString padString(const QString &str, int size, bool before = true, char pad = 48);
 
   static QString dataToAscii(const QByteArray &data, int offset, int size);
-  static QString hexToAscii(const QString &data, int offset, int blocks, bool unicode = false);
+  static QString hexToAscii(const QString &data, int offset, int blocks, int blocksize = 2,
+                            bool unicode = false);
+  static QString hexToUnicode(const QString &data);
   static QString hexToString(const QString &str);
   static QByteArray hexToData(const QString &str);
 

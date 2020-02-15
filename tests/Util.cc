@@ -104,3 +104,31 @@ TEST(Util, escapeWhitespace)
   EXPECT_EQ(Util::escapeWhitespace("hello\nthere\rhello\fworld!\v"),
             "hello\\nthere\\rhello\\fworld!\\v");
 }
+
+TEST(Util, hexToAscii)
+{
+  // If not in range [32; 126] then yield ".".
+  EXPECT_EQ(Util::hexToAscii("1F", 0, 1), "."); // 31
+  EXPECT_EQ(Util::hexToAscii("20", 0, 1), " "); // 32
+  EXPECT_EQ(Util::hexToAscii("7E", 0, 1), "~"); // 126
+  EXPECT_EQ(Util::hexToAscii("7F", 0, 1), "."); // 127
+
+  EXPECT_EQ(Util::hexToAscii("61 62 63", 0, 3), "abc");
+  EXPECT_EQ(Util::hexToAscii("616263", 0, 3), "abc");
+
+  EXPECT_EQ(Util::hexToAscii("31 32 33 34 35 36", 0, 6), "123456");
+  EXPECT_EQ(Util::hexToAscii("313233343536", 0, 6), "123456");
+
+  // Offset
+  EXPECT_EQ(Util::hexToAscii("31 32", 3, 1), "2"); // 0x32 = '2'
+  EXPECT_EQ(Util::hexToAscii("31 32", 4, 1), "."); // 0x2 = '.' (<32)
+}
+
+TEST(Util, hexToUnicode)
+{
+  EXPECT_EQ(Util::hexToUnicode("20AC"), "€");
+  EXPECT_EQ(Util::hexToUnicode("24 20AC 25"), "$€%");
+  EXPECT_EQ(Util::hexToUnicode("2420AC25"), "$ ¬%");
+  EXPECT_EQ(Util::hexToUnicode("24AC 25"), "⒬%");
+}
+

@@ -89,12 +89,22 @@ void ConversionHelper::onTextEdited(const QString &text)
 
 void ConversionHelper::onHexToText()
 {
-  auto hex = hexEdit->toPlainText().trimmed().replace(" ", "");
-  if (hex.isEmpty()) return;
+  auto hex = hexEdit->toPlainText();
+  if (hex.trimmed().replace(" ", "").isEmpty()) {
+    return;
+  }
 
   bool unicode = (encBox->currentIndex() == 1);
 
-  auto text = Util::hexToAscii(hex, 0, hex.size() / 2, unicode);
+  const auto text = [&] {
+    if (unicode) {
+      return Util::hexToUnicode(hex);
+    }
+
+    hex = hex.trimmed().replace(" ", "");
+    return Util::hexToAscii(hex, 0, hex.size() / 2);
+  }();
+
   if (text.isEmpty()) {
     QMessageBox::information(this, "bmod", tr("Could not convert hex to text."));
     return;

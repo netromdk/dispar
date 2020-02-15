@@ -6,6 +6,7 @@
 #include <QDesktopWidget>
 #include <QDir>
 #include <QFileInfo>
+#include <QRegularExpression>
 #include <QScreen>
 #include <QScrollBar>
 #include <QTimer>
@@ -63,19 +64,19 @@ QString Util::dataToAscii(const QByteArray &data, int offset, int size)
   return res;
 }
 
-QString Util::hexToAscii(const QString &str, int offset, int blocks, bool unicode)
+QString Util::hexToAscii(const QString &str, int offset, int blocks, int blocksize, bool unicode)
 {
   QString res;
   int len = str.size();
-  int size = blocks * 2;
+  int size = blocks * blocksize;
   bool ok;
-  for (int i = offset; i - offset <= size && i < len; i += 2) {
+  for (int i = offset; i - offset <= size && i < len; i += blocksize) {
     if (str[i] == ' ') {
       size++;
       i--;
       continue;
     }
-    int ic = str.mid(i, 2).toInt(&ok, 16);
+    int ic = str.mid(i, blocksize).toInt(&ok, 16);
     if (!ok) return QString();
     if (!unicode) {
       res += (ic >= 32 && ic <= 126 ? (char) ic : '.');
@@ -84,6 +85,22 @@ QString Util::hexToAscii(const QString &str, int offset, int blocks, bool unicod
       res += QString::fromUtf16((ushort *) &ic, 1);
     }
   }
+  return res;
+}
+
+QString Util::hexToUnicode(const QString &str)
+{
+  QString res;
+
+  // Split on whitespace and treat each part separately.
+  for (const auto &part : str.split(QRegularExpression("\\s+"), QString::SkipEmptyParts)) {
+    int blocksize = part.size();
+    if (blocksize < 2 || blocksize > 4) {
+      blocksize = 2;
+    }
+    res += hexToAscii(part, 0, part.size() / blocksize, blocksize, true);
+  }
+
   return res;
 }
 
