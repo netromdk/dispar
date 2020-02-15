@@ -5,6 +5,7 @@ matrix:
   include:
     # works on Precise and Trusty
     - os: linux
+      dist: bionic
       sudo: required
       addons:
         apt:
@@ -19,6 +20,7 @@ matrix:
     # works on Precise and Trusty
     - os: linux
       sudo: required
+      dist: bionic
       addons:
         apt:
           sources:
