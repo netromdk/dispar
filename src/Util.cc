@@ -6,6 +6,7 @@
 #include <QDesktopWidget>
 #include <QDir>
 #include <QFileInfo>
+#include <QScreen>
 #include <QScrollBar>
 #include <QTimer>
 #include <QTreeWidgetItem>
@@ -176,14 +177,26 @@ QString Util::resolveAppBinary(QString path)
   return {};
 }
 
+QScreen *Util::screenOfWidget(QWidget *widget)
+{
+  const auto number = QApplication::desktop()->screenNumber(widget);
+  if (number == -1) return nullptr;
+  return QGuiApplication::screens()[number];
+}
+
 void Util::centerWidget(QWidget *widget)
 {
-  widget->move(QApplication::desktop()->screen()->rect().center() - widget->rect().center());
+  if (const auto *screen = screenOfWidget(widget); screen) {
+    widget->move(screen->availableGeometry().center() - widget->rect().center());
+  }
 }
 
 void Util::resizeRatioOfScreen(QWidget *widget, float percentage, const QSize &minimum)
 {
-  auto rect = QApplication::desktop()->availableGeometry();
+  const auto *screen = screenOfWidget(widget);
+  if (!screen) return;
+
+  auto rect = screen->availableGeometry();
   rect.setWidth(static_cast<float>(rect.width()) * percentage);
   rect.setHeight(static_cast<float>(rect.height()) * percentage);
 

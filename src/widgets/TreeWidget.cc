@@ -60,7 +60,10 @@ void TreeWidget::setMachineCodeColumns(const QList<int> &columns)
       machineCodeColumns << col;
     }
   }
-  machineCodeColumns = machineCodeColumns.toSet().toList();
+
+  // Remove duplicates.
+  machineCodeColumns = QSet<int>(machineCodeColumns.begin(), machineCodeColumns.end()).values();
+
   if (machineCodeColumns.size() > cols) {
     machineCodeColumns.clear();
   }

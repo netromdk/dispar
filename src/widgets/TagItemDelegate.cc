@@ -47,7 +47,7 @@ QSize TagItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModel
 {
   auto tag = index.data().toString();
   QFontMetrics fm(option.font);
-  return QSize(float(fm.width(tag)) * 1.3, float(fm.height()) * 1.5);
+  return QSize(float(fm.horizontalAdvance(tag)) * 1.3, float(fm.height()) * 1.5);
 }
 
 } // namespace dispar

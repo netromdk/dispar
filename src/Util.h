@@ -12,6 +12,7 @@
 #include "CpuType.h"
 #include "cxx.h"
 
+class QScreen;
 class QTreeWidgetItem;
 class QAbstractScrollArea;
 
@@ -32,6 +33,8 @@ public:
   static QString bytesToHex(const unsigned char *bytes, int size);
 
   static QString resolveAppBinary(QString path);
+
+  static QScreen *screenOfWidget(QWidget *widget);
 
   static void centerWidget(QWidget *widget);
 
