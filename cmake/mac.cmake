@@ -29,11 +29,10 @@ endif()
 
 add_definitions(
   -DMAC
-  -DGCC_VISIBILITY
-  -mmacosx-version-min=${SDK_MIN}
   )
 
 set(CMAKE_OSX_SYSROOT ${DEV_SDK})
+SET(CMAKE_OSX_DEPLOYMENT_TARGET ${SDK_MIN})
 
 # Silence annoying "ranlib: file: ...o has no symbols" warnings! On Mac the ar utility will run
 # ranlib, which causes the warning. Using the "Src" argument stops ar from executing ranlib, and
