@@ -200,7 +200,7 @@ void TreeWidget::findAddress()
 
   quint64 num = text.toULongLong(&ok, 16);
   if (!ok) {
-    QMessageBox::warning(this, "bmod", tr("Invalid address! Must be in hexadecimal."));
+    QMessageBox::warning(this, "dispar", tr("Invalid address! Must be in hexadecimal."));
     findAddress();
     return;
   }

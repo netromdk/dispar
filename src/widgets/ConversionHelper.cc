@@ -106,8 +106,7 @@ void ConversionHelper::onHexToText()
   }();
 
   if (text.isEmpty()) {
-    QMessageBox::information(this, "bmod", tr("Could not convert hex to text."));
-    return;
+    QMessageBox::information(this, "dispar", tr("Could not convert hex to text."));
   }
   textEdit->setText(text);
 }
@@ -131,8 +130,7 @@ void ConversionHelper::onTextToHex()
     hex += Util::padString(QString::number(ic, 16).toUpper(), 2) + " ";
   }
   if (hex.isEmpty()) {
-    QMessageBox::information(this, "bmod", tr("Could not convert text to hex."));
-    return;
+    QMessageBox::information(this, "dispar", tr("Could not convert text to hex."));
   }
   hexEdit->setText(hex);
 }
