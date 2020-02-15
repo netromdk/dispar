@@ -17,6 +17,11 @@ set(CMAKE_CXX_FLAGS_MINSIZEREL "-O3 -DNDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
 
+# Show color in diagnostics messages from Clang.
+if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcolor-diagnostics")
+endif()
+
 # Some release optimization flags for GCC/Clang.
 if (NOT WIN32)
   # Clang/GCC
