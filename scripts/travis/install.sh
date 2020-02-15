@@ -5,7 +5,7 @@ set -x
 
 # Linux
 if [[ $TRAVIS_OS_NAME == "linux" ]]; then
-    sudo apt-get install -qq qt514base
+    sudo apt-get install -qq qt514base mesa-common-dev libglu1-mesa-dev
 fi
 
 # macOS
