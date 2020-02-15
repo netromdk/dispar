@@ -5,13 +5,12 @@ set(QT_MINIMUM_VERSION "5.14.0")
 if (NOT WIN32)
   set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}
     "/usr/local/Cellar/qt"
-    "/usr/local/Qt-5.6.0"
-    "/usr/local/Qt-5.4.1"
-    "/usr/local/Qt-5.4.0"
+    "/usr/local/Qt-5.14.1"
+    "/usr/local/Qt-5.14.0"
     "/usr/local/opt"
     "/usr/local/opt/qt5"
     "/opt/local/libexec/qt5"
-    "/opt/qt56"
+    "/opt/qt514"
     )
 else()
   set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}
