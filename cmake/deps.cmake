@@ -4,6 +4,7 @@ set(QT_MINIMUM_VERSION "5.14.0")
 # Added some paths to help find the modules on some systems.
 if (NOT WIN32)
   set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}
+    "/usr/local/Cellar/qt"
     "/usr/local/Qt-5.6.0"
     "/usr/local/Qt-5.4.1"
     "/usr/local/Qt-5.4.0"
