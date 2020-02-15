@@ -3,46 +3,27 @@ language: generic
 
 matrix:
   include:
-    # works on Precise and Trusty
     - os: linux
       dist: bionic
       sudo: required
       addons:
         apt:
-          sources:
-            - ubuntu-toolchain-r-test
           packages:
             - g++-7
       env:
         - CC=gcc-7
         - CXX=g++-7
 
-    # works on Precise and Trusty
     - os: linux
       sudo: required
       dist: bionic
       addons:
         apt:
-          sources:
-            - ubuntu-toolchain-r-test
           packages:
             - g++-8
       env:
         - CC=gcc-8
         - CXX=g++-8
-
-    # # works on Trusty
-    # - os: linux
-    #   sudo: required
-    #   addons:
-    #     apt:
-    #       sources:
-    #         - llvm-toolchain-trusty-5.0
-    #       packages:
-    #         - clang-5.0
-    #   env:
-    #     - CC=clang-5.0
-    #     - CXX=clang++-5.0
 
     - os: osx
       compiler: clang
