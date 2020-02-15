@@ -12,6 +12,7 @@ class Reader;
 class MachO : public Format {
 public:
   MachO(const QString &file);
+  virtual ~MachO() = default;
 
   QString file() const override;
 
