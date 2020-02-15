@@ -1,7 +1,7 @@
 set(SDK_MIN 10.8)
 
 # Try to pick the newest!
-set(SDKS 10.13 10.12 10.11 10.10 10.9 10.8)
+set(SDKS 10.15 10.14 10.13 10.12 10.11 10.10 10.9 10.8)
 
 # Force a specific version if defined.
 if (FORCE_MAC_SDK)
@@ -24,7 +24,7 @@ foreach (sdk ${SDKS})
 endforeach()
 
 if (NOT found_sdk)
-  message(FATAL_ERROR "Could not find Mac OS X SDK version 10.8 - 10.13!")
+  message(FATAL_ERROR "Could not find Mac OS X SDK version 10.8 - 10.15!")
 endif()
 
 add_definitions(
