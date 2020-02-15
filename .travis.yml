@@ -1,11 +1,10 @@
 # Not using "cpp" because the default tools are so old!
 language: generic
 
-matrix:
+jobs:
   include:
     - os: linux
       dist: bionic
-      sudo: required
       addons:
         apt:
           packages:
@@ -15,7 +14,6 @@ matrix:
         - CXX=g++-7
 
     - os: linux
-      sudo: required
       dist: bionic
       addons:
         apt:
