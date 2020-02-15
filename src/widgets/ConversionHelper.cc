@@ -81,8 +81,13 @@ void ConversionHelper::onTextEdited(const QString &text)
 
     // ACSII
     else if (i == 3 && val > 0) {
-      auto s = (val >= 32 && val <= 126 ? QString((char) val) : "");
-      e->setText(s);
+      if (val < 32 || val > 126) {
+        e->setText("");
+        e->setPlaceholderText(tr("None"));
+      }
+      else {
+        e->setText(QString((char) val));
+      }
     }
   }
 }
