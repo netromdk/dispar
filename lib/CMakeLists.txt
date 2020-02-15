@@ -1,3 +1,9 @@
+# Turn off automoc/autorcc because Qt isn't used in these third party libs.
+# It removes the following dev warning:
+#   AUTOGEN: No valid Qt version found for target capstone-static.  AUTOMOC and AUTORCC disabled.
+set(CMAKE_AUTOMOC OFF)
+set(CMAKE_AUTORCC OFF)
+
 add_subdirectory(libiberty)
 
 set(CAPSTONE_BUILD_STATIC ON CACHE BOOL "")
