@@ -9,6 +9,8 @@
 #include <QTextEdit>
 
 #include "Util.h"
+
+#include "widgets/AsciiValidator.h"
 #include "widgets/ConversionHelper.h"
 
 namespace dispar {
@@ -155,6 +157,7 @@ void ConversionHelper::createLayout()
 
     if (i == 3) {
       edit->setMaxLength(1);
+      edit->setValidator(new AsciiValidator(this));
     }
 
     numLayout->addWidget(edit, i, 1);
