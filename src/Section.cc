@@ -36,6 +36,9 @@ QString Section::typeName(Type type)
 
   case Section::Type::CODE_SIG:
     return QObject::tr("Code Signatures");
+
+  case Section::Type::LC_VERSION_MIN_MACOSX:
+    return QObject::tr("LC_VERSION_MIN_MACOSX");
   }
 
   return {};

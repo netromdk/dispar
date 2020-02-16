@@ -645,12 +645,18 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
     // LC_VERSION_MIN_MACOSX
     else if (type == 0x24) {
       // Version (X.Y.Z is encoded in nibbles xxxx.yy.zz)
+      const auto targetAddr = r.pos();
       r.getUInt32(&ok);
       if (!ok) return false;
 
       // SDK version (X.Y.Z is encoded in nibbles xxxx.yy.zz)
       r.getUInt32(&ok);
       if (!ok) return false;
+
+      auto sec = std::make_unique<Section>(Section::Type::LC_VERSION_MIN_MACOSX,
+                                           QObject::tr("macOS SDK min version"), targetAddr, 4 * 2,
+                                           offset + targetAddr);
+      binaryObject->addSection(std::move(sec));
     }
 
     // LC_SOURCE_VERSION

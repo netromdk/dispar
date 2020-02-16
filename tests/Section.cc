@@ -19,6 +19,7 @@ TEST(Section, types)
   EXPECT_EQ((int) Section::Type::STRING, 5);
   EXPECT_EQ((int) Section::Type::FUNC_STARTS, 6);
   EXPECT_EQ((int) Section::Type::CODE_SIG, 7);
+  EXPECT_EQ((int) Section::Type::LC_VERSION_MIN_MACOSX, 8);
 }
 
 TEST(Section, typeNames)
@@ -31,6 +32,7 @@ TEST(Section, typeNames)
   EXPECT_EQ(Section::typeName(Section::Type::STRING), "String");
   EXPECT_EQ(Section::typeName(Section::Type::FUNC_STARTS), "Function Starts");
   EXPECT_EQ(Section::typeName(Section::Type::CODE_SIG), "Code Signatures");
+  EXPECT_EQ(Section::typeName(Section::Type::LC_VERSION_MIN_MACOSX), "LC_VERSION_MIN_MACOSX");
 }
 
 TEST(Section, type)
