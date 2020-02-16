@@ -395,4 +395,9 @@ QString Util::escapeWhitespace(QString value)
     .replace("\f", "\\f");
 }
 
+std::tuple<int, int> Util::decodeMacSdkVersion(const quint32 version)
+{
+  return {version >> 16, (version & 0x00FFF) >> 8};
+}
+
 } // namespace dispar

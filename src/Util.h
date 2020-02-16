@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <functional>
 #include <iterator>
+#include <tuple>
 
 #include "CpuType.h"
 #include "cxx.h"
@@ -105,6 +106,9 @@ public:
   /// Escapes all whitespace in \p value.
   /** So "\n" will be "\\n", for instance. */
   static QString escapeWhitespace(QString value);
+
+  /// Decode version from format 0xXXYYY as x.y.
+  static std::tuple<int, int> decodeMacSdkVersion(const quint32 version);
 };
 
 } // namespace dispar

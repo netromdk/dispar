@@ -132,3 +132,10 @@ TEST(Util, hexToUnicode)
   EXPECT_EQ(Util::hexToUnicode("24AC 25"), "⒬%");
 }
 
+TEST(Util, decodeMacSdkVersion)
+{
+  EXPECT_EQ(Util::decodeMacSdkVersion(0xA0900), std::make_tuple(10, 9));
+  EXPECT_EQ(Util::decodeMacSdkVersion(0xB0900), std::make_tuple(11, 9));
+  EXPECT_EQ(Util::decodeMacSdkVersion(0xA0C00), std::make_tuple(10, 12));
+}
+

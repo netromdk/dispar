@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QBuffer>
 #include <QClipboard>
 #include <QDebug>
 #include <QDesktopServices>
@@ -27,6 +28,7 @@
 #include "CStringReader.h"
 #include "Context.h"
 #include "Project.h"
+#include "Reader.h"
 #include "Util.h"
 #include "cxx.h"
 #include "widgets/BinaryWidget.h"
@@ -517,7 +519,7 @@ void BinaryWidget::setup()
   QProgressDialog setupDiag(this);
   setupDiag.setLabelText(tr("Setting up for binary data.."));
   setupDiag.setCancelButton(nullptr);
-  setupDiag.setRange(0, 4);
+  setupDiag.setRange(0, 5);
   setupDiag.show();
   qApp->processEvents();
   qDebug() << qPrintable(setupDiag.labelText());
@@ -688,6 +690,60 @@ void BinaryWidget::setup()
   qDebug() << ">" << stringSectionsTime << "ms";
 
   setupDiag.setValue(3);
+  setupDiag.setLabelText(tr("Generating UI for load commands.."));
+  qApp->processEvents();
+  qDebug() << qPrintable(setupDiag.labelText());
+
+  // Show load command sections.
+  auto loadCommandSecs = object->sectionsByType(Section::Type::LC_VERSION_MIN_MACOSX);
+  for (auto *section : loadCommandSecs) {
+    cursor.movePosition(QTextCursor::End);
+    cursor.insertBlock();
+
+    // Save section to block number.
+    sectionBlock[section] = cursor.blockNumber();
+
+    const auto secName = section->toString();
+    qDebug() << "" << secName << "section..";
+    cursor.insertText("===== " + secName + " =====\n");
+
+    QElapsedTimer sectionTimer;
+    sectionTimer.start();
+
+    QBuffer buf;
+    buf.setData(section->data());
+    buf.open(QIODevice::ReadOnly);
+    Reader reader(buf);
+
+    static const auto versionString = [](const std::tuple<int, int> &version) {
+      return QString("%1.%2").arg(std::get<0>(version)).arg(std::get<1>(version));
+    };
+
+    bool ok;
+    const auto targetAddr = reader.pos();
+    const auto target = reader.getUInt32(&ok);
+    const auto targetStr = QString("0x%1 (target %2)")
+                             .arg(target, 0, 16)
+                             .arg(versionString(Util::decodeMacSdkVersion(target)));
+    appendString(section->address() + targetAddr, section->address(), targetStr);
+
+    const auto sdkAddr = reader.pos();
+    const auto sdk = reader.getUInt32(&ok);
+    const auto sdkStr =
+      QString("0x%1 (sdk %2)").arg(sdk, 0, 16).arg(versionString(Util::decodeMacSdkVersion(sdk)));
+    appendString(section->address() + sdkAddr, section->address(), sdkStr);
+
+    qDebug() << " >" << sectionTimer.restart() << "ms";
+
+    cursor.movePosition(QTextCursor::End);
+    cursor.insertBlock();
+    cursor.insertText("\n===== /" + secName + " =====\n");
+  }
+
+  const auto lcSectionsTime = elapsedTimer.restart();
+  qDebug() << ">" << lcSectionsTime << "ms";
+
+  setupDiag.setValue(4);
   setupDiag.setLabelText(tr("Generating sidebar with functions and strings.."));
   qApp->processEvents();
   qDebug() << qPrintable(setupDiag.labelText());
@@ -716,7 +772,7 @@ void BinaryWidget::setup()
   qDebug() << ">" << sidebarTime << "ms";
 
   cursor.endEditBlock();
-  setupDiag.setValue(4);
+  setupDiag.setValue(5);
 
   Util::scrollToTop(mainView);
 
