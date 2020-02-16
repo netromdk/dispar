@@ -16,6 +16,7 @@ namespace dispar {
 class TagsEdit;
 class HexEditor;
 class DisassemblyEditor;
+class MacSdkVersionsEditor;
 
 class BinaryWidget : public QWidget {
   Q_OBJECT
@@ -67,6 +68,7 @@ private:
     *fileTypeLabel;
   TagsEdit *tagsEdit;
   QHash<Section *, DisassemblyEditor *> disassemblyEditors;
+  QHash<Section *, MacSdkVersionsEditor *> macSdkVersionsEditors;
   QHash<Section *, HexEditor *> hexEditors;
 };
 

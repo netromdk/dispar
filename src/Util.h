@@ -109,6 +109,11 @@ public:
 
   /// Decode version from format 0xXXYYY as x.y.
   static std::tuple<int, int> decodeMacSdkVersion(const quint32 version);
+
+  /// Encode version x.y as 0xXXYYY.
+  static quint32 encodeMacSdkVersion(const std::tuple<int, int> &version);
+
+  static QByteArray longToData(const unsigned long n);
 };
 
 } // namespace dispar

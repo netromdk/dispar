@@ -35,6 +35,7 @@
 #include "widgets/DisassemblerDialog.h"
 #include "widgets/DisassemblyEditor.h"
 #include "widgets/HexEditor.h"
+#include "widgets/MacSdkVersionsEditor.h"
 #include "widgets/PersistentSplitter.h"
 #include "widgets/TagsEdit.h"
 #include "widgets/ToggleBox.h"
@@ -209,6 +210,21 @@ void BinaryWidget::onCustomContextMenuRequested(const QPoint &pos)
           if (!editor) {
             editor = new DisassemblyEditor(section, object, this);
             disassemblyEditors[section] = editor;
+          }
+
+          editor->exec();
+          checkModified(section, priorModRegions);
+        });
+      }
+
+      else if (section->type() == Section::Type::LC_VERSION_MIN_MACOSX) {
+        menu.addAction(tr("Edit versions '%1'").arg(section->toString()), this, [this, section] {
+          const auto priorModRegions = section->modifiedRegions();
+
+          auto *editor = macSdkVersionsEditors.value(section, nullptr);
+          if (!editor) {
+            editor = new MacSdkVersionsEditor(section, object, this);
+            macSdkVersionsEditors[section] = editor;
           }
 
           editor->exec();

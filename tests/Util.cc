@@ -2,6 +2,8 @@
 
 #include "testutils.h"
 
+#include <vector>
+
 #include "Util.h"
 using namespace dispar;
 
@@ -139,3 +141,20 @@ TEST(Util, decodeMacSdkVersion)
   EXPECT_EQ(Util::decodeMacSdkVersion(0xA0C00), std::make_tuple(10, 12));
 }
 
+TEST(Util, encodeMacSdkVersion)
+{
+  EXPECT_EQ(Util::encodeMacSdkVersion(std::make_tuple(10, 9)), quint32(0xA0900));
+  EXPECT_EQ(Util::encodeMacSdkVersion(std::make_tuple(11, 9)), quint32(0xB0900));
+  EXPECT_EQ(Util::encodeMacSdkVersion(std::make_tuple(10, 12)), quint32(0xA0C00));
+}
+
+TEST(Util, longToData)
+{
+  auto data = Util::longToData(0xA0C00);
+  std::vector<char> v(data.begin(), data.end());
+  EXPECT_EQ(v, std::vector<char>({0x00, 0x0C, 0x0A, 0x00}));
+
+  data = Util::longToData(0xB0700);
+  v = std::vector<char>(data.begin(), data.end());
+  EXPECT_EQ(v, std::vector<char>({0x00, 0x07, 0x0B, 0x00}));
+}

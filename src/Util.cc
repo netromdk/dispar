@@ -400,4 +400,23 @@ std::tuple<int, int> Util::decodeMacSdkVersion(const quint32 version)
   return {version >> 16, (version & 0x00FFF) >> 8};
 }
 
+quint32 Util::encodeMacSdkVersion(const std::tuple<int, int> &version)
+{
+  return std::get<0>(version) << 16 | std::get<1>(version) << 8;
+}
+
+QByteArray Util::longToData(const unsigned long n)
+{
+  union char_int32 {
+    char chars[4];
+    unsigned long n;
+  } ci;
+  ci.n = n;
+  QByteArray data;
+  for (int i = 0; i < 4; ++i) {
+    data.append(ci.chars[i]);
+  }
+  return data;
+}
+
 } // namespace dispar

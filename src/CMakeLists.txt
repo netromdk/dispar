@@ -74,6 +74,8 @@ add_library(
   widgets/NumberValidator.cc
   widgets/AsciiValidator.h
   widgets/AsciiValidator.cc
+  widgets/MacSdkVersionsEditor.h
+  widgets/MacSdkVersionsEditor.cc
 
   formats/Format.h
   formats/Format.cc
