@@ -40,6 +40,9 @@ add_dispar_executable(
   formats/FormatLoader.cc
   formats/MachO.cc
 
+  widgets/NumberValidator.cc
+  widgets/AsciiValidator.cc
+
   Debugger.cc
 
   binaries.qrc
