@@ -61,7 +61,7 @@ QString Util::dataToAscii(const QByteArray &data, int offset, int size)
   int len = data.size();
   for (int i = offset; i - offset < size && i < len; i++) {
     int ic = data[i];
-    res += (std::isprint(ic) ? (char) ic : '.');
+    res += (std::isprint(ic) > 0 ? (char) ic : '.');
   }
   return res;
 }
@@ -81,7 +81,7 @@ QString Util::hexToAscii(const QString &str, int offset, int blocks, int blocksi
     int ic = str.mid(i, blocksize).toInt(&ok, 16);
     if (!ok) return QString();
     if (!unicode) {
-      res += (std::isprint(ic) ? (char) ic : '.');
+      res += (std::isprint(ic) > 0 ? (char) ic : '.');
     }
     else {
       res += QString::fromUtf16((ushort *) &ic, 1);
@@ -252,7 +252,7 @@ QString Util::addrDataString(quint64 addr, QByteArray data)
       hc = "0" + hc;
     }
     output += hc + " ";
-    ascii += (std::isgraph(ic) ? c : '.');
+    ascii += (std::isgraph(ic) > 0 ? c : '.');
     if ((i + 1) % 16 == 0 || i == data.size() - 1) {
       output += "  " + ascii;
       ascii.clear();
