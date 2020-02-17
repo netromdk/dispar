@@ -413,7 +413,7 @@ void BinaryWidget::createLayout()
   sizeLabel = new QLabel(tr("Size: %1").arg(Util::formatSize(binarySize)));
 
   archLabel = new QLabel(
-    tr("Arch: %1 %2").arg(cpuTypeName(object->cpuType())).arg(cpuTypeName(object->cpuSubType())));
+    tr("Arch: %1, %2").arg(cpuTypeName(object->cpuType())).arg(cpuTypeName(object->cpuSubType())));
 
   fileTypeLabel = new QLabel(tr("Type: %1").arg(fileTypeName(object->fileType())));
 
