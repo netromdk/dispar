@@ -66,3 +66,21 @@ TEST(AsciiValidator, backspaceIsNotPrintable)
   int pos = 0;
   EXPECT_EQ(QValidator::Invalid, v.validate(input, pos));
 }
+
+TEST(AsciiValidator, multipleChars)
+{
+  AsciiValidator v;
+  int pos = 0;
+  QString input("abcd");
+  EXPECT_EQ(QValidator::Acceptable, v.validate(input, pos));
+
+  input = "ab";
+  input.append(0x10);
+  EXPECT_EQ(QValidator::Invalid, v.validate(input, pos));
+
+  input = "ab";
+  input.append(0x10);
+  input.append("cd");
+  input.append(0x03);
+  EXPECT_EQ(QValidator::Invalid, v.validate(input, pos));
+}
