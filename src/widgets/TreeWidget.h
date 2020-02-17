@@ -44,6 +44,7 @@ private slots:
   void copyField();
   void copyRow();
   void findAddress();
+  void showConversionHelper();
 
 private:
   void resetSearch();

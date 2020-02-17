@@ -1,4 +1,5 @@
 #include "widgets/TreeWidget.h"
+#include "widgets/ConversionHelper.h"
 #include "widgets/DisassemblerDialog.h"
 #include "widgets/LineEdit.h"
 
@@ -138,6 +139,9 @@ void TreeWidget::onShowContextMenu(const QPoint &pos)
       menu.addSeparator();
       menu.addAction("Disassemble", this, SLOT(disassemble()));
     }
+
+    menu.addSeparator();
+    menu.addAction(tr("Conversion helper"), this, SLOT(showConversionHelper()));
   }
 
   // Use cursor because mapToGlobal(pos) is off by the height of the
@@ -229,6 +233,13 @@ void TreeWidget::findAddress()
   }
 
   QMessageBox::information(this, "bmdo", tr("Did not find anything."));
+}
+
+void TreeWidget::showConversionHelper()
+{
+  auto *helper = new ConversionHelper(this);
+  connect(helper, &QDialog::finished, helper, &QDialog::deleteLater);
+  helper->show();
 }
 
 void TreeWidget::resetSearch()
