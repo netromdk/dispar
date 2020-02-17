@@ -121,10 +121,10 @@ void TreeWidget::endSearch()
 void TreeWidget::onShowContextMenu(const QPoint &pos)
 {
   QMenu menu;
-  menu.addAction("Search", this, SLOT(doSearch()));
+  menu.addAction(tr("Search"), this, SLOT(doSearch()));
 
   if (addrColumn != -1) {
-    menu.addAction("Find address", this, SLOT(findAddress()));
+    menu.addAction(tr("Find address"), this, SLOT(findAddress()));
   }
 
   ctxItem = itemAt(pos);
@@ -132,12 +132,12 @@ void TreeWidget::onShowContextMenu(const QPoint &pos)
     ctxCol = indexAt(pos).column();
 
     menu.addSeparator();
-    menu.addAction("Copy field", this, SLOT(copyField()));
-    menu.addAction("Copy row", this, SLOT(copyRow()));
+    menu.addAction(tr("Copy field"), this, SLOT(copyField()));
+    menu.addAction(tr("Copy row"), this, SLOT(copyRow()));
 
     if (machineCodeColumns.contains(ctxCol)) {
       menu.addSeparator();
-      menu.addAction("Disassemble", this, SLOT(disassemble()));
+      menu.addAction(tr("Disassemble"), this, SLOT(disassemble()));
     }
 
     menu.addSeparator();
@@ -232,7 +232,7 @@ void TreeWidget::findAddress()
     }
   }
 
-  QMessageBox::information(this, "bmdo", tr("Did not find anything."));
+  QMessageBox::information(this, "dispar", tr("Did not find anything."));
 }
 
 void TreeWidget::showConversionHelper()
