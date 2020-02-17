@@ -7,6 +7,8 @@ if (NOT WIN32)
     "/usr/local/Cellar/qt"
     "/usr/local/Qt-5.14.1"
     "/usr/local/Qt-5.14.0"
+    "$ENV{HOME}/Qt/5.14.1/gcc_64"
+    "$ENV{HOME}/Qt/5.14.0/gcc_64"
     "/usr/local/opt"
     "/usr/local/opt/qt5"
     "/opt/local/libexec/qt5"
