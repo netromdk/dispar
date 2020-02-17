@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/netromdk/dispar.svg?branch=master)](https://travis-ci.org/netromdk/dispar)
 
 # dispar
-Dispar is short for "[Dis]assemling binary [Par]ser" written in C++14. The whole concept of the project is to load binaries, like executables, libraries, core dumps etc., and do analysis of their structure and data; most notably their strings, symbols, and functions. Currently, it supports only 32+64 bit [Mach-O](https://en.wikipedia.org/wiki/Mach-O) binaries (including [universal binaries](https://en.wikipedia.org/wiki/Universal_binary)) but there are plans for supporting [ELF](https://en.wikipedia.org/wiki/Executable_and_Linkable_Format) and [PE/PE+](https://en.wikipedia.org/wiki/Portable_Executable) later on.
+Dispar is short for "[Dis]assemling binary [Par]ser" written in C++17. The whole concept of the project is to load binaries, like executables, libraries, core dumps etc., and do analysis of their structure and data; most notably their strings, symbols, and functions. Currently, it supports only 32+64 bit [Mach-O](https://en.wikipedia.org/wiki/Mach-O) binaries (including [universal binaries](https://en.wikipedia.org/wiki/Universal_binary)) but there are plans for supporting [ELF](https://en.wikipedia.org/wiki/Executable_and_Linkable_Format) and [PE/PE+](https://en.wikipedia.org/wiki/Portable_Executable) later on.
 
 # Table of Contents
 * [Dependencies](#dependencies)
@@ -16,8 +16,8 @@ Dispar is short for "[Dis]assemling binary [Par]ser" written in C++14. The whole
 There are both external and internal libraries and tools required to build and run this program.
 
 ## External
-* CMake 3.1+
-* Qt 5+
+* CMake 3.12+
+* Qt 5.14+
   * QtCore
   * QtGui
   * QtWidgets
