@@ -83,6 +83,9 @@ add_library(
   formats/FormatLoader.cc
   formats/MachO.h
   formats/MachO.cc
+
+  AddrHexAsciiEncoder.h
+  AddrHexAsciiEncoder.cc
   )
 
 target_link_libraries(

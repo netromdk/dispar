@@ -45,6 +45,8 @@ add_dispar_executable(
 
   Debugger.cc
 
+  AddrHexAsciiEncoder.cc
+
   binaries.qrc
   )
 
