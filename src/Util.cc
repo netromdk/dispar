@@ -241,8 +241,13 @@ QString Util::addrDataString(quint64 addr, QByteArray data)
     }
   }
 
-  QString output = QString::number(addr, 16).toUpper() + ": ";
-  QString ascii;
+  QString output, ascii;
+  QStringList lines;
+
+  const auto addLine = [&](const QString &line) {
+    lines.append(QString::number(addr, 16).toUpper() + ": " + line);
+  };
+
   for (int i = 0; i < data.size(); i++) {
     char c = data[i];
     int ic = c;
@@ -257,12 +262,17 @@ QString Util::addrDataString(quint64 addr, QByteArray data)
       output += "  " + ascii;
       ascii.clear();
       if (i != data.size() - 1) {
+        addLine(output);
         addr += 16;
-        output += "\n" + QString::number(addr, 16).toUpper() + ": ";
+        output.clear();
       }
     }
   }
-  return output;
+
+  // Add the last line.
+  addLine(output);
+
+  return lines.join("\n");
 }
 
 void Util::scrollToTop(QAbstractScrollArea *widget)

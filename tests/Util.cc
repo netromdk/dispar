@@ -158,3 +158,33 @@ TEST(Util, longToData)
   v = std::vector<char>(data.begin(), data.end());
   EXPECT_EQ(v, std::vector<char>({0x00, 0x07, 0x0B, 0x00}));
 }
+
+TEST(Util, addrDataString)
+{
+  auto res = Util::addrDataString(0, {});
+  EXPECT_EQ(res, "0: ") << res;
+
+  res = Util::addrDataString(0, QByteArray(3, 'x'));
+  EXPECT_EQ(res, "0: 78 78 78 00 00 00 00 00 00 00 00 00 00 00 00 00   xxx.............") << res;
+
+  res = Util::addrDataString(0xabcdef, QByteArray(3, 'x'));
+  EXPECT_EQ(res, "ABCDEF: 78 78 78 00 00 00 00 00 00 00 00 00 00 00 00 00   xxx.............")
+    << res;
+
+  res = Util::addrDataString(0xabc, QByteArray(45, '9'));
+  EXPECT_EQ(res, R"***(ABC: 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39   9999999999999999
+ACC: 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39   9999999999999999
+ADC: 39 39 39 39 39 39 39 39 39 39 39 39 39 00 00 00   9999999999999...)***")
+    << res;
+
+  QByteArray arr;
+  for (int i = 32; i < 32 * 3 - 7; ++i) {
+    arr.append(char(i));
+  }
+  res = Util::addrDataString(0x1000, arr);
+  EXPECT_EQ(res, R"***(1000: 20 21 22 23 24 25 26 27 28 29 2A 2B 2C 2D 2E 2F   .!"#$%&'()*+,-./
+1010: 30 31 32 33 34 35 36 37 38 39 3A 3B 3C 3D 3E 3F   0123456789:;<=>?
+1020: 40 41 42 43 44 45 46 47 48 49 4A 4B 4C 4D 4E 4F   @ABCDEFGHIJKLMNO
+1030: 50 51 52 53 54 55 56 57 58 00 00 00 00 00 00 00   PQRSTUVWX.......)***")
+    << res;
+}
