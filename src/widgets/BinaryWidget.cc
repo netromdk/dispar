@@ -27,6 +27,7 @@
 #include "BinaryObject.h"
 #include "CStringReader.h"
 #include "Context.h"
+#include "MacSdkVersionPatcher.h"
 #include "Project.h"
 #include "Reader.h"
 #include "Util.h"
@@ -726,28 +727,23 @@ void BinaryWidget::setup()
     QElapsedTimer sectionTimer;
     sectionTimer.start();
 
-    QBuffer buf;
-    buf.setData(section->data());
-    buf.open(QIODevice::ReadOnly);
-    Reader reader(buf);
+    MacSdkVersionPatcher patcher(*section);
+    if (patcher.valid()) {
+      static const auto versionString = [](const std::tuple<int, int> &version) {
+        return QString("%1.%2").arg(std::get<0>(version)).arg(std::get<1>(version));
+      };
 
-    static const auto versionString = [](const std::tuple<int, int> &version) {
-      return QString("%1.%2").arg(std::get<0>(version)).arg(std::get<1>(version));
-    };
+      const auto target = patcher.target();
+      const auto targetStr = QString("0x%1 (target %2)")
+                               .arg(Util::encodeMacSdkVersion(target), 0, 16)
+                               .arg(versionString(target));
+      appendString(section->address(), section->address(), targetStr);
 
-    bool ok;
-    const auto targetAddr = reader.pos();
-    const auto target = reader.getUInt32(&ok);
-    const auto targetStr = QString("0x%1 (target %2)")
-                             .arg(target, 0, 16)
-                             .arg(versionString(Util::decodeMacSdkVersion(target)));
-    appendString(section->address() + targetAddr, section->address(), targetStr);
-
-    const auto sdkAddr = reader.pos();
-    const auto sdk = reader.getUInt32(&ok);
-    const auto sdkStr =
-      QString("0x%1 (sdk %2)").arg(sdk, 0, 16).arg(versionString(Util::decodeMacSdkVersion(sdk)));
-    appendString(section->address() + sdkAddr, section->address(), sdkStr);
+      const auto sdk = patcher.sdk();
+      const auto sdkStr =
+        QString("0x%1 (sdk %2)").arg(Util::encodeMacSdkVersion(sdk), 0, 16).arg(versionString(sdk));
+      appendString(section->address() + 4, section->address(), sdkStr);
+    }
 
     qDebug() << " >" << sectionTimer.restart() << "ms";
 
