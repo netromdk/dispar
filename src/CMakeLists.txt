@@ -86,6 +86,9 @@ add_library(
 
   AddrHexAsciiEncoder.h
   AddrHexAsciiEncoder.cc
+
+  MacSdkVersionPatcher.h
+  MacSdkVersionPatcher.cc
   )
 
 target_link_libraries(

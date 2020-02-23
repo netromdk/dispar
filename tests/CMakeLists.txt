@@ -47,6 +47,8 @@ add_dispar_executable(
 
   AddrHexAsciiEncoder.cc
 
+  MacSdkVersionPatcher.cc
+
   binaries.qrc
   )
 
