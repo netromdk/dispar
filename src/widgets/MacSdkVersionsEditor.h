@@ -4,6 +4,7 @@
 #include <QDialog>
 
 #include "BinaryObject.h"
+#include "MacSdkVersionPatcher.h"
 #include "Section.h"
 
 class QSpinBox;
@@ -26,12 +27,9 @@ private:
   void createLayout();
 
   Section *section;
+  MacSdkVersionPatcher patcher;
 
   QSpinBox *targetMajorSpin, *targetMinorSpin, *sdkMajorSpin, *sdkMinorSpin;
-
-  quint64 targetAddr, sdkAddr;
-  int targetMajor, targetMinor;
-  int sdkMajor, sdkMinor;
 
   bool shown;
   QDateTime sectionModified;

@@ -1,5 +1,6 @@
 #include "widgets/MacSdkVersionsEditor.h"
 #include "Context.h"
+#include "MacSdkVersionPatcher.h"
 #include "Reader.h"
 #include "Util.h"
 
@@ -15,7 +16,7 @@
 namespace dispar {
 
 MacSdkVersionsEditor::MacSdkVersionsEditor(Section *section, BinaryObject *object, QWidget *parent)
-  : QDialog(parent), section(section)
+  : QDialog(parent), section(section), patcher(*section)
 {
   assert(section);
   Q_UNUSED(object);
@@ -59,49 +60,27 @@ void MacSdkVersionsEditor::setup()
 
 void MacSdkVersionsEditor::accept()
 {
-  const auto applyVersion = [&](quint64 addr, int major, int minor, int curMajor, int curMinor) {
-    // Don't update if values are the same.
-    if (major == curMajor && minor == curMinor) {
-      return;
-    }
+  const MacSdkVersionPatcher::Version newTarget(targetMajorSpin->value(), targetMinorSpin->value()),
+    newSdk(sdkMajorSpin->value(), sdkMinorSpin->value());
 
-    const auto version = Util::encodeMacSdkVersion({major, minor});
-    section->setSubData(Util::longToData(version), addr);
-
+  if (patcher.setTarget(newTarget) || patcher.setSdk(newSdk)) {
     sectionModified = QDateTime::currentDateTime();
-  };
-
-  applyVersion(targetAddr, targetMajorSpin->value(), targetMinorSpin->value(), targetMajor,
-               targetMinor);
-  applyVersion(sdkAddr, sdkMajorSpin->value(), sdkMinorSpin->value(), sdkMajor, sdkMinor);
+  }
 
   done(QDialog::Accepted);
 }
 
 void MacSdkVersionsEditor::readValues()
 {
-  QBuffer buf;
-  buf.setData(section->data());
-  buf.open(QIODevice::ReadOnly);
-  Reader reader(buf);
+  if (!patcher.valid()) return;
 
-  targetAddr = reader.pos();
-  const auto target = Util::decodeMacSdkVersion(reader.getUInt32());
+  const auto target = patcher.target();
+  targetMajorSpin->setValue(std::get<0>(target));
+  targetMinorSpin->setValue(std::get<1>(target));
 
-  sdkAddr = reader.pos();
-  const auto sdk = Util::decodeMacSdkVersion(reader.getUInt32());
-
-  targetMajor = std::get<0>(target);
-  targetMajorSpin->setValue(targetMajor);
-
-  targetMinor = std::get<1>(target);
-  targetMinorSpin->setValue(targetMinor);
-
-  sdkMajor = std::get<0>(sdk);
-  sdkMajorSpin->setValue(sdkMajor);
-
-  sdkMinor = std::get<1>(sdk);
-  sdkMinorSpin->setValue(sdkMinor);
+  const auto sdk = patcher.sdk();
+  sdkMajorSpin->setValue(std::get<0>(sdk));
+  sdkMinorSpin->setValue(std::get<1>(sdk));
 }
 
 void MacSdkVersionsEditor::createLayout()
