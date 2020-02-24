@@ -13,11 +13,14 @@
 #include "CpuType.h"
 #include "cxx.h"
 
+class QIODevice;
 class QScreen;
 class QTreeWidgetItem;
 class QAbstractScrollArea;
 
 namespace dispar {
+
+class Format;
 
 class Util {
 public:
@@ -114,6 +117,9 @@ public:
   static quint32 encodeMacSdkVersion(const std::tuple<int, int> &version);
 
   static QByteArray longToData(const unsigned long n);
+
+  /// Write modified sections of all objects to file.
+  static void writeFormatToFile(const std::shared_ptr<Format> format, QIODevice &file);
 };
 
 } // namespace dispar

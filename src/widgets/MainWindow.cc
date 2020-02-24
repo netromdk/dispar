@@ -245,20 +245,7 @@ bool MainWindow::saveBinary()
   }
 
   qDebug() << "Committing modified regions to binary:" << format->file();
-
-  for (const auto *object : format->objects()) {
-    for (const auto *section : object->sections()) {
-      if (!section->isModified()) {
-        continue;
-      }
-
-      const auto &data = section->data();
-      for (const auto &region : section->modifiedRegions()) {
-        f.seek(section->offset() + region.first);
-        f.write(data.mid(region.first, region.second));
-      }
-    }
-  }
+  Util::writeFormatToFile(format, f);
 
   binaryModified = false;
   saveBinaryAction->setEnabled(false);
