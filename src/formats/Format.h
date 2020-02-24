@@ -20,6 +20,7 @@ public:
   enum class Type { MACH_O };
 
   Format(Type type);
+  virtual ~Format() = default;
 
   Type type() const;
 
