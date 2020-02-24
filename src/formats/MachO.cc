@@ -655,7 +655,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
 
       auto sec = std::make_unique<Section>(Section::Type::LC_VERSION_MIN_MACOSX,
                                            QObject::tr("macOS SDK min version"), targetAddr, 4 * 2,
-                                           offset + targetAddr);
+                                           targetAddr);
       binaryObject->addSection(std::move(sec));
     }
 
