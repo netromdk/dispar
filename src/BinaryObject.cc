@@ -1,4 +1,5 @@
 #include "BinaryObject.h"
+#include "CpuType.h"
 
 namespace dispar {
 
@@ -61,6 +62,16 @@ FileType BinaryObject::fileType() const
 void BinaryObject::setFileType(FileType type)
 {
   fileType_ = type;
+}
+
+QString BinaryObject::toString() const
+{
+  return QString("%1 (%2), %3-bit, %4, %5 Endian")
+    .arg(cpuTypeName(cpuType()))
+    .arg(cpuTypeName(cpuSubType()))
+    .arg(systemBits())
+    .arg(fileTypeName(fileType()))
+    .arg(isLittleEndian() ? "Little" : "Big");
 }
 
 QList<Section *> BinaryObject::sections() const

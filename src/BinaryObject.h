@@ -34,6 +34,8 @@ public:
   FileType fileType() const;
   void setFileType(FileType type);
 
+  QString toString() const;
+
   /// Takes ownership of \p section.
   void addSection(std::unique_ptr<Section> section);
 

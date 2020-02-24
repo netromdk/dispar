@@ -3,14 +3,20 @@
 #include <QDebug>
 #include <QDir>
 #include <QFileInfo>
+#include <QRegularExpression>
 #include <QStringList>
 #include <QTimer>
 
+#include <algorithm>
 #include <signal.h>
 
+#include "BinaryObject.h"
 #include "Context.h"
+#include "MacSdkVersionPatcher.h"
+#include "Util.h"
 #include "Version.h"
 #include "formats/Format.h"
+#include "formats/FormatLoader.h"
 #include "widgets/MainWindow.h"
 using namespace dispar;
 
@@ -18,6 +24,111 @@ void signalHandler(int sig)
 {
   qDebug().nospace() << "Caught software signal " << sig << ". Cleaning up and closing down.";
   QApplication::exit(0);
+}
+
+std::shared_ptr<Format> loadFile(const QString &fileName)
+{
+  FormatLoader loader(fileName);
+
+  bool failed = false;
+  QObject::connect(&loader, &FormatLoader::failed, [&](const QString &msg) {
+    qCritical() << msg;
+    failed = true;
+  });
+
+  QObject::connect(&loader, &FormatLoader::status,
+                   [](const QString &msg) { qInfo() << qPrintable(msg); });
+
+  std::shared_ptr<Format> res = nullptr;
+  QObject::connect(&loader, &FormatLoader::success,
+                   [&](std::shared_ptr<Format> fmt) { res = fmt; });
+
+  loader.start();
+  loader.wait();
+
+  if (failed) return nullptr;
+  return res;
+}
+
+bool saveFile(std::shared_ptr<Format> format)
+{
+  QFile f(format->file());
+  if (!f.open(QIODevice::ReadWrite)) {
+    qCritical() << "Could not open binary file for writing:" << format->file();
+    return false;
+  }
+
+  Util::writeFormatToFile(format, f);
+  return true;
+}
+
+int handlePatchMacSdk(std::shared_ptr<Format> format, const QString &version)
+{
+  const bool list = (version == "list");
+
+  MacSdkVersionPatcher::Version newTarget;
+  if (!list) {
+    QRegularExpression re("(\\d+)\\.(\\d+)");
+    const auto m = re.match(version);
+    if (!m.hasMatch()) {
+      qCritical() << "Invalid version:" << version;
+      return 1;
+    }
+
+    bool ok, ok2;
+    const auto major = m.captured(1).toInt(&ok);
+    const auto minor = m.captured(2).toInt(&ok2);
+    if (!ok || !ok2 || major < 0 || minor < 0) {
+      qCritical() << "Invalid version:" << version;
+      return 1;
+    }
+
+    newTarget = {major, minor};
+  }
+
+  const auto printSdks = [](const MacSdkVersionPatcher &patcher, const BinaryObject *object) {
+    qInfo() << "[" << qPrintable(object->toString()) << "]";
+    const auto target = patcher.target();
+    qInfo().nospace() << "- Target SDK: " << std::get<0>(target) << "." << std::get<1>(target);
+    const auto sdk = patcher.sdk();
+    qInfo().nospace() << "- Source SDK: " << std::get<0>(sdk) << "." << std::get<1>(sdk);
+  };
+
+  bool modified = false;
+  for (const auto *object : format->objects()) {
+    auto *section = object->section(Section::Type::LC_VERSION_MIN_MACOSX);
+    if (!section) continue;
+
+    MacSdkVersionPatcher patcher(*section);
+    if (!patcher.valid()) {
+      qWarning() << "Could not read SDK versions!";
+      continue;
+    }
+
+    if (list) {
+      printSdks(patcher, object);
+    }
+    else {
+      modified |= patcher.setTarget(newTarget);
+      if (modified) {
+        printSdks(patcher, object);
+      }
+    }
+  }
+
+  if (list) return 0;
+
+  // Save modified data to file.
+  if (modified) {
+    if (!saveFile(format)) {
+      return 1;
+    }
+    qInfo() << "Modifications saved to file.";
+  }
+  else {
+    qInfo() << "No modifications to save to file.";
+  }
+  return 0;
 }
 
 int main(int argc, char **argv)
@@ -47,12 +158,41 @@ int main(int argc, char **argv)
   parser.addVersionOption();
   parser.addPositionalArgument("file", "Project .dispar or binary file to load.", "(file)");
 
+  QCommandLineOption patchSdkOption(
+    "patch-mac-sdk-version",
+    QObject::tr(
+      "Patch macOS SDK target version and exit (headless). The version must be on the "
+      "format 'X.Y', like '10.14', or use 'list' to list the target and source SDK versions."),
+    "version");
+  parser.addOption(patchSdkOption);
+
   parser.process(app);
   auto posArgs = parser.positionalArguments();
 
   QString file;
   if (posArgs.size() == 1) {
     file = posArgs.first();
+  }
+
+  const bool requiresFile = parser.isSet(patchSdkOption);
+
+  std::shared_ptr<Format> format = nullptr;
+  if (requiresFile) {
+    if (file.isEmpty() || !QFile::exists(file)) {
+      qCritical() << "Input binary file must be specified and exist!";
+      return 1;
+    }
+
+    format = loadFile(file);
+    if (!format) {
+      qCritical() << "Could not load file:" << file;
+      return 1;
+    }
+  }
+
+  if (parser.isSet(patchSdkOption)) {
+    const auto version = parser.value(patchSdkOption);
+    return handlePatchMacSdk(format, version);
   }
 
   // Register meta types.
