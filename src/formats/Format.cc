@@ -2,6 +2,8 @@
 #include "BinaryObject.h"
 #include "formats/MachO.h"
 
+#include <QIODevice>
+
 namespace dispar {
 
 Format::Format(Type type) : type_(type)
@@ -31,6 +33,23 @@ QString Format::typeName(Type type)
   }
 
   return "";
+}
+
+void Format::write(QIODevice &device)
+{
+  for (const auto *object : objects()) {
+    for (const auto *section : object->sections()) {
+      if (!section->isModified()) {
+        continue;
+      }
+
+      const auto &data = section->data();
+      for (const auto &region : section->modifiedRegions()) {
+        device.seek(section->offset() + region.first);
+        device.write(data.mid(region.first, region.second));
+      }
+    }
+  }
 }
 
 void Format::registerType()

@@ -2,13 +2,9 @@
 
 #include "testutils.h"
 
-#include <QBuffer>
-
 #include <vector>
 
-#include "BinaryObject.h"
 #include "Util.h"
-#include "formats/MachO.h"
 using namespace dispar;
 
 TEST(Util, padString)
@@ -191,35 +187,4 @@ ADC: 39 39 39 39 39 39 39 39 39 39 39 39 39 00 00 00   9999999999999...)***")
 1020: 40 41 42 43 44 45 46 47 48 49 4A 4B 4C 4D 4E 4F   @ABCDEFGHIJKLMNO
 1030: 50 51 52 53 54 55 56 57 58 00 00 00 00 00 00 00   PQRSTUVWX.......)***")
     << res;
-}
-
-TEST(Util, writeFormatToFile)
-{
-  auto format = std::make_shared<MachO>(":macho_main");
-  ASSERT_TRUE(format->parse());
-
-  QFile f(format->file());
-  ASSERT_TRUE(f.open(QIODevice::ReadOnly));
-  auto data = f.readAll();
-  f.close();
-
-  auto objects = format->objects();
-  ASSERT_EQ(1, objects.size());
-
-  auto sections = objects.first()->sections();
-  ASSERT_GT(sections.size(), 1);
-
-  auto *section = sections.first();
-  ASSERT_NE(nullptr, section);
-
-  const QByteArray block("abcd");
-  EXPECT_EQ(QByteArray("UH\x89\xE5"), data.mid(section->offset(), block.size()));
-
-  section->setSubData(block, 0);
-
-  QBuffer buf(&data);
-  buf.open(QIODevice::ReadWrite);
-  Util::writeFormatToFile(format, buf);
-
-  EXPECT_EQ(block, data.mid(section->offset(), block.size()));
 }

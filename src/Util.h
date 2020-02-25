@@ -117,9 +117,6 @@ public:
   static quint32 encodeMacSdkVersion(const std::tuple<int, int> &version);
 
   static QByteArray longToData(const unsigned long n);
-
-  /// Write modified sections of all objects to file.
-  static void writeFormatToFile(const std::shared_ptr<Format> format, QIODevice &file);
 };
 
 } // namespace dispar

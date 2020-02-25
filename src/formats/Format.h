@@ -11,6 +11,8 @@
 #include "FileType.h"
 #include "Section.h"
 
+class QIODevice;
+
 namespace dispar {
 
 class BinaryObject;
@@ -36,6 +38,9 @@ public:
   /// Get the list of probed binary objects of the file.
   /** Format keeps ownership of objects. */
   virtual QList<BinaryObject *> objects() const = 0;
+
+  /// Write modified sections of objects to \p device.
+  void write(QIODevice &device);
 
   /// Try each of the known formats and see if any of them are compatible with the file.
   static std::shared_ptr<Format> detect(const QString &file);

@@ -431,21 +431,4 @@ QByteArray Util::longToData(const unsigned long n)
   return data;
 }
 
-void Util::writeFormatToFile(const std::shared_ptr<Format> format, QIODevice &file)
-{
-  for (const auto *object : format->objects()) {
-    for (const auto *section : object->sections()) {
-      if (!section->isModified()) {
-        continue;
-      }
-
-      const auto &data = section->data();
-      for (const auto &region : section->modifiedRegions()) {
-        file.seek(section->offset() + region.first);
-        file.write(data.mid(region.first, region.second));
-      }
-    }
-  }
-}
-
 } // namespace dispar

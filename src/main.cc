@@ -57,8 +57,7 @@ bool saveFile(std::shared_ptr<Format> format)
     qCritical() << "Could not open binary file for writing:" << format->file();
     return false;
   }
-
-  Util::writeFormatToFile(format, f);
+  format->write(f);
   return true;
 }
 

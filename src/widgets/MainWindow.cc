@@ -245,7 +245,7 @@ bool MainWindow::saveBinary()
   }
 
   qDebug() << "Committing modified regions to binary:" << format->file();
-  Util::writeFormatToFile(format, f);
+  format->write(f);
 
   binaryModified = false;
   saveBinaryAction->setEnabled(false);
