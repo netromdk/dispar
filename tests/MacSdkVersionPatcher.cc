@@ -4,9 +4,11 @@
 
 #include <memory>
 
+#include "BinaryObject.h"
 #include "MacSdkVersionPatcher.h"
 #include "Section.h"
 #include "Util.h"
+#include "formats/MachO.h"
 using namespace dispar;
 
 using Version = MacSdkVersionPatcher::Version;
@@ -107,4 +109,25 @@ TEST(MacSdkVersionPatcher, changeVersions)
 
   EXPECT_EQ(createData(target, sdk), section->data());
   EXPECT_TRUE(section->isModified());
+}
+
+TEST(MacSdkVersionPatcher, universalBinary)
+{
+  MachO fmt(":macho_main_32_64");
+  ASSERT_TRUE(fmt.parse());
+
+  const auto objects = fmt.objects();
+  ASSERT_EQ(2, objects.size());
+
+  for (auto object : objects) {
+    auto *section = object->section(Section::Type::LC_VERSION_MIN_MACOSX);
+    ASSERT_NE(nullptr, section);
+
+    MacSdkVersionPatcher patcher(*section);
+    ASSERT_TRUE(patcher.valid());
+
+    const MacSdkVersionPatcher::Version target{10, 11}, sdk{10, 11};
+    EXPECT_EQ(target, patcher.target());
+    EXPECT_EQ(sdk, patcher.sdk());
+  }
 }
