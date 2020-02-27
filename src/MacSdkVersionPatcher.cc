@@ -54,7 +54,10 @@ void MacSdkVersionPatcher::parse()
   valid_ = false;
 
   if (section.data().isEmpty() || section.data().size() != 4 * 2 ||
-      section.type() != Section::Type::LC_VERSION_MIN_MACOSX) {
+      (section.type() != Section::Type::LC_VERSION_MIN_MACOSX &&
+       section.type() != Section::Type::LC_VERSION_MIN_IPHONEOS &&
+       section.type() != Section::Type::LC_VERSION_MIN_WATCHOS &&
+       section.type() != Section::Type::LC_VERSION_MIN_TVOS)) {
     return;
   }
 

@@ -20,6 +20,9 @@ TEST(Section, types)
   EXPECT_EQ((int) Section::Type::FUNC_STARTS, 6);
   EXPECT_EQ((int) Section::Type::CODE_SIG, 7);
   EXPECT_EQ((int) Section::Type::LC_VERSION_MIN_MACOSX, 8);
+  EXPECT_EQ((int) Section::Type::LC_VERSION_MIN_IPHONEOS, 9);
+  EXPECT_EQ((int) Section::Type::LC_VERSION_MIN_WATCHOS, 10);
+  EXPECT_EQ((int) Section::Type::LC_VERSION_MIN_TVOS, 11);
 }
 
 TEST(Section, typeNames)
@@ -33,6 +36,9 @@ TEST(Section, typeNames)
   EXPECT_EQ(Section::typeName(Section::Type::FUNC_STARTS), "Function Starts");
   EXPECT_EQ(Section::typeName(Section::Type::CODE_SIG), "Code Signatures");
   EXPECT_EQ(Section::typeName(Section::Type::LC_VERSION_MIN_MACOSX), "LC_VERSION_MIN_MACOSX");
+  EXPECT_EQ(Section::typeName(Section::Type::LC_VERSION_MIN_IPHONEOS), "LC_VERSION_MIN_IPHONEOS");
+  EXPECT_EQ(Section::typeName(Section::Type::LC_VERSION_MIN_WATCHOS), "LC_VERSION_MIN_WATCHOS");
+  EXPECT_EQ(Section::typeName(Section::Type::LC_VERSION_MIN_TVOS), "LC_VERSION_MIN_TVOS");
 }
 
 TEST(Section, type)
@@ -97,7 +103,7 @@ TEST(Section, setSubData)
   {
     Section s(Section::Type::TEXT, "test", 0x1, 1);
     s.setData("ABCD");
-    s.setSubData("X", -1); // fails
+    s.setSubData("X", -1);  // fails
     s.setSubData("Y", 100); // fails
   }
 

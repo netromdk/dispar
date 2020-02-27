@@ -16,15 +16,18 @@ namespace dispar {
 class Section {
 public:
   enum class Type : int {
-    TEXT,                  ///< Executable code (__text, .text).
-    SYMBOL_STUBS,          ///< Indirect symbol stubs.
-    SYMBOLS,               ///< Symbol table.
-    DYN_SYMBOLS,           ///< Dynamic symbol table.
-    CSTRING,               ///< Constant C strings (__cstring).
-    STRING,                ///< String table constants.
-    FUNC_STARTS,           ///< Function starts.
-    CODE_SIG,              ///< Code signature.
-    LC_VERSION_MIN_MACOSX, ///< macOS SDK min version (load command).
+    TEXT,                    ///< Executable code (__text, .text).
+    SYMBOL_STUBS,            ///< Indirect symbol stubs.
+    SYMBOLS,                 ///< Symbol table.
+    DYN_SYMBOLS,             ///< Dynamic symbol table.
+    CSTRING,                 ///< Constant C strings (__cstring).
+    STRING,                  ///< String table constants.
+    FUNC_STARTS,             ///< Function starts.
+    CODE_SIG,                ///< Code signature.
+    LC_VERSION_MIN_MACOSX,   ///< macOS SDK min version (load command).
+    LC_VERSION_MIN_IPHONEOS, ///< iOS SDK min version (load command).
+    LC_VERSION_MIN_WATCHOS,  ///< watchOS SDK min version (load command).
+    LC_VERSION_MIN_TVOS,     ///< tvOS SDK min version (load command).
   };
 
   Section(Type type, const QString &name, quint64 addr, quint64 size, quint32 offset = 0);

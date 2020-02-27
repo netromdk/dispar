@@ -61,7 +61,7 @@ bool saveFile(std::shared_ptr<Format> format)
   return true;
 }
 
-int handlePatchMacSdk(std::shared_ptr<Format> format, const QString &version)
+int handlePatchSdk(std::shared_ptr<Format> format, const Section::Type type, const QString &version)
 {
   const bool list = (version == "list");
 
@@ -95,8 +95,12 @@ int handlePatchMacSdk(std::shared_ptr<Format> format, const QString &version)
 
   bool modified = false;
   for (const auto *object : format->objects()) {
-    auto *section = object->section(Section::Type::LC_VERSION_MIN_MACOSX);
-    if (!section) continue;
+    auto *section = object->section(type);
+    if (!section) {
+      qInfo() << "[" << qPrintable(object->toString()) << "]";
+      qWarning() << "Does not have section" << Section::typeName(type);
+      continue;
+    }
 
     MacSdkVersionPatcher patcher(*section);
     if (!patcher.valid()) {
@@ -157,23 +161,44 @@ int main(int argc, char **argv)
   parser.addVersionOption();
   parser.addPositionalArgument("file", "Project .dispar or binary file to load.", "(file)");
 
-  QCommandLineOption patchSdkOption(
+  QCommandLineOption patchMacSdkOption(
     "patch-mac-sdk-version",
     QObject::tr(
       "Patch macOS SDK target version and exit (headless). The version must be on the "
       "format 'X.Y', like '10.14', or use 'list' to list the target and source SDK versions."),
     "version");
-  parser.addOption(patchSdkOption);
+  parser.addOption(patchMacSdkOption);
+
+  QCommandLineOption patchiOSSdkOption(
+    "patch-ios-sdk-version", QObject::tr("Patch iOS SDK target version and exit (headless)."),
+    "version");
+  parser.addOption(patchiOSSdkOption);
+
+  QCommandLineOption patchWatchOSSdkOption(
+    "patch-watchos-sdk-version",
+    QObject::tr("Patch watchOS SDK target version and exit (headless)."), "version");
+  parser.addOption(patchWatchOSSdkOption);
+
+  QCommandLineOption patchTvOSSdkOption(
+    "patch-tvos-sdk-version", QObject::tr("Patch tvOS SDK target version and exit (headless)."),
+    "version");
+  parser.addOption(patchTvOSSdkOption);
 
   parser.process(app);
   auto posArgs = parser.positionalArguments();
+
+  const bool patchMac = parser.isSet(patchMacSdkOption);
+  const bool patchiOS = parser.isSet(patchiOSSdkOption);
+  const bool patchWatchOS = parser.isSet(patchWatchOSSdkOption);
+  const bool patchTvOS = parser.isSet(patchTvOSSdkOption);
+  const bool patchSdk = patchMac | patchiOS | patchWatchOS | patchTvOS;
 
   QString file;
   if (posArgs.size() == 1) {
     file = posArgs.first();
   }
 
-  const bool requiresFile = parser.isSet(patchSdkOption);
+  const bool requiresFile = patchSdk;
 
   std::shared_ptr<Format> format = nullptr;
   if (requiresFile) {
@@ -189,9 +214,23 @@ int main(int argc, char **argv)
     }
   }
 
-  if (parser.isSet(patchSdkOption)) {
-    const auto version = parser.value(patchSdkOption);
-    return handlePatchMacSdk(format, version);
+  if (patchSdk) {
+    if (patchMac) {
+      return handlePatchSdk(format, Section::Type::LC_VERSION_MIN_MACOSX,
+                            parser.value(patchMacSdkOption));
+    }
+    else if (patchiOS) {
+      return handlePatchSdk(format, Section::Type::LC_VERSION_MIN_IPHONEOS,
+                            parser.value(patchiOSSdkOption));
+    }
+    else if (patchWatchOS) {
+      return handlePatchSdk(format, Section::Type::LC_VERSION_MIN_WATCHOS,
+                            parser.value(patchWatchOSSdkOption));
+    }
+    else if (patchTvOS) {
+      return handlePatchSdk(format, Section::Type::LC_VERSION_MIN_TVOS,
+                            parser.value(patchTvOSSdkOption));
+    }
   }
 
   // Register meta types.

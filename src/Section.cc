@@ -39,6 +39,15 @@ QString Section::typeName(Type type)
 
   case Section::Type::LC_VERSION_MIN_MACOSX:
     return QObject::tr("LC_VERSION_MIN_MACOSX");
+
+  case Section::Type::LC_VERSION_MIN_IPHONEOS:
+    return QObject::tr("LC_VERSION_MIN_IPHONEOS");
+
+  case Section::Type::LC_VERSION_MIN_WATCHOS:
+    return QObject::tr("LC_VERSION_MIN_WATCHOS");
+
+  case Section::Type::LC_VERSION_MIN_TVOS:
+    return QObject::tr("LC_VERSION_MIN_TVOS");
   }
 
   return {};

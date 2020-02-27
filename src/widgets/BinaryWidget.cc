@@ -218,7 +218,10 @@ void BinaryWidget::onCustomContextMenuRequested(const QPoint &pos)
         });
       }
 
-      else if (section->type() == Section::Type::LC_VERSION_MIN_MACOSX) {
+      else if (section->type() == Section::Type::LC_VERSION_MIN_MACOSX ||
+               section->type() == Section::Type::LC_VERSION_MIN_IPHONEOS ||
+               section->type() == Section::Type::LC_VERSION_MIN_WATCHOS ||
+               section->type() == Section::Type::LC_VERSION_MIN_TVOS) {
         menu.addAction(tr("Edit versions '%1'").arg(section->toString()), this, [this, section] {
           const auto priorModRegions = section->modifiedRegions();
 
@@ -713,6 +716,9 @@ void BinaryWidget::setup()
 
   // Show load command sections.
   auto loadCommandSecs = object->sectionsByType(Section::Type::LC_VERSION_MIN_MACOSX);
+  loadCommandSecs << object->sectionsByType(Section::Type::LC_VERSION_MIN_IPHONEOS);
+  loadCommandSecs << object->sectionsByType(Section::Type::LC_VERSION_MIN_WATCHOS);
+  loadCommandSecs << object->sectionsByType(Section::Type::LC_VERSION_MIN_TVOS);
   for (auto *section : loadCommandSecs) {
     cursor.movePosition(QTextCursor::End);
     cursor.insertBlock();

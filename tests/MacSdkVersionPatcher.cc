@@ -21,12 +21,13 @@ QByteArray createData(const Version &target, const Version &sdk)
   return data;
 }
 
-std::unique_ptr<Section> createSection(const QByteArray &data)
+std::unique_ptr<Section>
+createSection(const QByteArray &data,
+              const Section::Type type = Section::Type::LC_VERSION_MIN_MACOSX)
 {
   const quint64 addr(0x1000);
   const quint64 size = data.size();
-  auto section =
-    std::make_unique<Section>(Section::Type::LC_VERSION_MIN_MACOSX, "Test", addr, size);
+  auto section = std::make_unique<Section>(type, "Test", addr, size);
   section->setData(data);
   return section;
 }
@@ -63,6 +64,42 @@ TEST(MacSdkVersionPatcher, invalidData)
     MacSdkVersionPatcher patcher(*section.get());
     EXPECT_FALSE(patcher.valid()) << data;
   }
+}
+
+TEST(MacSdkVersionPatcher, macOS)
+{
+  const auto data = createData({10, 12}, {10, 15});
+  auto section = createSection(data, dispar::Section::Type::LC_VERSION_MIN_MACOSX);
+
+  MacSdkVersionPatcher patcher(*section.get());
+  ASSERT_TRUE(patcher.valid());
+}
+
+TEST(MacSdkVersionPatcher, iOS)
+{
+  const auto data = createData({10, 12}, {10, 15});
+  auto section = createSection(data, dispar::Section::Type::LC_VERSION_MIN_IPHONEOS);
+
+  MacSdkVersionPatcher patcher(*section.get());
+  ASSERT_TRUE(patcher.valid());
+}
+
+TEST(MacSdkVersionPatcher, watchOS)
+{
+  const auto data = createData({10, 12}, {10, 15});
+  auto section = createSection(data, dispar::Section::Type::LC_VERSION_MIN_WATCHOS);
+
+  MacSdkVersionPatcher patcher(*section.get());
+  ASSERT_TRUE(patcher.valid());
+}
+
+TEST(MacSdkVersionPatcher, tvOS)
+{
+  const auto data = createData({10, 12}, {10, 15});
+  auto section = createSection(data, dispar::Section::Type::LC_VERSION_MIN_TVOS);
+
+  MacSdkVersionPatcher patcher(*section.get());
+  ASSERT_TRUE(patcher.valid());
 }
 
 TEST(MacSdkVersionPatcher, read)
