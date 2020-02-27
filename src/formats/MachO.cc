@@ -606,8 +606,8 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
       if (!ok) return false;
     }
 
-    // LC_LOAD_DYLIB, LC_ID_DYLIB or LC_LOAD_WEAK_DYLIB
-    else if (type == 0xC || type == 0xD || type == 0x18 + 0x80000000) {
+    // LC_LOAD_DYLIB, LC_ID_DYLIB, LC_LOAD_WEAK_DYLIB, LC_REEXPORT_DYLIB
+    else if (type == 0xC || type == 0xD || type == 0x18 + 0x80000000 || type == 0x1F + 0x80000000) {
       // Library path name offset.
       quint32 liboffset = r.getUInt32(&ok);
       if (!ok) return false;
@@ -628,8 +628,8 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
       r.read(cmdsize - liboffset);
     }
 
-    // LC_LOAD_DYLINKER or LC_DYLD_ENVIRONMENT
-    else if (type == 0xE || type == 0x27) {
+    // LC_LOAD_DYLINKER, LC_ID_DYLINKER or LC_DYLD_ENVIRONMENT
+    else if (type == 0xE || type == 0xF || type == 0x27) {
       // Dynamic linker's path name.
       quint32 noffset = r.getUInt32(&ok);
       if (!ok) return false;
@@ -698,9 +698,10 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
       if (!ok) return false;
     }
 
-    // LC_FUNCTION_STARTS, LC_DYLIB_CODE_SIGN_DRS,
-    // LC_SEGMENT_SPLIT_INFO or LC_CODE_SIGNATURE
-    else if (type == 0x26 || type == 0x2B || type == 0x1E || type == 0x1D) {
+    // LC_FUNCTION_STARTS, LC_DYLIB_CODE_SIGN_DRS, LC_SEGMENT_SPLIT_INFO, LC_CODE_SIGNATURE,
+    // LC_LINKER_OPTIMIZATION_HINT, LC_DYLD_EXPORTS_TRIE, or LC_DYLD_CHAINED_FIXUPS
+    else if (type == 0x26 || type == 0x2B || type == 0x1E || type == 0x1D || type == 0x2E ||
+             type == (0x33 | 0x80000000) || type == (0x34 | 0x80000000)) {
       // File offset to data in __LINKEDIT segment.
       quint32 off = r.getUInt32(&ok);
       if (!ok) return false;
@@ -759,6 +760,76 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
 
       // Name.
       r.read(cmdsize - off);
+    }
+
+    // LC_SUB_CLIENT, LC_SUB_UMBRELLA, LC_SUB_FRAMEWORK or LC_SUB_LIBRARY
+    else if (type == 0x12 || type == 0x13 || type == 0x14 || type == 0x15) {
+      r.read(cmdsize);
+    }
+
+    // LC_LOADFVMLIB
+    else if (type == 0x6) {
+      r.read(cmdsize);
+    }
+
+    // LC_IDFVMLIB
+    else if (type == 0x7) {
+      r.read(cmdsize);
+    }
+
+    // LC_IDENT
+    else if (type == 0x8) {
+      r.read(cmdsize);
+    }
+
+    // LC_FVMFILE
+    else if (type == 0x9) {
+      r.read(cmdsize);
+    }
+
+    // LC_PREPAGE
+    else if (type == 0xA) {
+      r.read(cmdsize);
+    }
+
+    // LC_PREBOUND_DYLIB
+    else if (type == 0x10) {
+      r.read(cmdsize);
+    }
+
+    // LC_ROUTINES or LC_ROUTINES_64
+    else if (type == 0x11 || type == 0x1A) {
+      r.read(cmdsize);
+    }
+
+    // LC_TWOLEVEL_HINTS
+    else if (type == 0x16) {
+      r.read(cmdsize);
+    }
+
+    // LC_PREBIND_CKSUM
+    else if (type == 0x17) {
+      r.read(cmdsize);
+    }
+
+    // LC_ENCRYPTION_INFO or LC_ENCRYPTION_INFO_64
+    else if (type == 0x21 || type == 0x2C) {
+      r.read(cmdsize);
+    }
+
+    // LC_LINKER_OPTION
+    else if (type == 0x2D) {
+      r.read(cmdsize);
+    }
+
+    // LC_NOTE
+    else if (type == 0x31) {
+      r.read(cmdsize);
+    }
+
+    // LC_BUILD_VERSION
+    else if (type == 0x32) {
+      r.read(cmdsize);
     }
 
     else {
