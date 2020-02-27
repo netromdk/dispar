@@ -105,6 +105,13 @@ TEST(MachO, parse)
     ASSERT_EQ(objs.size(), 1);
     EXPECT_EQ(objs[0]->cpuType(), CpuType::X86_64);
     EXPECT_EQ(objs[0]->fileType(), FileType::EXECUTE);
+    const auto secs = objs[0]->sections();
+    ASSERT_EQ(5, secs.size());
+    EXPECT_EQ(Section::Type::TEXT, secs[0]->type());
+    EXPECT_EQ(Section::Type::STRING, secs[1]->type());
+    EXPECT_EQ(Section::Type::LC_VERSION_MIN_MACOSX, secs[2]->type());
+    EXPECT_EQ(Section::Type::FUNC_STARTS, secs[3]->type());
+    EXPECT_EQ(Section::Type::SYMBOLS, secs[4]->type());
   }
 
   {
@@ -114,6 +121,12 @@ TEST(MachO, parse)
     ASSERT_EQ(objs.size(), 1);
     EXPECT_EQ(objs[0]->cpuType(), CpuType::X86_64);
     EXPECT_EQ(objs[0]->fileType(), FileType::OBJECT);
+    const auto secs = objs[0]->sections();
+    ASSERT_EQ(4, secs.size());
+    EXPECT_EQ(Section::Type::TEXT, secs[0]->type());
+    EXPECT_EQ(Section::Type::LC_VERSION_MIN_MACOSX, secs[1]->type());
+    EXPECT_EQ(Section::Type::STRING, secs[2]->type());
+    EXPECT_EQ(Section::Type::SYMBOLS, secs[3]->type());
   }
 
   {
@@ -123,6 +136,13 @@ TEST(MachO, parse)
     ASSERT_EQ(objs.size(), 1);
     EXPECT_EQ(objs[0]->cpuType(), CpuType::X86);
     EXPECT_EQ(objs[0]->fileType(), FileType::EXECUTE);
+    const auto secs = objs[0]->sections();
+    ASSERT_EQ(5, secs.size());
+    EXPECT_EQ(Section::Type::TEXT, secs[0]->type());
+    EXPECT_EQ(Section::Type::STRING, secs[1]->type());
+    EXPECT_EQ(Section::Type::LC_VERSION_MIN_MACOSX, secs[2]->type());
+    EXPECT_EQ(Section::Type::FUNC_STARTS, secs[3]->type());
+    EXPECT_EQ(Section::Type::SYMBOLS, secs[4]->type());
   }
 
   {
@@ -132,6 +152,12 @@ TEST(MachO, parse)
     ASSERT_EQ(objs.size(), 1);
     EXPECT_EQ(objs[0]->cpuType(), CpuType::X86);
     EXPECT_EQ(objs[0]->fileType(), FileType::OBJECT);
+    const auto secs = objs[0]->sections();
+    ASSERT_EQ(4, secs.size());
+    EXPECT_EQ(Section::Type::TEXT, secs[0]->type());
+    EXPECT_EQ(Section::Type::LC_VERSION_MIN_MACOSX, secs[1]->type());
+    EXPECT_EQ(Section::Type::STRING, secs[2]->type());
+    EXPECT_EQ(Section::Type::SYMBOLS, secs[3]->type());
   }
 
   {
@@ -141,8 +167,23 @@ TEST(MachO, parse)
     ASSERT_EQ(objs.size(), 2);
     EXPECT_EQ(objs[0]->cpuType(), CpuType::X86);
     EXPECT_EQ(objs[0]->fileType(), FileType::EXECUTE);
+    auto secs = objs[0]->sections();
+    ASSERT_EQ(5, secs.size());
+    EXPECT_EQ(Section::Type::TEXT, secs[0]->type());
+    EXPECT_EQ(Section::Type::STRING, secs[1]->type());
+    EXPECT_EQ(Section::Type::LC_VERSION_MIN_MACOSX, secs[2]->type());
+    EXPECT_EQ(Section::Type::FUNC_STARTS, secs[3]->type());
+    EXPECT_EQ(Section::Type::SYMBOLS, secs[4]->type());
+
     EXPECT_EQ(objs[1]->cpuType(), CpuType::X86_64);
     EXPECT_EQ(objs[1]->fileType(), FileType::EXECUTE);
+    secs = objs[1]->sections();
+    ASSERT_EQ(5, secs.size());
+    EXPECT_EQ(Section::Type::TEXT, secs[0]->type());
+    EXPECT_EQ(Section::Type::STRING, secs[1]->type());
+    EXPECT_EQ(Section::Type::LC_VERSION_MIN_MACOSX, secs[2]->type());
+    EXPECT_EQ(Section::Type::FUNC_STARTS, secs[3]->type());
+    EXPECT_EQ(Section::Type::SYMBOLS, secs[4]->type());
   }
 
   {
@@ -152,6 +193,13 @@ TEST(MachO, parse)
     ASSERT_EQ(objs.size(), 1);
     EXPECT_EQ(objs[0]->cpuType(), CpuType::X86_64);
     EXPECT_EQ(objs[0]->fileType(), FileType::EXECUTE);
+    const auto secs = objs[0]->sections();
+    ASSERT_EQ(5, secs.size());
+    EXPECT_EQ(Section::Type::TEXT, secs[0]->type());
+    EXPECT_EQ(Section::Type::STRING, secs[1]->type());
+    EXPECT_EQ(Section::Type::LC_VERSION_MIN_MACOSX, secs[2]->type());
+    EXPECT_EQ(Section::Type::FUNC_STARTS, secs[3]->type());
+    EXPECT_EQ(Section::Type::SYMBOLS, secs[4]->type());
   }
 
   {
@@ -170,6 +218,17 @@ TEST(MachO, parse)
     ASSERT_EQ(strings.size(), 2);
     EXPECT_EQ(strings[0], "hello");
     EXPECT_EQ(strings[1], "second");
+
+    const auto secs = objs[0]->sections();
+    ASSERT_EQ(8, secs.size());
+    EXPECT_EQ(Section::Type::TEXT, secs[0]->type());
+    EXPECT_EQ(Section::Type::SYMBOL_STUBS, secs[1]->type());
+    EXPECT_EQ(Section::Type::CSTRING, secs[2]->type());
+    EXPECT_EQ(Section::Type::STRING, secs[3]->type());
+    EXPECT_EQ(Section::Type::LC_VERSION_MIN_MACOSX, secs[4]->type());
+    EXPECT_EQ(Section::Type::FUNC_STARTS, secs[5]->type());
+    EXPECT_EQ(Section::Type::SYMBOLS, secs[6]->type());
+    EXPECT_EQ(Section::Type::DYN_SYMBOLS, secs[7]->type());
   }
 
   {
@@ -179,6 +238,17 @@ TEST(MachO, parse)
     ASSERT_EQ(objs.size(), 1);
     EXPECT_EQ(objs[0]->cpuType(), CpuType::X86_64);
     EXPECT_EQ(objs[0]->fileType(), FileType::EXECUTE);
+    const auto secs = objs[0]->sections();
+    ASSERT_EQ(9, secs.size());
+    EXPECT_EQ(Section::Type::TEXT, secs[0]->type());
+    EXPECT_EQ(Section::Type::SYMBOL_STUBS, secs[1]->type());
+    EXPECT_EQ(Section::Type::CSTRING, secs[2]->type());
+    EXPECT_EQ(Section::Type::CSTRING, secs[3]->type());
+    EXPECT_EQ(Section::Type::STRING, secs[4]->type());
+    EXPECT_EQ(Section::Type::LC_VERSION_MIN_MACOSX, secs[5]->type());
+    EXPECT_EQ(Section::Type::FUNC_STARTS, secs[6]->type());
+    EXPECT_EQ(Section::Type::SYMBOLS, secs[7]->type());
+    EXPECT_EQ(Section::Type::DYN_SYMBOLS, secs[8]->type());
   }
 
   {
@@ -188,5 +258,12 @@ TEST(MachO, parse)
     ASSERT_EQ(objs.size(), 1);
     EXPECT_EQ(objs[0]->cpuType(), CpuType::X86_64);
     EXPECT_EQ(objs[0]->fileType(), FileType::DYLIB);
+    const auto secs = objs[0]->sections();
+    ASSERT_EQ(5, secs.size());
+    EXPECT_EQ(Section::Type::TEXT, secs[0]->type());
+    EXPECT_EQ(Section::Type::STRING, secs[1]->type());
+    EXPECT_EQ(Section::Type::LC_VERSION_MIN_MACOSX, secs[2]->type());
+    EXPECT_EQ(Section::Type::FUNC_STARTS, secs[3]->type());
+    EXPECT_EQ(Section::Type::SYMBOLS, secs[4]->type());
   }
 }
