@@ -312,6 +312,15 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
     quint32 cmdsize = r.getUInt32(&ok);
     if (!ok) return false;
 
+    // Abort parsing if obsolete load command is reached: LC_SYMSEG, LC_LOADFVMLIB, LC_IDFVMLIB,
+    // LC_IDENT, LC_FVMFILE, LC_PREPAGE, LC_PREBOUND_DYLIB, LC_TWOLEVEL_HINTS or LC_PREBIND_CKSUM.
+    if (type == 0x3 || type == 0x6 || type == 0x7 || type == 0x8 || type == 0x9 || type == 0xA ||
+        type == 0x10 || type == 0x16 || type == 0x17) {
+      qCritical().nospace().noquote()
+        << "Obsolete load command 0x" << QString::number(type, 16) << " is not supported!";
+      return false;
+    }
+
     // LC_SEGMENT or LC_SEGMENT_64
     if (type == 1 || type == 25) {
       QString name{r.read(16)};
@@ -767,48 +776,8 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
       r.read(cmdsize);
     }
 
-    // LC_LOADFVMLIB
-    else if (type == 0x6) {
-      r.read(cmdsize);
-    }
-
-    // LC_IDFVMLIB
-    else if (type == 0x7) {
-      r.read(cmdsize);
-    }
-
-    // LC_IDENT
-    else if (type == 0x8) {
-      r.read(cmdsize);
-    }
-
-    // LC_FVMFILE
-    else if (type == 0x9) {
-      r.read(cmdsize);
-    }
-
-    // LC_PREPAGE
-    else if (type == 0xA) {
-      r.read(cmdsize);
-    }
-
-    // LC_PREBOUND_DYLIB
-    else if (type == 0x10) {
-      r.read(cmdsize);
-    }
-
     // LC_ROUTINES or LC_ROUTINES_64
     else if (type == 0x11 || type == 0x1A) {
-      r.read(cmdsize);
-    }
-
-    // LC_TWOLEVEL_HINTS
-    else if (type == 0x16) {
-      r.read(cmdsize);
-    }
-
-    // LC_PREBIND_CKSUM
-    else if (type == 0x17) {
       r.read(cmdsize);
     }
 
