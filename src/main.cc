@@ -195,13 +195,14 @@ int main(int argc, char **argv)
 
   QString file;
   if (posArgs.size() == 1) {
-    file = posArgs.first();
+    file = Util::resolveAppBinary(posArgs.first());
   }
 
   const bool requiresFile = patchSdk;
 
   std::shared_ptr<Format> format = nullptr;
   if (requiresFile) {
+    qInfo() << "Loading" << file;
     if (file.isEmpty() || !QFile::exists(file)) {
       qCritical() << "Input binary file must be specified and exist!";
       return 1;
