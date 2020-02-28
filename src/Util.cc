@@ -140,18 +140,18 @@ QString Util::resolveAppBinary(QString path)
     path.chop(1);
   }
   if (!path.toLower().endsWith(".app")) {
-    return {};
+    return path;
   }
 
   QDir dir(path);
   if (!dir.exists() || !dir.cd("Contents")) {
-    return {};
+    return path;
   }
 
   const auto plistFile = dir.absoluteFilePath("Info.plist");
 
   if (!dir.cd("MacOS")) {
-    return {};
+    return path;
   }
 
   // Try using the name of the app itself without the ".app".
@@ -165,12 +165,12 @@ QString Util::resolveAppBinary(QString path)
   //   <key>CFBundleExecutable</key>
   //   <string>THENAME</string>
   if (!QFile::exists(plistFile)) {
-    return {};
+    return path;
   }
 
   QFile file(plistFile);
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-    return {};
+    return path;
   }
 
   QXmlStreamReader reader(&file);
@@ -189,13 +189,13 @@ QString Util::resolveAppBinary(QString path)
     if (name == "string" && nextString) {
       const auto execName = reader.readElementText();
       if (!dir.exists(execName)) {
-        return {};
+        return path;
       }
       return dir.absoluteFilePath(execName);
     }
   }
 
-  return {};
+  return path;
 }
 
 QScreen *Util::screenOfWidget(QWidget *widget)

@@ -2,6 +2,8 @@
 
 #include "testutils.h"
 
+#include <QTemporaryDir>
+
 #include <vector>
 
 #include "Util.h"
@@ -187,4 +189,53 @@ ADC: 39 39 39 39 39 39 39 39 39 39 39 39 39 00 00 00   9999999999999...)***")
 1020: 40 41 42 43 44 45 46 47 48 49 4A 4B 4C 4D 4E 4F   @ABCDEFGHIJKLMNO
 1030: 50 51 52 53 54 55 56 57 58 00 00 00 00 00 00 00   PQRSTUVWX.......)***")
     << res;
+}
+
+TEST(Util, resolveAppBinary)
+{
+  // Returns input on any kind of failure.
+
+  // Exists but isn't an .app bundle.
+  EXPECT_EQ(":macho_main", Util::resolveAppBinary(":macho_main"));
+
+  // Doesn't exist.
+  EXPECT_EQ("thisprogramdoesnotexist", Util::resolveAppBinary("thisprogramdoesnotexist"));
+
+  QTemporaryDir tempDir(QDir::tempPath() + "/XXXXXX.app");
+  ASSERT_TRUE(tempDir.isValid());
+
+  // Not complete bundle yet.
+  EXPECT_EQ(tempDir.path(), Util::resolveAppBinary(tempDir.path()));
+
+  QDir dir(tempDir.path());
+  ASSERT_TRUE(dir.mkpath("Contents/MacOS"));
+
+  // Not complete bundle yet.
+  EXPECT_EQ(tempDir.path(), Util::resolveAppBinary(tempDir.path()));
+
+  ASSERT_TRUE(dir.cd("Contents"));
+
+  QFile plist(dir.absoluteFilePath("Info.plist"));
+  ASSERT_TRUE(plist.open(QIODevice::WriteOnly));
+  plist.write(R"***(<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleExecutable</key>
+  <string>binaryname</string>
+</dict>
+</plist>
+)***");
+  plist.close();
+
+  // Not complete bundle yet.
+  EXPECT_EQ(tempDir.path(), Util::resolveAppBinary(tempDir.path()));
+
+  ASSERT_TRUE(dir.cd("MacOS"));
+  const auto binaryName = dir.absoluteFilePath("binaryname");
+  QFile binary(binaryName);
+  ASSERT_TRUE(binary.open(QIODevice::WriteOnly));
+
+  // Now it works!
+  EXPECT_EQ(binaryName, Util::resolveAppBinary(tempDir.path()));
 }

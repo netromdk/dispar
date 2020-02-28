@@ -522,10 +522,7 @@ void MainWindow::loadBinary(QString file)
   file = QFileInfo(file).absoluteFilePath();
 
   // If .app then resolve the internal binary file.
-  const auto appBin = Util::resolveAppBinary(file);
-  if (!appBin.isEmpty()) {
-    file = appBin;
-  }
+  file = Util::resolveAppBinary(file);
 
   qDebug() << "Loading binary:" << file;
 

@@ -38,6 +38,8 @@ public:
 
   static QString bytesToHex(const unsigned char *bytes, int size);
 
+  /// If \p path is an .app it tries to resolve the binary inside.
+  /** If it fails, it will return \p path. */
   static QString resolveAppBinary(QString path);
 
   static QScreen *screenOfWidget(QWidget *widget);
