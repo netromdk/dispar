@@ -1,6 +1,8 @@
 #include "Context.h"
 #include "Project.h"
 
+#include "cxx.h"
+
 #include <cassert>
 
 #include <QDebug>
@@ -21,23 +23,35 @@ static QString settingsPath()
 
 namespace dispar {
 
+namespace {
+
+Context *instance = nullptr;
+
+} // namespace
+
 Context::Context()
   : showMachineCode_(true), disassemblerSyntax_(Disassembler::Syntax::INTEL), backupEnabled_(true),
     backupAmount_(5), project_(nullptr)
 {
+  ASSERT_X(!instance, "Only one Context can be live at any one time");
+  instance = this;
+
   logHandler = std::make_unique<LogHandler>(*this);
   loadSettings();
 }
 
 Context::~Context()
 {
+  assert(instance);
+  instance = nullptr;
+
   saveSettings();
 }
 
 Context &Context::get()
 {
-  static Context instance;
-  return instance;
+  ASSERT_X(instance, "Context must be constructed first");
+  return *instance;
 }
 
 void Context::setVerbose(bool verbose)

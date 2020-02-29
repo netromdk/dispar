@@ -218,7 +218,7 @@ int main(int argc, char **argv)
   Format::registerType();
 
   // Initialize and load context.
-  auto &context = Context::get();
+  Context context;
   context.setVerbose(verbose);
 
   if (version) {

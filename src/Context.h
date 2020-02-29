@@ -15,10 +15,14 @@ namespace dispar {
 
 class Project;
 
+/// It is required to create an instance once in the beginning of the program.
+/** Since only one instance can be live at any one time, it is asserted that more aren't tried
+    created. */
 class Context : public QObject {
   Q_OBJECT
 
 public:
+  Context();
   ~Context();
 
   /// Singleton instance.
@@ -71,8 +75,6 @@ signals:
   void showMachineCodeChanged(bool show);
 
 private:
-  Context();
-
   bool verbose_ = false;
 
   bool showMachineCode_;
