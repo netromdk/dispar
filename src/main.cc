@@ -165,6 +165,10 @@ int main(int argc, char **argv)
   QCommandLineOption verboseOption({"v", "verbose"}, QObject::tr("Verbose mode."));
   parser.addOption(verboseOption);
 
+  QCommandLineOption parseOption(
+    "parse", QObject::tr("Parse binary, display information, and exit (headless)."));
+  parser.addOption(parseOption);
+
   parser.addPositionalArgument("file", "Project .dispar or binary file to load.", "(file)");
 
   QCommandLineOption patchMacSdkOption(
@@ -201,6 +205,7 @@ int main(int argc, char **argv)
 
   const bool version = parser.isSet(versionOption);
   const bool verbose = parser.isSet(verboseOption);
+  const bool parse = parser.isSet(parseOption);
 
   // Register meta types.
   Format::registerType();
@@ -220,7 +225,7 @@ int main(int argc, char **argv)
     file = Util::resolveAppBinary(posArgs.first());
   }
 
-  const bool requiresFile = patchSdk;
+  const bool requiresFile = patchSdk || parse;
 
   std::shared_ptr<Format> format = nullptr;
   if (requiresFile) {
@@ -235,6 +240,12 @@ int main(int argc, char **argv)
       qCritical() << "Could not load file:" << file;
       return 1;
     }
+  }
+
+  if (parse) {
+    qInfo() << "Binary parsed successfully!";
+    qInfo().noquote() << format->toString();
+    return 0;
   }
 
   if (patchSdk) {

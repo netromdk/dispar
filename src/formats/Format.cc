@@ -15,6 +15,19 @@ Format::Type Format::type() const
   return type_;
 }
 
+QString Format::toString() const
+{
+  const auto objs = objects();
+  auto res = QString("Format: %1\n").arg(typeName(type()));
+  if (objs.size() > 1) {
+    res += QString("%1 objects:\n").arg(objs.size());
+  }
+  for (const auto *obj : objs) {
+    res += QString("- %1\n").arg(obj->toString());
+  }
+  return res;
+}
+
 std::shared_ptr<Format> Format::detect(const QString &file)
 {
   // Mach-O

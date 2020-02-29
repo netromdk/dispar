@@ -26,6 +26,8 @@ public:
 
   Type type() const;
 
+  virtual QString toString() const;
+
   virtual QString file() const = 0;
 
   /// Detect whether the magic code of the file corresponds to the format.
