@@ -291,6 +291,10 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
   else if (filetype == 8) { // MH_BUNDLE
     fileType = FileType::BUNDLE;
   }
+  else {
+    qWarning() << "Unknown file type:" << filetype;
+    return false;
+  }
 
   binaryObject->setFileType(fileType);
 

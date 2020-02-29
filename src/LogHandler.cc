@@ -3,6 +3,8 @@
 
 #include <QDir>
 #include <QFileInfo>
+#include <QMutex>
+#include <QMutexLocker>
 #include <QTextStream>
 
 namespace dispar {
@@ -15,6 +17,8 @@ LogHandler::LogHandler()
 void LogHandler::messageHandler(QtMsgType type, const QMessageLogContext &context,
                                 const QString &msg)
 {
+  static QMutex mutex;
+
   // Ignore debug messages in release mode, except if verbose is enabled.
 #ifdef NDEBUG
   auto &ctx = Context::get();
@@ -45,6 +49,10 @@ void LogHandler::messageHandler(QtMsgType type, const QMessageLogContext &contex
   // output += QString(" {%1 @ %2:%3}").arg(function).arg(file).arg(context.line);
   output += QString(" {%1%2}").arg(file).arg(context.line);
 #endif
+
+  // Lock mutex while writing to stdout such that output isn't messed up when coming from multiple
+  // threads.
+  QMutexLocker locker(&mutex);
 
   QTextStream stream(stdout);
   stream << output;
