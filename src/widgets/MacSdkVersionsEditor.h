@@ -31,7 +31,7 @@ private:
 
   QSpinBox *targetMajorSpin, *targetMinorSpin, *sdkMajorSpin, *sdkMinorSpin;
 
-  bool shown;
+  bool shown = false;
   QDateTime sectionModified;
 };
 
