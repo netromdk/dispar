@@ -1,5 +1,6 @@
 #include "formats/Format.h"
 #include "BinaryObject.h"
+#include "Util.h"
 #include "formats/MachO.h"
 
 #include <QIODevice>
@@ -24,6 +25,16 @@ QString Format::toString() const
   }
   for (const auto *obj : objs) {
     res += QString("- %1\n").arg(obj->toString());
+    for (const auto *sec : obj->sections()) {
+      res += QString("  - %1\n      0x%2-0x%3 (%4)\n")
+               .arg(sec->toString())
+               .arg(sec->address(), 0, 16)
+               .arg(sec->address() + sec->size(), 0, 16)
+               .arg(Util::formatSize(sec->size()));
+      if (sec->address() != sec->offset()) {
+        res += QString("      0x%1 offset\n").arg(sec->offset(), 0, 16);
+      }
+    }
   }
   return res;
 }

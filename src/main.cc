@@ -61,6 +61,13 @@ bool saveFile(std::shared_ptr<Format> format)
   return true;
 }
 
+int handleParse(std::shared_ptr<Format> format)
+{
+  qInfo() << "Binary parsed successfully!";
+  qInfo().noquote() << format->toString();
+  return 0;
+}
+
 int handlePatchSdk(std::shared_ptr<Format> format, const Section::Type type, const QString &version)
 {
   const bool list = (version == "list");
@@ -243,9 +250,7 @@ int main(int argc, char **argv)
   }
 
   if (parse) {
-    qInfo() << "Binary parsed successfully!";
-    qInfo().noquote() << format->toString();
-    return 0;
+    return handleParse(format);
   }
 
   if (patchSdk) {
