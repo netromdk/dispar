@@ -29,7 +29,7 @@ bool MacSdkVersionPatcher::setTarget(const Version &version)
   }
 
   target_ = version;
-  patch();
+  patch(version, 0);
   return true;
 }
 
@@ -45,7 +45,7 @@ bool MacSdkVersionPatcher::setSdk(const Version &version)
   }
 
   sdk_ = version;
-  patch();
+  patch(version, 4);
   return true;
 }
 
@@ -79,14 +79,13 @@ void MacSdkVersionPatcher::parse()
   valid_ = true;
 }
 
-void MacSdkVersionPatcher::patch()
+void MacSdkVersionPatcher::patch(const Version &newVersion, int pos)
 {
   QByteArray data;
-  data.append(Util::longToData(Util::encodeMacSdkVersion(target_)));
-  data.append(Util::longToData(Util::encodeMacSdkVersion(sdk_)));
+  data.append(Util::longToData(Util::encodeMacSdkVersion(newVersion)));
 
   // Set as "sub" data so that the modified flag is set, too.
-  section.setSubData(data, 0);
+  section.setSubData(data, pos);
 }
 
 } // namespace dispar

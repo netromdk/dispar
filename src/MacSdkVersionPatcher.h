@@ -23,7 +23,7 @@ public:
 
 private:
   void parse();
-  void patch();
+  void patch(const Version &newVersion, int pos);
 
   Section &section;
   bool valid_ = false;
