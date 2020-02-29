@@ -16,6 +16,7 @@ if (NOT WIN32)
     )
 else()
   set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}
+    "C:/Qt/5.14.1/msvc2017_64/lib/cmake"
     "C:/qt-everywhere-opensource-src-5.6.0-w64/qtbase/lib/cmake"
     "C:/qt-everywhere-opensource-src-5.4.1-w64/qtbase/lib/cmake"
     "C:/qt-everywhere-opensource-src-5.4.0-w64/qtbase/lib/cmake"
