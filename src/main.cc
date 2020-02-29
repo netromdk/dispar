@@ -220,6 +220,7 @@ int main(int argc, char **argv)
   // Initialize and load context.
   Context context;
   context.setVerbose(verbose);
+  context.init();
 
   if (version) {
     qInfo().noquote().nospace() << qApp->applicationName() << " " << qApp->applicationVersion()

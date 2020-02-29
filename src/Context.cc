@@ -26,6 +26,7 @@ namespace dispar {
 namespace {
 
 Context *instance = nullptr;
+bool initialized = false;
 
 } // namespace
 
@@ -35,15 +36,15 @@ Context::Context()
 {
   ASSERT_X(!instance, "Only one Context can be live at any one time");
   instance = this;
-
-  logHandler = std::make_unique<LogHandler>(*this);
-  loadSettings();
 }
 
 Context::~Context()
 {
   assert(instance);
   instance = nullptr;
+
+  ASSERT_X(initialized, "Context wasn't initialized before being destroyed");
+  initialized = false;
 
   saveSettings();
 }
@@ -52,6 +53,15 @@ Context &Context::get()
 {
   ASSERT_X(instance, "Context must be constructed first");
   return *instance;
+}
+
+void Context::init()
+{
+  ASSERT_X(!initialized, "Context is already initialized");
+  initialized = true;
+
+  logHandler = std::make_unique<LogHandler>(*this);
+  loadSettings();
 }
 
 void Context::setVerbose(bool verbose)

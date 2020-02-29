@@ -28,6 +28,9 @@ public:
   /// Singleton instance.
   static Context &get();
 
+  /// Initializes context.
+  void init();
+
   void setVerbose(bool verbose);
   bool verbose() const;
 
