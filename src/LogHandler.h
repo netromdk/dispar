@@ -5,9 +5,11 @@
 
 namespace dispar {
 
+class Context;
+
 class LogHandler {
 public:
-  LogHandler();
+  LogHandler(Context &context);
 
   /// Message handler to be installed via \p qInstallMessageHandler().
   static void messageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg);

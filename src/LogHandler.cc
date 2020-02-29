@@ -9,8 +9,16 @@
 
 namespace dispar {
 
-LogHandler::LogHandler()
+namespace {
+
+// Make context available in static messageHandler().
+Context *ctx = nullptr;
+
+} // namespace
+
+LogHandler::LogHandler(Context &context)
 {
+  ctx = &context;
   qInstallMessageHandler(this->messageHandler);
 }
 
@@ -21,8 +29,7 @@ void LogHandler::messageHandler(QtMsgType type, const QMessageLogContext &contex
 
   // Ignore debug messages in release mode, except if verbose is enabled.
 #ifdef NDEBUG
-  auto &ctx = Context::get();
-  if (type == QtDebugMsg && !ctx.verbose()) {
+  if (type == QtDebugMsg && !ctx->verbose()) {
     return;
   }
 #endif
