@@ -66,12 +66,13 @@ void BinaryObject::setFileType(FileType type)
 
 QString BinaryObject::toString() const
 {
-  return QString("%1 (%2), %3-bit, %4, %5 Endian")
+  return QString("%1 (%2), %3-bit, %4, %5 Endian, %6 sections")
     .arg(cpuTypeName(cpuType()))
     .arg(cpuTypeName(cpuSubType()))
     .arg(systemBits())
     .arg(fileTypeName(fileType()))
-    .arg(isLittleEndian() ? "Little" : "Big");
+    .arg(isLittleEndian() ? "Little" : "Big")
+    .arg(sections().size());
 }
 
 QList<Section *> BinaryObject::sections() const
