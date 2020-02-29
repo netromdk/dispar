@@ -224,16 +224,15 @@ void BinaryWidget::onCustomContextMenuRequested(const QPoint &pos)
                section->type() == Section::Type::LC_VERSION_MIN_WATCHOS ||
                section->type() == Section::Type::LC_VERSION_MIN_TVOS) {
         menu.addAction(tr("Edit versions '%1'").arg(section->toString()), this, [this, section] {
-          const auto priorModRegions = section->modifiedRegions();
-
           auto *editor = macSdkVersionsEditors.value(section, nullptr);
           if (!editor) {
             editor = new MacSdkVersionsEditor(section, object, this);
             macSdkVersionsEditors[section] = editor;
           }
 
-          editor->exec();
-          checkModified(section, priorModRegions);
+          if (QDialog::Accepted == editor->exec()) {
+            checkModified(section, {});
+          }
         });
       }
 

@@ -67,9 +67,12 @@ void MacSdkVersionsEditor::accept()
   // only the first setter is called if it returns true.
   if (patcher.setTarget(newTarget) | patcher.setSdk(newSdk)) {
     sectionModified = QDateTime::currentDateTime();
+    done(QDialog::Accepted);
+    return;
   }
 
-  done(QDialog::Accepted);
+  // Not modified.
+  done(QDialog::Rejected);
 }
 
 void MacSdkVersionsEditor::readValues()
