@@ -2,10 +2,26 @@
 #define DISPAR_CXX_H
 
 #include <algorithm>
+#include <cstdlib>
+#include <iostream>
 #include <iterator>
+
+#ifndef NDEBUG
+#define ASSERT_X(cond, what)                                                                       \
+  ((cond) ? static_cast<void>(0) : dispar::cxx::assert_x(__FUNCTION__, what, __FILE__, __LINE__))
+#else
+#define ASSERT_X(cond, what) static_cast<void>(0)
+#endif
 
 namespace dispar {
 namespace cxx {
+
+static inline void assert_x(const char *where, const char *what, const char *file, int line)
+{
+  std::cerr << "ASSERT failure in " << where << ": " << what << ", file " << file << ", line "
+            << line << std::endl;
+  std::abort();
+}
 
 /// When a member function has muliple overloads and you need to use just one of them.
 /** Example:
