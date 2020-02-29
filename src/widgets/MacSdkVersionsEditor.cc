@@ -63,7 +63,9 @@ void MacSdkVersionsEditor::accept()
   const MacSdkVersionPatcher::Version newTarget(targetMajorSpin->value(), targetMinorSpin->value()),
     newSdk(sdkMajorSpin->value(), sdkMinorSpin->value());
 
-  if (patcher.setTarget(newTarget) || patcher.setSdk(newSdk)) {
+  // OR to call both setter functions and yield true if one of them were true. If || is used then
+  // only the first setter is called if it returns true.
+  if (patcher.setTarget(newTarget) | patcher.setSdk(newSdk)) {
     sectionModified = QDateTime::currentDateTime();
   }
 
