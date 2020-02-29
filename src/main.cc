@@ -197,6 +197,13 @@ int main(int argc, char **argv)
   const bool patchSdk = patchMac | patchiOS | patchWatchOS | patchTvOS;
 
   const bool version = parser.isSet(versionOption);
+
+  // Register meta types.
+  Format::registerType();
+
+  // Initialize and load context.
+  auto &context = Context::get();
+
   if (version) {
     qInfo().noquote().nospace() << qApp->applicationName() << " " << qApp->applicationVersion()
                                 << " (" << __DATE__ << ")";
@@ -244,11 +251,6 @@ int main(int argc, char **argv)
     }
   }
 
-  // Register meta types.
-  Format::registerType();
-
-  // Initialize and load context.
-  Context::get();
 
   // Start in event loop.
   MainWindow main(file);
