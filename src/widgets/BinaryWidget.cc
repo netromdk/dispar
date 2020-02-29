@@ -69,6 +69,7 @@ BinaryWidget::~BinaryWidget()
 {
   qDeleteAll(disassemblyEditors.values());
   qDeleteAll(hexEditors.values());
+  qDeleteAll(macSdkVersionsEditors.values());
 }
 
 void BinaryWidget::showEvent(QShowEvent *event)
