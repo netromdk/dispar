@@ -40,6 +40,16 @@ Context &Context::get()
   return instance;
 }
 
+void Context::setVerbose(bool verbose)
+{
+  verbose_ = verbose;
+}
+
+bool Context::verbose() const
+{
+  return verbose_;
+}
+
 bool Context::showMachineCode() const
 {
   return showMachineCode_;

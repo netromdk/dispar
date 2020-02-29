@@ -162,6 +162,9 @@ int main(int argc, char **argv)
   QCommandLineOption versionOption("version", QObject::tr("Displays version information."));
   parser.addOption(versionOption);
 
+  QCommandLineOption verboseOption({"v", "verbose"}, QObject::tr("Verbose mode."));
+  parser.addOption(verboseOption);
+
   parser.addPositionalArgument("file", "Project .dispar or binary file to load.", "(file)");
 
   QCommandLineOption patchMacSdkOption(
@@ -197,12 +200,14 @@ int main(int argc, char **argv)
   const bool patchSdk = patchMac | patchiOS | patchWatchOS | patchTvOS;
 
   const bool version = parser.isSet(versionOption);
+  const bool verbose = parser.isSet(verboseOption);
 
   // Register meta types.
   Format::registerType();
 
   // Initialize and load context.
   auto &context = Context::get();
+  context.setVerbose(verbose);
 
   if (version) {
     qInfo().noquote().nospace() << qApp->applicationName() << " " << qApp->applicationVersion()

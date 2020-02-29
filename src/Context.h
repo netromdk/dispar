@@ -24,6 +24,9 @@ public:
   /// Singleton instance.
   static Context &get();
 
+  void setVerbose(bool verbose);
+  bool verbose() const;
+
   bool showMachineCode() const;
   void setShowMachineCode(bool show);
 
@@ -69,6 +72,8 @@ signals:
 
 private:
   Context();
+
+  bool verbose_ = false;
 
   bool showMachineCode_;
   Disassembler::Syntax disassemblerSyntax_;

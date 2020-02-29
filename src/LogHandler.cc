@@ -1,4 +1,5 @@
 #include "LogHandler.h"
+#include "Context.h"
 
 #include <QDir>
 #include <QFileInfo>
@@ -14,9 +15,10 @@ LogHandler::LogHandler()
 void LogHandler::messageHandler(QtMsgType type, const QMessageLogContext &context,
                                 const QString &msg)
 {
-  // Ignore debug messages in release mode.
+  // Ignore debug messages in release mode, except if verbose is enabled.
 #ifdef NDEBUG
-  if (type == QtDebugMsg) {
+  auto &ctx = Context::get();
+  if (type == QtDebugMsg && !ctx.verbose()) {
     return;
   }
 #endif
