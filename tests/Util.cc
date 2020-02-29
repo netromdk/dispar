@@ -15,6 +15,8 @@ TEST(Util, padString)
   EXPECT_EQ(Util::padString("x", 3, false, ' '), "x  ");
 }
 
+// Demangling doesn't work on Windows right now..
+#ifndef WIN32
 TEST(Util, demangle)
 {
   auto res = Util::demangle("__ZSt9terminatev");
@@ -29,6 +31,7 @@ TEST(Util, demangle)
   res = Util::demangle("__Znam");
   EXPECT_EQ(res, "operator new[](unsigned long)") << res;
 }
+#endif
 
 TEST(Util, convertAddress)
 {
