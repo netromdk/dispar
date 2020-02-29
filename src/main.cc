@@ -158,7 +158,10 @@ int main(int argc, char **argv)
 
   QCommandLineParser parser;
   parser.addHelpOption();
-  parser.addVersionOption();
+
+  QCommandLineOption versionOption("version", QObject::tr("Displays version information."));
+  parser.addOption(versionOption);
+
   parser.addPositionalArgument("file", "Project .dispar or binary file to load.", "(file)");
 
   QCommandLineOption patchMacSdkOption(
@@ -192,6 +195,13 @@ int main(int argc, char **argv)
   const bool patchWatchOS = parser.isSet(patchWatchOSSdkOption);
   const bool patchTvOS = parser.isSet(patchTvOSSdkOption);
   const bool patchSdk = patchMac | patchiOS | patchWatchOS | patchTvOS;
+
+  const bool version = parser.isSet(versionOption);
+  if (version) {
+    qInfo().noquote().nospace() << qApp->applicationName() << " " << qApp->applicationVersion()
+                                << " (" << __DATE__ << ")";
+    return 0;
+  }
 
   QString file;
   if (posArgs.size() == 1) {
