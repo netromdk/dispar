@@ -11,11 +11,13 @@ set(COMMON_COMPILER_ERRORS "-Werror=return-type -Werror=delete-incomplete -Werro
 set(CLANG_ERRORS "-Werror=inconsistent-missing-override -Werror=unused-private-field -Werror=division-by-zero -Werror=return-stack-address")
 set(GCC_ERRORS "")
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic-errors ${COMMON_COMPILER_WARNINGS} ${COMMON_COMPILER_ERRORS}")
-set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
-set(CMAKE_CXX_FLAGS_MINSIZEREL "-O3 -DNDEBUG")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
+if (NOT WIN32)
+  set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic-errors ${COMMON_COMPILER_WARNINGS} ${COMMON_COMPILER_ERRORS}")
+  set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
+  set(CMAKE_CXX_FLAGS_MINSIZEREL "-O3 -DNDEBUG")
+  set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
+  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
+endif()
 
 # Show color in diagnostics messages from Clang.
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
