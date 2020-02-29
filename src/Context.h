@@ -9,6 +9,7 @@
 
 #include "Debugger.h"
 #include "Disassembler.h"
+#include "LogHandler.h"
 
 namespace dispar {
 
@@ -81,6 +82,7 @@ private:
   Debugger debugger_;
 
   std::unique_ptr<Project> project_;
+  std::unique_ptr<LogHandler> logHandler;
 };
 
 } // namespace dispar

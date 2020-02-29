@@ -13,6 +13,8 @@ add_library(
 
   Context.h
   Context.cc
+  LogHandler.h
+  LogHandler.cc
   Project.h
   Project.cc
 

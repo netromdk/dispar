@@ -25,6 +25,7 @@ Context::Context()
   : showMachineCode_(true), disassemblerSyntax_(Disassembler::Syntax::INTEL), backupEnabled_(true),
     backupAmount_(5), project_(nullptr)
 {
+  logHandler = std::make_unique<LogHandler>();
   loadSettings();
 }
 
