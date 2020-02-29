@@ -37,7 +37,7 @@ std::shared_ptr<Format> loadFile(const QString &fileName)
   });
 
   QObject::connect(&loader, &FormatLoader::status,
-                   [](const QString &msg) { qInfo() << qPrintable(msg); });
+                   [](const QString &msg) { qDebug() << qPrintable(msg); });
 
   std::shared_ptr<Format> res = nullptr;
   QObject::connect(&loader, &FormatLoader::success,
