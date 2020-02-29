@@ -1,7 +1,7 @@
 #include "Context.h"
 #include "Project.h"
-
 #include "cxx.h"
+#include "formats/Format.h"
 
 #include <cassert>
 
@@ -59,6 +59,9 @@ void Context::init()
 {
   ASSERT_X(!initialized, "Context is already initialized");
   initialized = true;
+
+  // Register meta types.
+  Format::registerType();
 
   logHandler = std::make_unique<LogHandler>(*this);
   loadSettings();

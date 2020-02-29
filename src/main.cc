@@ -214,19 +214,16 @@ int main(int argc, char **argv)
   const bool verbose = parser.isSet(verboseOption);
   const bool parse = parser.isSet(parseOption);
 
-  // Register meta types.
-  Format::registerType();
-
-  // Initialize and load context.
-  Context context;
-  context.setVerbose(verbose);
-  context.init();
-
   if (version) {
     qInfo().noquote().nospace() << qApp->applicationName() << " " << qApp->applicationVersion()
                                 << " (" << __DATE__ << ")";
     return 0;
   }
+
+  // Initialize and load context.
+  Context context;
+  context.setVerbose(verbose);
+  context.init();
 
   QString file;
   if (posArgs.size() == 1) {
