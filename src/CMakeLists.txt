@@ -139,6 +139,7 @@ install(
   )
 
 set(INSTALL_TARGET_NAME "${binName}")
+set(lib_dir "${Qt5Core_DIR}/../../")
 set(bin_dir "${Qt5Core_DIR}/../../../bin/")
 set(plugin_dir "${Qt5Core_DIR}/../../../plugins/")
 
@@ -169,6 +170,18 @@ elseif (LINUX)
   install(
     FILES "${plugin_dir}/platforms/libqxcb.so"
     DESTINATION "${INSTALL_BIN_DIR}/platforms/"
+    )
+  install(
+    FILES
+      "${lib_dir}/libQt5XcbQpa.so.5"
+      "${lib_dir}/libQt5XcbQpa.so.${QT_VERSION}"
+      "${lib_dir}/libQt5DBus.so.5"
+      "${lib_dir}/libQt5DBus.so.${QT_VERSION}"
+    DESTINATION "${INSTALL_BIN_DIR}/"
+    PERMISSIONS
+      OWNER_READ OWNER_WRITE OWNER_EXECUTE
+      GROUP_READ GROUP_EXECUTE
+      WORLD_READ WORLD_EXECUTE
     )
 endif()
 
