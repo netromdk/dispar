@@ -139,6 +139,7 @@ install(
   )
 
 set(INSTALL_TARGET_NAME "${binName}")
+set(bin_dir "${Qt5Core_DIR}/../../../bin/")
 set(plugin_dir "${Qt5Core_DIR}/../../../plugins/")
 
 if (APPLE)
@@ -157,6 +158,13 @@ elseif (WIN32)
       DESTINATION "${INSTALL_BIN_DIR}/platforms/"
       )
   endif()
+  install(
+    FILES
+      "${bin_dir}/Qt5Core.dll"
+      "${bin_dir}/Qt5Gui.dll"
+      "${bin_dir}/Qt5Widgets.dll"
+    DESTINATION "${INSTALL_BIN_DIR}/"
+    )
 elseif (LINUX)
   install(
     FILES "${plugin_dir}/platforms/libqxcb.so"

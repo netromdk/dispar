@@ -26,8 +26,9 @@ set(
   @CMAKE_RUNTIME_OUTPUT_DIRECTORY@
   @CMAKE_LIBRARY_OUTPUT_DIRECTORY@
 
-  # The general Qt lib folder.
+  # The general Qt lib and bin folders.
   @Qt5Core_DIR@/../../
+  @Qt5Core_DIR@/../../../bin/
 
   # Qt plugins.
   @Qt5Core_DIR@/../../../plugins/
