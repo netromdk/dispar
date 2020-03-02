@@ -21,6 +21,7 @@ There are both external and internal libraries and tools required to build and r
   * QtCore
   * QtGui
   * QtWidgets
+  * QtPrintSupport + QDBus (macOS only)
   * Arch-specific platform plugin: libqcocoa.dylib, qwindows.dll, or libqxcb.so
 * Clang, llvm-profdata, and llvm-cov 4+ (for code coverage)
 * Clang, scan-build 4+ (for static analysis)

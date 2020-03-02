@@ -47,4 +47,10 @@ requireQtModule(Qt5Core)
 requireQtModule(Qt5Gui)
 requireQtModule(Qt5Widgets)
 
+# Required deps of libqcocoa.dylib.
+if (APPLE)
+  requireQtModule(Qt5PrintSupport)
+  requireQtModule(Qt5DBus)
+endif()
+
 set(FOUND_QT YES)
