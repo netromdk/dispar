@@ -40,7 +40,10 @@ function (requireQtModule module)
     message(FATAL_ERROR "Minimum supported Qt5 version is ${QT_MINIMUM_VERSION}!")
   endif()
 
-  message(STATUS "Found ${module} with version ${${module}_VERSION}")
+  set(version ${${module}_VERSION})
+  message(STATUS "Found ${module} with version ${version}")
+
+  set(QT_VERSION ${version} PARENT_SCOPE)
 endfunction()
 
 requireQtModule(Qt5Core)
@@ -50,6 +53,10 @@ requireQtModule(Qt5Widgets)
 # Required deps of libqcocoa.dylib.
 if (APPLE)
   requireQtModule(Qt5PrintSupport)
+  requireQtModule(Qt5DBus)
+
+# Required deps of libqxcb.so.
+elseif (LINUX)
   requireQtModule(Qt5DBus)
 endif()
 
