@@ -151,6 +151,12 @@ elseif (WIN32)
     FILES "${plugin_dir}/platforms/qwindows.dll"
     DESTINATION "${INSTALL_BIN_DIR}/platforms/"
     )
+  if ("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
+    install(
+      FILES "${plugin_dir}/platforms/qwindowsd.dll"
+      DESTINATION "${INSTALL_BIN_DIR}/platforms/"
+      )
+  endif()
 elseif (LINUX)
   install(
     FILES "${plugin_dir}/platforms/libqxcb.so"
