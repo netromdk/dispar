@@ -63,7 +63,7 @@ void Context::init()
   // Register meta types.
   Format::registerType();
 
-  logHandler = std::make_unique<LogHandler>(*this);
+  logHandler_ = std::make_unique<LogHandler>(*this);
   loadSettings();
 }
 
@@ -354,6 +354,12 @@ Project *Context::loadProject(const QString &file)
 {
   project_ = Project::load(file);
   return project();
+}
+
+LogHandler *Context::logHandler() const
+{
+  assert(logHandler_);
+  return logHandler_.get();
 }
 
 } // namespace dispar

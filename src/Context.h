@@ -74,6 +74,8 @@ public:
   /** Keeps ownership. */
   Project *loadProject(const QString &file);
 
+  LogHandler *logHandler() const;
+
 signals:
   void showMachineCodeChanged(bool show);
 
@@ -92,7 +94,7 @@ private:
   Debugger debugger_;
 
   std::unique_ptr<Project> project_;
-  std::unique_ptr<LogHandler> logHandler;
+  std::unique_ptr<LogHandler> logHandler_;
 };
 
 } // namespace dispar
