@@ -5,10 +5,26 @@
 
 #include <capstone.h>
 
+#include "LogHandler.h"
+
 namespace dispar {
 namespace Constants {
 
 static const QString PROJECT_URL("https://github.com/netromdk/dispar");
+
+namespace Log {
+
+enum {
+  DEBUG_LEVEL = 0,
+  INFO_LEVEL = 1,
+  WARNING_LEVEL = 2,
+  CRITICAL_LEVEL = 3,
+  FATAL_LEVEL = 4,
+
+  DEFAULT_LEVEL = INFO_LEVEL,
+};
+
+} // namespace Log
 
 namespace Debugger {
 

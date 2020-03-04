@@ -1,4 +1,5 @@
 #include "Context.h"
+#include "Constants.h"
 #include "Project.h"
 #include "cxx.h"
 #include "formats/Format.h"
@@ -289,6 +290,13 @@ void Context::loadSettings()
       }
     }
   }
+
+  if (obj.contains("logLevel")) {
+    logLevel_ = obj["logLevel"].toInt();
+    if (logLevel_ < Constants::Log::DEBUG_LEVEL || logLevel_ > Constants::Log::FATAL_LEVEL) {
+      logLevel_ = Constants::Log::DEFAULT_LEVEL;
+    }
+  }
 }
 
 void Context::saveSettings()
@@ -318,6 +326,7 @@ void Context::saveSettings()
   obj["recent"] = recentObj;
   obj["values"] = QJsonValue::fromVariant(values);
   obj["debugger"] = debuggerObj;
+  obj["logLevel"] = logLevel_;
 
   QJsonDocument doc;
   doc.setObject(obj);
@@ -360,6 +369,11 @@ LogHandler *Context::logHandler() const
 {
   assert(logHandler_);
   return logHandler_.get();
+}
+
+int Context::logLevel() const
+{
+  return logLevel_;
 }
 
 } // namespace dispar

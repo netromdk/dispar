@@ -7,6 +7,7 @@
 
 #include <memory>
 
+#include "Constants.h"
 #include "Debugger.h"
 #include "Disassembler.h"
 #include "LogHandler.h"
@@ -75,6 +76,7 @@ public:
   Project *loadProject(const QString &file);
 
   LogHandler *logHandler() const;
+  int logLevel() const;
 
 signals:
   void showMachineCodeChanged(bool show);
@@ -92,6 +94,8 @@ private:
   QVariantHash values;
 
   Debugger debugger_;
+
+  int logLevel_ = Constants::Log::DEFAULT_LEVEL;
 
   std::unique_ptr<Project> project_;
   std::unique_ptr<LogHandler> logHandler_;
