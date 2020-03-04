@@ -1,4 +1,5 @@
 #include "widgets/OptionsDialog.h"
+#include "Constants.h"
 #include "Context.h"
 #include "Disassembler.h"
 #include "cxx.h"
@@ -87,6 +88,9 @@ void OptionsDialog::onAccept()
   }
   ctx.setDisassemblerSyntax(syntax);
 
+  const auto newLevel = logLevelBox->currentData().toInt();
+  ctx.setLogLevel(newLevel);
+
   const auto dbg = currentDebugger();
   if (dbg.valid()) {
     ctx.setDebugger(dbg);
@@ -126,6 +130,37 @@ void OptionsDialog::createLayout()
 
   auto *mainGroup = new QGroupBox(tr("Main View"));
   mainGroup->setLayout(mainLayout);
+
+  ///// Log Context
+
+  logLevelBox = new QComboBox;
+  logLevelBox->addItem(tr("Debug"), Constants::Log::DEBUG_LEVEL);
+  logLevelBox->addItem(tr("Information"), Constants::Log::INFO_LEVEL);
+  logLevelBox->addItem(tr("Warning"), Constants::Log::WARNING_LEVEL);
+  logLevelBox->addItem(tr("Critical"), Constants::Log::CRITICAL_LEVEL);
+  logLevelBox->addItem(tr("Fatal"), Constants::Log::FATAL_LEVEL);
+
+  idx = logLevelBox->findData(ctx.logLevel());
+  if (idx != -1) {
+    logLevelBox->setCurrentIndex(idx);
+  }
+
+  auto *logLevelLayout = new QHBoxLayout;
+  logLevelLayout->addWidget(new QLabel(tr("Level:")));
+  logLevelLayout->addWidget(logLevelBox);
+  logLevelLayout->addStretch();
+
+  auto *logLayout = new QVBoxLayout;
+  logLayout->addLayout(logLevelLayout);
+
+  if (ctx.verbose()) {
+    logLayout->addWidget(new QLabel(
+      tr("Running in verbose mode!") + "\n" +
+      tr("Log level will be saved if changed but debug is the effective session log level.")));
+  }
+
+  auto *logGroup = new QGroupBox(tr("Log Context"));
+  logGroup->setLayout(logLayout);
 
   ///// Binary Backups
 
@@ -224,6 +259,7 @@ void OptionsDialog::createLayout()
 
   auto *layout = new QVBoxLayout;
   layout->addWidget(mainGroup);
+  layout->addWidget(logGroup);
   layout->addWidget(backupGroup);
   layout->addWidget(debuggerGroup);
   layout->addStretch();

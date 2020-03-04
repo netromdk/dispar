@@ -77,7 +77,7 @@ void LogHandler::messageHandler(QtMsgType type, const QMessageLogContext &contex
   static QMutex mutex;
 
   // Ignore log message if level is lower than current log level, except if verbose is enabled.
-  if (msgLogLevel(type) < ctx->logLevel() && !ctx->verbose()) {
+  if (!ctx->acceptMsgType(type)) {
     return;
   }
 

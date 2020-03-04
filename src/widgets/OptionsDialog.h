@@ -29,7 +29,7 @@ private:
   Debugger currentDebugger() const;
 
   QCheckBox *showMachineCode;
-  QComboBox *disAsmSyntax;
+  QComboBox *disAsmSyntax, *logLevelBox;
   QLineEdit *debuggerEdit, *launchPatternEdit, *versionArgumentEdit;
 };
 

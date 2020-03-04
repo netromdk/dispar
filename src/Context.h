@@ -77,9 +77,12 @@ public:
 
   LogHandler *logHandler() const;
   int logLevel() const;
+  void setLogLevel(int level);
+  bool acceptMsgType(QtMsgType type) const;
 
 signals:
   void showMachineCodeChanged(bool show);
+  void logLevelChanged(int newLevel);
 
 private:
   bool verbose_ = false;

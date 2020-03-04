@@ -376,4 +376,16 @@ int Context::logLevel() const
   return logLevel_;
 }
 
+void Context::setLogLevel(int level)
+{
+  if (level == logLevel_) return;
+  logLevel_ = level;
+  emit logLevelChanged(logLevel_);
+}
+
+bool Context::acceptMsgType(QtMsgType type) const
+{
+  return LogHandler::msgLogLevel(type) >= logLevel() || verbose();
+}
+
 } // namespace dispar
