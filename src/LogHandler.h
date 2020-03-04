@@ -25,6 +25,9 @@ public:
   LogHandler(Context &context);
   virtual ~LogHandler();
 
+  /// Log level corresponding to \p type.
+  static int msgLogLevel(QtMsgType type);
+
   /// Message handler to be installed via \p qInstallMessageHandler().
   static void messageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 

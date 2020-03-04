@@ -78,6 +78,8 @@ add_library(
   widgets/AsciiValidator.cc
   widgets/MacSdkVersionsEditor.h
   widgets/MacSdkVersionsEditor.cc
+  widgets/LogDialog.h
+  widgets/LogDialog.cc
 
   formats/Format.h
   formats/Format.cc

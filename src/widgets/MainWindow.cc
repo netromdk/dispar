@@ -10,6 +10,7 @@
 #include "widgets/BinaryWidget.h"
 #include "widgets/ConversionHelper.h"
 #include "widgets/DisassemblerDialog.h"
+#include "widgets/LogDialog.h"
 #include "widgets/OptionsDialog.h"
 
 #include <cassert>
@@ -302,6 +303,14 @@ void MainWindow::onOptions()
   diag.exec();
 }
 
+void MainWindow::onLog()
+{
+  static auto *diag = new LogDialog(this);
+  diag->show();
+  diag->raise();
+  diag->activateWindow();
+}
+
 void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
 {
   format = fmt;
@@ -514,6 +523,7 @@ void MainWindow::createMenu()
   auto *helpMenu = menuBar()->addMenu(tr("&Help"));
   helpMenu->addAction(tr("&About"), this, SLOT(onAbout()));
   helpMenu->addAction(tr("&Options"), this, SLOT(onOptions()));
+  helpMenu->addAction(tr("&Log"), this, SLOT(onLog()));
 }
 
 void MainWindow::loadBinary(QString file)

@@ -25,8 +25,8 @@ public:
   virtual ~MainWindow();
 
 protected:
-  void showEvent(QShowEvent *event);
-  void closeEvent(QCloseEvent *event);
+  void showEvent(QShowEvent *event) override;
+  void closeEvent(QCloseEvent *event) override;
 
 private slots:
   void newProject();
@@ -51,6 +51,7 @@ private slots:
   void onDisassembler();
   void onAbout();
   void onOptions();
+  void onLog();
   void onLoadSuccess(std::shared_ptr<Format> fmt);
   void onProjectModified();
   void onBinaryModified();

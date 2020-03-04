@@ -53,17 +53,33 @@ LogHandler::~LogHandler()
   instance = nullptr;
 }
 
+int LogHandler::msgLogLevel(QtMsgType type)
+{
+  switch (type) {
+  case QtDebugMsg:
+    return Constants::Log::DEBUG_LEVEL;
+  case QtInfoMsg:
+    return Constants::Log::INFO_LEVEL;
+  case QtWarningMsg:
+    return Constants::Log::WARNING_LEVEL;
+  case QtCriticalMsg:
+    return Constants::Log::CRITICAL_LEVEL;
+  case QtFatalMsg:
+    return Constants::Log::FATAL_LEVEL;
+  default:
+    return Constants::Log::DEFAULT_LEVEL;
+  }
+}
+
 void LogHandler::messageHandler(QtMsgType type, const QMessageLogContext &context,
                                 const QString &msg)
 {
   static QMutex mutex;
 
-  // Ignore debug messages in release mode, except if verbose is enabled.
-#ifdef NDEBUG
-  if (type == QtDebugMsg && !ctx->verbose()) {
+  // Ignore log message if level is lower than current log level, except if verbose is enabled.
+  if (msgLogLevel(type) < ctx->logLevel() && !ctx->verbose()) {
     return;
   }
-#endif
 
   auto output = msg;
 
