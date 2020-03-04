@@ -16,9 +16,10 @@ LogDialog::LogDialog(QWidget *parent) : QDialog(parent)
   createLayout();
 
   loadEntries();
-  connect(Context::get().logHandler(), &LogHandler::newEntry, this, &LogDialog::addEntry);
 
-  // TODO: set log level in LogDialog or OptionsDialog?? when changed, call loadEntries()
+  auto &ctx = Context::get();
+  connect(ctx.logHandler(), &LogHandler::newEntry, this, &LogDialog::addEntry);
+  connect(&ctx, &Context::logLevelChanged, this, &LogDialog::loadEntries);
 }
 
 void LogDialog::createLayout()
@@ -46,6 +47,10 @@ void LogDialog::loadEntries()
 
 void LogDialog::addEntry(const LogHandler::Entry &entry)
 {
+  if (!Context::get().acceptMsgType(entry.type)) {
+    return;
+  }
+
   auto *item = new QTreeWidgetItem;
   item->setText(0, entry.time.toString("hh:mm:ss"));
   item->setText(1, entry.typeString());

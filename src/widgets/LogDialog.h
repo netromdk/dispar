@@ -15,10 +15,10 @@ public:
 
 private slots:
   void addEntry(const LogHandler::Entry &entry);
+  void loadEntries();
 
 private:
   void createLayout();
-  void loadEntries();
 
   QTreeWidget *treeWidget = nullptr;
 };
