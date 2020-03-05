@@ -63,6 +63,7 @@ void Context::init()
 
   // Register meta types.
   Format::registerType();
+  LogHandler::registerType();
 
   logHandler_ = std::make_unique<LogHandler>(*this);
   loadSettings();

@@ -53,6 +53,11 @@ LogHandler::~LogHandler()
   instance = nullptr;
 }
 
+void LogHandler::registerType()
+{
+  qRegisterMetaType<Entry>("Entry");
+}
+
 int LogHandler::msgLogLevel(QtMsgType type)
 {
   switch (type) {

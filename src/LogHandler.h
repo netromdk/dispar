@@ -25,6 +25,8 @@ public:
   LogHandler(Context &context);
   virtual ~LogHandler();
 
+  static void registerType();
+
   /// Log level corresponding to \p type.
   static int msgLogLevel(QtMsgType type);
 
