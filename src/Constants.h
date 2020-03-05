@@ -27,6 +27,9 @@ enum {
 /// Maximum number of log entries to keep in memory in a sliding window fashion.
 static const int MEMORY_ENTRIES = 256;
 
+/// Interval between flushing log data to disk.
+static const int FLUSH_INTERVAL = 10 * 1000; // ms
+
 } // namespace Log
 
 namespace Debugger {
