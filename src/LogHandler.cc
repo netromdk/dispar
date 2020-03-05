@@ -3,6 +3,7 @@
 #include "cxx.h"
 
 #include <cassert>
+#include <iostream>
 
 #include <QDir>
 #include <QFileInfo>
@@ -80,6 +81,18 @@ void LogHandler::messageHandler(QtMsgType type, const QMessageLogContext &contex
                                 const QString &msg)
 {
   static QMutex mutex;
+
+  // In debug mode, assert on important log messages, like QObject signal connections.
+  // Examples:
+  //   QObject::connect: Cannot queue arguments of type 'Entry'
+#ifndef NDEBUG
+  if (const auto lmsg = msg.trimmed().toLower();
+      lmsg.startsWith("qobject::connect:") || lmsg.startsWith("qobject::disconnect:")) {
+    std::cerr << msg.toStdString() << std::endl;
+    assert(false);
+    return;
+  }
+#endif
 
   // Ignore log message if level is lower than current log level, except if verbose is enabled.
   if (!ctx->acceptMsgType(type)) {
