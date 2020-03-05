@@ -37,7 +37,7 @@ QString LogHandler::Entry::typeString() const
   }
 }
 
-LogHandler::LogHandler(Context &context)
+LogHandler::LogHandler(Context &context) : entries_(Constants::Log::MEMORY_ENTRIES)
 {
   ASSERT_X(!instance, "Only one LogHandler can be live at any one time");
   instance = this;
@@ -128,11 +128,11 @@ void LogHandler::messageHandler(QtMsgType type, const QMessageLogContext &contex
 
 void LogHandler::addEntry(const Entry &entry)
 {
-  entries_ << entry;
+  entries_.append(entry);
   emit newEntry(entry);
 }
 
-QList<LogHandler::Entry> LogHandler::entries() const
+const LogHandler::Container &LogHandler::entries() const
 {
   return entries_;
 }

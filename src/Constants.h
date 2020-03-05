@@ -24,6 +24,9 @@ enum {
   DEFAULT_LEVEL = INFO_LEVEL,
 };
 
+/// Maximum number of log entries to keep in memory in a sliding window fashion.
+static const int MEMORY_ENTRIES = 256;
+
 } // namespace Log
 
 namespace Debugger {

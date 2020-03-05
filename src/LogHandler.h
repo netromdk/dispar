@@ -1,6 +1,7 @@
 #ifndef SRC_LOGHANDLER_H
 #define SRC_LOGHANDLER_H
 
+#include <QContiguousCache>
 #include <QDateTime>
 #include <QDebug>
 #include <QObject>
@@ -22,6 +23,8 @@ public:
     // TODO: add context perhaps..
   };
 
+  using Container = QContiguousCache<Entry>;
+
   LogHandler(Context &context);
   virtual ~LogHandler();
 
@@ -34,13 +37,13 @@ public:
   static void messageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 
   void addEntry(const Entry &entry);
-  QList<Entry> entries() const;
+  const Container &entries() const;
 
 signals:
   void newEntry(const Entry &entry);
 
 private:
-  QList<Entry> entries_;
+  Container entries_;
 };
 
 } // namespace dispar

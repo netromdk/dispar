@@ -40,8 +40,9 @@ void LogDialog::createLayout()
 void LogDialog::loadEntries()
 {
   treeWidget->clear();
-  for (const auto &entry : Context::get().logHandler()->entries()) {
-    addEntry(entry);
+  const auto &entries = Context::get().logHandler()->entries();
+  for (int i = entries.firstIndex(), last = entries.lastIndex(); i <= last; ++i) {
+    addEntry(entries.at(i));
   }
 }
 
