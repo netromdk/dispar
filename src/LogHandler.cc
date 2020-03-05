@@ -63,6 +63,9 @@ LogHandler::~LogHandler()
 {
   assert(instance);
   instance = nullptr;
+
+  // Ensure last chunk is written to disk.
+  flushToFile();
 }
 
 void LogHandler::registerType()
