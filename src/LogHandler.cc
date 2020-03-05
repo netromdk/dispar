@@ -223,6 +223,11 @@ void LogHandler::queueToFile(const Entry &entry)
     QMutexLocker locker(&chunkMutex);
     nextChunk.append(output.toUtf8());
   }
+
+  // Flush important messages to disk immediately.
+  if (msgLogLevel(entry.type) >= Constants::Log::WARNING_LEVEL) {
+    flushToFile();
+  }
 }
 
 } // namespace dispar
