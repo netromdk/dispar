@@ -1,4 +1,5 @@
 #include "widgets/LogDialog.h"
+#include "Constants.h"
 #include "Context.h"
 
 #include <QDebug>
@@ -58,6 +59,12 @@ void LogDialog::addEntry(const LogHandler::Entry &entry)
   item->setText(2, entry.msg);
   treeWidget->addTopLevelItem(item);
   treeWidget->scrollToItem(item);
+
+  // Remove initial entries when exceeding set amount.
+  for (int i = 0, tooMany = treeWidget->topLevelItemCount() - Constants::Log::MEMORY_ENTRIES;
+       i < tooMany; ++i) {
+    delete treeWidget->takeTopLevelItem(i);
+  }
 }
 
 } // namespace dispar
