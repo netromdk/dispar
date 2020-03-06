@@ -54,6 +54,7 @@ private slots:
 
 private:
   void queueToFile(const Entry &entry);
+  void openLogFile();
 
   Container entries_;
   QFile logFile;

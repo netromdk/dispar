@@ -30,6 +30,9 @@ static const int MEMORY_ENTRIES = 256;
 /// Interval between flushing log data to disk.
 static const int FLUSH_INTERVAL = 10 * 1000; // ms
 
+/// Maximum size of log file before it is truncated.
+static const int MAX_SIZE = 512 * 1024; // kb
+
 } // namespace Log
 
 namespace Debugger {

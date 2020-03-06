@@ -1,6 +1,7 @@
 #include "LogHandler.h"
 #include "Constants.h"
 #include "Context.h"
+#include "Util.h"
 #include "cxx.h"
 
 #include <cassert>
@@ -46,11 +47,7 @@ LogHandler::LogHandler(Context &context) : entries_(Constants::Log::MEMORY_ENTRI
 
   ctx = &context;
 
-  logFile.setFileName(logPath());
-  if (!logFile.open(QIODevice::Text | QIODevice::Append)) {
-    std::cerr << "Could not open log file for writing: " << logFile.fileName().toStdString()
-              << " error=" << logFile.error() << std::endl;
-  }
+  openLogFile();
 
   connect(&fileFlushTimer, &QTimer::timeout, this, &LogHandler::flushToFile);
   fileFlushTimer.setInterval(Constants::Log::FLUSH_INTERVAL);
@@ -229,6 +226,24 @@ void LogHandler::queueToFile(const Entry &entry)
   // Flush important messages to disk immediately.
   if (msgLogLevel(entry.type) >= Constants::Log::WARNING_LEVEL) {
     flushToFile();
+  }
+}
+
+void LogHandler::openLogFile()
+{
+  logFile.setFileName(logPath());
+
+  auto flags = QIODevice::Text | QIODevice::Append;
+  if (logFile.exists() && logFile.size() > Constants::Log::MAX_SIZE) {
+    flags |= QIODevice::Truncate;
+    std::cout << "Truncating log file due to size >"
+              << Util::formatSize(Constants::Log::MAX_SIZE).toStdString() << ": "
+              << Util::formatSize(logFile.size()).toStdString() << std::endl;
+  }
+
+  if (!logFile.open(flags)) {
+    std::cerr << "Could not open log file for writing: " << logFile.fileName().toStdString()
+              << " error=" << logFile.error() << std::endl;
   }
 }
 
