@@ -1,6 +1,7 @@
 #include "widgets/LogDialog.h"
 #include "Constants.h"
 #include "Context.h"
+#include "Util.h"
 
 #include <QDebug>
 #include <QDialogButtonBox>
@@ -21,6 +22,24 @@ LogDialog::LogDialog(QWidget *parent) : QDialog(parent)
   auto &ctx = Context::get();
   connect(ctx.logHandler(), &LogHandler::newEntry, this, &LogDialog::addEntry);
   connect(&ctx, &Context::logLevelChanged, this, &LogDialog::loadEntries);
+}
+
+LogDialog::~LogDialog()
+{
+  Context::get().setValue("LogDialog.geometry", Util::byteArrayString(saveGeometry()));
+}
+
+void LogDialog::showEvent(QShowEvent *event)
+{
+  QDialog::showEvent(event);
+
+  static bool first = true;
+  if (!first) return;
+  first = true;
+
+  if (!restoreGeometry(Util::byteArray(Context::get().value("LogDialog.geometry").toString()))) {
+    Util::centerWidget(this);
+  }
 }
 
 void LogDialog::createLayout()

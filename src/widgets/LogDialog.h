@@ -5,6 +5,7 @@
 
 #include <QDialog>
 
+class QShowEvent;
 class QTreeWidget;
 
 namespace dispar {
@@ -12,6 +13,10 @@ namespace dispar {
 class LogDialog : public QDialog {
 public:
   LogDialog(QWidget *parent = nullptr);
+  virtual ~LogDialog();
+
+protected:
+  void showEvent(QShowEvent *event) override;
 
 private slots:
   void addEntry(const LogHandler::Entry &entry);
