@@ -190,9 +190,9 @@ void LogHandler::flushToFile()
 
 void LogHandler::queueToFile(const Entry &entry)
 {
-  QString output;
-#ifndef NDEBUG
-  output.append("[");
+  QString output("[");
+  output.append(QString("%1 - ").arg(entry.time.toString(Qt::ISODate)));
+
   switch (entry.type) {
   case QtDebugMsg:
     output.append("DD");
@@ -215,7 +215,6 @@ void LogHandler::queueToFile(const Entry &entry)
     break;
   }
   output.append("] ");
-#endif
 
   output += entry.msg;
   if (!output.endsWith("\n")) {
