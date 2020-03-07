@@ -3,7 +3,7 @@
 
 #include <QString>
 
-#include <capstone.h>
+#include <capstone/capstone.h>
 
 #include "LogHandler.h"
 
