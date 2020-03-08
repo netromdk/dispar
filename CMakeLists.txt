@@ -11,7 +11,7 @@ include(policies NO_POLICY_SCOPE)
 
 option(BUILD_TESTS "Build test suite" OFF)
 option(USE_CCACHE "Use ccache (if found) to speed up compile and link" OFF)
-option(CODE_COVERAGE "Instrument for code coverage (clang only!)" OFF)
+option(CODE_COVERAGE "Instrument for code coverage (clang only and builds tests!)" OFF)
 option(ADDRESS_SANITIZER "Use memory error detector  (clang only and implies debug mode!)" OFF)
 option(STATIC_ANALYZER "Do static analysis (clang only and implies debug mode!)" OFF)
 
@@ -31,6 +31,11 @@ include(target)
 if (CODE_COVERAGE)
   if (NOT "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     message(FATAL_ERROR "Clang is required to do code coverage!")
+  endif()
+
+  if (NOT BUILD_TESTS)
+    message("Enabling building of tests since they are required for code coverage!")
+    set(BUILD_TESTS ON)
   endif()
 
   if (NOT LLVM_PROFDATA)
@@ -96,6 +101,7 @@ add_subdirectory(lib)
 add_subdirectory(src)
 
 # Requires llvm/clang v4+!
+# Setup: CC=clang-10 CXX=clang++ cmake -G Ninja -DCODE_COVERAGE=ON ../../
 # Setup: CC=clang-mp-5.0 CXX=clang++-mp-5.0 cmake -G Ninja -DCODE_COVERAGE=ON -DLLVM_PROFDATA=llvm-profdata-mp-5.0 -DLLVM_COV=llvm-cov-mp-5.0 ../../
 if (CODE_COVERAGE)
   add_custom_target(
