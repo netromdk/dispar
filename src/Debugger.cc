@@ -113,6 +113,17 @@ bool Debugger::detachStart(const QString &binary, const QStringList &args) const
   return QProcess::startDetached("open", {"-a", "Terminal.app", scriptFile.fileName()});
 }
 
+bool Debugger::operator==(const Debugger &rhs) const
+{
+  return program() == rhs.program() && versionArgument() == rhs.versionArgument() &&
+         launchPattern() == rhs.launchPattern();
+}
+
+bool Debugger::operator!=(const Debugger &rhs) const
+{
+  return !(*this == rhs);
+}
+
 } // namespace dispar
 
 QDebug operator<<(QDebug dbg, const dispar::Debugger &debugger)

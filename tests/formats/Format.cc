@@ -60,3 +60,45 @@ TEST(Format, write)
 
   EXPECT_EQ(block, data.mid(section->offset(), block.size()));
 }
+
+TEST(Format, toString)
+{
+  auto format = std::make_shared<MachO>(":macho_main_32_64");
+  ASSERT_TRUE(format->parse());
+
+  const auto str = format->toString();
+  EXPECT_EQ(R"***(Format: Mach-O
+2 objects:
+- x86 (i386), 32-bit, Executable, Little Endian, 5 sections
+  - Program (Text)
+      0x1fa0-0x1fb2 (18.0 B)
+  - String Table (String)
+      0x1054-0x1084 (48.0 B)
+      0x2054 offset
+  - macOS SDK min version (LC_VERSION_MIN_MACOSX)
+      0x1220-0x1228 (8.0 B)
+  - Function Starts (Function Starts)
+      0x102c-0x1030 (4.0 B)
+      0x202c offset
+  - Symbol Table (Symbols)
+      0x1030-0x1054 (36.0 B)
+      0x2030 offset
+- x86 64 (i386), 64-bit, Executable, Little Endian, 5 sections
+  - Program (Text)
+      0x100000fa0-0x100000faf (15.0 B)
+      0x3fa0 offset
+  - String Table (String)
+      0x1068-0x1098 (48.0 B)
+      0x4068 offset
+  - macOS SDK min version (LC_VERSION_MIN_MACOSX)
+      0x3270-0x3278 (8.0 B)
+  - Function Starts (Function Starts)
+      0x1030-0x1038 (8.0 B)
+      0x4030 offset
+  - Symbol Table (Symbols)
+      0x1038-0x1068 (48.0 B)
+      0x4038 offset
+)***",
+            str)
+    << str;
+}

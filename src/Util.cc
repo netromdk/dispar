@@ -361,7 +361,9 @@ quint64 Util::convertAddress(QString input, bool *ok)
   // Try with different bases, starting with auto-detection ("0x" = 16 and "0" = 8).
   for (const auto base : {0, 16, 8, 10}) {
     const auto addr = input.toULongLong(ok, base);
-    if (!ok) continue;
+    if (ok != nullptr && !*ok) {
+      continue;
+    }
 
     // Reject false positives if input wasn't a zero.
     if (addr == 0 && input != "0") {

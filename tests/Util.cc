@@ -43,6 +43,23 @@ TEST(Util, padString)
 {
   EXPECT_EQ(Util::padString("x", 3, true, ' '), "  x");
   EXPECT_EQ(Util::padString("x", 3, false, ' '), "x  ");
+
+  // Input is returned if size is smaller than or equal to input.
+  EXPECT_EQ(Util::padString("abc", 1, false, ' '), "abc");
+  EXPECT_EQ(Util::padString("abc", 3, false, ' '), "abc");
+}
+
+TEST(Util, dataToAscii)
+{
+  auto ascii = Util::dataToAscii("\x30\x31\x32\x61\x62\x63", 0, 6);
+  EXPECT_EQ("012abc", ascii) << ascii;
+
+  ascii = Util::dataToAscii("\x30\x31\x32\x61\x62\x63", 2, 3);
+  EXPECT_EQ("2ab", ascii) << ascii;
+
+  // Unprintable bytes are shown as ".".
+  ascii = Util::dataToAscii("\x01\x02\x03", 0, 3);
+  EXPECT_EQ("...", ascii) << ascii;
 }
 
 // Demangling doesn't work on Windows right now..
@@ -60,6 +77,16 @@ TEST(Util, demangle)
 
   res = Util::demangle("__Znam");
   EXPECT_EQ(res, "operator new[](unsigned long)") << res;
+
+  // Empty string yields empty string.
+  res = Util::demangle("");
+  EXPECT_EQ(QString(), res) << res;
+
+  // Skip leading: . $
+  res = Util::demangle("$__Znam");
+  EXPECT_EQ("operator new[](unsigned long)", res) << res;
+  res = Util::demangle(".__Znam");
+  EXPECT_EQ("operator new[](unsigned long)", res) << res;
 }
 #endif
 
@@ -104,6 +131,10 @@ TEST(Util, convertAddress)
   addr = Util::convertAddress("0", &ok);
   ASSERT_TRUE(ok);
   EXPECT_EQ(addr, static_cast<quint64>(0));
+
+  // Invalid text and no 'ok' given triggers rejection of false positives when input wasn't "0".
+  addr = Util::convertAddress("P");
+  EXPECT_EQ(addr, static_cast<quint64>(0));
 }
 
 TEST(Util, moveTo)
@@ -144,6 +175,8 @@ TEST(Util, escapeWhitespace)
 
 TEST(Util, hexToAscii)
 {
+  EXPECT_EQ(Util::hexToAscii("P", 0, 1), ""); // Invalid hex.
+
   // If not in range [32; 126] then yield ".".
   EXPECT_EQ(Util::hexToAscii("1F", 0, 1), "."); // 31
   EXPECT_EQ(Util::hexToAscii("20", 0, 1), " "); // 32
@@ -237,10 +270,18 @@ TEST(Util, resolveAppBinary)
   QTemporaryDir tempDir(QDir::tempPath() + "/XXXXXX.app");
   ASSERT_TRUE(tempDir.isValid());
 
+  // Ignore trailing slash.
+  EXPECT_EQ(tempDir.path(), Util::resolveAppBinary(tempDir.path() + "/"));
+
   // Not complete bundle yet.
   EXPECT_EQ(tempDir.path(), Util::resolveAppBinary(tempDir.path()));
 
   QDir dir(tempDir.path());
+  ASSERT_TRUE(dir.mkpath("Contents"));
+
+  // Not complete bundle yet.
+  EXPECT_EQ(tempDir.path(), Util::resolveAppBinary(tempDir.path()));
+
   ASSERT_TRUE(dir.mkpath("Contents/MacOS"));
 
   // Not complete bundle yet.
@@ -271,4 +312,35 @@ TEST(Util, resolveAppBinary)
 
   // Now it works!
   EXPECT_EQ(binaryName, Util::resolveAppBinary(tempDir.path()));
+}
+
+TEST(Util, hexToData)
+{
+  auto data = QString::fromUtf8(Util::hexToData("0123456789abcdef"));
+  EXPECT_EQ(QByteArray("\x01\x23\x45\x67\x89\xAB\xCD\xEF"), data) << data;
+
+  // Not hexadecimal.
+  data = QString::fromUtf8(Util::hexToData("PQZ"));
+  EXPECT_EQ(QByteArray(), data) << data;
+}
+
+TEST(Util, hexToString)
+{
+  auto data = Util::hexToString("0123456789abcdef");
+  EXPECT_EQ(QByteArray("\x01\x23\x45\x67\x89\xAB\xCD\xEF"), data) << data;
+
+  // Not hexadecimal.
+  data = Util::hexToString("PQZ");
+  EXPECT_EQ(QByteArray(), data) << data;
+}
+
+TEST(Util, bytesToHex)
+{
+  const auto *input = (unsigned char*) "\x01\x23\x45";
+  auto data = Util::bytesToHex(input, 1);
+  EXPECT_EQ(QString("01"), data) << data;
+  data = Util::bytesToHex(input, 2);
+  EXPECT_EQ(QString("01 23"), data) << data;
+  data = Util::bytesToHex(input, 3);
+  EXPECT_EQ(QString("01 23 45"), data) << data;
 }

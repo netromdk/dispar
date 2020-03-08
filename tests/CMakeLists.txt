@@ -20,6 +20,8 @@ add_dispar_executable(
   testutils.h
   testutils.cc
 
+  Version.cc
+
   Util.cc
 
   Project.cc

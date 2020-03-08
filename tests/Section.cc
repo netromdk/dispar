@@ -1,5 +1,9 @@
 #include "gtest/gtest.h"
 
+#include "testutils.h"
+
+#include "BinaryObject.h"
+#include "Disassembler.h"
 #include "Section.h"
 using namespace dispar;
 
@@ -39,6 +43,9 @@ TEST(Section, typeNames)
   EXPECT_EQ(Section::typeName(Section::Type::LC_VERSION_MIN_IPHONEOS), "LC_VERSION_MIN_IPHONEOS");
   EXPECT_EQ(Section::typeName(Section::Type::LC_VERSION_MIN_WATCHOS), "LC_VERSION_MIN_WATCHOS");
   EXPECT_EQ(Section::typeName(Section::Type::LC_VERSION_MIN_TVOS), "LC_VERSION_MIN_TVOS");
+
+  // Empty string for unknown type.
+  EXPECT_EQ(Section::typeName(Section::Type(-1)), "");
 }
 
 TEST(Section, type)
@@ -131,4 +138,33 @@ TEST(Section, hasAddress)
   EXPECT_TRUE(s.hasAddress(9));
   EXPECT_TRUE(s.hasAddress(10));
   EXPECT_FALSE(s.hasAddress(11));
+}
+
+TEST(Section, toString)
+{
+  const Section s(Section::Type::TEXT, "test", 1, 10, 10);
+  const auto expect = QString("%1 (%2)").arg(s.name()).arg(Section::typeName(s.type()));
+  const auto str = s.toString();
+  EXPECT_EQ(expect, str) << str;
+}
+
+TEST(Section, setGetDisassembly)
+{
+  auto obj = std::make_unique<BinaryObject>();
+  obj->setCpuType(CpuType::X86_64);
+
+  Disassembler disasm(*obj.get());
+  ASSERT_TRUE(disasm.valid());
+
+  auto res = disasm.disassemble(QString("90 90 90"));
+  ASSERT_NE(nullptr, res);
+  const auto count = res->count();
+  EXPECT_EQ((unsigned long) 3, count);
+
+  Section s(Section::Type::TEXT, "test", 1, 10, 10);
+  EXPECT_EQ(nullptr, s.disassembly());
+
+  s.setDisassembly(std::move(res));
+  ASSERT_NE(nullptr, s.disassembly());
+  EXPECT_EQ(count, s.disassembly()->count());
 }

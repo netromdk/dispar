@@ -45,6 +45,9 @@ public:
   /** Returns true if the debugger was started successfully. */
   bool detachStart(const QString &binary, const QStringList &args = {}) const;
 
+  bool operator==(const Debugger &rhs) const;
+  bool operator!=(const Debugger &rhs) const;
+
 private:
   QString program_, versionArgument_, launchPattern_;
 };
