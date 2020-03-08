@@ -113,6 +113,7 @@ void OptionsDialog::createLayout()
   disAsmSyntax = new QComboBox;
   disAsmSyntax->addItem(tr("AT&T"), (int) Disassembler::Syntax::ATT);
   disAsmSyntax->addItem(tr("Intel"), (int) Disassembler::Syntax::INTEL);
+  disAsmSyntax->addItem(tr("Intel Masm"), (int) Disassembler::Syntax::INTEL_MASM);
 
   int idx = disAsmSyntax->findData((int) ctx.disassemblerSyntax());
   if (idx != -1) {

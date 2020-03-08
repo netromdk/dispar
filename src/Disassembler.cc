@@ -67,6 +67,10 @@ Disassembler::Disassembler(const BinaryObject &object, Syntax syntax) : valid_(f
   case Syntax::INTEL:
     csSyntax = cs_opt_value::CS_OPT_SYNTAX_INTEL;
     break;
+
+  case Syntax::INTEL_MASM:
+    csSyntax = cs_opt_value::CS_OPT_SYNTAX_MASM;
+    break;
   }
 
   valid_ = !cs_option(handle, cs_opt_type::CS_OPT_SYNTAX, csSyntax);

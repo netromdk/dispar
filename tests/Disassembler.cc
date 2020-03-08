@@ -72,6 +72,52 @@ TEST(Disassembler, disassembleData_Intel_64_x86)
   EXPECT_EQ(std::string(instr->op_str), std::string("rsp, 0x70")) << instr->op_str;
 }
 
+TEST(Disassembler, disassembleData_IntelMasm_32_x86)
+{
+  auto obj = std::make_unique<BinaryObject>();
+  obj->setCpuType(CpuType::X86);
+
+  Disassembler dis(*obj.get(), Disassembler::Syntax::INTEL_MASM);
+  ASSERT_TRUE(dis.valid());
+
+  // dec eax
+  // sub esp, 70h
+  const char *code = "\x48\x83\xec\x70";
+  auto res = dis.disassemble(QByteArray(code));
+  ASSERT_NE(res, nullptr);
+  EXPECT_EQ(res->count(), std::size_t(2));
+
+  auto *instr = res->instructions(0);
+  ASSERT_NE(instr, nullptr);
+  EXPECT_EQ(std::string(instr->mnemonic), std::string("dec")) << instr->mnemonic;
+  EXPECT_EQ(std::string(instr->op_str), std::string("eax")) << instr->op_str;
+
+  instr = res->instructions(1);
+  ASSERT_NE(instr, nullptr);
+  EXPECT_EQ(std::string(instr->mnemonic), std::string("sub")) << instr->mnemonic;
+  EXPECT_EQ(std::string(instr->op_str), std::string("esp, 70h")) << instr->op_str;
+}
+
+TEST(Disassembler, disassembleData_IntelMasm_64_x86)
+{
+  auto obj = std::make_unique<BinaryObject>();
+  obj->setCpuType(CpuType::X86_64);
+
+  Disassembler dis(*obj.get(), Disassembler::Syntax::INTEL_MASM);
+  ASSERT_TRUE(dis.valid());
+
+  // sub rsp, 70h
+  const char *code = "\x48\x83\xec\x70";
+  auto res = dis.disassemble(QByteArray(code));
+  ASSERT_NE(res, nullptr);
+  EXPECT_EQ(res->count(), std::size_t(1));
+
+  auto *instr = res->instructions(0);
+  ASSERT_NE(instr, nullptr);
+  EXPECT_EQ(std::string(instr->mnemonic), std::string("sub")) << instr->mnemonic;
+  EXPECT_EQ(std::string(instr->op_str), std::string("rsp, 70h")) << instr->op_str;
+}
+
 TEST(Disassembler, disassembleData_Att_32_x86)
 {
   auto obj = std::make_unique<BinaryObject>();

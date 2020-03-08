@@ -15,7 +15,7 @@ class BinaryObject;
 
 class Disassembler {
 public:
-  enum class Syntax { ATT, INTEL };
+  enum class Syntax { ATT, INTEL, INTEL_MASM };
 
   class Result {
   public:
