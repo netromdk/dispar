@@ -9,6 +9,36 @@
 #include "Util.h"
 using namespace dispar;
 
+TEST(Util, formatSize)
+{
+  auto str = Util::formatSize(0);
+  EXPECT_EQ("0.0 B", str) << str;
+  str = Util::formatSize(0, 0);
+  EXPECT_EQ("0 B", str) << str;
+  str = Util::formatSize(0, 3);
+  EXPECT_EQ("0.000 B", str) << str;
+
+  str = Util::formatSize(1234);
+  EXPECT_EQ("1.2 KB", str) << str;
+  str = Util::formatSize(1234, 8);
+  EXPECT_EQ("1.20507813 KB", str) << str;
+
+  str = Util::formatSize(1234567, 2);
+  EXPECT_EQ("1.18 MB", str) << str;
+
+  str = Util::formatSize(1234567890, 2);
+  EXPECT_EQ("1.15 GB", str) << str;
+
+  str = Util::formatSize(1234567890123, 2);
+  EXPECT_EQ("1.12 TB", str) << str;
+
+  str = Util::formatSize(1234567890123456, 2);
+  EXPECT_EQ("1.10 PB", str) << str;
+
+  str = Util::formatSize(1234567890123456789, 2);
+  EXPECT_EQ("1.07 EB", str) << str;
+}
+
 TEST(Util, padString)
 {
   EXPECT_EQ(Util::padString("x", 3, true, ' '), "  x");
