@@ -3,7 +3,7 @@ DIR=$1
 BINARY_FILE=$2
 LLVM_PROFDATA=$3
 LLVM_COV=$4
-LLVM_PROFILE_FILE=tests.profraw
+LLVM_PROFILE_FILE=default.profraw
 LLVM_PROFILE_DATA=tests.profdata
 REPORT_DIR=report.dir
 
