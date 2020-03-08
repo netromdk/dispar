@@ -2,20 +2,6 @@
 
 namespace dispar {
 
-SymbolTable::SymbolTable()
-{
-}
-
-SymbolTable::SymbolTable(const SymbolTable &other)
-{
-  *this = other;
-}
-
-SymbolTable::SymbolTable(SymbolTable &&other) : SymbolTable()
-{
-  *this = std::move(other);
-}
-
 void SymbolTable::addSymbol(const SymbolEntry &entry)
 {
   entries.push_back(entry);

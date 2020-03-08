@@ -13,9 +13,9 @@ class SymbolTable {
 public:
   using EntryList = std::vector<SymbolEntry>;
 
-  SymbolTable();
-  SymbolTable(const SymbolTable &other);
-  SymbolTable(SymbolTable &&other);
+  SymbolTable() = default;
+  SymbolTable(const SymbolTable &other) = default;
+  SymbolTable(SymbolTable &&other) = default;
 
   void addSymbol(const SymbolEntry &entry);
   void addSymbol(SymbolEntry &&entry);
