@@ -1,4 +1,5 @@
 #include "widgets/TreeWidget.h"
+#include "Constants.h"
 #include "widgets/ConversionHelper.h"
 #include "widgets/DisassemblerDialog.h"
 #include "widgets/LineEdit.h"
@@ -24,8 +25,7 @@ TreeWidget::TreeWidget(QWidget *parent)
   setContextMenuPolicy(Qt::CustomContextMenu);
   connect(this, &QTreeWidget::customContextMenuRequested, this, &TreeWidget::onShowContextMenu);
 
-  // Set fixed-width font.
-  setFont(QFont("Courier"));
+  setFont(Constants::FIXED_FONT);
 
   searchEdit = new LineEdit(this);
   searchEdit->setVisible(false);

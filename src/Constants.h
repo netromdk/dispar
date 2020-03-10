@@ -1,6 +1,7 @@
 #ifndef SRC_CONSTANTS_H
 #define SRC_CONSTANTS_H
 
+#include <QFont>
 #include <QString>
 
 #include <capstone/capstone.h>
@@ -11,6 +12,7 @@ namespace dispar {
 namespace Constants {
 
 static const QString PROJECT_URL("https://github.com/netromdk/dispar");
+static const QFont FIXED_FONT("Courier");
 
 namespace Log {
 

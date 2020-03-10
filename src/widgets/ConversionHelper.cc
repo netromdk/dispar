@@ -8,6 +8,7 @@
 #include <QPushButton>
 #include <QTextEdit>
 
+#include "Constants.h"
 #include "Util.h"
 
 #include "widgets/AsciiValidator.h"
@@ -179,9 +180,11 @@ void ConversionHelper::createLayout()
 
   hexEdit = new QTextEdit;
   hexEdit->setTabChangesFocus(true);
+  hexEdit->setFont(Constants::FIXED_FONT);
 
   textEdit = new QTextEdit;
   textEdit->setTabChangesFocus(true);
+  textEdit->setFont(Constants::FIXED_FONT);
 
   encBox = new QComboBox;
   encBox->addItem(tr("ASCII"), 0);

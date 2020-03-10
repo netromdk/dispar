@@ -10,6 +10,7 @@
 #include <QVBoxLayout>
 
 #include "BinaryObject.h"
+#include "Constants.h"
 #include "Disassembler.h"
 #include "Util.h"
 #include "cxx.h"
@@ -73,6 +74,7 @@ void DisassemblerDialog::createLayout()
 {
   machineText = new QTextEdit;
   machineText->setTabChangesFocus(true);
+  machineText->setFont(Constants::FIXED_FONT);
 
   offsetEdit = new QLineEdit;
   offsetEdit->setText(QString::number(offset, 16));
@@ -98,6 +100,7 @@ void DisassemblerDialog::createLayout()
   asmText = new QTextEdit;
   asmText->setReadOnly(true);
   asmText->setTabChangesFocus(true);
+  asmText->setFont(Constants::FIXED_FONT);
 
   auto *asmLayout = new QVBoxLayout;
   asmLayout->setContentsMargins(0, 0, 0, 0);
