@@ -130,6 +130,7 @@ void DisassemblerDialog::createLayout()
   syntaxBox = new QComboBox;
   syntaxBox->addItem(tr("AT&T"), (int) Disassembler::Syntax::ATT);
   syntaxBox->addItem(tr("Intel"), (int) Disassembler::Syntax::INTEL);
+  syntaxBox->addItem(tr("Intel Masm"), (int) Disassembler::Syntax::INTEL_MASM);
 
   idx = syntaxBox->findData((int) syntax);
   if (idx != -1) {
