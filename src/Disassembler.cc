@@ -31,6 +31,22 @@ cs_insn *Disassembler::Result::instructions(size_t pos) const
   return insn + pos;
 }
 
+QString Disassembler::Result::toString() const
+{
+  QStringList lines;
+  for (size_t i = 0, n = count(); i < n; ++i) {
+    const auto *instr = instructions(i);
+    const auto addr = instr->address;
+    auto line = QString("%1: %2").arg(addr, 0, 16).arg(instr->mnemonic);
+    const QString opStr(instr->op_str);
+    if (!opStr.isEmpty()) {
+      line += " " + opStr;
+    }
+    lines << line;
+  }
+  return lines.join("\n");
+}
+
 Disassembler::Disassembler(const BinaryObject &object, Syntax syntax) : valid_(false)
 {
   cs_arch arch;

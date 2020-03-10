@@ -25,6 +25,9 @@ public:
     size_t count() const;
     cs_insn *instructions(size_t pos) const;
 
+    /// Lines of addresses, mnemonics, and instruction strings.
+    QString toString() const;
+
   private:
     cs_insn *insn;
     size_t count_;

@@ -1,5 +1,7 @@
 #include "gtest/gtest.h"
 
+#include "testutils.h"
+
 #include "BinaryObject.h"
 #include "CpuType.h"
 #include "Disassembler.h"
@@ -189,4 +191,26 @@ TEST(Disassembler, disassembleText)
     ASSERT_NE(instr, nullptr);
     EXPECT_EQ(std::string(instr->mnemonic), std::string("nop")) << instr->mnemonic;
   }
+}
+
+TEST(Disassembler, resultToString)
+{
+  auto obj = std::make_unique<BinaryObject>();
+  Disassembler dis(*obj.get());
+  ASSERT_TRUE(dis.valid());
+
+  auto res = dis.disassemble(QString("90 90 90"));
+  ASSERT_NE(res, nullptr);
+  const QString expected(R"***(0: nop
+1: nop
+2: nop)***");
+  auto str = res->toString();
+  EXPECT_EQ(expected, str) << str;
+
+  res = dis.disassemble(QString("48 83 EC 70"), 0x2a);
+  ASSERT_NE(res, nullptr);
+  str = res->toString();
+  const QString expected2(R"***(2a: dec eax
+2b: sub esp, 0x70)***");
+  EXPECT_EQ(expected2, str) << str;
 }

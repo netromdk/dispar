@@ -49,13 +49,7 @@ void DisassemblerDialog::onConvert()
 
   auto result = dis.disassemble(text, textOffset);
   if (result) {
-    QStringList lines;
-    for (size_t i = 0; i < result->count(); i++) {
-      auto *instr = result->instructions(i);
-      auto addr = instr->address;
-      lines << QString("%1: %2 %3").arg(addr, 0, 16).arg(instr->mnemonic).arg(instr->op_str);
-    }
-    asmText->setText(lines.join("\n"));
+    asmText->setText(result->toString());
     setAsmVisible();
   }
   else {
