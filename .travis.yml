@@ -41,10 +41,7 @@ install:
   - ./scripts/travis/install.sh
 
 before_script:
-  - cmake --system-information info.txt && cat info.txt
-  - mkdir build
-  - cd build
-  - cmake -DBUILD_TESTS=ON ..
+  - ./scripts/travis/cmake.sh
 
 script:
-  - VERBOSE=1 make -j2 && ./bin/tests
+  - ./scripts/travis/run.sh
