@@ -69,6 +69,18 @@ OutputIt copy_if(const Container &src, OutputIt dstFirst, UnaryPredicate pred)
   return std::copy_if(std::cbegin(src), std::cend(src), dstFirst, pred);
 }
 
+template <typename Container, typename UnaryPredicate>
+bool any_of(const Container &src, UnaryPredicate pred)
+{
+  return std::any_of(std::cbegin(src), std::cend(src), pred);
+}
+
+template <typename Container, typename UnaryPredicate>
+auto find_if(const Container &src, UnaryPredicate pred)
+{
+  return std::find_if(std::cbegin(src), std::cend(src), pred);
+}
+
 } // namespace cxx
 } // namespace dispar
 
