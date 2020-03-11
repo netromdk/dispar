@@ -141,7 +141,7 @@ endif()
 add_custom_target(
   cppcheck
 
-  cppcheck --enable=all --project=${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json --xml 2> cppcheck.xml && python ${CMAKE_SOURCE_DIR}/scripts/cppcheck-htmlreport.py --file=cppcheck.xml --report-dir=cppcheck
+  cppcheck -j ${CPU_COUNT} --enable=all --std=c++17 --suppress=*:${CMAKE_SOURCE_DIR}/lib/* --suppress=*:${CMAKE_SOURCE_DIR}/tests/gtest/* --project=${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json --xml 2> cppcheck.xml && python ${CMAKE_SOURCE_DIR}/scripts/cppcheck-htmlreport.py --file=cppcheck.xml --report-dir=cppcheck
 
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   USES_TERMINAL
