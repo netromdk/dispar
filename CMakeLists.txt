@@ -108,7 +108,9 @@ if (CODE_COVERAGE)
     codecov
 
     sh ${CMAKE_SOURCE_DIR}/scripts/code_coverage.sh "${CMAKE_CURRENT_BINARY_DIR}" "$<TARGET_FILE:${testName}>" "${LLVM_PROFDATA}" "${LLVM_COV}"
+
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    USES_TERMINAL
     COMMENT "Generating test code coverage report"
     DEPENDS ${testName}
     )
@@ -121,6 +123,7 @@ if (STATIC_ANALYZER)
 
     sh ${CMAKE_SOURCE_DIR}/scripts/static_analysis.sh ${SCAN_BUILD} ${CMAKE_CURRENT_BINARY_DIR} ${Qt5Core_DIR}/../../ ${binName}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    USES_TERMINAL
     COMMENT "Doing static analysis"
     )
 endif()
@@ -132,6 +135,7 @@ add_custom_target(
   cppcheck --enable=all --project=${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json --xml 2> cppcheck.xml && python ${CMAKE_SOURCE_DIR}/scripts/cppcheck-htmlreport.py --file=cppcheck.xml --report-dir=cppcheck
 
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  USES_TERMINAL
   COMMENT "Running cppcheck"
   )
 
