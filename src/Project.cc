@@ -1,4 +1,5 @@
 #include "Project.h"
+#include "cxx.h"
 
 #include <QDebug>
 #include <QFile>
@@ -168,10 +169,9 @@ const QHash<quint64, QStringList> &Project::tags() const
 
 bool Project::addAddressTag(const QString &tag, quint64 address)
 {
-  for (const auto addr : addressTags_.keys()) {
-    if (addressTags(addr).contains(tag)) {
-      return false;
-    }
+  if (cxx::any_of(addressTags_.keys(),
+                  [&](const auto addr) { return addressTags_[addr].contains(tag); })) {
+    return false;
   }
 
   if (addressTags_.contains(address)) {

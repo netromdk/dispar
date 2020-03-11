@@ -87,10 +87,9 @@ bool MachO::parse()
     }
 
     // Parse the actual binary objects.
-    for (const auto &arch : archs) {
-      if (!parseHeader(arch.first, arch.second, r)) {
-        return false;
-      }
+    if (cxx::any_of(archs,
+                    [&](const auto &arch) { return !parseHeader(arch.first, arch.second, r); })) {
+      return false;
     }
   }
 

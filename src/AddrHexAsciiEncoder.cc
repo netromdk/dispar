@@ -65,8 +65,8 @@ void AddrHexAsciiEncoder::addResult(const quint64 index, const QString &result)
     std::sort(results.begin(), results.end(),
               [](const auto &a, const auto &b) { return a.index < b.index; });
     QStringList totals;
-    for (const auto &result : results) {
-      totals.append(result.data);
+    for (const auto &res : results) {
+      totals.append(res.data);
     }
     result_ = totals.join("\n");
 

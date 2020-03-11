@@ -62,13 +62,12 @@ void OptionsDialog::onDetectInstalledDebuggers()
     return;
   }
 
-  for (const auto &dbg : dbgs) {
-    if (chosenDbg == dbg.program()) {
-      debuggerEdit->setText(dbg.program());
-      launchPatternEdit->setText(dbg.launchPattern());
-      versionArgumentEdit->setText(dbg.versionArgument());
-      return;
-    }
+  if (const auto it =
+        cxx::find_if(dbgs, [&](const auto &dbg) { return chosenDbg == dbg.program(); });
+      it != dbgs.cend()) {
+    debuggerEdit->setText(it->program());
+    launchPatternEdit->setText(it->launchPattern());
+    versionArgumentEdit->setText(it->versionArgument());
   }
 }
 

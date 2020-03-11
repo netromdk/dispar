@@ -43,7 +43,7 @@ private:
 
   QThreadPool pool;
   QString result_;
-  int tasks;
+  int tasks = 0;
 
   struct Result {
     quint64 index;

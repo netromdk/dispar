@@ -1,5 +1,6 @@
 #include "BinaryObject.h"
 #include "CpuType.h"
+#include "cxx.h"
 
 namespace dispar {
 
@@ -97,10 +98,9 @@ QList<Section *> BinaryObject::sectionsByType(Section::Type type) const
 
 Section *BinaryObject::section(Section::Type type) const
 {
-  for (auto &section : sections_) {
-    if (section->type() == type) {
-      return section.get();
-    }
+  if (auto it = cxx::find_if(sections_, [type](auto &section) { return section->type() == type; });
+      it != sections_.cend()) {
+    return it->get();
   }
   return nullptr;
 }

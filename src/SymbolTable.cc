@@ -1,4 +1,5 @@
 #include "SymbolTable.h"
+#include "cxx.h"
 
 namespace dispar {
 
@@ -14,15 +15,15 @@ void SymbolTable::addSymbol(SymbolEntry &&entry)
 
 bool SymbolTable::string(quint64 value, QString &str) const
 {
-  for (const auto &entry : entries) {
-    if (entry.value() == value) {
-      const auto &s = entry.string();
-      if (s.isEmpty()) continue;
-      str = s;
-      return true;
-    }
-  }
-  return false;
+  return entries.cend() != cxx::find_if(entries, [value, &str](const auto &entry) {
+           if (entry.value() != value) {
+             return false;
+           }
+           const auto &s = entry.string();
+           if (s.isEmpty()) return false;
+           str = s;
+           return true;
+         });
 }
 
 SymbolTable::EntryList &SymbolTable::symbols()
