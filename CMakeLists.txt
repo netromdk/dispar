@@ -28,6 +28,13 @@ include(misc)
 include(platform)
 include(target)
 
+include(ProcessorCount)
+ProcessorCount(CPU_COUNT)
+if (${CPU_COUNT} EQUAL 0)
+  message("Could not determine processor count! Defaulting to 1.")
+  set(CPU_COUNT 1)
+endif()
+
 if (CODE_COVERAGE)
   if (NOT "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     message(FATAL_ERROR "Clang is required to do code coverage!")
@@ -149,6 +156,7 @@ if (APPLE)
   message(STATUS "Mac SDK: ${DEV_SDK}")
 endif()
 
+message(STATUS "Detected processor count: ${CPU_COUNT}")
 message(STATUS "Building test suite: ${BUILD_TESTS}")
 
 if (CCACHE)
