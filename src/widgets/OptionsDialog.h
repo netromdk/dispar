@@ -5,6 +5,7 @@
 
 #include <QDialog>
 
+class QLabel;
 class QCheckBox;
 class QComboBox;
 class QLineEdit;
@@ -21,6 +22,7 @@ private slots:
   void onTestDebugger();
   void onDetectInstalledDebuggers();
   void onAccept();
+  void onSyntaxChanged(int index);
 
 private:
   void createLayout();
@@ -31,6 +33,7 @@ private:
   QCheckBox *showMachineCode;
   QComboBox *disAsmSyntax, *logLevelBox;
   QLineEdit *debuggerEdit, *launchPatternEdit, *versionArgumentEdit;
+  QLabel *disAsmExample;
 };
 
 } // namespace dispar

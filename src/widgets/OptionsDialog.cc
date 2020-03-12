@@ -1,4 +1,5 @@
 #include "widgets/OptionsDialog.h"
+#include "BinaryObject.h"
 #include "Constants.h"
 #include "Context.h"
 #include "Disassembler.h"
@@ -98,6 +99,23 @@ void OptionsDialog::onAccept()
   accept();
 }
 
+void OptionsDialog::onSyntaxChanged(int index)
+{
+  const auto syntax = static_cast<Disassembler::Syntax>(disAsmSyntax->itemData(index).toInt());
+
+  // Using 32-bit because it makes the instructions span two lines, yielding a better example.
+  const BinaryObject obj(CpuType::X86);
+
+  Disassembler dis(obj, syntax);
+  const auto res = dis.disassemble(QString("48 83 EC 70"), 0x2b9a);
+  if (res) {
+    disAsmExample->setText(res->toString());
+  }
+  else {
+    disAsmExample->clear();
+  }
+}
+
 void OptionsDialog::createLayout()
 {
   auto &ctx = Context::get();
@@ -114,6 +132,13 @@ void OptionsDialog::createLayout()
   disAsmSyntax->addItem(tr("Intel"), (int) Disassembler::Syntax::INTEL);
   disAsmSyntax->addItem(tr("Intel Masm"), (int) Disassembler::Syntax::INTEL_MASM);
 
+  disAsmExample = new QLabel;
+  disAsmExample->setFont(Constants::FIXED_FONT);
+  disAsmExample->setToolTip(tr("Disassembler syntax example."));
+
+  connect(disAsmSyntax, cxx::Use<int>::overloadOf(&QComboBox::currentIndexChanged), this,
+          &OptionsDialog::onSyntaxChanged);
+
   int idx = disAsmSyntax->findData((int) ctx.disassemblerSyntax());
   if (idx != -1) {
     disAsmSyntax->setCurrentIndex(idx);
@@ -127,6 +152,7 @@ void OptionsDialog::createLayout()
   auto *mainLayout = new QVBoxLayout;
   mainLayout->addWidget(showMachineCode);
   mainLayout->addLayout(disAsmSyntaxLayout);
+  mainLayout->addWidget(disAsmExample);
 
   auto *mainGroup = new QGroupBox(tr("Main View"));
   mainGroup->setLayout(mainLayout);
