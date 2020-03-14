@@ -14,6 +14,7 @@ option(USE_CCACHE "Use ccache (if found) to speed up compile and link" OFF)
 option(CODE_COVERAGE "Instrument for code coverage (clang only and builds tests!)" OFF)
 option(ADDRESS_SANITIZER "Use memory error detector  (clang only and implies debug mode!)" OFF)
 option(STATIC_ANALYZER "Do static analysis (clang only and implies debug mode!)" OFF)
+option(EVERY_WARNING "Show every(!) warning (clang only!)" OFF)
 
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
@@ -75,6 +76,15 @@ if (STATIC_ANALYZER)
   endif()
 
   set(CMAKE_BUILD_TYPE Debug)
+endif()
+
+if (EVERY_WARNING)
+  if (NOT "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    message(FATAL_ERROR "Clang is required to use -Weverything!")
+  endif()
+
+  # But ignore some warnings.
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Weverything -Wno-c++98-compat -Wno-padded -Wno-shadow-field-in-constructor -Wno-c++98-compat-pedantic -Wno-sign-conversion -Wno-old-style-cast -Wno-switch-enum -Wno-float-conversion -Wno-documentation-unknown-command -Wno-global-constructors -Wno-exit-time-destructors -Wno-return-std-move-in-c++11 -Wno-missing-prototypes -Wno-date-time")
 endif()
 
 # Names
@@ -177,6 +187,12 @@ if (STATIC_ANALYZER)
   message(STATUS "Static analyzer: ${STATIC_ANALYZER} (target: sa)")
 else()
   message(STATUS "Static analyzer: ${STATIC_ANALYZER}")
+endif()
+
+if (EVERY_WARNING)
+  message(STATUS "Every warning: ${EVERY_WARNING} (-Weverything)")
+else()
+  message(STATUS "Every warning: OFF")
 endif()
 
 message(STATUS "Found Qt: ${FOUND_QT} (min. v. ${QT_MINIMUM_VERSION})")
