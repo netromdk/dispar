@@ -1,4 +1,5 @@
 include_directories(
+  SYSTEM
   ${CMAKE_SOURCE_DIR}/lib
   ${CMAKE_SOURCE_DIR}/lib/capstone/include
   )

@@ -1,4 +1,5 @@
 include_directories(
+  SYSTEM
   gtest/
   gtest/include
   ${CMAKE_SOURCE_DIR}/lib
