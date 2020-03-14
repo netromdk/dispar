@@ -15,11 +15,11 @@
 
 namespace dispar {
 
-MacSdkVersionsEditor::MacSdkVersionsEditor(Section *section, BinaryObject *object, QWidget *parent)
-  : QDialog(parent), section(section), patcher(*section)
+MacSdkVersionsEditor::MacSdkVersionsEditor(Section *section_, BinaryObject *object_, QWidget *parent)
+  : QDialog(parent), section(section_), patcher(*section_)
 {
   assert(section);
-  Q_UNUSED(object);
+  Q_UNUSED(object_);
 
   setWindowTitle(tr("Versions Editor: %1").arg(section->toString()));
   createLayout();

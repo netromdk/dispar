@@ -18,17 +18,17 @@
 
 namespace dispar {
 
-DisassemblerDialog::DisassemblerDialog(QWidget *parent, CpuType cpuType, const QString &data,
-                                       quint64 offset, Disassembler::Syntax syntax)
-  : QDialog(parent), cpuType(cpuType), offset(offset), syntax(syntax)
+DisassemblerDialog::DisassemblerDialog(QWidget *parent, CpuType cpuType_, const QString &data_,
+                                       quint64 offset_, Disassembler::Syntax syntax_)
+  : QDialog(parent), cpuType(cpuType_), offset(offset_), syntax(syntax_)
 {
   setWindowTitle(tr("Disassembler"));
   createLayout();
   resize(500, 400);
   Util::centerWidget(this);
 
-  if (!data.isEmpty()) {
-    machineText->setText(data);
+  if (!data_.isEmpty()) {
+    machineText->setText(data_);
     convertBtn->click();
   }
 }

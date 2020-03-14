@@ -22,8 +22,8 @@ namespace {
 
 class ItemDelegate : public QStyledItemDelegate {
 public:
-  ItemDelegate(HexEditor *widget, QTreeWidget *tree, Section *section)
-    : widget(widget), tree(tree), section(section)
+  ItemDelegate(HexEditor *widget_, QTreeWidget *tree_, Section *section_)
+    : widget(widget_), tree(tree_), section(section_)
   {
   }
 
@@ -101,8 +101,8 @@ private:
 
 } // namespace
 
-HexEditor::HexEditor(Section *section, BinaryObject *object, QWidget *parent)
-  : QDialog(parent), section(section), object(object), shown(false), rows(0)
+HexEditor::HexEditor(Section *section_, BinaryObject *object_, QWidget *parent)
+  : QDialog(parent), section(section_), object(object_), shown(false), rows(0)
 {
   assert(section);
   assert(object);
@@ -187,8 +187,8 @@ void HexEditor::createEntries()
   treeWidget->clear();
 
   quint64 addr = section->address();
-  const QByteArray &data = section->data();
-  int len = data.size();
+  const QByteArray &sectionData = section->data();
+  int len = sectionData.size();
   rows = len / 16;
 
   if (len == 0) {
@@ -209,7 +209,7 @@ void HexEditor::createEntries()
     QStringList codes;
     int start = byte, end = 0;
     for (; end < 16 && byte < len; end++, byte++) {
-      const auto ch = static_cast<unsigned char>(data[byte]);
+      const auto ch = static_cast<unsigned char>(sectionData[byte]);
 
       // Use map to speed up the process because there will be a max of 256 values!
       auto hex = charToHex.value(ch);
@@ -225,7 +225,7 @@ void HexEditor::createEntries()
     item->setText(1, code.mid(0, 8 * 3));
     item->setText(2, code.mid(8 * 3));
 
-    const auto ascii = Util::dataToAscii(data, start, end);
+    const auto ascii = Util::dataToAscii(sectionData, start, end);
     item->setText(3, ascii);
 
     treeWidget->addTopLevelItem(item);

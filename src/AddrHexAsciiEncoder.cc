@@ -9,9 +9,9 @@
 
 namespace dispar {
 
-AddrHexAsciiEncoderTask::AddrHexAsciiEncoderTask(const QByteArray &data, const quint64 address, const quint64 index,
-                               const quint64 size)
-  : data(data), address(address), index(index), size(size)
+AddrHexAsciiEncoderTask::AddrHexAsciiEncoderTask(const QByteArray &data_, const quint64 address_,
+                                                 const quint64 index_, const quint64 size_)
+  : data(data_), address(address_), index(index_), size(size_)
 {
 }
 
@@ -21,7 +21,7 @@ void AddrHexAsciiEncoderTask::run()
   emit result(index, Util::addrDataString(address + index, subData));
 }
 
-AddrHexAsciiEncoder::AddrHexAsciiEncoder(const Section *section) : section(section)
+AddrHexAsciiEncoder::AddrHexAsciiEncoder(const Section *section_) : section(section_)
 {
   pool.setMaxThreadCount(QThread::idealThreadCount());
 }

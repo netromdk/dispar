@@ -9,18 +9,20 @@ using namespace dispar;
 
 class ReaderTest : public ::testing::Test {
 public:
-  void SetUp() override
-  {
-    buffer = std::make_unique<QBuffer>(&array);
-    buffer->open(QIODevice::ReadOnly);
-
-    reader = std::make_unique<Reader>(*buffer.get());
-  }
+  virtual void SetUp() override;
 
   QByteArray array;
   std::unique_ptr<QBuffer> buffer;
   std::unique_ptr<Reader> reader;
 };
+
+void ReaderTest::SetUp()
+{
+  buffer = std::make_unique<QBuffer>(&array);
+  buffer->open(QIODevice::ReadOnly);
+
+  reader = std::make_unique<Reader>(*buffer.get());
+}
 
 TEST(Reader, instantiate)
 {

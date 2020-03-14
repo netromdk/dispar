@@ -893,7 +893,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
       for (std::size_t h = 0; h < symbols.size(); h++) {
         auto &symbol = symbols[h];
         QByteArray tmp;
-        for (quint32 i = symbol.index(), size = data.size(); i < size; ++i) {
+        for (quint32 i = symbol.index(), n = data.size(); i < n; ++i) {
           char c = data[i];
           tmp += c;
           if (c == 0) break;

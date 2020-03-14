@@ -8,7 +8,6 @@ QString fileTypeName(FileType type)
   case FileType::OBJECT:
     return "Object";
 
-  default:
   case FileType::EXECUTE:
     return "Executable";
 
@@ -27,6 +26,9 @@ QString fileTypeName(FileType type)
   case FileType::BUNDLE:
     return "Bundle";
   }
+
+  // This won't be reached.
+  return {};
 }
 
 } // namespace dispar

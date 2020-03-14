@@ -4,9 +4,9 @@
 
 namespace dispar {
 
-Section::Section(Section::Type type, const QString &name, quint64 addr, quint64 size,
+Section::Section(Section::Type type, const QString &name, quint64 addr_, quint64 size,
                  quint32 offset)
-  : type_{type}, name_{name}, addr{addr}, size_{size}, offset_{offset}, disasm_(nullptr)
+  : type_{type}, name_{name}, addr{addr_}, size_{size}, offset_{offset}, disasm_(nullptr)
 {
 }
 

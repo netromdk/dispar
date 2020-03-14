@@ -5,7 +5,6 @@ namespace dispar {
 QString cpuTypeName(CpuType type)
 {
   switch (type) {
-  default:
   case CpuType::X86:
     return "x86";
 
@@ -16,6 +15,9 @@ QString cpuTypeName(CpuType type)
     return "HPPA";
 
   case CpuType::ARM:
+    return "ARM";
+
+  case CpuType::ARM_64:
     return "ARM";
 
   case CpuType::SPARC:
@@ -87,6 +89,9 @@ QString cpuTypeName(CpuType type)
   case CpuType::XEON_MP:
     return "Xeon MP";
   }
+
+  // This won't be reached.
+  return {};
 }
 
 } // namespace dispar

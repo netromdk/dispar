@@ -4,9 +4,9 @@
 
 namespace dispar {
 
-BinaryObject::BinaryObject(CpuType cpuType, CpuType cpuSubType, bool littleEndian, int systemBits,
+BinaryObject::BinaryObject(CpuType cpuType, CpuType cpuSubType, bool littleEndian_, int systemBits,
                            FileType fileType)
-  : cpuType_{cpuType}, cpuSubType_{cpuSubType}, littleEndian{littleEndian},
+  : cpuType_{cpuType}, cpuSubType_{cpuSubType}, littleEndian{littleEndian_},
     systemBits_{systemBits}, fileType_{fileType}
 {
   setCpuType(cpuType);

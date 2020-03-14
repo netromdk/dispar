@@ -178,10 +178,10 @@ bool MainWindow::saveProject()
         continue;
       }
 
-      const auto &data = section->data();
+      const auto &sectionData = section->data();
       for (const auto &region : section->modifiedRegions()) {
         project->addModifiedRegion(section->offset() + region.first,
-                                   data.mid(region.first, region.second));
+                                   sectionData.mid(region.first, region.second));
       }
     }
   }
@@ -656,13 +656,14 @@ void MainWindow::applyModifiedRegions(BinaryObject *object)
   bool match = false;
   for (auto *section : object->sections()) {
     for (const auto addr : modifiedRegions.keys()) {
-      const auto &data = modifiedRegions[addr];
-      if (addr >= section->offset() && addr + data.size() < section->offset() + section->size()) {
+      const auto &regionData = modifiedRegions[addr];
+      if (addr >= section->offset() &&
+          addr + regionData.size() < section->offset() + section->size()) {
         // Make sure the region hasn't already been written to the binary. The binary thus wouldn't
         // be modified in that case.
         const auto pos = addr - section->offset();
-        if (data != section->data().mid(pos, data.size())) {
-          section->setSubData(data, pos);
+        if (regionData != section->data().mid(pos, regionData.size())) {
+          section->setSubData(regionData, pos);
           match = true;
         }
       }

@@ -13,9 +13,9 @@ void TagItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
 
   // Use a rectangle that is 5% smaller to give some room.
   auto lessRect = option.rect;
-  auto w = float(lessRect.width()) * 0.95;
+  auto w = float(lessRect.width()) * 0.95f;
   auto diffW = lessRect.width() - w;
-  auto h = float(lessRect.height()) * 0.95;
+  auto h = float(lessRect.height()) * 0.95f;
   auto diffH = lessRect.height() - h;
   lessRect.setWidth(w);
   lessRect.setHeight(h);
@@ -47,7 +47,7 @@ QSize TagItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModel
 {
   auto tag = index.data().toString();
   QFontMetrics fm(option.font);
-  return QSize(float(fm.horizontalAdvance(tag)) * 1.3, float(fm.height()) * 1.5);
+  return QSize(float(fm.horizontalAdvance(tag)) * 1.3f, float(fm.height()) * 1.5f);
 }
 
 } // namespace dispar

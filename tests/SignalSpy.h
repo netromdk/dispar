@@ -13,7 +13,7 @@
 
 class SignalSpy {
 public:
-  SignalSpy(const char *file, int line) : file(file), line(line), count_(0), expect_(true)
+  SignalSpy(const char *file_, int line_) : file(file_), line(line_), count_(0), expect_(true)
   {
   }
 

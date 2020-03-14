@@ -6,9 +6,9 @@
 
 namespace dispar {
 
-PersistentSplitter::PersistentSplitter(const QString &settingsKey, Qt::Orientation orientation,
+PersistentSplitter::PersistentSplitter(const QString &settingsKey_, Qt::Orientation orientation,
                                        QWidget *parent)
-  : QSplitter(orientation, parent), settingsKey(settingsKey)
+  : QSplitter(orientation, parent), settingsKey(settingsKey_)
 {
 }
 

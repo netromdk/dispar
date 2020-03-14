@@ -12,6 +12,10 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent)
   createLayout();
 }
 
+AboutDialog::~AboutDialog()
+{
+}
+
 void AboutDialog::createLayout()
 {
   auto *titleLabel = new QLabel("Dispar", this);

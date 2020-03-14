@@ -9,8 +9,8 @@
 
 namespace dispar {
 
-ToggleBox::ToggleBox(const QString &title, const QString &settingsKey, QWidget *parent)
-  : QWidget(parent), title(title), settingsKey(settingsKey)
+ToggleBox::ToggleBox(const QString &title_, const QString &settingsKey_, QWidget *parent)
+  : QWidget(parent), title(title_), settingsKey(settingsKey_)
 {
   createLayout();
   setCollapsed();

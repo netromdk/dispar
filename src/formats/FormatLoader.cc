@@ -7,7 +7,7 @@
 
 namespace dispar {
 
-FormatLoader::FormatLoader(const QString &file) : file(file)
+FormatLoader::FormatLoader(const QString &file_) : file(file_)
 {
 }
 

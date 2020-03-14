@@ -5,7 +5,7 @@
 
 namespace dispar {
 
-Reader::Reader(QIODevice &dev, bool littleEndian) : dev(dev), littleEndian(littleEndian)
+Reader::Reader(QIODevice &dev_, bool littleEndian_) : dev(dev_), littleEndian(littleEndian_)
 {
 }
 

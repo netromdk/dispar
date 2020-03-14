@@ -16,7 +16,8 @@
 namespace dispar {
 namespace cxx {
 
-static inline void assert_x(const char *where, const char *what, const char *file, int line)
+[[noreturn]] static inline void assert_x(const char *where, const char *what, const char *file,
+                                         int line)
 {
   std::cerr << "ASSERT failure in " << where << ": " << what << ", file " << file << ", line "
             << line << std::endl;

@@ -25,9 +25,9 @@ namespace {
 
 class ItemDelegate : public QStyledItemDelegate {
 public:
-  ItemDelegate(DisassemblyEditor *disasmEditor, QTreeWidget *tree, BinaryObject *object,
-               Section *section)
-    : disasmEditor(disasmEditor), tree(tree), object(object), section(section)
+  ItemDelegate(DisassemblyEditor *disasmEditor_, QTreeWidget *tree_, BinaryObject *object_,
+               Section *section_)
+    : disasmEditor(disasmEditor_), tree(tree_), object(object_), section(section_)
   {
   }
 
@@ -115,8 +115,8 @@ private:
 
 } // namespace
 
-DisassemblyEditor::DisassemblyEditor(Section *section, BinaryObject *object, QWidget *parent)
-  : QDialog(parent), section(section), object(object), shown(false), label(nullptr),
+DisassemblyEditor::DisassemblyEditor(Section *section_, BinaryObject *object_, QWidget *parent)
+  : QDialog(parent), section(section_), object(object_), shown(false), label(nullptr),
     treeWidget(nullptr)
 {
   assert(section);

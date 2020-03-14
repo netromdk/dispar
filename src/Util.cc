@@ -306,7 +306,7 @@ QString Util::demangle(const QString &name)
 
   int flags = DMGL_PARAMS | DMGL_ANSI | DMGL_VERBOSE;
   auto *res = cplus_demangle(mangledName.constData(), flags);
-  if (res == 0) {
+  if (res == nullptr) {
     return name;
   }
 

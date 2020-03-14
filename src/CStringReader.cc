@@ -4,7 +4,7 @@
 
 namespace dispar {
 
-CStringReader::CStringReader(const QByteArray &data) : data(data), pos(0), offset_(0)
+CStringReader::CStringReader(const QByteArray &data_) : data(data_), pos(0), offset_(0)
 {
 }
 

@@ -28,7 +28,6 @@ QString LogHandler::Entry::typeString() const
   switch (type) {
   case QtDebugMsg:
     return tr("Debug");
-  default:
   case QtInfoMsg:
     return tr("Info");
   case QtWarningMsg:
@@ -38,6 +37,9 @@ QString LogHandler::Entry::typeString() const
   case QtFatalMsg:
     return tr("Fatal");
   }
+
+  // This won't be reached.
+  return {};
 }
 
 LogHandler::LogHandler(Context &context) : entries_(Constants::Log::MEMORY_ENTRIES)
@@ -83,9 +85,10 @@ int LogHandler::msgLogLevel(QtMsgType type)
     return Constants::Log::CRITICAL_LEVEL;
   case QtFatalMsg:
     return Constants::Log::FATAL_LEVEL;
-  default:
-    return Constants::Log::DEFAULT_LEVEL;
   }
+
+  // This won't be reached.
+  return {};
 }
 
 QString LogHandler::messageString(QtMsgType type, const QMessageLogContext &context,
