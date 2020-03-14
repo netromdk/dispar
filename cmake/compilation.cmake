@@ -2,14 +2,15 @@
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(COMMON_COMPILER_WARNINGS "-Wno-unused-parameter -Wempty-body -Woverloaded-virtual -Wtautological-compare")
-set(CLANG_WARNINGS "-Wnull-arithmetic -Woverriding-method-mismatch")
+set(COMMON_COMPILER_WARNINGS "-Wno-unused-parameter -Wempty-body -Woverloaded-virtual -Wtautological-compare -Wshadow -Wmissing-noreturn -Wdouble-promotion")
+set(CLANG_WARNINGS "-Wnull-arithmetic -Woverriding-method-mismatch -Wcovered-switch-default -Wzero-as-null-pointer-constant -Wweak-vtables -Wunused-private-field")
 set(GCC_WARNINGS "-Wuseless-cast")
 
 # Warnings turned into errors.
-set(COMMON_COMPILER_ERRORS "-Werror=return-type -Werror=delete-incomplete -Werror=delete-non-virtual-dtor -Werror=float-equal -Werror=reorder -Werror=uninitialized -Werror=unreachable-code")
-set(CLANG_ERRORS "-Werror=inconsistent-missing-override -Werror=unused-private-field -Werror=division-by-zero -Werror=return-stack-address")
+set(COMMON_COMPILER_ERRORS "-Werror=return-type -Werror=delete-incomplete -Werror=delete-non-virtual-dtor -Werror=float-equal -Werror=reorder -Werror=uninitialized -Werror=unreachable-code -Werror=switch")
+set(CLANG_ERRORS "-Werror=inconsistent-missing-override -Werror=inconsistent-missing-destructor-override -Werror=division-by-zero -Werror=return-stack-address -Werror=pessimizing-move")
 set(GCC_ERRORS "")
+set(GCC9_ERRORS "-Werror=pessimizing-move")
 
 if (NOT WIN32)
   set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic-errors ${COMMON_COMPILER_WARNINGS} ${COMMON_COMPILER_ERRORS}")
@@ -55,6 +56,9 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
     MESSAGE(FATAL_ERROR "Requires GCC >= 5.0.")
   endif()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_WARNINGS} ${GCC_ERRORS}")
+  if (GCC_VERSION VERSION_GREATER 9.0 OR GCC_VERSION VERSION_EQUAL 9.0)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC9_ERRORS}")
+  endif()
 elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
   execute_process(
     COMMAND ${CMAKE_CXX_COMPILER} -dumpversion
