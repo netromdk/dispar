@@ -16,6 +16,7 @@ option(ADDRESS_SANITIZER "Use memory error detector  (clang only and implies deb
 option(STATIC_ANALYZER "Do static analysis (clang only and implies debug mode!)" OFF)
 option(EVERY_WARNING "Show every(!) warning (clang only!)" OFF)
 option(TIME_TRACE "Trace compilation time into .json files (clang only!)" OFF)
+option(TIME_REPORT "Trace compilation time report (clang and gcc only!)" OFF)
 
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
@@ -94,6 +95,14 @@ if (TIME_TRACE)
   endif()
 
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftime-trace")
+endif()
+
+if (TIME_REPORT)
+  if (NOT ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU"))
+    message(FATAL_ERROR "Clang or GCC is required to use -ftime-report!")
+  endif()
+
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftime-report")
 endif()
 
 # Names
@@ -208,6 +217,12 @@ if (TIME_TRACE)
   message(STATUS "Compilation time trace: ${TIME_TRACE} (-ftime-trace)")
 else()
   message(STATUS "Compilation time trace: OFF")
+endif()
+
+if (TIME_REPORT)
+  message(STATUS "Compilation time report: ${TIME_REPORT} (-ftime-report)")
+else()
+  message(STATUS "Compilation time report: OFF")
 endif()
 
 message(STATUS "Found Qt: ${FOUND_QT} (min. v. ${QT_MINIMUM_VERSION})")
