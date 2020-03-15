@@ -13,6 +13,7 @@
 #include <QLineEdit>
 #include <QProgressDialog>
 #include <QStyledItemDelegate>
+#include <QTimer>
 #include <QTreeWidget>
 #include <QVBoxLayout>
 
@@ -122,7 +123,9 @@ void HexEditor::showEvent(QShowEvent *event)
 
   if (!shown) {
     shown = true;
-    setup();
+
+    // Setup after showing UI.
+    QTimer::singleShot(1, this, &HexEditor::setup);
 
     if (!restoreGeometry(Util::byteArray(Context::get().value("HexEditor.geometry").toString()))) {
       resize(800, 600);
