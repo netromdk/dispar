@@ -15,6 +15,7 @@ option(CODE_COVERAGE "Instrument for code coverage (clang only and builds tests!
 option(ADDRESS_SANITIZER "Use memory error detector  (clang only and implies debug mode!)" OFF)
 option(STATIC_ANALYZER "Do static analysis (clang only and implies debug mode!)" OFF)
 option(EVERY_WARNING "Show every(!) warning (clang only!)" OFF)
+option(TIME_TRACE "Trace compilation time into .json files (clang only!)" OFF)
 
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
@@ -85,6 +86,14 @@ if (EVERY_WARNING)
 
   # But ignore some warnings.
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Weverything -Wno-c++98-compat -Wno-padded -Wno-shadow-field-in-constructor -Wno-c++98-compat-pedantic -Wno-sign-conversion -Wno-old-style-cast -Wno-switch-enum -Wno-float-conversion -Wno-documentation-unknown-command -Wno-global-constructors -Wno-exit-time-destructors -Wno-return-std-move-in-c++11 -Wno-missing-prototypes -Wno-date-time")
+endif()
+
+if (TIME_TRACE)
+  if (NOT "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    message(FATAL_ERROR "Clang is required to use -ftime-trace!")
+  endif()
+
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftime-trace")
 endif()
 
 # Names
@@ -193,6 +202,12 @@ if (EVERY_WARNING)
   message(STATUS "Every warning: ${EVERY_WARNING} (-Weverything)")
 else()
   message(STATUS "Every warning: OFF")
+endif()
+
+if (TIME_TRACE)
+  message(STATUS "Compilation time trace: ${TIME_TRACE} (-ftime-trace)")
+else()
+  message(STATUS "Compilation time trace: OFF")
 endif()
 
 message(STATUS "Found Qt: ${FOUND_QT} (min. v. ${QT_MINIMUM_VERSION})")
