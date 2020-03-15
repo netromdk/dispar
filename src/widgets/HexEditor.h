@@ -3,12 +3,14 @@
 
 #include <QDateTime>
 #include <QDialog>
+#include <QPointer>
 
 #include "BinaryObject.h"
 #include "Section.h"
 
 class QLabel;
 class QTreeWidgetItem;
+class QProgressDialog;
 
 namespace dispar {
 
@@ -38,6 +40,8 @@ private:
   int rows;
   QLabel *label;
   TreeWidget *treeWidget;
+
+  QPointer<QProgressDialog> progDiag = nullptr;
 };
 
 } // namespace dispar

@@ -166,6 +166,14 @@ void HexEditor::createLayout()
 
 void HexEditor::setup()
 {
+  progDiag = new QProgressDialog(this);
+  progDiag->setWindowFlags(progDiag->windowFlags() | Qt::WindowStaysOnTopHint);
+  progDiag->setLabelText(tr("Loading entries.."));
+  progDiag->setCancelButton(nullptr);
+  progDiag->setRange(0, 0);
+  progDiag->show();
+  qApp->processEvents();
+
   createEntries();
   markModifiedRegions();
 
@@ -179,6 +187,13 @@ void HexEditor::setup()
                    .arg(treeWidget->topLevelItemCount()));
 
   treeWidget->setFocus();
+
+  // Remove dialog when all events related to the adding and drawing of tree wigdget items have been
+  // processed. This is when this additional event is processed.
+  QTimer::singleShot(1, this, [this] {
+    delete progDiag;
+    progDiag = nullptr;
+  });
 }
 
 void HexEditor::createEntries()
@@ -201,6 +216,11 @@ void HexEditor::createEntries()
   }
 
   if (len % 16 > 0) rows++;
+
+  if (progDiag) {
+    progDiag->setLabelText(tr("Loading %1 rows (%2 data)").arg(rows).arg(Util::formatSize(len)));
+    qApp->processEvents();
+  }
 
   QHash<unsigned char, QString> charToHex;
   for (int row = 0, byte = 0; row < rows; row++, addr += 16) {
