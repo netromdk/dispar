@@ -223,6 +223,8 @@ void HexEditor::createEntries()
   }
 
   QHash<unsigned char, QString> charToHex;
+  QList<QTreeWidgetItem *> items;
+  QStringList codes;
   for (int row = 0, byte = 0; row < rows; row++, addr += 16) {
     auto *item = new QTreeWidgetItem;
     item->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable |
@@ -230,7 +232,7 @@ void HexEditor::createEntries()
     item->setText(0,
                   Util::padString(QString::number(addr, 16).toUpper(), object->systemBits() / 8));
 
-    QStringList codes;
+    codes.clear();
     int start = byte, end = 0;
     for (; end < 16 && byte < len; end++, byte++) {
       const auto ch = static_cast<unsigned char>(sectionData[byte]);
@@ -252,8 +254,29 @@ void HexEditor::createEntries()
     const auto ascii = Util::dataToAscii(sectionData, start, end);
     item->setText(3, ascii);
 
-    treeWidget->addTopLevelItem(item);
+
+    items << item;
   }
+
+  treeWidget->setUpdatesEnabled(false);
+
+  if (rows < 10000) {
+    treeWidget->addTopLevelItems(items);
+  }
+  else {
+    // Show first chunk quickly to give feedback.
+    const int firstChunk = 512;
+    treeWidget->addTopLevelItems(items.mid(0, firstChunk));
+
+    // Force showing the first chunk. It is necessary to enable updates for this temporarily.
+    treeWidget->setUpdatesEnabled(true);
+    qApp->processEvents();
+    treeWidget->setUpdatesEnabled(false);
+
+    treeWidget->addTopLevelItems(items.mid(firstChunk));
+  }
+
+  treeWidget->setUpdatesEnabled(true);
 
   qDebug() << ">" << elapsedTimer.restart() << "ms";
 }
