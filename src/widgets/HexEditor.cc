@@ -225,7 +225,8 @@ void HexEditor::createEntries()
   QHash<unsigned char, QString> charToHex;
   for (int row = 0, byte = 0; row < rows; row++, addr += 16) {
     auto *item = new QTreeWidgetItem;
-    item->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+    item->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable |
+                   Qt::ItemNeverHasChildren);
     item->setText(0,
                   Util::padString(QString::number(addr, 16).toUpper(), object->systemBits() / 8));
 
