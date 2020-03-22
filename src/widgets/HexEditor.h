@@ -9,12 +9,11 @@
 #include "Section.h"
 
 class QLabel;
-class QTreeWidgetItem;
 class QProgressDialog;
 
 namespace dispar {
 
-class TreeWidget;
+class HexEdit;
 
 class HexEditor : public QDialog {
 public:
@@ -30,16 +29,14 @@ private:
   void createLayout();
   void setup();
   void createEntries();
-  void markModifiedRegions();
 
   Section *section;
   BinaryObject *object;
   QDateTime sectionModified;
 
   bool shown;
-  int rows;
   QLabel *label;
-  TreeWidget *treeWidget;
+  HexEdit *textEdit;
 
   QPointer<QProgressDialog> progDiag = nullptr;
 };
