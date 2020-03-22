@@ -229,15 +229,6 @@ void Util::resizeRatioOfScreen(QWidget *widget, float percentage, const QSize &m
 
 QString Util::addrDataString(quint64 addr, QByteArray data)
 {
-  // Pad data to a multiple of 16.
-  quint64 rest = data.size() % 16;
-  if (rest != 0) {
-    int amount = 16 - rest;
-    for (int i = 0; i < amount; i++) {
-      data += (char) 0;
-    }
-  }
-
   QString output, ascii;
   QStringList lines;
 
@@ -262,6 +253,11 @@ QString Util::addrDataString(quint64 addr, QByteArray data)
 
     ascii += (std::isgraph(ic) > 0 ? c : '.');
     if ((i + 1) % 16 == 0 || i == data.size() - 1) {
+      // If hex amount is < 16 blocks (including extra spaces) then pad with spaces, not zeros.
+      if (const auto n = output.size(), max = 16 * 2 + 16 + 1; n < max) {
+        output += QString(max - n, ' ');
+      }
+
       output += "  " + ascii;
       ascii.clear();
       if (i != data.size() - 1) {
