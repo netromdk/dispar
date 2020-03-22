@@ -148,20 +148,26 @@ void HexEdit::editAtCursor()
   asciiHighLabel->setFont(Constants::FIXED_FONT);
 
   const auto createEdit = [](const QString &data, QLabel *label) {
-    assert(data.size() == 16);
+    auto *edit = new QLineEdit;
+    edit->setMinimumWidth(200);
+    edit->setFont(Constants::FIXED_FONT);
+
+    if (data.isEmpty()) {
+      edit->setDisabled(true);
+      return edit;
+    }
+
+    const int blocks = data.size() / 2;
     QString mask, newData;
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < blocks; i++) {
       mask += "HH ";
       newData += data.mid(i * 2, 2) + " ";
     }
     mask.chop(1);
     newData.chop(1);
 
-    auto *edit = new QLineEdit;
-    edit->setMinimumWidth(200);
     edit->setInputMask(mask);
     edit->setText(newData);
-    edit->setFont(Constants::FIXED_FONT);
 
     // Update ASCII on editing hex.
     connect(edit, &QLineEdit::textEdited, label,
@@ -286,7 +292,7 @@ HexEdit::Block HexEdit::cursorBlock(const QTextBlock &block) const
   text.chop(16); // Remove ASCII.
   text = text.trimmed().replace(" ", "");
 
-  // Each part is 2x8 chars.
+  // Each part is up to 2x8 chars.
   const auto hexLow = text.mid(0, 16), hexHigh = text.mid(16, 16);
 
   return {addr, hexLow, hexHigh, ascii, oldText};
