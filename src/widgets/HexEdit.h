@@ -8,6 +8,7 @@
 namespace dispar {
 
 class Section;
+class BinaryObject;
 
 class HexEdit : public QPlainTextEdit {
   Q_OBJECT
@@ -15,9 +16,9 @@ class HexEdit : public QPlainTextEdit {
   enum class Copy { ADDRESS, HEX_LOW, HEX_HIGH, HEX_BOTH, ASCII };
 
 public:
-  HexEdit(CpuType cpuType, QWidget *parent = nullptr);
+  HexEdit(QWidget *parent = nullptr);
 
-  void decode(Section *section);
+  void decode(Section *section, BinaryObject *object);
 
 signals:
   void edited();
@@ -48,8 +49,8 @@ private:
   Block currentBlock() const;
   void markModifiedRegions();
 
-  CpuType cpuType;
   Section *section = nullptr;
+  BinaryObject *object = nullptr;
   QList<QTextEdit::ExtraSelection> modSelections, curLineSelection;
 };
 

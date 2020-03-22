@@ -22,8 +22,14 @@ public:
 
   void updateModified();
 
+public slots:
+  void done(int result) override;
+
 protected:
   void showEvent(QShowEvent *event) override;
+
+private slots:
+  void updateDisassembly();
 
 private:
   void createLayout();
@@ -32,7 +38,7 @@ private:
 
   Section *section;
   BinaryObject *object;
-  QDateTime sectionModified;
+  QDateTime sectionModified, lastModified;
 
   bool shown;
   QLabel *label;

@@ -1,5 +1,6 @@
 #include "widgets/HexEdit.h"
 #include "AddrHexAsciiEncoder.h"
+#include "BinaryObject.h"
 #include "Constants.h"
 #include "Section.h"
 #include "Util.h"
@@ -39,7 +40,7 @@ QString HexEdit::Block::hex() const
   return hexLow + hexHigh;
 }
 
-HexEdit::HexEdit(CpuType cpuType_, QWidget *parent) : QPlainTextEdit(parent), cpuType(cpuType_)
+HexEdit::HexEdit(QWidget *parent) : QPlainTextEdit(parent)
 {
   setReadOnly(true);
   setCenterOnScroll(true);
@@ -52,10 +53,12 @@ HexEdit::HexEdit(CpuType cpuType_, QWidget *parent) : QPlainTextEdit(parent), cp
           &HexEdit::customContextMenuRequested);
 }
 
-void HexEdit::decode(Section *section_)
+void HexEdit::decode(Section *section_, BinaryObject *object_)
 {
   section = section_;
   assert(section_);
+  object = object_;
+  assert(object_);
 
   AddrHexAsciiEncoder encoder(section);
   const bool blocking(true);
@@ -269,7 +272,7 @@ void HexEdit::findAddress()
 void HexEdit::disassemble()
 {
   const auto block = currentBlock();
-  DisassemblerDialog diag(this, cpuType, block.hex(), block.addr);
+  DisassemblerDialog diag(this, object->cpuType(), block.hex(), block.addr);
   diag.exec();
 }
 

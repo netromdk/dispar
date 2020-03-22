@@ -12,6 +12,7 @@
 #include <QHash>
 #include <QLabel>
 #include <QLineEdit>
+#include <QMessageBox>
 #include <QProgressDialog>
 #include <QStyledItemDelegate>
 #include <QTimer>
@@ -53,16 +54,40 @@ void HexEditor::showEvent(QShowEvent *event)
     const auto mod = section->modifiedWhen();
     if (sectionModified.isNull() || mod != sectionModified) {
       sectionModified = mod;
+      updateDisassembly();
       setup();
     }
   }
+}
+
+void HexEditor::updateDisassembly()
+{
+  // Only update if section has a disassembly!
+  if (!section->disassembly()) {
+    return;
+  }
+
+  QElapsedTimer elapsedTimer;
+  elapsedTimer.start();
+
+  qDebug() << "Re-dissassembling..";
+
+  Disassembler dis(*object, Context::get().disassemblerSyntax());
+  auto result = dis.disassemble(section->data());
+  if (!result) {
+    QMessageBox::critical(this, "", tr("Could not disassemble machine code!"));
+    return;
+  }
+
+  section->setDisassembly(std::move(result));
+  qDebug() << ">" << elapsedTimer.restart() << "ms";
 }
 
 void HexEditor::createLayout()
 {
   label = new QLabel;
 
-  textEdit = new HexEdit(object->cpuType());
+  textEdit = new HexEdit;
   connect(textEdit, &HexEdit::edited, this, &HexEditor::updateModified);
 
   auto *layout = new QVBoxLayout;
@@ -128,7 +153,7 @@ void HexEditor::createEntries()
   }
 
   textEdit->setFocus();
-  textEdit->decode(section);
+  textEdit->decode(section, object);
 
   qDebug() << ">" << elapsedTimer.restart() << "ms";
 }
@@ -137,7 +162,19 @@ void HexEditor::createEntries()
 void HexEditor::updateModified()
 // *************************************************************************************************
 {
+  lastModified = sectionModified;
   sectionModified = QDateTime::currentDateTime();
+}
+
+void HexEditor::done(int result)
+{
+  // Update disassembly if changed before closing dialog.
+  if (section->isModified() && sectionModified != lastModified) {
+    lastModified = sectionModified;
+    updateDisassembly();
+  }
+
+  QDialog::done(result);
 }
 
 } // namespace dispar
