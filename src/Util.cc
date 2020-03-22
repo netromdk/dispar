@@ -58,7 +58,7 @@ QString Util::dataToAscii(const QByteArray &data, int offset, int size)
   int len = data.size();
   for (int i = offset; i - offset < size && i < len; i++) {
     int ic = data[i];
-    res += (std::isprint(ic) > 0 ? (char) ic : '.');
+    res += (ic >= 32 && ic <= 126 ? (char) ic : '.');
   }
   return res;
 }
@@ -78,7 +78,7 @@ QString Util::hexToAscii(const QString &str, int offset, int blocks, int blocksi
     int ic = str.mid(i, blocksize).toInt(&ok, 16);
     if (!ok) return QString();
     if (!unicode) {
-      res += (std::isprint(ic) > 0 ? (char) ic : '.');
+      res += (ic >= 32 && ic <= 126 ? (char) ic : '.');
     }
     else {
       res += QString::fromUtf16((ushort *) &ic, 1);
@@ -245,7 +245,7 @@ QString Util::addrDataString(quint64 addr, QByteArray data)
     lines.append(QString::number(addr, 16).toUpper() + ": " + line);
   };
 
-  for (int i = 0; i < data.size(); i++) {
+  for (int i = 0, j = 0; i < data.size(); ++i) {
     char c = data[i];
     int ic = c;
     unsigned char uc = c;
@@ -254,6 +254,12 @@ QString Util::addrDataString(quint64 addr, QByteArray data)
       hc = "0" + hc;
     }
     output += hc + " ";
+
+    // Put an extra space in the middle of the hex data to show the low and high parts.
+    if (j++ == 7) {
+      output += " ";
+    }
+
     ascii += (std::isgraph(ic) > 0 ? c : '.');
     if ((i + 1) % 16 == 0 || i == data.size() - 1) {
       output += "  " + ascii;
@@ -262,6 +268,7 @@ QString Util::addrDataString(quint64 addr, QByteArray data)
         addLine(output);
         addr += 16;
         output.clear();
+        j = 0;
       }
     }
   }

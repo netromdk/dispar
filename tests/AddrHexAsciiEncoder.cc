@@ -25,7 +25,7 @@ TEST(AddrHexAsciiEncoder, async)
   loop.exec();
 
   EXPECT_EQ(encoder.result(),
-            "1000: 78 78 78 00 00 00 00 00 00 00 00 00 00 00 00 00   xxx.............")
+            "1000: 78 78 78 00 00 00 00 00  00 00 00 00 00 00 00 00   xxx.............")
     << encoder.result();
 }
 
@@ -43,6 +43,6 @@ TEST(AddrHexAsciiEncoder, blocking)
   encoder.start(blocking);
 
   EXPECT_EQ(encoder.result(),
-            "1000: 78 78 78 00 00 00 00 00 00 00 00 00 00 00 00 00   xxx.............")
+            "1000: 78 78 78 00 00 00 00 00  00 00 00 00 00 00 00 00   xxx.............")
     << encoder.result();
 }
