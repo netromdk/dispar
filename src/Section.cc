@@ -100,7 +100,9 @@ void Section::setData(const QByteArray &data)
 
 void Section::setSubData(const QByteArray &subData, int pos)
 {
-  if (pos < 0 || pos > data_.size() - 1) {
+  assert(subData.size() <= data_.size());
+
+  if (pos < 0 || pos > data_.size() - 1 || subData.size() > data_.size()) {
     return;
   }
 
