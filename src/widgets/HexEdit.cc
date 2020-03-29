@@ -32,7 +32,7 @@ QString HexEdit::Block::addrStr() const
 QString HexEdit::Block::addrEndStr() const
 {
   // Return the last address of the block.
-  return QString::number(addr + 15, 16).toUpper();
+  return QString::number(addr + hex().size() / 2 - 1, 16).toUpper();
 }
 
 QString HexEdit::Block::hex() const
