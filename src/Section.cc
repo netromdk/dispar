@@ -4,6 +4,16 @@
 
 namespace dispar {
 
+bool Section::ModifiedRegion::operator==(const ModifiedRegion &rhs) const
+{
+  return position == rhs.position && size == rhs.size;
+}
+
+bool Section::ModifiedRegion::operator!=(const ModifiedRegion &rhs) const
+{
+  return !(*this == rhs);
+}
+
 Section::Section(Section::Type type, const QString &name, quint64 addr_, quint64 size,
                  quint32 offset)
   : type_{type}, name_{name}, addr{addr_}, size_{size}, offset_{offset}, disasm_(nullptr)
@@ -109,7 +119,7 @@ void Section::setSubData(const QByteArray &subData, int pos)
   data_.replace(pos, subData.size(), subData);
   modified = QDateTime::currentDateTime();
 
-  QPair<int, int> region(pos, subData.size());
+  ModifiedRegion region{pos, subData.size()};
   if (!modifiedRegions_.contains(region)) {
     modifiedRegions_ << region;
   }
@@ -125,7 +135,7 @@ QDateTime Section::modifiedWhen() const
   return modified;
 }
 
-const QList<QPair<int, int>> &Section::modifiedRegions() const
+const QList<Section::ModifiedRegion> &Section::modifiedRegions() const
 {
   return modifiedRegions_;
 }

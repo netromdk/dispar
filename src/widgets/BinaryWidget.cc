@@ -879,7 +879,7 @@ void BinaryWidget::removeSelectedTags()
 }
 
 void BinaryWidget::checkModified(const Section *section,
-                                 const QList<QPair<int, int>> &priorModifications)
+                                 const QList<Section::ModifiedRegion> &priorModifications)
 {
   // Only emit modified if new changes were made.
   if (section->isModified() && section->modifiedRegions() != priorModifications) {

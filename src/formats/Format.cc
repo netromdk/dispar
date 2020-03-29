@@ -69,8 +69,8 @@ void Format::write(QIODevice &device)
 
       const auto &data = section->data();
       for (const auto &region : section->modifiedRegions()) {
-        device.seek(section->offset() + region.first);
-        device.write(data.mid(region.first, region.second));
+        device.seek(section->offset() + region.position);
+        device.write(data.mid(region.position, region.size));
       }
     }
   }

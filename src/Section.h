@@ -4,7 +4,6 @@
 #include <QByteArray>
 #include <QDateTime>
 #include <QList>
-#include <QPair>
 #include <QString>
 
 #include <memory>
@@ -30,6 +29,14 @@ public:
     LC_VERSION_MIN_TVOS,     ///< tvOS SDK min version (load command).
   };
 
+  struct ModifiedRegion {
+    int position = -1;
+    int size = 0;
+
+    bool operator==(const ModifiedRegion &rhs) const;
+    bool operator!=(const ModifiedRegion &rhs) const;
+  };
+
   Section(Type type, const QString &name, quint64 addr, quint64 size, quint32 offset = 0);
 
   /// Get string representation of type.
@@ -51,7 +58,7 @@ public:
   void setSubData(const QByteArray &subData, int pos);
   bool isModified() const;
   QDateTime modifiedWhen() const;
-  const QList<QPair<int, int>> &modifiedRegions() const;
+  const QList<ModifiedRegion> &modifiedRegions() const;
 
   /// Takes ownership of \p disasm.
   void setDisassembly(std::unique_ptr<Disassembler::Result> disasm);
@@ -63,7 +70,7 @@ private:
   quint64 addr, size_;
   quint32 offset_;
   QByteArray data_;
-  QList<QPair<int, int>> modifiedRegions_;
+  QList<ModifiedRegion> modifiedRegions_;
   QDateTime modified;
   std::unique_ptr<Disassembler::Result> disasm_;
 };

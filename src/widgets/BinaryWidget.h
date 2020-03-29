@@ -51,7 +51,8 @@ private:
 
   /// Check if section has different modifications than \p priorModifications and emit modified.
   /** It will also add to re-run setup() if modified. */
-  void checkModified(const Section *section, const QList<QPair<int, int>> &priorModifications);
+  void checkModified(const Section *section,
+                     const QList<Section::ModifiedRegion> &priorModifications);
 
   BinaryObject *object;
 

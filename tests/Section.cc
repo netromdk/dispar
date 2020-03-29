@@ -125,8 +125,8 @@ TEST(Section, setSubData)
     const auto &pairs = s.modifiedRegions();
     ASSERT_EQ(pairs.size(), 1);
     auto pair = pairs[0];
-    EXPECT_EQ(pair.first, 1);
-    EXPECT_EQ(pair.second, 1);
+    EXPECT_EQ(pair.position, 1);
+    EXPECT_EQ(pair.size, 1);
   }
 }
 
@@ -167,4 +167,12 @@ TEST(Section, setGetDisassembly)
   s.setDisassembly(std::move(res));
   ASSERT_NE(nullptr, s.disassembly());
   EXPECT_EQ(count, s.disassembly()->count());
+}
+
+TEST(SectionModifiedRegion, operatorEquals)
+{
+  const Section::ModifiedRegion r{0, 1}, r2{20, 5};
+  EXPECT_EQ(r, r);
+  EXPECT_NE(r, r2);
+  EXPECT_NE(r2, r);
 }

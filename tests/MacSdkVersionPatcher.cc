@@ -138,7 +138,7 @@ TEST(MacSdkVersionPatcher, changeVersions)
   const Version target{10, 11};
   ASSERT_TRUE(patcher.setTarget(target));
 
-  QList<QPair<int, int>> mod{{0, 4}};
+  QList<Section::ModifiedRegion> mod{{0, 4}};
   EXPECT_EQ(mod, section->modifiedRegions());
 
   const Version sdk{10, 14};
