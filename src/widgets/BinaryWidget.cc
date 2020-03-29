@@ -674,9 +674,7 @@ void BinaryWidget::setup()
   qDebug() << qPrintable(setupDiag.labelText());
 
   // Show cstring+string sections.
-  auto stringSecs = object->sectionsByType(Section::Type::CSTRING);
-  stringSecs << object->sectionsByType(Section::Type::STRING);
-  for (auto *section : stringSecs) {
+  for (auto *section : object->sectionsByTypes({Section::Type::CSTRING, Section::Type::STRING})) {
     cursor.movePosition(QTextCursor::End);
     cursor.insertBlock();
 
@@ -715,11 +713,9 @@ void BinaryWidget::setup()
   qDebug() << qPrintable(setupDiag.labelText());
 
   // Show load command sections.
-  auto loadCommandSecs = object->sectionsByType(Section::Type::LC_VERSION_MIN_MACOSX);
-  loadCommandSecs << object->sectionsByType(Section::Type::LC_VERSION_MIN_IPHONEOS);
-  loadCommandSecs << object->sectionsByType(Section::Type::LC_VERSION_MIN_WATCHOS);
-  loadCommandSecs << object->sectionsByType(Section::Type::LC_VERSION_MIN_TVOS);
-  for (auto *section : loadCommandSecs) {
+  for (auto *section : object->sectionsByTypes(
+         {Section::Type::LC_VERSION_MIN_MACOSX, Section::Type::LC_VERSION_MIN_IPHONEOS,
+          Section::Type::LC_VERSION_MIN_WATCHOS, Section::Type::LC_VERSION_MIN_TVOS})) {
     cursor.movePosition(QTextCursor::End);
     cursor.insertBlock();
 

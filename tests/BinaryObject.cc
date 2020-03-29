@@ -87,6 +87,43 @@ TEST(BinaryObject, sectionsByType)
   EXPECT_EQ(sec2->size(), static_cast<quint64>(1));
 }
 
+TEST(BinaryObject, sectionsByTypes)
+{
+  const QList<Section::Type> types{
+    {Section::Type::TEXT, Section::Type::CODE_SIG, Section::Type::SYMBOLS}};
+
+  BinaryObject b;
+  EXPECT_EQ(0, b.sectionsByTypes(types).size());
+
+  auto sec = std::make_unique<Section>(Section::Type::TEXT, "name", 0x1, 1);
+  b.addSection(std::move(sec));
+
+  auto sec2 = std::make_unique<Section>(Section::Type::CODE_SIG, "name2", 0x1, 1);
+  b.addSection(std::move(sec2));
+
+  auto sec3 = std::make_unique<Section>(Section::Type::SYMBOLS, "name3", 0x1, 1);
+  b.addSection(std::move(sec3));
+
+  const auto secs = b.sectionsByTypes(types);
+  ASSERT_EQ(secs.size(), 3);
+
+  auto *s = secs[0];
+  EXPECT_EQ(s->type(), Section::Type::TEXT);
+  EXPECT_EQ(s->name(), "name");
+  EXPECT_EQ(s->address(), static_cast<quint64>(0x1));
+  EXPECT_EQ(s->size(), static_cast<quint64>(1));
+  s = secs[1];
+  EXPECT_EQ(s->type(), Section::Type::CODE_SIG);
+  EXPECT_EQ(s->name(), "name2");
+  EXPECT_EQ(s->address(), static_cast<quint64>(0x1));
+  EXPECT_EQ(s->size(), static_cast<quint64>(1));
+  s = secs[2];
+  EXPECT_EQ(s->type(), Section::Type::SYMBOLS);
+  EXPECT_EQ(s->name(), "name3");
+  EXPECT_EQ(s->address(), static_cast<quint64>(0x1));
+  EXPECT_EQ(s->size(), static_cast<quint64>(1));
+}
+
 TEST(BinaryObject, symbolTable)
 {
   SymbolTable st;

@@ -96,6 +96,17 @@ QList<Section *> BinaryObject::sectionsByType(Section::Type type) const
   return res;
 }
 
+QList<Section *> BinaryObject::sectionsByTypes(const QList<Section::Type> &types) const
+{
+  QList<Section *> res;
+  for (auto &section : sections_) {
+    if (types.contains(section->type())) {
+      res << section.get();
+    }
+  }
+  return res;
+}
+
 Section *BinaryObject::section(Section::Type type) const
 {
   if (auto it = cxx::find_if(sections_, [type](auto &section) { return section->type() == type; });

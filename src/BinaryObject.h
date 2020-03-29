@@ -41,6 +41,7 @@ public:
 
   QList<Section *> sections() const;
   QList<Section *> sectionsByType(Section::Type type) const;
+  QList<Section *> sectionsByTypes(const QList<Section::Type> &types) const;
 
   /// First section of \p type.
   /** Returns \p nullptr if none were found. */
