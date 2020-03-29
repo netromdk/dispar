@@ -739,12 +739,14 @@ void BinaryWidget::setup()
       const auto targetStr = QString("0x%1 (target %2)")
                                .arg(Util::encodeMacSdkVersion(target), 0, 16)
                                .arg(versionString(target));
-      appendString(section->address(), section->address(), targetStr);
+      auto addr = section->address();
+      appendString(addr, addr - section->address(), targetStr);
 
       const auto sdk = patcher.sdk();
       const auto sdkStr =
         QString("0x%1 (sdk %2)").arg(Util::encodeMacSdkVersion(sdk), 0, 16).arg(versionString(sdk));
-      appendString(section->address() + 4, section->address(), sdkStr);
+      addr = section->address() + 4;
+      appendString(addr, addr - section->address(), sdkStr);
     }
 
     qDebug() << " >" << sectionTimer.restart() << "ms";
