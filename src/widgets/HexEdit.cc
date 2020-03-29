@@ -40,6 +40,11 @@ QString HexEdit::Block::hex() const
   return hexLow + hexHigh;
 }
 
+bool HexEdit::Block::hasHexHigh() const
+{
+  return hex().size() / 2 > 8;
+}
+
 HexEdit::HexEdit(QWidget *parent) : QPlainTextEdit(parent)
 {
   setReadOnly(true);
@@ -136,6 +141,7 @@ void HexEdit::copyContent(const Copy type)
 void HexEdit::editAtCursor()
 {
   const auto block = currentBlock();
+  const bool showHigh = block.hasHexHigh();
 
   QDialog diag(this);
   diag.setWindowFlags(Qt::CustomizeWindowHint | Qt::Dialog | Qt::WindowTitleHint |
@@ -197,7 +203,9 @@ void HexEdit::editAtCursor()
   auto *layout = new QFormLayout;
   layout->addRow(tr("Address:"), addrLabel);
   layout->addRow(tr("Low:"), lowLayout);
-  layout->addRow(tr("High:"), highLayout);
+  if (showHigh) {
+    layout->addRow(tr("High:"), highLayout);
+  }
   layout->addWidget(buttonBox);
 
   diag.setLayout(layout);

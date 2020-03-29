@@ -43,6 +43,7 @@ private:
     QString addrStr() const;
     QString addrEndStr() const;
     QString hex() const;
+    bool hasHexHigh() const;
   };
 
   Block cursorBlock(const QTextBlock &block) const;
