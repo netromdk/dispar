@@ -217,6 +217,13 @@ void HexEdit::editAtCursor()
   auto const low = editLow->text().toUpper();
   auto const high = editHigh->text().toUpper();
   auto newStr = low + "  " + high;
+
+  // Pad hex string, like when low/high is less than 16 chars. Two blocks of 8*2 hex chars with a
+  // space between, and two spaces between the two hex blocks.
+  if (const int max = (8 * 2 + 7) * 2 + 2; newStr.size() < max) {
+    newStr = Util::padString(newStr, max, false, ' ');
+  }
+
   const auto newAscii = Util::hexToAscii(newStr, 0, 16);
   const auto newLine = QString::number(block.addr, 16).toUpper() + ": " + newStr + "   " + newAscii;
 
