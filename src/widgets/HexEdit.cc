@@ -288,11 +288,11 @@ HexEdit::Block HexEdit::cursorBlock(const QTextBlock &block) const
   const auto oldText = block.text().trimmed();
 
   const auto addr = oldText.mid(0, oldText.indexOf(':')).toULongLong(nullptr, 16);
-  const auto ascii = oldText.right(16);
+  const auto ascii = oldText.right(16).trimmed();
 
   // Remove the address part "...:" and the last ASCII part.
   auto text = oldText.mid(oldText.indexOf(':') + 1);
-  text.chop(16); // Remove ASCII.
+  text.chop(ascii.size()); // Remove ASCII.
   text = text.trimmed().replace(" ", "");
 
   // Each part is up to 2x8 chars.
