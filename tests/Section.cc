@@ -128,6 +128,89 @@ TEST(Section, setSubData)
     EXPECT_EQ(pair.position, 1);
     EXPECT_EQ(pair.size, 1);
   }
+
+  {
+    Section s(Section::Type::TEXT, "test", 0x1, 1);
+    s.setData("ABCD");
+
+    // These are all the same pos+size so only the last one is kept, "Z".
+    s.setSubData("X", 1);
+    s.setSubData("Y", 1);
+    s.setSubData("X", 1);
+    s.setSubData("Z", 1);
+
+    const auto &pairs = s.modifiedRegions();
+    ASSERT_EQ(pairs.size(), 1);
+    EXPECT_EQ(pairs[0], Section::ModifiedRegion(1, "Z"));
+  }
+
+  {
+    Section s(Section::Type::TEXT, "test", 0x1, 1);
+    s.setData("ABCD");
+
+    // First region is contained in the newer second region, so it is removed.
+    s.setSubData("X", 2);
+    s.setSubData("123", 1);
+
+    const auto &pairs = s.modifiedRegions();
+    ASSERT_EQ(pairs.size(), 1);
+    EXPECT_EQ(pairs[0], Section::ModifiedRegion(1, "123"));
+  }
+
+  {
+    Section s(Section::Type::TEXT, "test", 0x1, 1);
+    s.setData("ABCD");
+
+    // All regions are contained in newer regions, thus only the last is left.
+    s.setSubData("X", 0);
+    s.setSubData("YZ", 1);
+    s.setSubData("H", 2);
+    s.setSubData("qwe", 0);
+    s.setSubData("123", 0);
+
+    const auto &pairs = s.modifiedRegions();
+    ASSERT_EQ(pairs.size(), 1);
+    EXPECT_EQ(pairs[0], Section::ModifiedRegion(0, "123"));
+  }
+
+  {
+    Section s(Section::Type::TEXT, "test", 0x1, 1);
+    s.setData("ABCD");
+    s.setSubData("1234", 0); // 1234
+    s.setSubData("XY", 1); // 1XY4
+    s.setSubData("Z", 2); // 1XZ4
+
+    // All three are still left.
+    ASSERT_EQ(s.modifiedRegions().size(), 3);
+
+    s.setSubData("89", 1); // 1894
+
+    // The middle two are removed.
+    const auto &pairs = s.modifiedRegions();
+    ASSERT_EQ(pairs.size(), 2);
+    EXPECT_EQ(pairs[0], Section::ModifiedRegion(0, "1234"));
+    EXPECT_EQ(pairs[1], Section::ModifiedRegion(1, "89"));
+  }
+
+  {
+    Section s(Section::Type::TEXT, "test", 0x1, 1);
+    s.setData("ABCDE");
+    s.setSubData("123", 1); // A123E
+    s.setSubData("QWE", 2); // A1QWE
+
+    // All are still left.
+    ASSERT_EQ(s.modifiedRegions().size(), 2);
+
+    // No regions are contained yet, though the first is eclipsed by the newest two.
+    s.setSubData("IOP", 0); // IOPWE
+    ASSERT_EQ(s.modifiedRegions().size(), 3);
+
+    // All are contained in the last region.
+    s.setSubData("ABCDE", 0); // ABCDE
+    const auto &pairs = s.modifiedRegions();
+    ASSERT_EQ(pairs.size(), 1);
+    EXPECT_EQ(pairs[0], Section::ModifiedRegion(0, "ABCDE"));
+  }
 }
 
 TEST(Section, hasAddress)

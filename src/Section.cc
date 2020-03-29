@@ -128,8 +128,22 @@ void Section::setSubData(const QByteArray &subData, int pos)
   modified = QDateTime::currentDateTime();
 
   const ModifiedRegion region{pos, subData};
-  if (!modifiedRegions_.contains(region)) {
-    modifiedRegions_ << region;
+  modifiedRegions_ << region;
+
+  // Prune modified regions that are contained in newer modified regions.
+  QList<int> remove;
+  for (int i = 0, n = modifiedRegions_.size(); i < n; ++i) {
+    const auto &r = modifiedRegions_[i];
+    for (int j = i + 1; j < n; ++j) {
+      const auto &r2 = modifiedRegions_[j];
+      if (r.position >= r2.position && r.position + r.size <= r2.position + r2.size) {
+        remove << i;
+        break;
+      }
+    }
+  }
+  for (auto it = remove.rbegin(); it != remove.rend(); ++it) {
+    modifiedRegions_.removeAt(*it);
   }
 }
 
