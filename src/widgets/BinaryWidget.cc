@@ -24,6 +24,7 @@
 
 #include <cassert>
 
+#include "AddrHexAsciiEncoder.h"
 #include "BinaryObject.h"
 #include "CStringReader.h"
 #include "Context.h"
@@ -258,8 +259,9 @@ void BinaryWidget::onCustomContextMenuRequested(const QPoint &pos)
     const auto address = Util::convertAddress(selected, &isAddress);
 
     menu.addSeparator();
-    menu.addAction(tr("Copy"), this, [&selected] { QApplication::clipboard()->setText(selected); },
-                   QKeySequence::Copy);
+    menu.addAction(
+      tr("Copy"), this, [&selected] { QApplication::clipboard()->setText(selected); },
+      QKeySequence::Copy);
 
     menu.addSeparator();
     menu.addAction(tr("Disassemble"), this, [this, &selected] {
@@ -539,7 +541,7 @@ void BinaryWidget::setup()
   QProgressDialog setupDiag(this);
   setupDiag.setLabelText(tr("Setting up for binary data.."));
   setupDiag.setCancelButton(nullptr);
-  setupDiag.setRange(0, 5);
+  setupDiag.setRange(0, 6);
   setupDiag.show();
   qApp->processEvents();
   qDebug() << qPrintable(setupDiag.labelText());
@@ -760,6 +762,63 @@ void BinaryWidget::setup()
   qDebug() << ">" << lcSectionsTime << "ms";
 
   setupDiag.setValue(4);
+  setupDiag.setLabelText(tr("Generating UI for miscellaneous sections.."));
+  qApp->processEvents();
+  qDebug() << qPrintable(setupDiag.labelText());
+
+  // Show miscellaneous sections. The section not shown in specific ways will be address-hex-ASCII
+  // encoded just to give some representation.
+  for (auto *section : object->sectionsByTypes(
+         {Section::Type::FUNC_STARTS, Section::Type::SYMBOLS, Section::Type::DYN_SYMBOLS,
+          Section::Type::SYMBOL_STUBS, Section::Type::CODE_SIG})) {
+    cursor.movePosition(QTextCursor::End);
+    cursor.insertBlock();
+
+    // Save section to block number.
+    sectionBlock[section] = cursor.blockNumber();
+
+    const auto secName = section->toString();
+    qDebug() << "" << secName << "section..";
+    cursor.insertText("===== " + secName + " =====\n");
+
+    QElapsedTimer sectionTimer;
+    sectionTimer.start();
+
+    AddrHexAsciiEncoder encoder(section);
+    const bool blocking(true);
+    encoder.start(blocking);
+    const auto lines = encoder.result().split("\n");
+
+    for (const auto &line : lines) {
+      const auto pos = line.indexOf(':');
+      if (pos == -1) continue;
+
+      const auto addr = line.mid(0, pos).toULongLong(nullptr, 16);
+
+      cursor.insertBlock();
+      cursor.insertText(line);
+
+      auto *userData = new TextBlockUserData;
+      userData->address = addr;
+      userData->offset = addr - section->address();
+
+      auto block = cursor.block();
+      block.setUserData(userData);
+
+      offsetBlock[userData->address] = block.blockNumber();
+    }
+
+    qDebug() << " >" << sectionTimer.restart() << "ms";
+
+    cursor.movePosition(QTextCursor::End);
+    cursor.insertBlock();
+    cursor.insertText("\n===== /" + secName + " =====\n");
+  }
+
+  const auto miscSectionsTime = elapsedTimer.restart();
+  qDebug() << ">" << miscSectionsTime << "ms";
+
+  setupDiag.setValue(5);
   setupDiag.setLabelText(tr("Generating sidebar with functions and strings.."));
   qApp->processEvents();
   qDebug() << qPrintable(setupDiag.labelText());
@@ -788,12 +847,12 @@ void BinaryWidget::setup()
   qDebug() << ">" << sidebarTime << "ms";
 
   cursor.endEditBlock();
-  setupDiag.setValue(5);
+  setupDiag.setValue(6);
 
   Util::scrollToTop(mainView);
 
-  const auto totalTime =
-    presetupTime + disSectionsTime + stringSectionsTime + sidebarTime + elapsedTimer.restart();
+  const auto totalTime = presetupTime + disSectionsTime + stringSectionsTime + lcSectionsTime +
+                         miscSectionsTime + sidebarTime + elapsedTimer.restart();
   qDebug() << "Setup in" << totalTime << "ms";
 
   symbolList->setSortingEnabled(true);
