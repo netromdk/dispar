@@ -1,12 +1,20 @@
 #include "Section.h"
 
+#include <QCryptographicHash>
 #include <QObject>
 
 namespace dispar {
 
+Section::ModifiedRegion::ModifiedRegion(int position_, const QByteArray &data)
+  : position(position_), size(data.size())
+{
+  // Hash must be fast and shouldn't be overkill, so SHA-1 is sufficient.
+  hash = QCryptographicHash::hash(data, QCryptographicHash::Sha1);
+}
+
 bool Section::ModifiedRegion::operator==(const ModifiedRegion &rhs) const
 {
-  return position == rhs.position && size == rhs.size;
+  return position == rhs.position && size == rhs.size && hash == rhs.hash;
 }
 
 bool Section::ModifiedRegion::operator!=(const ModifiedRegion &rhs) const
@@ -119,7 +127,7 @@ void Section::setSubData(const QByteArray &subData, int pos)
   data_.replace(pos, subData.size(), subData);
   modified = QDateTime::currentDateTime();
 
-  ModifiedRegion region{pos, subData.size()};
+  const ModifiedRegion region{pos, subData};
   if (!modifiedRegions_.contains(region)) {
     modifiedRegions_ << region;
   }

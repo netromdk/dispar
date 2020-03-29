@@ -171,8 +171,12 @@ TEST(Section, setGetDisassembly)
 
 TEST(SectionModifiedRegion, operatorEquals)
 {
-  const Section::ModifiedRegion r{0, 1}, r2{20, 5};
+  const Section::ModifiedRegion r{0, "x"}, r2{20, "xyz"}, r3{0, "y"};
   EXPECT_EQ(r, r);
   EXPECT_NE(r, r2);
   EXPECT_NE(r2, r);
+  EXPECT_NE(r, r3);
+  EXPECT_NE(r3, r);
+  EXPECT_NE(r2, r3);
+  EXPECT_NE(r3, r2);
 }

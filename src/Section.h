@@ -29,12 +29,19 @@ public:
     LC_VERSION_MIN_TVOS,     ///< tvOS SDK min version (load command).
   };
 
+  /// Modified region indicates where and how much data was changed but doesn't contain the data
+  /// itself.
   struct ModifiedRegion {
-    int position = -1;
-    int size = 0;
+    ModifiedRegion(int position, const QByteArray &data);
 
     bool operator==(const ModifiedRegion &rhs) const;
     bool operator!=(const ModifiedRegion &rhs) const;
+
+    int position = -1;
+    int size = 0;
+
+  private:
+    QByteArray hash;
   };
 
   Section(Type type, const QString &name, quint64 addr, quint64 size, quint32 offset = 0);

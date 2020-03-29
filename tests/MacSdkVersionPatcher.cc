@@ -138,13 +138,19 @@ TEST(MacSdkVersionPatcher, changeVersions)
   const Version target{10, 11};
   ASSERT_TRUE(patcher.setTarget(target));
 
-  QList<Section::ModifiedRegion> mod{{0, 4}};
+  // Same changed region as what's done internally in `setTarget()`.
+  const Section::ModifiedRegion reg{0, Util::longToData(Util::encodeMacSdkVersion(target))};
+
+  QList<Section::ModifiedRegion> mod{reg};
   EXPECT_EQ(mod, section->modifiedRegions());
 
   const Version sdk{10, 14};
   ASSERT_TRUE(patcher.setSdk(sdk));
 
-  mod = decltype(mod){{0, 4}, {4, 4}};
+  // Same changed region as what's done internally in `setSdk()`.
+  const Section::ModifiedRegion reg2{4, Util::longToData(Util::encodeMacSdkVersion(sdk))};
+
+  mod = decltype(mod){reg, reg2};
   EXPECT_EQ(mod, section->modifiedRegions());
 
   EXPECT_EQ(target, patcher.target());
