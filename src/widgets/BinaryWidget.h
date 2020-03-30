@@ -13,6 +13,7 @@ class QTextDocument;
 
 namespace dispar {
 
+class Context;
 class TagsEdit;
 class HexEditor;
 class DisassemblyEditor;
@@ -57,6 +58,8 @@ private:
                      const QList<Section::ModifiedRegion> &priorModifications);
 
   BinaryObject *object;
+
+  Context &context;
 
   bool shown;
   QListWidget *symbolList, *stringList, *tagList;

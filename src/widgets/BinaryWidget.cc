@@ -57,13 +57,14 @@ public:
 
 namespace dispar {
 
-BinaryWidget::BinaryWidget(BinaryObject *object_) : object(object_), shown(false), doc(nullptr)
+BinaryWidget::BinaryWidget(BinaryObject *object_)
+  : object(object_), context(Context::get()), shown(false), doc(nullptr)
 {
   assert(object);
   createLayout();
 
-  auto &ctx = Context::get();
-  connect(&ctx, &Context::showMachineCodeChanged, this, &BinaryWidget::onShowMachineCodeChanged);
+  connect(&context, &Context::showMachineCodeChanged, this,
+          &BinaryWidget::onShowMachineCodeChanged);
 }
 
 BinaryWidget::~BinaryWidget()
@@ -334,8 +335,7 @@ void BinaryWidget::filterSymbols(const QString &filter)
 
 void BinaryWidget::createLayout()
 {
-  auto &ctx = Context::get();
-  auto *project = ctx.project();
+  auto *project = context.project();
   assert(project);
 
   // Symbols left bar.
@@ -440,7 +440,7 @@ void BinaryWidget::createLayout()
   binaryRunDebuggerButton->setToolTip(tr("Run binary in debugger."));
 
   connect(binaryRunDebuggerButton, &QPushButton::clicked, this, [this, binaryFile] {
-    const auto dbg = Context::get().debugger();
+    const auto dbg = context.debugger();
     if (!dbg.valid()) {
       QMessageBox::warning(this, "",
                            tr("No valid debugger is specified! Do so in the Options Dialog."));
