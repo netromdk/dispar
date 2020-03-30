@@ -1,15 +1,22 @@
 #ifndef DISPAR_BINARY_WIDGET_H
 #define DISPAR_BINARY_WIDGET_H
 
+#include <QElapsedTimer>
 #include <QHash>
+#include <QPointer>
 #include <QWidget>
 
+#include <memory>
+
 #include "BinaryObject.h"
+#include "SymbolTable.h"
 
 class QLabel;
+class QTextCursor;
 class QListWidget;
 class QPlainTextEdit;
 class QTextDocument;
+class QProgressDialog;
 
 namespace dispar {
 
@@ -76,6 +83,25 @@ private:
   QHash<Section *, DisassemblyEditor *> disassemblyEditors;
   QHash<Section *, MacSdkVersionsEditor *> macSdkVersionsEditors;
   QHash<Section *, HexEditor *> hexEditors;
+
+  /// Setup related.
+  //@{
+  QPointer<QProgressDialog> setupDiag;
+  QElapsedTimer setupElapsedTimer;
+  std::unique_ptr<QTextCursor> setupCursor;
+  QHash<quint64, QString> procNameMap;
+  quint64 firstAddress = 0;
+  SymbolTable::EntryList symbols;
+  void appendInstruction(quint64 address, quint64 offset, const QString &bytes,
+                         const QString &instruction, const QString &operands);
+  void appendString(quint64 address, quint64 offset, const QString &string);
+  qint64 presetup();
+  qint64 setupDisassembledSections();
+  qint64 setupStringSections();
+  qint64 setupLoadCommandSections();
+  qint64 setupMiscSections();
+  qint64 setupSidebar();
+  //@}
 };
 
 } // namespace dispar

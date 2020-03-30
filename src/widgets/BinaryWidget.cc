@@ -4,7 +4,6 @@
 #include <QDebug>
 #include <QDesktopServices>
 #include <QDir>
-#include <QElapsedTimer>
 #include <QFile>
 #include <QFileInfo>
 #include <QGroupBox>
@@ -524,8 +523,7 @@ void BinaryWidget::createLayout()
 
 void BinaryWidget::setup()
 {
-  QElapsedTimer elapsedTimer;
-  elapsedTimer.start();
+  setupElapsedTimer.start();
 
   // Make sure we start from a clean slate.
   mainView->clear();
@@ -543,321 +541,27 @@ void BinaryWidget::setup()
   sectionBlock.clear();
   codeBlocks.clear();
 
-  QProgressDialog setupDiag(this);
-  setupDiag.setLabelText(tr("Setting up for binary data.."));
-  setupDiag.setCancelButton(nullptr);
-  setupDiag.setRange(0, 6);
-  setupDiag.show();
-  qApp->processEvents();
-  qDebug() << qPrintable(setupDiag.labelText());
-
-  auto symbols = object->symbolTable().symbols();
-  Util::copyTo(object->dynSymbolTable().symbols(), symbols);
-
-  // Create temporary procedure name lookup map.
-  QHash<quint64, QString> procNameMap;
-  for (const auto &symbol : symbols) {
-    if (!symbol.string().isEmpty()) {
-      procNameMap[symbol.value()] = Util::demangle(symbol.string());
-    }
-  }
-
-  // Create text edit of all binary contents.
-  QTextCursor cursor(doc);
-
-  auto &ctx = Context::get();
-
-  auto appendInstruction = [this, &cursor, &ctx](quint64 address, quint64 offset,
-                                                 const QString &bytes, const QString &instruction,
-                                                 const QString &operands) {
-    auto *userData = new TextBlockUserData;
-    userData->address = address;
-    userData->addressStart = 0;
-    userData->addressEnd = 20;
-
-    userData->offset = offset;
-
-    bool smc = ctx.showMachineCode();
-    userData->bytes = bytes;
-    userData->bytesStart = userData->addressEnd + 1;
-    userData->bytesEnd = (smc ? userData->bytesStart + 24 : -1);
-
-    cursor.insertBlock();
-    cursor.insertText(QString("%1%2%3%4")
-                        .arg(QString("0x%1").arg(address, 0, 16), -20)
-                        .arg(smc ? QString("%1").arg(bytes, -24) : QString())
-                        .arg(instruction, -10)
-                        .arg(operands));
-
-    auto block = cursor.block();
-    block.setUserData(userData);
-
-    offsetBlock[userData->address] = block.blockNumber();
-    codeBlocks << block.blockNumber();
-  };
-
-  auto appendString = [this, &cursor](quint64 address, quint64 offset, const QString &string) {
-    cursor.insertBlock();
-    cursor.insertText(QString("%1%2%3")
-                        .arg(QString("0x%1").arg(address, 0, 16), -20)
-                        .arg(QString("\"%1\"").arg(Util::escapeWhitespace(string)))
-                        .arg(tr("; size=%1").arg(string.size()), 11));
-
-    auto *userData = new TextBlockUserData;
-    userData->address = address;
-    userData->offset = offset;
-
-    auto block = cursor.block();
-    block.setUserData(userData);
-
-    offsetBlock[userData->address] = block.blockNumber();
-  };
-
-  const auto presetupTime = elapsedTimer.restart();
-  qDebug() << ">" << presetupTime << "ms";
-
-  cursor.beginEditBlock();
-
-  setupDiag.setValue(1);
-  setupDiag.setLabelText(tr("Generating UI for disassembled sections.."));
-  qApp->processEvents();
-  qDebug() << qPrintable(setupDiag.labelText());
-
-  quint64 firstAddress = 0;
-  for (auto *section : object->sections()) {
-    const auto *disasm = section->disassembly();
-    if (!disasm) continue;
-
-    cursor.movePosition(QTextCursor::End);
-
-    // There is a default block at the beginning so reuse that.
-    if (cursor.block() != doc->firstBlock()) {
-      cursor.insertBlock();
-    }
-
-    // Save section to block number.
-    sectionBlock[section] = cursor.blockNumber();
-
-    const auto secName = section->toString();
-    qDebug() << "" << secName << "section..";
-    cursor.insertText("===== " + secName + " =====");
-
-    QElapsedTimer sectionTimer;
-    sectionTimer.start();
-
-    for (std::size_t i = 0; i < disasm->count(); i++) {
-      const auto *instr = disasm->instructions(i);
-      const auto offset = instr->address;
-      const auto addr = offset + section->address();
-
-      // Check if address is the start of a procedure.
-      const auto it = procNameMap.find(addr);
-      if (it != procNameMap.end()) {
-        cursor.insertBlock();
-        cursor.insertText("\nPROC: " + *it + "\n");
-      }
-
-      if (firstAddress == 0) {
-        firstAddress = addr;
-      }
-
-      appendInstruction(addr, offset, Util::bytesToHex(instr->bytes, instr->size), instr->mnemonic,
-                        instr->op_str);
-    }
-
-    qDebug() << " >" << sectionTimer.restart() << "ms";
-
-    cursor.movePosition(QTextCursor::End);
-    cursor.insertBlock();
-    cursor.insertText("\n===== /" + secName + " =====\n");
-  }
-
-  const auto disSectionsTime = elapsedTimer.restart();
-  qDebug() << ">" << disSectionsTime << "ms";
-
-  setupDiag.setValue(2);
-  setupDiag.setLabelText(tr("Generating UI for string sections.."));
-  qApp->processEvents();
-  qDebug() << qPrintable(setupDiag.labelText());
-
-  // Show cstring+string sections.
-  for (auto *section : object->sectionsByTypes({Section::Type::CSTRING, Section::Type::STRING})) {
-    cursor.movePosition(QTextCursor::End);
-    cursor.insertBlock();
-
-    // Save section to block number.
-    sectionBlock[section] = cursor.blockNumber();
-
-    const auto secName = section->toString();
-    qDebug() << "" << secName << "section..";
-    cursor.insertText("===== " + secName + " =====\n");
-
-    QElapsedTimer sectionTimer;
-    sectionTimer.start();
-
-    CStringReader reader(section->data());
-    while (reader.next()) {
-      const auto offset = reader.offset();
-      const auto addr = offset + section->address();
-      const auto string = reader.string();
-      appendString(addr, offset, string);
-      addSymbolToList(string, addr, stringList);
-    }
-
-    qDebug() << " >" << sectionTimer.restart() << "ms";
-
-    cursor.movePosition(QTextCursor::End);
-    cursor.insertBlock();
-    cursor.insertText("\n===== /" + secName + " =====\n");
-  }
-
-  const auto stringSectionsTime = elapsedTimer.restart();
-  qDebug() << ">" << stringSectionsTime << "ms";
-
-  setupDiag.setValue(3);
-  setupDiag.setLabelText(tr("Generating UI for load commands.."));
-  qApp->processEvents();
-  qDebug() << qPrintable(setupDiag.labelText());
-
-  // Show load command sections.
-  for (auto *section : object->sectionsByTypes(
-         {Section::Type::LC_VERSION_MIN_MACOSX, Section::Type::LC_VERSION_MIN_IPHONEOS,
-          Section::Type::LC_VERSION_MIN_WATCHOS, Section::Type::LC_VERSION_MIN_TVOS})) {
-    cursor.movePosition(QTextCursor::End);
-    cursor.insertBlock();
-
-    // Save section to block number.
-    sectionBlock[section] = cursor.blockNumber();
-
-    const auto secName = section->toString();
-    qDebug() << "" << secName << "section..";
-    cursor.insertText("===== " + secName + " =====\n");
-
-    QElapsedTimer sectionTimer;
-    sectionTimer.start();
-
-    MacSdkVersionPatcher patcher(*section);
-    if (patcher.valid()) {
-      static const auto versionString = [](const std::tuple<int, int> &version) {
-        return QString("%1.%2").arg(std::get<0>(version)).arg(std::get<1>(version));
-      };
-
-      const auto target = patcher.target();
-      const auto targetStr = QString("0x%1 (target %2)")
-                               .arg(Util::encodeMacSdkVersion(target), 0, 16)
-                               .arg(versionString(target));
-      auto addr = section->address();
-      appendString(addr, addr - section->address(), targetStr);
-
-      const auto sdk = patcher.sdk();
-      const auto sdkStr =
-        QString("0x%1 (sdk %2)").arg(Util::encodeMacSdkVersion(sdk), 0, 16).arg(versionString(sdk));
-      addr = section->address() + 4;
-      appendString(addr, addr - section->address(), sdkStr);
-    }
-
-    qDebug() << " >" << sectionTimer.restart() << "ms";
-
-    cursor.movePosition(QTextCursor::End);
-    cursor.insertBlock();
-    cursor.insertText("\n===== /" + secName + " =====\n");
-  }
-
-  const auto lcSectionsTime = elapsedTimer.restart();
-  qDebug() << ">" << lcSectionsTime << "ms";
-
-  setupDiag.setValue(4);
-  setupDiag.setLabelText(tr("Generating UI for miscellaneous sections.."));
-  qApp->processEvents();
-  qDebug() << qPrintable(setupDiag.labelText());
-
-  // Show miscellaneous sections. The section not shown in specific ways will be address-hex-ASCII
-  // encoded just to give some representation.
-  for (auto *section : object->sectionsByTypes(
-         {Section::Type::FUNC_STARTS, Section::Type::SYMBOLS, Section::Type::DYN_SYMBOLS,
-          Section::Type::SYMBOL_STUBS, Section::Type::CODE_SIG})) {
-    cursor.movePosition(QTextCursor::End);
-    cursor.insertBlock();
-
-    // Save section to block number.
-    sectionBlock[section] = cursor.blockNumber();
-
-    const auto secName = section->toString();
-    qDebug() << "" << secName << "section..";
-    cursor.insertText("===== " + secName + " =====\n");
-
-    QElapsedTimer sectionTimer;
-    sectionTimer.start();
-
-    AddrHexAsciiEncoder encoder(section);
-    const bool blocking(true);
-    encoder.start(blocking);
-    const auto lines = encoder.result().split("\n");
-
-    for (const auto &line : lines) {
-      const auto pos = line.indexOf(':');
-      if (pos == -1) continue;
-
-      const auto addr = line.mid(0, pos).toULongLong(nullptr, 16);
-
-      cursor.insertBlock();
-      cursor.insertText(line);
-
-      auto *userData = new TextBlockUserData;
-      userData->address = addr;
-      userData->offset = addr - section->address();
-
-      auto block = cursor.block();
-      block.setUserData(userData);
-
-      offsetBlock[userData->address] = block.blockNumber();
-    }
-
-    qDebug() << " >" << sectionTimer.restart() << "ms";
-
-    cursor.movePosition(QTextCursor::End);
-    cursor.insertBlock();
-    cursor.insertText("\n===== /" + secName + " =====\n");
-  }
-
-  const auto miscSectionsTime = elapsedTimer.restart();
-  qDebug() << ">" << miscSectionsTime << "ms";
-
-  setupDiag.setValue(5);
-  setupDiag.setLabelText(tr("Generating sidebar with functions and strings.."));
-  qApp->processEvents();
-  qDebug() << qPrintable(setupDiag.labelText());
-
-  // Fill side bar with function names of the symbol tables.
-  QSet<quint64> seenSymbols;
-  for (const auto &symbol : symbols) {
-    if (seenSymbols.contains(symbol.value())) {
-      continue;
-    }
-
-    seenSymbols << symbol.value();
-
-    auto func = Util::demangle(symbol.string());
-    if (func.isEmpty()) {
-      func = QString("unnamed_%1").arg(symbol.value(), 0, 16);
-    }
-    if (offsetBlock.contains(symbol.value())) {
-      func += " *";
-    }
-
-    addSymbolToList(func, symbol.value() /* offset to symbol */, symbolList);
-  }
-
-  const auto sidebarTime = elapsedTimer.restart();
-  qDebug() << ">" << sidebarTime << "ms";
-
-  cursor.endEditBlock();
-  setupDiag.setValue(6);
+  setupDiag = new QProgressDialog(this);
+  setupDiag->setCancelButton(nullptr);
+  setupDiag->setRange(0, 6);
+  setupDiag->show();
+
+  const auto presetupTime = presetup();
+  setupCursor->beginEditBlock();
+
+  const auto disSectionsTime = setupDisassembledSections();
+  const auto stringSectionsTime = setupStringSections();
+  const auto lcSectionsTime = setupLoadCommandSections();
+  const auto miscSectionsTime = setupMiscSections();
+  const auto sidebarTime = setupSidebar();
+
+  setupCursor->endEditBlock();
+  setupDiag->setValue(6);
 
   Util::scrollToTop(mainView);
 
   const auto totalTime = presetupTime + disSectionsTime + stringSectionsTime + lcSectionsTime +
-                         miscSectionsTime + sidebarTime + elapsedTimer.restart();
+                         miscSectionsTime + sidebarTime + setupElapsedTimer.restart();
   qDebug() << "Setup in" << totalTime << "ms";
 
   symbolList->setSortingEnabled(true);
@@ -872,13 +576,16 @@ void BinaryWidget::setup()
   if (!offsetBlock.isEmpty()) {
     selectAddress(firstAddress);
   }
+
+  setupDiag->deleteLater();
+  setupCursor.reset();
 }
 
 void BinaryWidget::updateTagList()
 {
   tagList->clear();
 
-  const auto &tags = Context::get().project()->tags();
+  const auto &tags = context.project()->tags();
   for (const auto addr : tags.keys()) {
     for (const auto &tag : tags[addr]) {
       addSymbolToList(tag, addr, tagList);
@@ -937,7 +644,7 @@ void BinaryWidget::removeSelectedTags()
   for (auto *item : tagList->selectedItems()) {
     tags << item->text();
   }
-  Context::get().project()->removeAddressTags(tags);
+  context.project()->removeAddressTags(tags);
 }
 
 void BinaryWidget::checkModified(const Section *section,
@@ -953,6 +660,337 @@ void BinaryWidget::checkModified(const Section *section,
       reloadUi();
     }
   }
+}
+
+void BinaryWidget::appendInstruction(quint64 address, quint64 offset, const QString &bytes,
+                                     const QString &instruction, const QString &operands)
+{
+  auto *userData = new TextBlockUserData;
+  userData->address = address;
+  userData->addressStart = 0;
+  userData->addressEnd = 20;
+
+  userData->offset = offset;
+
+  bool smc = context.showMachineCode();
+  userData->bytes = bytes;
+  userData->bytesStart = userData->addressEnd + 1;
+  userData->bytesEnd = (smc ? userData->bytesStart + 24 : -1);
+
+  setupCursor->insertBlock();
+  setupCursor->insertText(QString("%1%2%3%4")
+                            .arg(QString("0x%1").arg(address, 0, 16), -20)
+                            .arg(smc ? QString("%1").arg(bytes, -24) : QString())
+                            .arg(instruction, -10)
+                            .arg(operands));
+
+  auto block = setupCursor->block();
+  block.setUserData(userData);
+
+  offsetBlock[userData->address] = block.blockNumber();
+  codeBlocks << block.blockNumber();
+}
+
+void BinaryWidget::appendString(quint64 address, quint64 offset, const QString &string)
+{
+  setupCursor->insertBlock();
+  setupCursor->insertText(QString("%1%2%3")
+                            .arg(QString("0x%1").arg(address, 0, 16), -20)
+                            .arg(QString("\"%1\"").arg(Util::escapeWhitespace(string)))
+                            .arg(tr("; size=%1").arg(string.size()), 11));
+
+  auto *userData = new TextBlockUserData;
+  userData->address = address;
+  userData->offset = offset;
+
+  auto block = setupCursor->block();
+  block.setUserData(userData);
+
+  offsetBlock[userData->address] = block.blockNumber();
+}
+
+qint64 BinaryWidget::presetup()
+{
+  setupDiag->setLabelText(tr("Setting up for binary data.."));
+  qApp->processEvents();
+  qDebug() << qPrintable(setupDiag->labelText());
+
+  symbols = object->symbolTable().symbols();
+  Util::copyTo(object->dynSymbolTable().symbols(), symbols);
+
+  // Create temporary procedure name lookup map.
+  procNameMap.clear();
+  for (const auto &symbol : symbols) {
+    if (!symbol.string().isEmpty()) {
+      procNameMap[symbol.value()] = Util::demangle(symbol.string());
+    }
+  }
+
+  // Create text edit of all binary contents.
+  setupCursor = std::make_unique<QTextCursor>(doc);
+
+  const auto presetupTime = setupElapsedTimer.restart();
+  qDebug() << ">" << presetupTime << "ms";
+
+  return presetupTime;
+}
+
+qint64 BinaryWidget::setupDisassembledSections()
+{
+  setupDiag->setValue(1);
+  setupDiag->setLabelText(tr("Generating UI for disassembled sections.."));
+  qApp->processEvents();
+  qDebug() << qPrintable(setupDiag->labelText());
+
+  firstAddress = 0;
+  for (auto *section : object->sections()) {
+    const auto *disasm = section->disassembly();
+    if (!disasm) continue;
+
+    setupCursor->movePosition(QTextCursor::End);
+
+    // There is a default block at the beginning so reuse that.
+    if (setupCursor->block() != doc->firstBlock()) {
+      setupCursor->insertBlock();
+    }
+
+    // Save section to block number.
+    sectionBlock[section] = setupCursor->blockNumber();
+
+    const auto secName = section->toString();
+    qDebug() << "" << secName << "section..";
+    setupCursor->insertText("===== " + secName + " =====");
+
+    QElapsedTimer sectionTimer;
+    sectionTimer.start();
+
+    for (std::size_t i = 0; i < disasm->count(); i++) {
+      const auto *instr = disasm->instructions(i);
+      const auto offset = instr->address;
+      const auto addr = offset + section->address();
+
+      // Check if address is the start of a procedure.
+      const auto it = procNameMap.find(addr);
+      if (it != procNameMap.end()) {
+        setupCursor->insertBlock();
+        setupCursor->insertText("\nPROC: " + *it + "\n");
+      }
+
+      if (firstAddress == 0) {
+        firstAddress = addr;
+      }
+
+      appendInstruction(addr, offset, Util::bytesToHex(instr->bytes, instr->size), instr->mnemonic,
+                        instr->op_str);
+    }
+
+    qDebug() << " >" << sectionTimer.restart() << "ms";
+
+    setupCursor->movePosition(QTextCursor::End);
+    setupCursor->insertBlock();
+    setupCursor->insertText("\n===== /" + secName + " =====\n");
+  }
+
+  const auto disSectionsTime = setupElapsedTimer.restart();
+  qDebug() << ">" << disSectionsTime << "ms";
+
+  return disSectionsTime;
+}
+
+qint64 BinaryWidget::setupStringSections()
+{
+  setupDiag->setValue(2);
+  setupDiag->setLabelText(tr("Generating UI for string sections.."));
+  qApp->processEvents();
+  qDebug() << qPrintable(setupDiag->labelText());
+
+  // Show cstring+string sections.
+  for (auto *section : object->sectionsByTypes({Section::Type::CSTRING, Section::Type::STRING})) {
+    setupCursor->movePosition(QTextCursor::End);
+    setupCursor->insertBlock();
+
+    // Save section to block number.
+    sectionBlock[section] = setupCursor->blockNumber();
+
+    const auto secName = section->toString();
+    qDebug() << "" << secName << "section..";
+    setupCursor->insertText("===== " + secName + " =====\n");
+
+    QElapsedTimer sectionTimer;
+    sectionTimer.start();
+
+    CStringReader reader(section->data());
+    while (reader.next()) {
+      const auto offset = reader.offset();
+      const auto addr = offset + section->address();
+      const auto string = reader.string();
+      appendString(addr, offset, string);
+      addSymbolToList(string, addr, stringList);
+    }
+
+    qDebug() << " >" << sectionTimer.restart() << "ms";
+
+    setupCursor->movePosition(QTextCursor::End);
+    setupCursor->insertBlock();
+    setupCursor->insertText("\n===== /" + secName + " =====\n");
+  }
+
+  const auto stringSectionsTime = setupElapsedTimer.restart();
+  qDebug() << ">" << stringSectionsTime << "ms";
+
+  return stringSectionsTime;
+}
+
+qint64 BinaryWidget::setupLoadCommandSections()
+{
+  setupDiag->setValue(3);
+  setupDiag->setLabelText(tr("Generating UI for load commands.."));
+  qApp->processEvents();
+  qDebug() << qPrintable(setupDiag->labelText());
+
+  // Show load command sections.
+  for (auto *section : object->sectionsByTypes(
+         {Section::Type::LC_VERSION_MIN_MACOSX, Section::Type::LC_VERSION_MIN_IPHONEOS,
+          Section::Type::LC_VERSION_MIN_WATCHOS, Section::Type::LC_VERSION_MIN_TVOS})) {
+    setupCursor->movePosition(QTextCursor::End);
+    setupCursor->insertBlock();
+
+    // Save section to block number.
+    sectionBlock[section] = setupCursor->blockNumber();
+
+    const auto secName = section->toString();
+    qDebug() << "" << secName << "section..";
+    setupCursor->insertText("===== " + secName + " =====\n");
+
+    QElapsedTimer sectionTimer;
+    sectionTimer.start();
+
+    MacSdkVersionPatcher patcher(*section);
+    if (patcher.valid()) {
+      static const auto versionString = [](const std::tuple<int, int> &version) {
+        return QString("%1.%2").arg(std::get<0>(version)).arg(std::get<1>(version));
+      };
+
+      const auto target = patcher.target();
+      const auto targetStr = QString("0x%1 (target %2)")
+                               .arg(Util::encodeMacSdkVersion(target), 0, 16)
+                               .arg(versionString(target));
+      auto addr = section->address();
+      appendString(addr, addr - section->address(), targetStr);
+
+      const auto sdk = patcher.sdk();
+      const auto sdkStr =
+        QString("0x%1 (sdk %2)").arg(Util::encodeMacSdkVersion(sdk), 0, 16).arg(versionString(sdk));
+      addr = section->address() + 4;
+      appendString(addr, addr - section->address(), sdkStr);
+    }
+
+    qDebug() << " >" << sectionTimer.restart() << "ms";
+
+    setupCursor->movePosition(QTextCursor::End);
+    setupCursor->insertBlock();
+    setupCursor->insertText("\n===== /" + secName + " =====\n");
+  }
+
+  const auto lcSectionsTime = setupElapsedTimer.restart();
+  qDebug() << ">" << lcSectionsTime << "ms";
+
+  return lcSectionsTime;
+}
+
+qint64 BinaryWidget::setupMiscSections()
+{
+  setupDiag->setValue(4);
+  setupDiag->setLabelText(tr("Generating UI for miscellaneous sections.."));
+  qApp->processEvents();
+  qDebug() << qPrintable(setupDiag->labelText());
+
+  // Show miscellaneous sections. The section not shown in specific ways will be address-hex-ASCII
+  // encoded just to give some representation.
+  for (auto *section : object->sectionsByTypes(
+         {Section::Type::FUNC_STARTS, Section::Type::SYMBOLS, Section::Type::DYN_SYMBOLS,
+          Section::Type::SYMBOL_STUBS, Section::Type::CODE_SIG})) {
+    setupCursor->movePosition(QTextCursor::End);
+    setupCursor->insertBlock();
+
+    // Save section to block number.
+    sectionBlock[section] = setupCursor->blockNumber();
+
+    const auto secName = section->toString();
+    qDebug() << "" << secName << "section..";
+    setupCursor->insertText("===== " + secName + " =====\n");
+
+    QElapsedTimer sectionTimer;
+    sectionTimer.start();
+
+    AddrHexAsciiEncoder encoder(section);
+    const bool blocking(true);
+    encoder.start(blocking);
+    const auto lines = encoder.result().split("\n");
+
+    for (const auto &line : lines) {
+      const auto pos = line.indexOf(':');
+      if (pos == -1) continue;
+
+      const auto addr = line.mid(0, pos).toULongLong(nullptr, 16);
+
+      setupCursor->insertBlock();
+      setupCursor->insertText(line);
+
+      auto *userData = new TextBlockUserData;
+      userData->address = addr;
+      userData->offset = addr - section->address();
+
+      auto block = setupCursor->block();
+      block.setUserData(userData);
+
+      offsetBlock[userData->address] = block.blockNumber();
+    }
+
+    qDebug() << " >" << sectionTimer.restart() << "ms";
+
+    setupCursor->movePosition(QTextCursor::End);
+    setupCursor->insertBlock();
+    setupCursor->insertText("\n===== /" + secName + " =====\n");
+  }
+
+  const auto miscSectionsTime = setupElapsedTimer.restart();
+  qDebug() << ">" << miscSectionsTime << "ms";
+
+  return miscSectionsTime;
+}
+
+qint64 BinaryWidget::setupSidebar()
+{
+  setupDiag->setValue(5);
+  setupDiag->setLabelText(tr("Generating sidebar with functions and strings.."));
+  qApp->processEvents();
+  qDebug() << qPrintable(setupDiag->labelText());
+
+  // Fill side bar with function names of the symbol tables.
+  QSet<quint64> seenSymbols;
+  for (const auto &symbol : symbols) {
+    if (seenSymbols.contains(symbol.value())) {
+      continue;
+    }
+
+    seenSymbols << symbol.value();
+
+    auto func = Util::demangle(symbol.string());
+    if (func.isEmpty()) {
+      func = QString("unnamed_%1").arg(symbol.value(), 0, 16);
+    }
+    if (offsetBlock.contains(symbol.value())) {
+      func += " *";
+    }
+
+    addSymbolToList(func, symbol.value() /* offset to symbol */, symbolList);
+  }
+
+  const auto sidebarTime = setupElapsedTimer.restart();
+  qDebug() << ">" << sidebarTime << "ms";
+
+  return sidebarTime;
 }
 
 } // namespace dispar
