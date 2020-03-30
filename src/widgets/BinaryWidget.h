@@ -25,6 +25,8 @@ public:
   BinaryWidget(BinaryObject *object);
   virtual ~BinaryWidget();
 
+  void reloadUi();
+
 signals:
   void modified();
 

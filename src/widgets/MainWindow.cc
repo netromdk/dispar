@@ -212,6 +212,7 @@ void MainWindow::closeProject()
   closeProjectAction->setEnabled(false);
   saveBinaryAction->setEnabled(false);
   reloadBinaryAction->setEnabled(false);
+  reloadBinaryUiAction->setEnabled(false);
 
   if (binaryWidget) {
     binaryWidget->deleteLater();
@@ -259,6 +260,13 @@ void MainWindow::reloadBinary()
   if (!checkSave()) return;
   if (!checkSaveBinary()) return;
   loadBinary(Context::get().project()->binary());
+}
+
+void MainWindow::reloadBinaryUi()
+{
+  if (binaryWidget) {
+    binaryWidget->reloadUi();
+  }
 }
 
 void MainWindow::onRecentProject()
@@ -421,6 +429,8 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
     connect(binaryWidget, &BinaryWidget::modified, this, &MainWindow::onBinaryModified);
 
     setCentralWidget(binaryWidget);
+
+    reloadBinaryUiAction->setEnabled(true);
   });
 }
 
@@ -513,6 +523,11 @@ void MainWindow::createMenu()
   closeProjectAction->setEnabled(false);
 
   fileMenu->addSeparator();
+
+  auto *viewMenu = menuBar()->addMenu(tr("&View"));
+  reloadBinaryUiAction =
+    viewMenu->addAction(tr("Reload binary UI"), this, &MainWindow::reloadBinaryUi);
+  reloadBinaryUiAction->setEnabled(false);
 
   auto *toolsMenu = menuBar()->addMenu(tr("&Tools"));
   toolsMenu->addAction(tr("Conversion helper"), this, SLOT(onConversionHelper()),

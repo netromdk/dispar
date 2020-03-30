@@ -45,6 +45,7 @@ private slots:
   bool saveBinary();
 
   void reloadBinary();
+  void reloadBinaryUi();
 
   void onRecentProject();
   void onRecentBinary();
@@ -79,7 +80,7 @@ private:
   QString startupFile;
 
   QAction *newProjectAction, *saveProjectAction, *saveAsProjectAction, *closeProjectAction,
-    *saveBinaryAction, *reloadBinaryAction;
+    *saveBinaryAction, *reloadBinaryAction, *reloadBinaryUiAction;
 
   std::unique_ptr<FormatLoader> loader;
   std::shared_ptr<Format> format;

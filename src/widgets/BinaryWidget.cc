@@ -73,6 +73,11 @@ BinaryWidget::~BinaryWidget()
   qDeleteAll(macSdkVersionsEditors.values());
 }
 
+void BinaryWidget::reloadUi()
+{
+  setup();
+}
+
 void BinaryWidget::showEvent(QShowEvent *event)
 {
   if (!shown) {
@@ -945,7 +950,7 @@ void BinaryWidget::checkModified(const Section *section,
     auto ret = QMessageBox::question(this, "dispar", tr("Binary was modified. Reload UI?"),
                                      QMessageBox::Yes | QMessageBox::No);
     if (QMessageBox::Yes == ret) {
-      setup(); // Reload UI.
+      reloadUi();
     }
   }
 }
