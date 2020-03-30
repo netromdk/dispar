@@ -3,6 +3,7 @@
 
 #include <QList>
 #include <QMainWindow>
+#include <QPointer>
 
 #include <memory>
 
@@ -82,6 +83,8 @@ private:
 
   std::unique_ptr<FormatLoader> loader;
   std::shared_ptr<Format> format;
+
+  QPointer<BinaryWidget> binaryWidget;
 };
 
 } // namespace dispar

@@ -213,8 +213,8 @@ void MainWindow::closeProject()
   saveBinaryAction->setEnabled(false);
   reloadBinaryAction->setEnabled(false);
 
-  if (centralWidget()) {
-    centralWidget()->deleteLater();
+  if (binaryWidget) {
+    binaryWidget->deleteLater();
   }
 
   createLayout();
@@ -417,7 +417,7 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
       centralWidget()->deleteLater();
     }
 
-    auto *binaryWidget = new BinaryWidget(object);
+    binaryWidget = new BinaryWidget(object);
     connect(binaryWidget, &BinaryWidget::modified, this, &MainWindow::onBinaryModified);
 
     setCentralWidget(binaryWidget);
