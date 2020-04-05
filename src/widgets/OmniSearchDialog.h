@@ -5,6 +5,7 @@
 #include <QTimer>
 
 class QTreeWidget;
+class QTreeWidgetItem;
 
 namespace dispar {
 
@@ -39,8 +40,8 @@ private slots:
 private:
   void setupLayout();
   float flexMatch(const QString &haystack, const QString &needle);
-  void addCandidate(const QString &text, const EntryType type, const float similarity,
-                    const QVariant data);
+  QTreeWidgetItem *createCandidate(const QString &text, const EntryType type,
+                                   const float similarity, const QVariant data);
   void navigateCandidates(const Navigation nav);
 
   BinaryWidget *binaryWidget = nullptr;

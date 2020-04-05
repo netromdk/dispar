@@ -151,6 +151,8 @@ void OmniSearchDialog::search()
   candidatesWidget->clear();
   candidatesWidget->setSortingEnabled(false);
 
+  QList<QTreeWidgetItem *> items;
+
   QElapsedTimer elapsedTimer;
   elapsedTimer.start();
 
@@ -158,8 +160,8 @@ void OmniSearchDialog::search()
     const float sim = flexMatch(section->name(), input),
                 sim2 = flexMatch(Section::typeName(section->type()), input);
     if (sim > 0.0f || sim2 > 0.0f) {
-      addCandidate(section->toString(), EntryType::SECTION, std::max(sim, sim2),
-                   QVariant::fromValue((void *) section));
+      items << createCandidate(section->toString(), EntryType::SECTION, std::max(sim, sim2),
+                               QVariant::fromValue((void *) section));
     }
   }
 
@@ -173,7 +175,8 @@ void OmniSearchDialog::search()
       itemText.chop(2);
     }
     if (const float sim = flexMatch(itemText, input); sim > 0.0f) {
-      addCandidate(itemText, EntryType::SYMBOL, sim, QVariant::fromValue((void *) item));
+      items << createCandidate(itemText, EntryType::SYMBOL, sim,
+                               QVariant::fromValue((void *) item));
     }
   }
   const auto *stringList = binaryWidget->stringList_;
@@ -181,7 +184,8 @@ void OmniSearchDialog::search()
     const auto *item = stringList->item(row);
     if (!item) continue;
     if (const float sim = flexMatch(item->text(), input); sim > 0.0f) {
-      addCandidate(item->text(), EntryType::STRING, sim, QVariant::fromValue((void *) item));
+      items << createCandidate(item->text(), EntryType::STRING, sim,
+                               QVariant::fromValue((void *) item));
     }
   }
   const auto *tagList = binaryWidget->tagList_;
@@ -189,12 +193,14 @@ void OmniSearchDialog::search()
     const auto *item = tagList->item(row);
     if (!item) continue;
     if (const float sim = flexMatch(item->text(), input); sim > 0.0f) {
-      addCandidate(item->text(), EntryType::TAG, sim, QVariant::fromValue((void *) item));
+      items << createCandidate(item->text(), EntryType::TAG, sim,
+                               QVariant::fromValue((void *) item));
     }
   }
 
   qDebug() << "Searched in" << elapsedTimer.restart() << "ms";
 
+  candidatesWidget->addTopLevelItems(items);
   candidatesWidget->setSortingEnabled(true);
 
   // Select first candidate, if any.
@@ -244,8 +250,8 @@ float OmniSearchDialog::flexMatch(const QString &haystack, const QString &needle
   return 0.0f;
 }
 
-void OmniSearchDialog::addCandidate(const QString &text, const EntryType type,
-                                    const float similarity, const QVariant data)
+QTreeWidgetItem *OmniSearchDialog::createCandidate(const QString &text, const EntryType type,
+                                                   const float similarity, const QVariant data)
 {
   const auto typeString = [&type]() -> QString {
     switch (type) {
@@ -264,7 +270,7 @@ void OmniSearchDialog::addCandidate(const QString &text, const EntryType type,
   auto *item = new QTreeWidgetItem({text, typeString, QString::number(double(similarity))});
   item->setData(0, Qt::UserRole, data);
   item->setData(1, Qt::UserRole, int(type));
-  candidatesWidget->addTopLevelItem(item);
+  return item;
 }
 
 void OmniSearchDialog::navigateCandidates(const Navigation nav)
