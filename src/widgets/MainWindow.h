@@ -17,6 +17,7 @@ class Format;
 class FormatLoader;
 class BinaryWidget;
 class BinaryObject;
+class OmniSearchDialog;
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -46,6 +47,8 @@ private slots:
 
   void reloadBinary();
   void reloadBinaryUi();
+
+  void omniSearch();
 
   void onRecentProject();
   void onRecentBinary();
@@ -80,12 +83,13 @@ private:
   QString startupFile;
 
   QAction *newProjectAction, *saveProjectAction, *saveAsProjectAction, *closeProjectAction,
-    *saveBinaryAction, *reloadBinaryAction, *reloadBinaryUiAction;
+    *saveBinaryAction, *reloadBinaryAction, *reloadBinaryUiAction, *omniSearchAction;
 
   std::unique_ptr<FormatLoader> loader;
   std::shared_ptr<Format> format;
 
   QPointer<BinaryWidget> binaryWidget;
+  QPointer<OmniSearchDialog> omniSearchDialog;
 };
 
 } // namespace dispar

@@ -12,6 +12,7 @@
 #include "SymbolTable.h"
 
 class QLabel;
+class QTabWidget;
 class QTextCursor;
 class QListWidget;
 class QPlainTextEdit;
@@ -28,6 +29,7 @@ class MacSdkVersionsEditor;
 
 class BinaryWidget : public QWidget {
   Q_OBJECT
+  friend class OmniSearchDialog;
 
 public:
   BinaryWidget(BinaryObject *object);
@@ -57,6 +59,7 @@ private:
   void addSymbolToList(const QString &text, quint64 address, QListWidget *list);
   void selectAddress(quint64 address);
   void selectBlock(int number);
+  void selectSection(const Section *section);
   void removeSelectedTags();
 
   /// Check if section has different modifications than \p priorModifications and emit modified.
@@ -64,12 +67,13 @@ private:
   void checkModified(const Section *section,
                      const QList<Section::ModifiedRegion> &priorModifications);
 
-  BinaryObject *object;
+  BinaryObject *object_;
 
   Context &context;
 
   bool shown;
-  QListWidget *symbolList, *stringList, *tagList;
+  QListWidget *symbolList_, *stringList_, *tagList_;
+  QTabWidget *tabWidget;
   QList<QListWidget *> symbolLists;
   QHash<QListWidget *, QString> listFilters;
   QPlainTextEdit *mainView;

@@ -11,6 +11,7 @@
 #include "widgets/ConversionHelper.h"
 #include "widgets/DisassemblerDialog.h"
 #include "widgets/LogDialog.h"
+#include "widgets/OmniSearchDialog.h"
 #include "widgets/OptionsDialog.h"
 
 #include <cassert>
@@ -213,6 +214,7 @@ void MainWindow::closeProject()
   saveBinaryAction->setEnabled(false);
   reloadBinaryAction->setEnabled(false);
   reloadBinaryUiAction->setEnabled(false);
+  omniSearchAction->setEnabled(false);
 
   if (binaryWidget) {
     binaryWidget->deleteLater();
@@ -267,6 +269,23 @@ void MainWindow::reloadBinaryUi()
   if (binaryWidget) {
     binaryWidget->reloadUi();
   }
+}
+
+void MainWindow::omniSearch()
+{
+  if (!binaryWidget) return;
+
+  if (!omniSearchDialog) {
+    omniSearchDialog = new OmniSearchDialog(this);
+  }
+
+  // Only one dialog can execute at any one time.
+  if (omniSearchDialog->isVisible()) {
+    return;
+  }
+
+  omniSearchDialog->setBinaryWidget(binaryWidget);
+  omniSearchDialog->exec();
 }
 
 void MainWindow::onRecentProject()
@@ -431,6 +450,7 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
     setCentralWidget(binaryWidget);
 
     reloadBinaryUiAction->setEnabled(true);
+    omniSearchAction->setEnabled(true);
   });
 }
 
@@ -525,9 +545,14 @@ void MainWindow::createMenu()
   fileMenu->addSeparator();
 
   auto *viewMenu = menuBar()->addMenu(tr("&View"));
+
   reloadBinaryUiAction =
     viewMenu->addAction(tr("Reload binary UI"), this, &MainWindow::reloadBinaryUi);
   reloadBinaryUiAction->setEnabled(false);
+
+  omniSearchAction = viewMenu->addAction(tr("Omni Search"), this, &MainWindow::omniSearch,
+                                         QKeySequence(Qt::SHIFT + Qt::CTRL + Qt::Key_F));
+  omniSearchAction->setEnabled(false);
 
   auto *toolsMenu = menuBar()->addMenu(tr("&Tools"));
   toolsMenu->addAction(tr("Conversion helper"), this, SLOT(onConversionHelper()),

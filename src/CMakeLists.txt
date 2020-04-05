@@ -83,6 +83,8 @@ add_library(
   widgets/MacSdkVersionsEditor.cc
   widgets/LogDialog.h
   widgets/LogDialog.cc
+  widgets/OmniSearchDialog.h
+  widgets/OmniSearchDialog.cc
 
   formats/Format.h
   formats/Format.cc

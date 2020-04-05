@@ -56,10 +56,10 @@ public:
 
 namespace dispar {
 
-BinaryWidget::BinaryWidget(BinaryObject *object_)
-  : object(object_), context(Context::get()), shown(false), doc(nullptr)
+BinaryWidget::BinaryWidget(BinaryObject *object)
+  : object_(object), context(Context::get()), shown(false), doc(nullptr)
 {
-  assert(object);
+  assert(object_);
   createLayout();
 
   connect(&context, &Context::showMachineCodeChanged, this,
@@ -88,7 +88,7 @@ void BinaryWidget::showEvent(QShowEvent *event)
 
 bool BinaryWidget::eventFilter(QObject *obj, QEvent *event)
 {
-  if (obj == tagList && event->type() == QEvent::KeyPress) {
+  if (obj == tagList_ && event->type() == QEvent::KeyPress) {
     const auto *keyEvent = static_cast<QKeyEvent *>(event);
     switch (keyEvent->key()) {
     case Qt::Key_Backspace:
@@ -104,11 +104,14 @@ bool BinaryWidget::eventFilter(QObject *obj, QEvent *event)
 
 void BinaryWidget::onSymbolChosen(int row)
 {
-  const auto *list = qobject_cast<QListWidget *>(sender());
+  auto *list = qobject_cast<QListWidget *>(sender());
 
   // If offset is found then put the cursor at that line.
   const auto *item = list->item(row);
   if (!item) return;
+
+  // Ensure the corresponding tab widget is shown.
+  tabWidget->setCurrentWidget(list);
 
   auto offset = item->data(Qt::UserRole).toLongLong();
   selectAddress(offset);
@@ -197,14 +200,13 @@ void BinaryWidget::onCustomContextMenuRequested(const QPoint &pos)
   auto sortedSections = sectionBlock.keys();
   cxx::sort(sortedSections, [](const auto *s1, const auto *s2) { return s1->type() < s2->type(); });
   for (const auto *section : sortedSections) {
-    sectionMenu->addAction(section->toString(), this,
-                           [this, section] { selectBlock(sectionBlock[section]); });
+    sectionMenu->addAction(section->toString(), this, [this, section] { selectSection(section); });
   }
 
   auto cursor = mainView->textCursor();
   const auto *userData = dynamic_cast<TextBlockUserData *>(cursor.block().userData());
   if (userData) {
-    for (auto *section : object->sections()) {
+    for (auto *section : object_->sections()) {
       if (!section->hasAddress(userData->address)) {
         continue;
       }
@@ -216,7 +218,7 @@ void BinaryWidget::onCustomContextMenuRequested(const QPoint &pos)
 
           auto *editor = disassemblyEditors.value(section, nullptr);
           if (!editor) {
-            editor = new DisassemblyEditor(section, object, this);
+            editor = new DisassemblyEditor(section, object_, this);
             disassemblyEditors[section] = editor;
           }
 
@@ -232,7 +234,7 @@ void BinaryWidget::onCustomContextMenuRequested(const QPoint &pos)
         menu.addAction(tr("Edit versions '%1'").arg(section->toString()), this, [this, section] {
           auto *editor = macSdkVersionsEditors.value(section, nullptr);
           if (!editor) {
-            editor = new MacSdkVersionsEditor(section, object, this);
+            editor = new MacSdkVersionsEditor(section, object_, this);
             macSdkVersionsEditors[section] = editor;
           }
 
@@ -247,7 +249,7 @@ void BinaryWidget::onCustomContextMenuRequested(const QPoint &pos)
 
         auto *editor = hexEditors.value(section, nullptr);
         if (!editor) {
-          editor = new HexEditor(section, object, this);
+          editor = new HexEditor(section, object_, this);
           hexEditors[section] = editor;
         }
 
@@ -270,7 +272,7 @@ void BinaryWidget::onCustomContextMenuRequested(const QPoint &pos)
 
     menu.addSeparator();
     menu.addAction(tr("Disassemble"), this, [this, &selected] {
-      DisassemblerDialog diag(this, object->cpuType(), selected);
+      DisassemblerDialog diag(this, object_->cpuType(), selected);
       diag.exec();
     });
 
@@ -289,14 +291,14 @@ void BinaryWidget::filterSymbols(const QString &filter)
   qDebug() << "Filter using:" << filter;
 
   QListWidget *list = nullptr;
-  if (symbolList->isVisible()) {
-    list = symbolList;
+  if (symbolList_->isVisible()) {
+    list = symbolList_;
   }
-  else if (stringList->isVisible()) {
-    list = stringList;
+  else if (stringList_->isVisible()) {
+    list = stringList_;
   }
   else {
-    list = tagList;
+    list = tagList_;
   }
 
   // Disable sorting while filtering to improve speed.
@@ -339,32 +341,32 @@ void BinaryWidget::createLayout()
 
   // Symbols left bar.
 
-  symbolList = new QListWidget;
-  symbolList->setSortingEnabled(false);
-  symbolList->setUniformItemSizes(true);
-  connect(symbolList, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
+  symbolList_ = new QListWidget;
+  symbolList_->setSortingEnabled(false);
+  symbolList_->setUniformItemSizes(true);
+  connect(symbolList_, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
 
-  stringList = new QListWidget;
-  stringList->setSortingEnabled(false);
-  stringList->setUniformItemSizes(true);
-  connect(stringList, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
+  stringList_ = new QListWidget;
+  stringList_->setSortingEnabled(false);
+  stringList_->setUniformItemSizes(true);
+  connect(stringList_, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
 
-  tagList = new QListWidget;
-  tagList->setSortingEnabled(false);
-  tagList->setUniformItemSizes(true);
-  tagList->setSelectionMode(QAbstractItemView::ExtendedSelection);
-  tagList->installEventFilter(this);
-  connect(tagList, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
+  tagList_ = new QListWidget;
+  tagList_->setSortingEnabled(false);
+  tagList_->setUniformItemSizes(true);
+  tagList_->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  tagList_->installEventFilter(this);
+  connect(tagList_, &QListWidget::currentRowChanged, this, &BinaryWidget::onSymbolChosen);
 
   connect(project, &Project::tagsChanged, this, &BinaryWidget::updateTagList);
   updateTagList();
 
-  auto *tabWidget = new QTabWidget;
-  tabWidget->addTab(symbolList, tr("Functions"));
-  tabWidget->addTab(stringList, tr("Strings"));
-  tabWidget->addTab(tagList, tr("Tags"));
+  tabWidget = new QTabWidget;
+  tabWidget->addTab(symbolList_, tr("Functions"));
+  tabWidget->addTab(stringList_, tr("Strings"));
+  tabWidget->addTab(tagList_, tr("Tags"));
 
-  symbolLists << symbolList << stringList << tagList;
+  symbolLists << symbolList_ << stringList_ << tagList_;
   assert(symbolLists.size() == 3);
 
   auto *filterSymLine = new QLineEdit;
@@ -422,10 +424,11 @@ void BinaryWidget::createLayout()
 
   sizeLabel = new QLabel(tr("Size: %1").arg(Util::formatSize(binarySize)));
 
-  archLabel = new QLabel(
-    tr("Arch: %1, %2").arg(cpuTypeName(object->cpuType())).arg(cpuTypeName(object->cpuSubType())));
+  archLabel = new QLabel(tr("Arch: %1, %2")
+                           .arg(cpuTypeName(object_->cpuType()))
+                           .arg(cpuTypeName(object_->cpuSubType())));
 
-  fileTypeLabel = new QLabel(tr("Type: %1").arg(fileTypeName(object->fileType())));
+  fileTypeLabel = new QLabel(tr("Type: %1").arg(fileTypeName(object_->fileType())));
 
   auto *binaryOpenFolderButton = new QPushButton(tr("Open Folder"));
   binaryOpenFolderButton->setToolTip(tr("Open folder of binary file."));
@@ -528,14 +531,14 @@ void BinaryWidget::setup()
   // Make sure we start from a clean slate.
   mainView->clear();
 
-  symbolList->clear();
-  symbolList->setEnabled(false);
+  symbolList_->clear();
+  symbolList_->setEnabled(false);
 
-  stringList->clear();
-  stringList->setEnabled(false);
+  stringList_->clear();
+  stringList_->setEnabled(false);
 
-  tagList->clear();
-  tagList->setEnabled(false);
+  tagList_->clear();
+  tagList_->setEnabled(false);
 
   offsetBlock.clear();
   sectionBlock.clear();
@@ -564,14 +567,14 @@ void BinaryWidget::setup()
                          miscSectionsTime + sidebarTime + setupElapsedTimer.restart();
   qDebug() << "Setup in" << totalTime << "ms";
 
-  symbolList->setSortingEnabled(true);
-  symbolList->setEnabled(true);
+  symbolList_->setSortingEnabled(true);
+  symbolList_->setEnabled(true);
 
-  stringList->setSortingEnabled(true);
-  stringList->setEnabled(true);
+  stringList_->setSortingEnabled(true);
+  stringList_->setEnabled(true);
 
-  tagList->setSortingEnabled(true);
-  tagList->setEnabled(true);
+  tagList_->setSortingEnabled(true);
+  tagList_->setEnabled(true);
 
   if (!offsetBlock.isEmpty()) {
     selectAddress(firstAddress);
@@ -583,12 +586,12 @@ void BinaryWidget::setup()
 
 void BinaryWidget::updateTagList()
 {
-  tagList->clear();
+  tagList_->clear();
 
   const auto &tags = context.project()->tags();
   for (const auto addr : tags.keys()) {
     for (const auto &tag : tags[addr]) {
-      addSymbolToList(tag, addr, tagList);
+      addSymbolToList(tag, addr, tagList_);
     }
   }
 }
@@ -638,10 +641,17 @@ void BinaryWidget::selectBlock(int number)
   mainView->ensureCursorVisible();
 }
 
+void BinaryWidget::selectSection(const Section *section)
+{
+  if (const auto it = sectionBlock.constFind(section); it != sectionBlock.constEnd()) {
+    selectBlock(*it);
+  }
+}
+
 void BinaryWidget::removeSelectedTags()
 {
   QStringList tags;
-  for (auto *item : tagList->selectedItems()) {
+  for (auto *item : tagList_->selectedItems()) {
     tags << item->text();
   }
   context.project()->removeAddressTags(tags);
@@ -715,8 +725,8 @@ qint64 BinaryWidget::presetup()
   qApp->processEvents();
   qDebug() << qPrintable(setupDiag->labelText());
 
-  symbols = object->symbolTable().symbols();
-  Util::copyTo(object->dynSymbolTable().symbols(), symbols);
+  symbols = object_->symbolTable().symbols();
+  Util::copyTo(object_->dynSymbolTable().symbols(), symbols);
 
   // Create temporary procedure name lookup map.
   procNameMap.clear();
@@ -743,7 +753,7 @@ qint64 BinaryWidget::setupDisassembledSections()
   qDebug() << qPrintable(setupDiag->labelText());
 
   firstAddress = 0;
-  for (auto *section : object->sections()) {
+  for (auto *section : object_->sections()) {
     const auto *disasm = section->disassembly();
     if (!disasm) continue;
 
@@ -805,7 +815,7 @@ qint64 BinaryWidget::setupStringSections()
   qDebug() << qPrintable(setupDiag->labelText());
 
   // Show cstring+string sections.
-  for (auto *section : object->sectionsByTypes({Section::Type::CSTRING, Section::Type::STRING})) {
+  for (auto *section : object_->sectionsByTypes({Section::Type::CSTRING, Section::Type::STRING})) {
     setupCursor->movePosition(QTextCursor::End);
     setupCursor->insertBlock();
 
@@ -825,7 +835,7 @@ qint64 BinaryWidget::setupStringSections()
       const auto addr = offset + section->address();
       const auto string = reader.string();
       appendString(addr, offset, string);
-      addSymbolToList(string, addr, stringList);
+      addSymbolToList(string, addr, stringList_);
     }
 
     qDebug() << " >" << sectionTimer.restart() << "ms";
@@ -849,7 +859,7 @@ qint64 BinaryWidget::setupLoadCommandSections()
   qDebug() << qPrintable(setupDiag->labelText());
 
   // Show load command sections.
-  for (auto *section : object->sectionsByTypes(
+  for (auto *section : object_->sectionsByTypes(
          {Section::Type::LC_VERSION_MIN_MACOSX, Section::Type::LC_VERSION_MIN_IPHONEOS,
           Section::Type::LC_VERSION_MIN_WATCHOS, Section::Type::LC_VERSION_MIN_TVOS})) {
     setupCursor->movePosition(QTextCursor::End);
@@ -907,7 +917,7 @@ qint64 BinaryWidget::setupMiscSections()
 
   // Show miscellaneous sections. The section not shown in specific ways will be address-hex-ASCII
   // encoded just to give some representation.
-  for (auto *section : object->sectionsByTypes(
+  for (auto *section : object_->sectionsByTypes(
          {Section::Type::FUNC_STARTS, Section::Type::SYMBOLS, Section::Type::DYN_SYMBOLS,
           Section::Type::SYMBOL_STUBS, Section::Type::CODE_SIG})) {
     setupCursor->movePosition(QTextCursor::End);
@@ -984,7 +994,7 @@ qint64 BinaryWidget::setupSidebar()
       func += " *";
     }
 
-    addSymbolToList(func, symbol.value() /* offset to symbol */, symbolList);
+    addSymbolToList(func, symbol.value() /* offset to symbol */, symbolList_);
   }
 
   updateTagList();
