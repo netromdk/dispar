@@ -987,6 +987,8 @@ qint64 BinaryWidget::setupSidebar()
     addSymbolToList(func, symbol.value() /* offset to symbol */, symbolList);
   }
 
+  updateTagList();
+
   const auto sidebarTime = setupElapsedTimer.restart();
   qDebug() << ">" << sidebarTime << "ms";
 
