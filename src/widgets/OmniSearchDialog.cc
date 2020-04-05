@@ -20,6 +20,10 @@ OmniSearchDialog::OmniSearchDialog(QWidget *parent) : QDialog(parent, Qt::Popup)
 {
   setWindowModality(Qt::ApplicationModal);
 
+  searchTimer.setSingleShot(true);
+  searchTimer.setInterval(500);
+  connect(&searchTimer, &QTimer::timeout, this, &OmniSearchDialog::search);
+
   setupLayout();
 }
 
@@ -41,7 +45,10 @@ void OmniSearchDialog::showEvent(QShowEvent *event)
 
 void OmniSearchDialog::inputEdited(const QString &text)
 {
-  search(text);
+  input = text;
+
+  // Delay search if inputting in quick succession.
+  searchTimer.start();
 }
 
 void OmniSearchDialog::inputKeyDown()
@@ -131,9 +138,9 @@ void OmniSearchDialog::setupLayout()
   setLayout(layout);
 }
 
-void OmniSearchDialog::search(const QString &text)
+void OmniSearchDialog::search()
 {
-  if (text.isEmpty()) {
+  if (input.isEmpty()) {
     candidatesWidget->clear();
     return;
   }
@@ -148,8 +155,8 @@ void OmniSearchDialog::search(const QString &text)
   elapsedTimer.start();
 
   for (const auto *section : object->sections()) {
-    const float sim = flexMatch(section->name(), text),
-                sim2 = flexMatch(Section::typeName(section->type()), text);
+    const float sim = flexMatch(section->name(), input),
+                sim2 = flexMatch(Section::typeName(section->type()), input);
     if (sim > 0.0f || sim2 > 0.0f) {
       addCandidate(section->toString(), EntryType::SECTION, std::max(sim, sim2),
                    QVariant::fromValue((void *) section));
@@ -165,7 +172,7 @@ void OmniSearchDialog::search(const QString &text)
     if (itemText.endsWith(" *")) {
       itemText.chop(2);
     }
-    if (const float sim = flexMatch(itemText, text); sim > 0.0f) {
+    if (const float sim = flexMatch(itemText, input); sim > 0.0f) {
       addCandidate(itemText, EntryType::SYMBOL, sim, QVariant::fromValue((void *) item));
     }
   }
@@ -173,7 +180,7 @@ void OmniSearchDialog::search(const QString &text)
   for (int row = 0; row < stringList->count(); ++row) {
     const auto *item = stringList->item(row);
     if (!item) continue;
-    if (const float sim = flexMatch(item->text(), text); sim > 0.0f) {
+    if (const float sim = flexMatch(item->text(), input); sim > 0.0f) {
       addCandidate(item->text(), EntryType::STRING, sim, QVariant::fromValue((void *) item));
     }
   }
@@ -181,7 +188,7 @@ void OmniSearchDialog::search(const QString &text)
   for (int row = 0; row < tagList->count(); ++row) {
     const auto *item = tagList->item(row);
     if (!item) continue;
-    if (const float sim = flexMatch(item->text(), text); sim > 0.0f) {
+    if (const float sim = flexMatch(item->text(), input); sim > 0.0f) {
       addCandidate(item->text(), EntryType::TAG, sim, QVariant::fromValue((void *) item));
     }
   }
@@ -192,6 +199,8 @@ void OmniSearchDialog::search(const QString &text)
 
   // Select first candidate, if any.
   inputKeyDown();
+
+  input.clear();
 }
 
 float OmniSearchDialog::flexMatch(const QString &haystack, const QString &needle)

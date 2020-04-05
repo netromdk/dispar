@@ -2,6 +2,7 @@
 #define SRC_WIDGETS_OMNISEARCHDIALOG_H
 
 #include <QDialog>
+#include <QTimer>
 
 class QTreeWidget;
 
@@ -33,10 +34,10 @@ private slots:
   void inputKeyDown();
   void inputKeyUp();
   void inputReturnPressed();
+  void search();
 
 private:
   void setupLayout();
-  void search(const QString &text);
   float flexMatch(const QString &haystack, const QString &needle);
   void addCandidate(const QString &text, const EntryType type, const float similarity,
                     const QVariant data);
@@ -47,7 +48,8 @@ private:
   LineEdit *inputEdit;
   QTreeWidget *candidatesWidget;
 
-  // TODO: table should be hidden when no candidates are available?
+  QTimer searchTimer;
+  QString input;
 };
 
 } // namespace dispar
