@@ -194,9 +194,18 @@ void OmniSearchDialog::search()
     return a->text(2).toFloat() > b->text(2).toFloat();
   });
 
+  // Only use a subset of most similar candidates.
+  const auto totalItems = items.size();
+  static constexpr int limit = 1000; // TODO: maybe this number goes into preferences UI?
+  const auto throwAway = items.mid(limit);
+  items = items.mid(0, limit);
+
   candidatesWidget->addTopLevelItems(items);
   candidatesWidget->setSortingEnabled(true);
   candidatesWidget->setUpdatesEnabled(true);
+
+  // Delete excess items after UI has been updated as slight perceived speedup.
+  qDeleteAll(throwAway);
 
   // Select first candidate, if any.
   inputKeyDown();
