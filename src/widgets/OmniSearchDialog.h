@@ -9,6 +9,7 @@
 class QLabel;
 class QTreeWidget;
 class QListWidget;
+class QCheckBox;
 
 namespace dispar {
 
@@ -71,6 +72,7 @@ private:
   LineEdit *inputEdit;
   QTreeWidget *candidatesWidget;
   QLabel *statusLabel;
+  QCheckBox *searchTextChk;
 
   QTimer searchTimer;
   QString input;

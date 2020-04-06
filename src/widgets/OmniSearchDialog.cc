@@ -4,6 +4,7 @@
 #include "widgets/BinaryWidget.h"
 #include "widgets/LineEdit.h"
 
+#include <QCheckBox>
 #include <QDebug>
 #include <QElapsedTimer>
 #include <QHBoxLayout>
@@ -176,10 +177,19 @@ void OmniSearchDialog::setupLayout()
 
   statusLabel = new QLabel;
 
+  searchTextChk = new QCheckBox(tr("Search binary text"));
+  searchTextChk->setToolTip(tr("This can be a slow operation."));
+  connect(searchTextChk, &QCheckBox::stateChanged, this, &OmniSearchDialog::search);
+
+  auto *bottomLayout = new QHBoxLayout;
+  bottomLayout->addWidget(statusLabel);
+  bottomLayout->addStretch();
+  bottomLayout->addWidget(searchTextChk);
+
   auto *layout = new QVBoxLayout;
   layout->addWidget(inputEdit);
   layout->addWidget(candidatesWidget);
-  layout->addWidget(statusLabel);
+  layout->addLayout(bottomLayout);
 
   setLayout(layout);
 }
@@ -193,8 +203,6 @@ void OmniSearchDialog::search()
   }
 
   regex.setPattern(input);
-  input.clear();
-
   regex.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
 
   if (!regex.isValid()) {
@@ -225,7 +233,10 @@ void OmniSearchDialog::search()
   futures.emplace_back(std::async(std::launch::async, &OmniSearchDialog::flexMatchList, this,
                                   binaryWidget->tagList_, EntryType::TAG));
 
+  if (searchTextChk->isChecked()) {
     items += flexMatchText();
+  }
+
   for (auto &future : futures) {
     future.wait();
     items += future.get();
