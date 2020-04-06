@@ -6,9 +6,12 @@
 
 #include <QDebug>
 #include <QElapsedTimer>
+#include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
 #include <QListWidget>
+#include <QPlainTextEdit>
+#include <QTextBlock>
 #include <QTreeWidget>
 #include <QVBoxLayout>
 
@@ -103,17 +106,17 @@ void OmniSearchDialog::inputReturnPressed()
 
   const auto *item = selected.first();
   const auto type = EntryType(item->data(1, Qt::UserRole).toInt());
-  void *data = item->data(0, Qt::UserRole).value<void *>();
+  const auto data = item->data(0, Qt::UserRole);
 
   switch (type) {
   case EntryType::SECTION: {
-    const auto *section = static_cast<Section *>(data);
+    const auto *section = static_cast<Section *>(data.value<void *>());
     binaryWidget->selectSection(section);
     break;
   }
 
   case EntryType::SYMBOL: {
-    auto *listItem = static_cast<QListWidgetItem *>(data);
+    auto *listItem = static_cast<QListWidgetItem *>(data.value<void *>());
     auto *list = binaryWidget->symbolList_;
 
     // Select nothing first to ensure the seleciton is changed even though it's already on that
@@ -124,7 +127,7 @@ void OmniSearchDialog::inputReturnPressed()
   }
 
   case EntryType::STRING: {
-    auto *listItem = static_cast<QListWidgetItem *>(data);
+    auto *listItem = static_cast<QListWidgetItem *>(data.value<void *>());
     auto *list = binaryWidget->stringList_;
     list->setCurrentItem(nullptr);
     list->setCurrentItem(listItem);
@@ -132,10 +135,19 @@ void OmniSearchDialog::inputReturnPressed()
   }
 
   case EntryType::TAG: {
-    auto *listItem = static_cast<QListWidgetItem *>(data);
+    auto *listItem = static_cast<QListWidgetItem *>(data.value<void *>());
     auto *list = binaryWidget->tagList_;
     list->setCurrentItem(nullptr);
     list->setCurrentItem(listItem);
+    break;
+  }
+
+  case EntryType::TEXT: {
+    bool ok;
+    const auto blockNumber = data.toInt(&ok);
+    if (ok) {
+      binaryWidget->selectBlock(blockNumber);
+    }
     break;
   }
   }
@@ -213,6 +225,7 @@ void OmniSearchDialog::search()
   futures.emplace_back(std::async(std::launch::async, &OmniSearchDialog::flexMatchList, this,
                                   binaryWidget->tagList_, EntryType::TAG));
 
+    items += flexMatchText();
   for (auto &future : futures) {
     future.wait();
     items += future.get();
@@ -322,6 +335,52 @@ QList<QTreeWidgetItem *> OmniSearchDialog::flexMatchList(const QListWidget *list
       items << createCandidate(itemText, type, sim, QVariant::fromValue((void *) item));
     }
   }
+
+  return items;
+}
+
+QList<QTreeWidgetItem *> OmniSearchDialog::flexMatchText() const
+{
+  auto *view = binaryWidget->mainView;
+  view->setUpdatesEnabled(false);
+
+  const auto oldCursor = view->textCursor();
+  view->moveCursor(QTextCursor::Start);
+
+  QList<QTreeWidgetItem *> items;
+
+  const int contextChars = 5;
+
+  static const QRegularExpression spacesBefore("^\\s+");
+  static const QRegularExpression spacesAfter("\\s+$");
+
+  // find() can only be run in GUI thread?!
+  while (regex.pattern().size() >= 3 && view->find(regex)) {
+    const auto cursor = view->textCursor();
+    const int endCol = cursor.columnNumber(); // This is the end column!
+    const int col = endCol - cursor.selectedText().size();
+
+    auto textBefore = cursor.block().text().mid(col - contextChars, contextChars);
+    textBefore.remove(spacesBefore);
+
+    auto textAfter = cursor.block().text().mid(endCol, contextChars);
+    textAfter.remove(spacesAfter);
+
+    const auto text = QString("%1[%2]%3     (line %4, col %5)")
+                        .arg(textBefore)
+                        .arg(cursor.selectedText())
+                        .arg(textAfter)
+                        .arg(cursor.block().firstLineNumber())
+                        .arg(col);
+
+    items << createCandidate(text, EntryType::TEXT,
+                             float(cursor.selectedText().size()) /
+                               float(cursor.block().text().trimmed().size()),
+                             QVariant::fromValue(cursor.blockNumber()));
+  }
+
+  view->setTextCursor(oldCursor);
+  view->setUpdatesEnabled(true);
   return items;
 }
 
@@ -339,6 +398,8 @@ QTreeWidgetItem *OmniSearchDialog::createCandidate(const QString &text, const En
       return tr("String");
     case EntryType::TAG:
       return tr("Tag");
+    case EntryType::TEXT:
+      return tr("Text");
     }
     return {};
   }();

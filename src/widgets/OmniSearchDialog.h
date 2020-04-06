@@ -27,7 +27,13 @@ class OmniSearchDialog : public QDialog {
   Q_OBJECT
 
   /// Types of candidates.
-  enum class EntryType { SECTION, SYMBOL, STRING, TAG };
+  enum class EntryType {
+    SECTION, ///< Section names and type names.
+    SYMBOL,  ///< Symbols and function names.
+    STRING,  ///< String entries (c-string, obj-c strings etc.).
+    TAG,     ///< Tag names.
+    TEXT,    ///< Text in binary widget.
+  };
 
   /// Navigation of candidates.
   enum class Navigation { UP, DOWN };
@@ -55,6 +61,7 @@ private:
   float flexMatch(const QString &haystack) const;
   QList<QTreeWidgetItem *> flexMatchSections(const QList<Section *> &sections) const;
   QList<QTreeWidgetItem *> flexMatchList(const QListWidget *list, const EntryType type) const;
+  QList<QTreeWidgetItem *> flexMatchText() const;
   QTreeWidgetItem *createCandidate(const QString &text, const EntryType type,
                                    const float similarity, const QVariant data) const;
   void navigateCandidates(const Navigation nav);
