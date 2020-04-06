@@ -416,7 +416,10 @@ QTreeWidgetItem *OmniSearchDialog::createCandidate(const QString &text, const En
   }();
 
   const auto fullText = text;
-  const auto title = text.simplified();
+
+  // Spaces are only removed on left and right, not internally.
+  static const QRegularExpression whiteSpace("[\\n\\r\\t\\v]");
+  const auto title = text.trimmed().remove(whiteSpace);
 
   auto *item =
     new OmniSearchItem({title, typeString, QString::number(double(similarity) * 100.0, 'f', 1)});
