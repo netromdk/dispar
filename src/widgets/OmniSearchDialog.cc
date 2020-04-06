@@ -162,6 +162,7 @@ void OmniSearchDialog::search()
   assert(object);
 
   candidatesWidget->clear();
+  candidatesWidget->setUpdatesEnabled(false);
   candidatesWidget->setSortingEnabled(false);
 
   std::vector<std::future<QList<QTreeWidgetItem *>>> futures;
@@ -188,6 +189,7 @@ void OmniSearchDialog::search()
 
   candidatesWidget->addTopLevelItems(items);
   candidatesWidget->setSortingEnabled(true);
+  candidatesWidget->setUpdatesEnabled(true);
 
   // Select first candidate, if any.
   inputKeyDown();
