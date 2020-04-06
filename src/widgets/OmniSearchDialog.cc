@@ -281,7 +281,7 @@ QList<QTreeWidgetItem *> OmniSearchDialog::flexMatchList(const QListWidget *list
   for (int row = 0; row < list->count(); ++row) {
     const auto *item = list->item(row);
     if (!item) continue;
-    auto itemText = item->text();
+    auto itemText = item->text().trimmed();
     if (type == EntryType::SYMBOL && itemText.endsWith(" *")) {
       itemText.chop(2);
     }
