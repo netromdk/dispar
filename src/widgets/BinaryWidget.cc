@@ -916,10 +916,11 @@ qint64 BinaryWidget::setupMiscSections()
   qDebug() << qPrintable(setupDiag->labelText());
 
   // Show miscellaneous sections. The section not shown in specific ways will be address-hex-ASCII
-  // encoded just to give some representation.
-  for (auto *section : object_->sectionsByTypes(
-         {Section::Type::FUNC_STARTS, Section::Type::SYMBOLS, Section::Type::DYN_SYMBOLS,
-          Section::Type::SYMBOL_STUBS, Section::Type::CODE_SIG})) {
+  // encoded just to give some representation. SYMBOL_STUBS aren't shown on purpose because the
+  // function symbols should map inside the program text instead!
+  for (auto *section :
+       object_->sectionsByTypes({Section::Type::FUNC_STARTS, Section::Type::SYMBOLS,
+                                 Section::Type::DYN_SYMBOLS, Section::Type::CODE_SIG})) {
     setupCursor->movePosition(QTextCursor::End);
     setupCursor->insertBlock();
 
