@@ -1,5 +1,6 @@
 #include "widgets/OmniSearchDialog.h"
 #include "Util.h"
+#include "cxx.h"
 #include "widgets/BinaryWidget.h"
 #include "widgets/LineEdit.h"
 
@@ -186,6 +187,12 @@ void OmniSearchDialog::search()
   }
 
   qDebug() << "Searched in" << elapsedTimer.restart() << "ms";
+
+  // Pre-sorting speeds up insertion+sorting inside the QTreeWidget, and it is important when
+  // throwing away candiates that are least similar.
+  cxx::sort(items, [](const auto *a, const auto *b) {
+    return a->text(2).toFloat() > b->text(2).toFloat();
+  });
 
   candidatesWidget->addTopLevelItems(items);
   candidatesWidget->setSortingEnabled(true);
