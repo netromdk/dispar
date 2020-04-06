@@ -5,6 +5,7 @@
 #include <QRegularExpression>
 #include <QTimer>
 
+class QLabel;
 class QTreeWidget;
 class QTreeWidgetItem;
 class QListWidget;
@@ -55,6 +56,7 @@ private:
 
   LineEdit *inputEdit;
   QTreeWidget *candidatesWidget;
+  QLabel *statusLabel;
 
   QTimer searchTimer;
   QString input;

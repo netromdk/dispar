@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QElapsedTimer>
 #include <QHeaderView>
+#include <QLabel>
 #include <QListWidget>
 #include <QTreeWidget>
 #include <QVBoxLayout>
@@ -144,9 +145,13 @@ void OmniSearchDialog::setupLayout()
   header->resizeSection(0, 300);
   header->resizeSection(1, 100);
 
+  statusLabel = new QLabel;
+  statusLabel->setHidden(true);
+
   auto *layout = new QVBoxLayout;
   layout->addWidget(inputEdit);
   layout->addWidget(candidatesWidget);
+  layout->addWidget(statusLabel);
 
   setLayout(layout);
 }
@@ -155,6 +160,8 @@ void OmniSearchDialog::search()
 {
   if (input.isEmpty()) {
     candidatesWidget->clear();
+    statusLabel->clear();
+    statusLabel->setHidden(true);
     return;
   }
 
@@ -165,6 +172,8 @@ void OmniSearchDialog::search()
 
   if (!regex.isValid()) {
     candidatesWidget->clear();
+    statusLabel->setText(tr("Invalid regex") + ": " + regex.errorString());
+    statusLabel->setVisible(true);
     return;
   }
 
@@ -212,6 +221,17 @@ void OmniSearchDialog::search()
   candidatesWidget->addTopLevelItems(items);
   candidatesWidget->setSortingEnabled(true);
   candidatesWidget->setUpdatesEnabled(true);
+
+  if (candidatesWidget->topLevelItemCount() == 0) {
+    statusLabel->setText(tr("No results found.."));
+  }
+  else if (items.size() == totalItems) {
+    statusLabel->setText(tr("%1 results found.").arg(items.size()));
+  }
+  else {
+    statusLabel->setText(tr("Showing %1 of %2 results.").arg(items.size()).arg(totalItems));
+  }
+  statusLabel->setVisible(true);
 
   // Delete excess items after UI has been updated as slight perceived speedup.
   qDeleteAll(throwAway);
