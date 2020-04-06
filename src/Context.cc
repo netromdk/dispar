@@ -298,6 +298,22 @@ void Context::loadSettings()
       logLevel_ = Constants::Log::DEFAULT_LEVEL;
     }
   }
+
+  if (obj.contains("omni")) {
+    const auto omniValue = obj["omni"];
+    if (omniValue.isObject()) {
+      const auto omniObj = omniValue.toObject();
+
+      if (omniObj.contains("limit")) {
+        using namespace Constants::Omni;
+        int limit = omniObj["limit"].toInt(DEFAULT_LIMIT);
+        if (limit < MIN_LIMIT || limit > MAX_LIMIT) {
+          limit = DEFAULT_LIMIT;
+        }
+        omniSearchLimit_ = limit;
+      }
+    }
+  }
 }
 
 void Context::saveSettings()
@@ -320,6 +336,9 @@ void Context::saveSettings()
     debuggerObj["versionArgument"] = debugger_.versionArgument();
   }
 
+  QJsonObject omni;
+  omni["limit"] = omniSearchLimit_;
+
   QJsonObject obj;
   obj["showMachineCode"] = showMachineCode();
   obj["disassemblerSyntax"] = static_cast<int>(disassemblerSyntax());
@@ -328,6 +347,7 @@ void Context::saveSettings()
   obj["values"] = QJsonValue::fromVariant(values);
   obj["debugger"] = debuggerObj;
   obj["logLevel"] = logLevel_;
+  obj["omni"] = omni;
 
   QJsonDocument doc;
   doc.setObject(obj);
@@ -387,6 +407,16 @@ void Context::setLogLevel(int level)
 bool Context::acceptMsgType(QtMsgType type) const
 {
   return LogHandler::msgLogLevel(type) >= logLevel() || verbose();
+}
+
+int Context::omniSearchLimit() const
+{
+  return omniSearchLimit_;
+}
+
+void Context::setOmniSearchLimit(int limit)
+{
+  omniSearchLimit_ = limit;
 }
 
 } // namespace dispar

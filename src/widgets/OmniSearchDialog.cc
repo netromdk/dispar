@@ -1,4 +1,5 @@
 #include "widgets/OmniSearchDialog.h"
+#include "Context.h"
 #include "Util.h"
 #include "cxx.h"
 #include "widgets/BinaryWidget.h"
@@ -252,7 +253,7 @@ void OmniSearchDialog::search()
 
   // Only use a subset of most similar candidates.
   const auto totalItems = items.size();
-  static constexpr int limit = 1000; // TODO: maybe this number goes into preferences UI?
+  const int limit = Context::get().omniSearchLimit();
   const auto throwAway = items.mid(limit);
   items = items.mid(0, limit);
 

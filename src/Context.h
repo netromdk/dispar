@@ -80,6 +80,9 @@ public:
   void setLogLevel(int level);
   bool acceptMsgType(QtMsgType type) const;
 
+  int omniSearchLimit() const;
+  void setOmniSearchLimit(int limit);
+
 signals:
   void showMachineCodeChanged(bool show);
   void logLevelChanged(int newLevel);
@@ -99,6 +102,7 @@ private:
   Debugger debugger_;
 
   int logLevel_ = Constants::Log::DEFAULT_LEVEL;
+  int omniSearchLimit_ = Constants::Omni::DEFAULT_LIMIT;
 
   std::unique_ptr<Project> project_;
   std::unique_ptr<LogHandler> logHandler_;

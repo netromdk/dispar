@@ -14,6 +14,14 @@ namespace Constants {
 static const QString PROJECT_URL("https://github.com/netromdk/dispar");
 static const QFont FIXED_FONT("Courier");
 
+namespace Omni {
+
+static const int DEFAULT_LIMIT = 1000;
+static const int MIN_LIMIT = 10;
+static const int MAX_LIMIT = 100000;
+
+}
+
 namespace Log {
 
 enum {

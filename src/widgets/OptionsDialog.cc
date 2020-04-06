@@ -149,10 +149,23 @@ void OptionsDialog::createLayout()
   disAsmSyntaxLayout->addWidget(disAsmSyntax);
   disAsmSyntaxLayout->addStretch();
 
+  auto *omniLimitSpin = new QSpinBox;
+  omniLimitSpin->setRange(Constants::Omni::MIN_LIMIT, Constants::Omni::MAX_LIMIT);
+  omniLimitSpin->setValue(ctx.omniSearchLimit());
+  omniLimitSpin->setToolTip(tr("Search performance can be degraded if limit is set too high."));
+  connect(omniLimitSpin, cxx::Use<int>::overloadOf(&QSpinBox::valueChanged), this,
+          [&ctx](int limit) { ctx.setOmniSearchLimit(limit); });
+
+  auto *omniLayout = new QHBoxLayout;
+  omniLayout->addWidget(new QLabel(tr("Omni search limit:")));
+  omniLayout->addWidget(omniLimitSpin);
+  omniLayout->addStretch();
+
   auto *mainLayout = new QVBoxLayout;
   mainLayout->addWidget(showMachineCode);
   mainLayout->addLayout(disAsmSyntaxLayout);
   mainLayout->addWidget(disAsmExample);
+  mainLayout->addLayout(omniLayout);
 
   auto *mainGroup = new QGroupBox(tr("Main View"));
   mainGroup->setLayout(mainLayout);
