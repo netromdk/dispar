@@ -41,8 +41,9 @@ bool OmniSearchItem::operator<(const QTreeWidgetItem &rhs) const
   return QTreeWidgetItem::operator<(rhs);
 }
 
-OmniSearchDialog::OmniSearchDialog(QWidget *parent) : QDialog(parent, Qt::Popup)
+OmniSearchDialog::OmniSearchDialog(QWidget *parent) : QDialog(parent)
 {
+  setWindowTitle(tr("Omni Search"));
   setWindowModality(Qt::ApplicationModal);
 
   searchTimer.setSingleShot(true);
