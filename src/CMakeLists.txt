@@ -106,6 +106,13 @@ target_link_libraries(
   iberty
   )
 
+if (LINUX)
+  target_link_libraries(
+    ${libName}
+    pthread
+    )
+endif()
+
 qt5_use_modules(
   ${libName}
   Core

@@ -13,6 +13,9 @@
 
 #include <algorithm>
 #include <cassert>
+#include <future>
+#include <thread>
+#include <vector>
 
 namespace dispar {
 
@@ -151,51 +154,24 @@ void OmniSearchDialog::search()
   candidatesWidget->clear();
   candidatesWidget->setSortingEnabled(false);
 
+  std::vector<std::future<QList<QTreeWidgetItem *>>> futures;
   QList<QTreeWidgetItem *> items;
 
   QElapsedTimer elapsedTimer;
   elapsedTimer.start();
 
-  for (const auto *section : object->sections()) {
-    const float sim = flexMatch(section->name(), input),
-                sim2 = flexMatch(Section::typeName(section->type()), input);
-    if (sim > 0.0f || sim2 > 0.0f) {
-      items << createCandidate(section->toString(), EntryType::SECTION, std::max(sim, sim2),
-                               QVariant::fromValue((void *) section));
-    }
-  }
+  futures.emplace_back(
+    std::async(std::launch::async, &OmniSearchDialog::flexMatchSections, this, object->sections()));
+  futures.emplace_back(std::async(std::launch::async, &OmniSearchDialog::flexMatchList, this,
+                                  binaryWidget->symbolList_, EntryType::SYMBOL));
+  futures.emplace_back(std::async(std::launch::async, &OmniSearchDialog::flexMatchList, this,
+                                  binaryWidget->stringList_, EntryType::STRING));
+  futures.emplace_back(std::async(std::launch::async, &OmniSearchDialog::flexMatchList, this,
+                                  binaryWidget->tagList_, EntryType::TAG));
 
-  // TODO: reuse the QListWidget searching for these three widgets?!
-  const auto *symbolList = binaryWidget->symbolList_;
-  for (int row = 0; row < symbolList->count(); ++row) {
-    const auto *item = symbolList->item(row);
-    if (!item) continue;
-    auto itemText = item->text();
-    if (itemText.endsWith(" *")) {
-      itemText.chop(2);
-    }
-    if (const float sim = flexMatch(itemText, input); sim > 0.0f) {
-      items << createCandidate(itemText, EntryType::SYMBOL, sim,
-                               QVariant::fromValue((void *) item));
-    }
-  }
-  const auto *stringList = binaryWidget->stringList_;
-  for (int row = 0; row < stringList->count(); ++row) {
-    const auto *item = stringList->item(row);
-    if (!item) continue;
-    if (const float sim = flexMatch(item->text(), input); sim > 0.0f) {
-      items << createCandidate(item->text(), EntryType::STRING, sim,
-                               QVariant::fromValue((void *) item));
-    }
-  }
-  const auto *tagList = binaryWidget->tagList_;
-  for (int row = 0; row < tagList->count(); ++row) {
-    const auto *item = tagList->item(row);
-    if (!item) continue;
-    if (const float sim = flexMatch(item->text(), input); sim > 0.0f) {
-      items << createCandidate(item->text(), EntryType::TAG, sim,
-                               QVariant::fromValue((void *) item));
-    }
+  for (auto &future : futures) {
+    future.wait();
+    items += future.get();
   }
 
   qDebug() << "Searched in" << elapsedTimer.restart() << "ms";
@@ -209,7 +185,7 @@ void OmniSearchDialog::search()
   input.clear();
 }
 
-float OmniSearchDialog::flexMatch(const QString &haystack, const QString &needle)
+float OmniSearchDialog::flexMatch(const QString &haystack, const QString &needle) const
 {
   // TODO: keep QSet of <haystack, needle> on successful matches so result is known immediately,
   // after one search match; writing the same again will query dictionary.
@@ -250,8 +226,41 @@ float OmniSearchDialog::flexMatch(const QString &haystack, const QString &needle
   return 0.0f;
 }
 
+QList<QTreeWidgetItem *> OmniSearchDialog::flexMatchSections(const QList<Section *> &sections) const
+{
+  QList<QTreeWidgetItem *> items;
+  for (const auto *section : sections) {
+    const float sim = flexMatch(section->name(), input),
+                sim2 = flexMatch(Section::typeName(section->type()), input);
+    if (sim > 0.0f || sim2 > 0.0f) {
+      items << createCandidate(section->toString(), EntryType::SECTION, std::max(sim, sim2),
+                               QVariant::fromValue((void *) section));
+    }
+  }
+  return items;
+}
+
+QList<QTreeWidgetItem *> OmniSearchDialog::flexMatchList(const QListWidget *list,
+                                                         const EntryType type) const
+{
+  QList<QTreeWidgetItem *> items;
+  for (int row = 0; row < list->count(); ++row) {
+    const auto *item = list->item(row);
+    if (!item) continue;
+    auto itemText = item->text();
+    if (type == EntryType::SYMBOL && itemText.endsWith(" *")) {
+      itemText.chop(2);
+    }
+    if (const float sim = flexMatch(itemText, input); sim > 0.0f) {
+      items << createCandidate(itemText, type, sim, QVariant::fromValue((void *) item));
+    }
+  }
+  return items;
+}
+
 QTreeWidgetItem *OmniSearchDialog::createCandidate(const QString &text, const EntryType type,
-                                                   const float similarity, const QVariant data)
+                                                   const float similarity,
+                                                   const QVariant data) const
 {
   const auto typeString = [&type]() -> QString {
     switch (type) {

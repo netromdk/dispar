@@ -6,9 +6,11 @@
 
 class QTreeWidget;
 class QTreeWidgetItem;
+class QListWidget;
 
 namespace dispar {
 
+class Section;
 class LineEdit;
 class BinaryWidget;
 
@@ -39,9 +41,11 @@ private slots:
 
 private:
   void setupLayout();
-  float flexMatch(const QString &haystack, const QString &needle);
+  float flexMatch(const QString &haystack, const QString &needle) const;
+  QList<QTreeWidgetItem *> flexMatchSections(const QList<Section *> &sections) const;
+  QList<QTreeWidgetItem *> flexMatchList(const QListWidget *list, const EntryType type) const;
   QTreeWidgetItem *createCandidate(const QString &text, const EntryType type,
-                                   const float similarity, const QVariant data);
+                                   const float similarity, const QVariant data) const;
   void navigateCandidates(const Navigation nav);
 
   BinaryWidget *binaryWidget = nullptr;
