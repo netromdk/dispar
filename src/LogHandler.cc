@@ -128,9 +128,11 @@ void LogHandler::messageHandler(QtMsgType type, const QMessageLogContext &contex
   // In debug mode, assert on important log messages, like QObject signal connections.
   // Examples:
   //   QObject::connect: Cannot queue arguments of type 'Entry'
+  //   QObject: Cannot create children for a parent that is in a different thread.
 #ifndef NDEBUG
   if (const auto lmsg = msg.trimmed().toLower();
-      lmsg.startsWith("qobject::connect:") || lmsg.startsWith("qobject::disconnect:")) {
+      lmsg.startsWith("qobject::connect:") || lmsg.startsWith("qobject::disconnect:") ||
+      lmsg.contains("qobject: cannot create children for a parent that is in a different thread")) {
     std::cerr << msg.toStdString() << std::endl;
     assert(false);
     return;
