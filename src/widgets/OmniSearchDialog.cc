@@ -20,6 +20,22 @@
 
 namespace dispar {
 
+OmniSearchItem::OmniSearchItem(const QStringList &values) : QTreeWidgetItem(values)
+{
+}
+
+bool OmniSearchItem::operator<(const QTreeWidgetItem &rhs) const
+{
+  const auto col = treeWidget()->sortColumn();
+
+  // Similarity.
+  if (col == 2) {
+    return text(col).toFloat() < rhs.text(col).toFloat();
+  }
+
+  return QTreeWidgetItem::operator<(rhs);
+}
+
 OmniSearchDialog::OmniSearchDialog(QWidget *parent) : QDialog(parent, Qt::Popup)
 {
   setWindowModality(Qt::ApplicationModal);
@@ -326,7 +342,11 @@ QTreeWidgetItem *OmniSearchDialog::createCandidate(const QString &text, const En
     return {};
   }();
 
-  auto *item = new QTreeWidgetItem({text, typeString, QString::number(double(similarity))});
+  const auto fullText = text;
+  const auto title = text.simplified();
+
+  auto *item =
+    new OmniSearchItem({title, typeString, QString::number(double(similarity) * 100.0, 'f', 1)});
   item->setData(0, Qt::UserRole, data);
   item->setData(1, Qt::UserRole, int(type));
   return item;

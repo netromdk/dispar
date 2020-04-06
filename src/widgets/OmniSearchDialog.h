@@ -4,10 +4,10 @@
 #include <QDialog>
 #include <QRegularExpression>
 #include <QTimer>
+#include <QTreeWidgetItem>
 
 class QLabel;
 class QTreeWidget;
-class QTreeWidgetItem;
 class QListWidget;
 
 namespace dispar {
@@ -15,6 +15,13 @@ namespace dispar {
 class Section;
 class LineEdit;
 class BinaryWidget;
+
+class OmniSearchItem : public QTreeWidgetItem {
+public:
+  OmniSearchItem(const QStringList &values);
+
+  bool operator<(const QTreeWidgetItem &rhs) const override;
+};
 
 class OmniSearchDialog : public QDialog {
   Q_OBJECT
