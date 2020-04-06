@@ -160,6 +160,7 @@ void OmniSearchDialog::setupLayout()
   auto *header = candidatesWidget->header();
   header->resizeSection(0, 300);
   header->resizeSection(1, 100);
+  header->resizeSection(2, 80);
 
   statusLabel = new QLabel;
 
@@ -348,7 +349,9 @@ QTreeWidgetItem *OmniSearchDialog::createCandidate(const QString &text, const En
   auto *item =
     new OmniSearchItem({title, typeString, QString::number(double(similarity) * 100.0, 'f', 1)});
   item->setData(0, Qt::UserRole, data);
+  item->setToolTip(0, fullText);
   item->setData(1, Qt::UserRole, int(type));
+  item->setTextAlignment(2, Qt::AlignRight);
   return item;
 }
 
