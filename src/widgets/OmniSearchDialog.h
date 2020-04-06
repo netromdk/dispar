@@ -29,6 +29,8 @@ public:
 
   void setBinaryWidget(BinaryWidget *widget);
 
+  void done(int result) override;
+
 protected:
   void showEvent(QShowEvent *event) override;
 

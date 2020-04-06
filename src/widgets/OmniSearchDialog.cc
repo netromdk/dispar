@@ -40,10 +40,23 @@ void OmniSearchDialog::setBinaryWidget(BinaryWidget *widget)
   binaryWidget = widget;
 }
 
+void OmniSearchDialog::done(int result)
+{
+  inputEdit->clearFocus();
+  inputEdit->releaseKeyboard();
+
+  QDialog::done(result);
+}
+
 void OmniSearchDialog::showEvent(QShowEvent *event)
 {
+  QDialog::showEvent(event);
+
   Util::centerWidget(this);
   inputEdit->setFocus();
+
+  // Keep keyboard focus in input field even though focus might be put in the candidates list.
+  inputEdit->grabKeyboard();
 }
 
 void OmniSearchDialog::inputEdited(const QString &text)
@@ -116,9 +129,6 @@ void OmniSearchDialog::setupLayout()
   inputEdit = new LineEdit;
   inputEdit->setPlaceholderText(tr("Omni search.."));
   inputEdit->setMinimumWidth(500);
-
-  // Keep keyboard focus in input field even though focus might be put in the candidates list.
-  inputEdit->grabKeyboard();
 
   connect(inputEdit, &QLineEdit::textEdited, this, &OmniSearchDialog::inputEdited);
   connect(inputEdit, &LineEdit::keyDown, this, &OmniSearchDialog::inputKeyDown);
