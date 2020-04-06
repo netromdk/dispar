@@ -8,7 +8,6 @@
 #include <QElapsedTimer>
 #include <QHeaderView>
 #include <QListWidget>
-#include <QRegularExpression>
 #include <QTreeWidget>
 #include <QVBoxLayout>
 
@@ -128,7 +127,7 @@ void OmniSearchDialog::inputReturnPressed()
 void OmniSearchDialog::setupLayout()
 {
   inputEdit = new LineEdit;
-  inputEdit->setPlaceholderText(tr("Omni search.."));
+  inputEdit->setPlaceholderText(tr("Omni regex search.."));
   inputEdit->setMinimumWidth(500);
 
   connect(inputEdit, &QLineEdit::textEdited, this, &OmniSearchDialog::inputEdited);
@@ -155,6 +154,16 @@ void OmniSearchDialog::setupLayout()
 void OmniSearchDialog::search()
 {
   if (input.isEmpty()) {
+    candidatesWidget->clear();
+    return;
+  }
+
+  regex.setPattern(input);
+  input.clear();
+
+  regex.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
+
+  if (!regex.isValid()) {
     candidatesWidget->clear();
     return;
   }
@@ -209,47 +218,44 @@ void OmniSearchDialog::search()
 
   // Select first candidate, if any.
   inputKeyDown();
-
-  input.clear();
 }
 
-float OmniSearchDialog::flexMatch(const QString &haystack, const QString &needle) const
+float OmniSearchDialog::flexMatch(const QString &haystack) const
 {
-  // TODO: keep QSet of <haystack, needle> on successful matches so result is known immediately,
-  // after one search match; writing the same again will query dictionary.
-
-  const auto lh = haystack.toLower();
-  const auto ln = needle.toLower();
+  if (!regex.isValid()) {
+    return 0.0f;
+  }
 
   // White space hay stack is ignored.
+  const auto lh = haystack.trimmed().toLower();
   if (lh.trimmed().isEmpty()) {
     return 0.0f;
   }
 
-  // Check if contained.
-  if (lh.contains(ln)) {
-    return float(needle.size()) / float(haystack.size());
+  if (const auto m = regex.match(lh); m.hasMatch()) {
+    return float(m.captured().size()) / float(lh.size());
   }
 
   // Check if individual characters of needle matching starting letters of words. Underscores are
   // turned into spaces in order to match words from "LC_VERSION_MIN_MACOSX", for instance. It tries
   // to match needle letters to word 1,2,3.., then 2,3.. etc. such that "lvm" matches
   // "[L]C_[V]ERSION_[M]IN_MACOSX" but so does "vmm" for "LC_[V]ERSION_[M]IN_[M]ACOSX".
-  const auto words =
-    QString(lh).replace("_", " ").split(QRegularExpression("\\s+"), QString::SkipEmptyParts);
-  for (int i = 0; i < words.size() && !words.isEmpty(); ++i) {
-    int wordMatches = 0;
-    for (int j = 0; j < ln.size() && j + i < words.size(); ++j) {
-      if (ln[j] == words[j + i][0]) {
-        wordMatches++;
+  const auto ln = regex.pattern().trimmed().simplified().toLower();
+  static const QRegularExpression spaceRegex("\\s+");
+  const auto words = QString(lh).replace("_", " ").split(spaceRegex, QString::SkipEmptyParts);
+  if (ln.size() <= words.size()) {
+    for (int i = 0; i < words.size() && !words.isEmpty(); ++i) {
+      int wordMatches = 0;
+      for (int j = 0; j < ln.size() && j + i < words.size(); ++j) {
+        if (ln[j] == words[j + i][0]) {
+          wordMatches++;
+        }
+      }
+      if (wordMatches == ln.size()) {
+        return float(wordMatches) / float(lh.size());
       }
     }
-    if (wordMatches > 1) {
-      return float(wordMatches) / float(haystack.size());
-    }
   }
-
-  // TODO: check as regular expression input?
 
   return 0.0f;
 }
@@ -258,8 +264,8 @@ QList<QTreeWidgetItem *> OmniSearchDialog::flexMatchSections(const QList<Section
 {
   QList<QTreeWidgetItem *> items;
   for (const auto *section : sections) {
-    const float sim = flexMatch(section->name(), input),
-                sim2 = flexMatch(Section::typeName(section->type()), input);
+    const float sim = flexMatch(section->name()),
+                sim2 = flexMatch(Section::typeName(section->type()));
     if (sim > 0.0f || sim2 > 0.0f) {
       items << createCandidate(section->toString(), EntryType::SECTION, std::max(sim, sim2),
                                QVariant::fromValue((void *) section));
@@ -279,7 +285,7 @@ QList<QTreeWidgetItem *> OmniSearchDialog::flexMatchList(const QListWidget *list
     if (type == EntryType::SYMBOL && itemText.endsWith(" *")) {
       itemText.chop(2);
     }
-    if (const float sim = flexMatch(itemText, input); sim > 0.0f) {
+    if (const float sim = flexMatch(itemText); sim > 0.0f) {
       items << createCandidate(itemText, type, sim, QVariant::fromValue((void *) item));
     }
   }

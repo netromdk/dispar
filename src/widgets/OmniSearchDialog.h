@@ -2,6 +2,7 @@
 #define SRC_WIDGETS_OMNISEARCHDIALOG_H
 
 #include <QDialog>
+#include <QRegularExpression>
 #include <QTimer>
 
 class QTreeWidget;
@@ -43,7 +44,7 @@ private slots:
 
 private:
   void setupLayout();
-  float flexMatch(const QString &haystack, const QString &needle) const;
+  float flexMatch(const QString &haystack) const;
   QList<QTreeWidgetItem *> flexMatchSections(const QList<Section *> &sections) const;
   QList<QTreeWidgetItem *> flexMatchList(const QListWidget *list, const EntryType type) const;
   QTreeWidgetItem *createCandidate(const QString &text, const EntryType type,
@@ -57,6 +58,7 @@ private:
 
   QTimer searchTimer;
   QString input;
+  QRegularExpression regex;
 };
 
 } // namespace dispar
