@@ -65,6 +65,8 @@ void OmniSearchDialog::setBinaryWidget(BinaryWidget *widget)
 
 void OmniSearchDialog::done(int result)
 {
+  Context::get().setValue("OmniSearchDialog.geometry", Util::byteArrayString(saveGeometry()));
+
   inputEdit->clearFocus();
   inputEdit->releaseKeyboard();
 
@@ -75,7 +77,11 @@ void OmniSearchDialog::showEvent(QShowEvent *event)
 {
   QDialog::showEvent(event);
 
-  Util::centerWidget(this);
+  if (!restoreGeometry(
+        Util::byteArray(Context::get().value("OmniSearchDialog.geometry").toString()))) {
+    Util::centerWidget(this);
+  }
+
   inputEdit->setFocus();
 
   // Keep keyboard focus in input field even though focus might be put in the candidates list.
