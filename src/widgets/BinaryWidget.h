@@ -39,6 +39,7 @@ public:
 
 signals:
   void modified();
+  void loaded();
 
 protected:
   void showEvent(QShowEvent *event);

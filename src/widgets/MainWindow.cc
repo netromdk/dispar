@@ -446,11 +446,12 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
 
     binaryWidget = new BinaryWidget(object);
     connect(binaryWidget, &BinaryWidget::modified, this, &MainWindow::onBinaryModified);
+    connect(binaryWidget, &BinaryWidget::loaded, this,
+            [this] { omniSearchAction->setEnabled(true); });
 
     setCentralWidget(binaryWidget);
 
     reloadBinaryUiAction->setEnabled(true);
-    omniSearchAction->setEnabled(true);
   });
 }
 

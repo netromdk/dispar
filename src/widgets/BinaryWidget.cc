@@ -582,6 +582,8 @@ void BinaryWidget::setup()
 
   setupDiag->deleteLater();
   setupCursor.reset();
+
+  emit loaded();
 }
 
 void BinaryWidget::updateTagList()
