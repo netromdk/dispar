@@ -56,6 +56,8 @@ private slots:
   void inputKeyUp();
   void search();
   void activateCurrentItem();
+  void candidateContextMenu(const QPoint &pos);
+  void copyCurrentText();
 
 private:
   void setupLayout();

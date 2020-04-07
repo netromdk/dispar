@@ -5,13 +5,16 @@
 #include "widgets/BinaryWidget.h"
 #include "widgets/LineEdit.h"
 
+#include <QApplication>
 #include <QCheckBox>
+#include <QClipboard>
 #include <QDebug>
 #include <QElapsedTimer>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
 #include <QListWidget>
+#include <QMenu>
 #include <QPlainTextEdit>
 #include <QTextBlock>
 #include <QTreeWidget>
@@ -130,6 +133,10 @@ void OmniSearchDialog::setupLayout()
 
   connect(candidatesWidget, &QTreeWidget::itemDoubleClicked, this,
           &OmniSearchDialog::activateCurrentItem);
+
+  candidatesWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(candidatesWidget, &QTreeWidget::customContextMenuRequested, this,
+          &OmniSearchDialog::candidateContextMenu);
 
   statusLabel = new QLabel;
 
@@ -380,6 +387,7 @@ QTreeWidgetItem *OmniSearchDialog::createCandidate(const QString &text, const En
   auto *item =
     new OmniSearchItem({title, typeString, QString::number(double(similarity) * 100.0, 'f', 1)});
   item->setData(0, Qt::UserRole, data);
+  item->setData(0, Qt::UserRole + 1, fullText);
   item->setToolTip(0, fullText);
   item->setData(1, Qt::UserRole, int(type));
   item->setTextAlignment(2, Qt::AlignRight);
@@ -460,18 +468,40 @@ void OmniSearchDialog::activateItem(const QTreeWidgetItem *item)
 
 void OmniSearchDialog::activateCurrentItem()
 {
-  const auto selected = candidatesWidget->selectedItems();
-  if (selected.isEmpty()) {
-    return;
-  }
-
-  const auto *item = selected.first();
+  const auto *item = candidatesWidget->currentItem();
+  if (!item) return;
 
   // Delay activation until after scope such that dialog is closed before activation, which ensures
   // the blue activation line is shown in the binary view.
   QTimer::singleShot(1, [this, item] { activateItem(item); });
 
   close();
+}
+
+void OmniSearchDialog::candidateContextMenu(const QPoint &pos)
+{
+  const auto *selectedItem = candidatesWidget->currentItem();
+
+  // Currently no other actions apply, so don't show context menu if no item is selected.
+  if (!selectedItem) return;
+
+  QMenu menu;
+
+  if (selectedItem) {
+    menu.addAction(tr("Jump to match"), this, &OmniSearchDialog::activateCurrentItem);
+    menu.addAction(tr("Copy matched text"), this, &OmniSearchDialog::copyCurrentText);
+  }
+
+  menu.exec(QCursor::pos());
+}
+
+void OmniSearchDialog::copyCurrentText()
+{
+  const auto *selectedItem = candidatesWidget->currentItem();
+  if (!selectedItem) return;
+
+  const auto fullText = selectedItem->data(0, Qt::UserRole + 1).toString();
+  QApplication::clipboard()->setText(fullText);
 }
 
 } // namespace dispar
