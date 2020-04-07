@@ -54,8 +54,8 @@ private slots:
   void inputEdited(const QString &text);
   void inputKeyDown();
   void inputKeyUp();
-  void inputReturnPressed();
   void search();
+  void activateCurrentItem();
 
 private:
   void setupLayout();
@@ -66,6 +66,7 @@ private:
   QTreeWidgetItem *createCandidate(const QString &text, const EntryType type,
                                    const float similarity, const QVariant data) const;
   void navigateCandidates(const Navigation nav);
+  void activateItem(const QTreeWidgetItem *item);
 
   BinaryWidget *binaryWidget = nullptr;
 

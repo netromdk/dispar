@@ -106,62 +106,6 @@ void OmniSearchDialog::inputKeyUp()
   navigateCandidates(Navigation::UP);
 }
 
-void OmniSearchDialog::inputReturnPressed()
-{
-  const auto selected = candidatesWidget->selectedItems();
-  if (selected.isEmpty()) {
-    return;
-  }
-
-  const auto *item = selected.first();
-  const auto type = EntryType(item->data(1, Qt::UserRole).toInt());
-  const auto data = item->data(0, Qt::UserRole);
-
-  switch (type) {
-  case EntryType::SECTION: {
-    const auto *section = static_cast<Section *>(data.value<void *>());
-    binaryWidget->selectSection(section);
-    break;
-  }
-
-  case EntryType::SYMBOL: {
-    auto *listItem = static_cast<QListWidgetItem *>(data.value<void *>());
-    auto *list = binaryWidget->symbolList_;
-
-    // Select nothing first to ensure the seleciton is changed even though it's already on that
-    // item, such that it changes to the relevant tab widget.
-    list->setCurrentItem(nullptr);
-    list->setCurrentItem(listItem);
-    break;
-  }
-
-  case EntryType::STRING: {
-    auto *listItem = static_cast<QListWidgetItem *>(data.value<void *>());
-    auto *list = binaryWidget->stringList_;
-    list->setCurrentItem(nullptr);
-    list->setCurrentItem(listItem);
-    break;
-  }
-
-  case EntryType::TAG: {
-    auto *listItem = static_cast<QListWidgetItem *>(data.value<void *>());
-    auto *list = binaryWidget->tagList_;
-    list->setCurrentItem(nullptr);
-    list->setCurrentItem(listItem);
-    break;
-  }
-
-  case EntryType::TEXT: {
-    bool ok;
-    const auto blockNumber = data.toInt(&ok);
-    if (ok) {
-      binaryWidget->selectBlock(blockNumber);
-    }
-    break;
-  }
-  }
-}
-
 void OmniSearchDialog::setupLayout()
 {
   inputEdit = new LineEdit;
@@ -171,7 +115,7 @@ void OmniSearchDialog::setupLayout()
   connect(inputEdit, &QLineEdit::textEdited, this, &OmniSearchDialog::inputEdited);
   connect(inputEdit, &LineEdit::keyDown, this, &OmniSearchDialog::inputKeyDown);
   connect(inputEdit, &LineEdit::keyUp, this, &OmniSearchDialog::inputKeyUp);
-  connect(inputEdit, &QLineEdit::returnPressed, this, &OmniSearchDialog::inputReturnPressed);
+  connect(inputEdit, &QLineEdit::returnPressed, this, &OmniSearchDialog::activateCurrentItem);
 
   candidatesWidget = new QTreeWidget;
   candidatesWidget->setMinimumHeight(200);
@@ -458,6 +402,72 @@ void OmniSearchDialog::navigateCandidates(const Navigation nav)
     }
   }
   candidatesWidget->setCurrentItem(item);
+}
+
+void OmniSearchDialog::activateItem(const QTreeWidgetItem *item)
+{
+  const auto type = EntryType(item->data(1, Qt::UserRole).toInt());
+  const auto data = item->data(0, Qt::UserRole);
+
+  switch (type) {
+  case EntryType::SECTION: {
+    const auto *section = static_cast<Section *>(data.value<void *>());
+    binaryWidget->selectSection(section);
+    break;
+  }
+
+  case EntryType::SYMBOL: {
+    auto *listItem = static_cast<QListWidgetItem *>(data.value<void *>());
+    auto *list = binaryWidget->symbolList_;
+
+    // Select nothing first to ensure the seleciton is changed even though it's already on that
+    // item, such that it changes to the relevant tab widget.
+    list->setCurrentItem(nullptr);
+    list->setCurrentItem(listItem);
+    break;
+  }
+
+  case EntryType::STRING: {
+    auto *listItem = static_cast<QListWidgetItem *>(data.value<void *>());
+    auto *list = binaryWidget->stringList_;
+    list->setCurrentItem(nullptr);
+    list->setCurrentItem(listItem);
+    break;
+  }
+
+  case EntryType::TAG: {
+    auto *listItem = static_cast<QListWidgetItem *>(data.value<void *>());
+    auto *list = binaryWidget->tagList_;
+    list->setCurrentItem(nullptr);
+    list->setCurrentItem(listItem);
+    break;
+  }
+
+  case EntryType::TEXT: {
+    bool ok;
+    const auto blockNumber = data.toInt(&ok);
+    if (ok) {
+      binaryWidget->selectBlock(blockNumber);
+    }
+    break;
+  }
+  }
+}
+
+void OmniSearchDialog::activateCurrentItem()
+{
+  const auto selected = candidatesWidget->selectedItems();
+  if (selected.isEmpty()) {
+    return;
+  }
+
+  const auto *item = selected.first();
+
+  // Delay activation until after scope such that dialog is closed before activation, which ensures
+  // the blue activation line is shown in the binary view.
+  QTimer::singleShot(1, [this, item] { activateItem(item); });
+
+  close();
 }
 
 } // namespace dispar
