@@ -176,6 +176,7 @@ void OmniSearchDialog::search()
 
   regex.setPattern(input);
   regex.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
+  regex.optimize();
 
   if (!regex.isValid()) {
     candidatesWidget->clear();
@@ -262,35 +263,8 @@ float OmniSearchDialog::flexMatch(const QString &haystack) const
     return 0.0f;
   }
 
-  // White space hay stack is ignored.
-  const auto lh = haystack.trimmed().toLower();
-  if (lh.trimmed().isEmpty()) {
-    return 0.0f;
-  }
-
-  if (const auto m = regex.match(lh); m.hasMatch()) {
-    return float(m.captured().size()) / float(lh.size());
-  }
-
-  // Check if individual characters of needle matching starting letters of words. Underscores are
-  // turned into spaces in order to match words from "LC_VERSION_MIN_MACOSX", for instance. It tries
-  // to match needle letters to word 1,2,3.., then 2,3.. etc. such that "lvm" matches
-  // "[L]C_[V]ERSION_[M]IN_MACOSX" but so does "vmm" for "LC_[V]ERSION_[M]IN_[M]ACOSX".
-  const auto ln = regex.pattern().trimmed().simplified().toLower();
-  static const QRegularExpression spaceRegex("\\s+");
-  const auto words = QString(lh).replace("_", " ").split(spaceRegex, QString::SkipEmptyParts);
-  if (ln.size() <= words.size()) {
-    for (int i = 0; i < words.size() && !words.isEmpty(); ++i) {
-      int wordMatches = 0;
-      for (int j = 0; j < ln.size() && j + i < words.size(); ++j) {
-        if (ln[j] == words[j + i][0]) {
-          wordMatches++;
-        }
-      }
-      if (wordMatches == ln.size()) {
-        return float(wordMatches) / float(lh.size());
-      }
-    }
+  if (const auto m = regex.match(haystack); m.hasMatch()) {
+    return float(m.captured().size()) / float(haystack.size());
   }
 
   return 0.0f;
