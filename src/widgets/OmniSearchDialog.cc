@@ -159,7 +159,7 @@ void OmniSearchDialog::inputReturnPressed()
 void OmniSearchDialog::setupLayout()
 {
   inputEdit = new LineEdit;
-  inputEdit->setPlaceholderText(tr("Omni regex search.."));
+  inputEdit->setPlaceholderText(tr("Regex search pattern.."));
   inputEdit->setMinimumWidth(500);
 
   connect(inputEdit, &QLineEdit::textEdited, this, &OmniSearchDialog::inputEdited);
