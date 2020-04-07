@@ -127,6 +127,9 @@ void OmniSearchDialog::setupLayout()
   header->resizeSection(1, 100);
   header->resizeSection(2, 80);
 
+  connect(candidatesWidget, &QTreeWidget::itemDoubleClicked, this,
+          &OmniSearchDialog::activateCurrentItem);
+
   statusLabel = new QLabel;
 
   searchTextChk = new QCheckBox(tr("Search binary text"));
