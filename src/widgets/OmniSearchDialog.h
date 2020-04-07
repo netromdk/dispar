@@ -64,7 +64,8 @@ private:
   void setupLayout();
   float flexMatch(const QString &haystack) const;
   QList<QTreeWidgetItem *> flexMatchSections(const QList<Section *> &sections) const;
-  QList<QTreeWidgetItem *> flexMatchList(const QListWidget *list, const EntryType type) const;
+  QList<QTreeWidgetItem *> flexMatchListRows(const QListWidget *list, const int startRow,
+                                             const int amount, const EntryType type) const;
   QList<QTreeWidgetItem *> flexMatchText() const;
   QTreeWidgetItem *createCandidate(const QString &text, const EntryType type,
                                    const float similarity, const QVariant data) const;

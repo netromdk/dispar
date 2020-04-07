@@ -198,12 +198,19 @@ void OmniSearchDialog::search()
 
   futures.emplace_back(
     std::async(std::launch::async, &OmniSearchDialog::flexMatchSections, this, object->sections()));
-  futures.emplace_back(std::async(std::launch::async, &OmniSearchDialog::flexMatchList, this,
-                                  binaryWidget->symbolList_, EntryType::SYMBOL));
-  futures.emplace_back(std::async(std::launch::async, &OmniSearchDialog::flexMatchList, this,
-                                  binaryWidget->stringList_, EntryType::STRING));
-  futures.emplace_back(std::async(std::launch::async, &OmniSearchDialog::flexMatchList, this,
-                                  binaryWidget->tagList_, EntryType::TAG));
+
+  const int chunkSize = 4092 * 4;
+  for (const auto listPair :
+       QList<QPair<QListWidget *, EntryType>>{{binaryWidget->symbolList_, EntryType::SYMBOL},
+                                              {binaryWidget->stringList_, EntryType::STRING},
+                                              {binaryWidget->tagList_, EntryType::TAG}}) {
+    const auto *list = listPair.first;
+    const auto type = listPair.second;
+    for (int row = 0, elms = list->count(); row < elms; row += chunkSize) {
+      futures.emplace_back(std::async(std::launch::async, &OmniSearchDialog::flexMatchListRows,
+                                      this, list, row, chunkSize, type));
+    }
+  }
 
   if (searchTextChk->isChecked()) {
     items += flexMatchText();
@@ -303,11 +310,12 @@ QList<QTreeWidgetItem *> OmniSearchDialog::flexMatchSections(const QList<Section
   return items;
 }
 
-QList<QTreeWidgetItem *> OmniSearchDialog::flexMatchList(const QListWidget *list,
-                                                         const EntryType type) const
+QList<QTreeWidgetItem *> OmniSearchDialog::flexMatchListRows(const QListWidget *list,
+                                                             const int startRow, const int amount,
+                                                             const EntryType type) const
 {
   QList<QTreeWidgetItem *> items;
-  for (int row = 0; row < list->count(); ++row) {
+  for (int row = startRow, count = list->count(); row < startRow + amount && row < count; ++row) {
     const auto *item = list->item(row);
     if (!item) continue;
     auto itemText = item->text().trimmed();
