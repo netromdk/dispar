@@ -109,6 +109,14 @@ void OmniSearchDialog::inputKeyUp()
   navigateCandidates(Navigation::UP);
 }
 
+void OmniSearchDialog::inputKeyCtrlNumber(int num)
+{
+  auto *item = candidatesWidget->topLevelItem(num - 1);
+  if (!item) return;
+  candidatesWidget->setCurrentItem(item);
+  activateCurrentItem();
+}
+
 void OmniSearchDialog::setupLayout()
 {
   inputEdit = new LineEdit;
@@ -118,6 +126,7 @@ void OmniSearchDialog::setupLayout()
   connect(inputEdit, &QLineEdit::textEdited, this, &OmniSearchDialog::inputEdited);
   connect(inputEdit, &LineEdit::keyDown, this, &OmniSearchDialog::inputKeyDown);
   connect(inputEdit, &LineEdit::keyUp, this, &OmniSearchDialog::inputKeyUp);
+  connect(inputEdit, &LineEdit::keyCtrlNumber, this, &OmniSearchDialog::inputKeyCtrlNumber);
   connect(inputEdit, &QLineEdit::returnPressed, this, &OmniSearchDialog::activateCurrentItem);
 
   candidatesWidget = new QTreeWidget;

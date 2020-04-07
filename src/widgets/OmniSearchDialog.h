@@ -54,6 +54,7 @@ private slots:
   void inputEdited(const QString &text);
   void inputKeyDown();
   void inputKeyUp();
+  void inputKeyCtrlNumber(int num);
   void search();
   void activateCurrentItem();
   void candidateContextMenu(const QPoint &pos);

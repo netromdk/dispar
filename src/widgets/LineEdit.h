@@ -16,6 +16,10 @@ signals:
   void keyUp();
   void keyDown();
 
+  /// Ctrl+N, with N in {1, 2, 3, 4, 5, 6, 7, 8, 9}.
+  /** On macOS, it is Command instead. */
+  void keyCtrlNumber(int num);
+
 protected:
   void focusOutEvent(QFocusEvent *event);
   void keyPressEvent(QKeyEvent *event);
