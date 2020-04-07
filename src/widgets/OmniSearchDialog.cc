@@ -119,6 +119,7 @@ void OmniSearchDialog::setupLayout()
 
   candidatesWidget = new QTreeWidget;
   candidatesWidget->setMinimumHeight(200);
+  candidatesWidget->setIndentation(0);
   candidatesWidget->setHeaderLabels({tr("Match"), tr("Type"), tr("Similarity")});
   candidatesWidget->sortItems(2, Qt::DescendingOrder); // High similarity at the top.
 
