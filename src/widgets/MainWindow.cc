@@ -220,6 +220,10 @@ void MainWindow::closeProject()
     binaryWidget->deleteLater();
   }
 
+  if (omniSearchDialog) {
+    delete omniSearchDialog;
+  }
+
   createLayout();
 }
 
@@ -448,6 +452,11 @@ void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
     connect(binaryWidget, &BinaryWidget::modified, this, &MainWindow::onBinaryModified);
     connect(binaryWidget, &BinaryWidget::loaded, this,
             [this] { omniSearchAction->setEnabled(true); });
+
+    // Clear active omni search.
+    if (omniSearchDialog) {
+      delete omniSearchDialog;
+    }
 
     setCentralWidget(binaryWidget);
 
