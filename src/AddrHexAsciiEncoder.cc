@@ -4,6 +4,7 @@
 
 #include <QEventLoop>
 #include <QMutexLocker>
+#include <QThread>
 
 #include <algorithm>
 
@@ -30,7 +31,8 @@ void AddrHexAsciiEncoder::start(const bool blocking)
 {
   tasks = 0;
 
-  quint64 size = 4096 * 32;
+  const int threads = QThread::idealThreadCount();
+  quint64 size = threads * 1024;
   for (quint64 i = 0, n = section->data().size(); i < n; i += size) {
     if (i + size > n) {
       size = n - i;
