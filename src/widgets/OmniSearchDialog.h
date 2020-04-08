@@ -72,6 +72,8 @@ private:
   void navigateCandidates(const Navigation nav);
   void activateItem(const QTreeWidgetItem *item);
 
+  static QString entryTypeString(const EntryType type);
+
   BinaryWidget *binaryWidget = nullptr;
 
   LineEdit *inputEdit;

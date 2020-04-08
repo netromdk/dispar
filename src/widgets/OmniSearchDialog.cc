@@ -17,6 +17,7 @@
 #include <QMenu>
 #include <QPlainTextEdit>
 #include <QTextBlock>
+#include <QThread>
 #include <QTreeWidget>
 #include <QVBoxLayout>
 
@@ -353,33 +354,15 @@ QTreeWidgetItem *OmniSearchDialog::createCandidate(const QString &text, const En
                                                    const float similarity,
                                                    const QVariant data) const
 {
-  const auto typeString = [&type]() -> QString {
-    switch (type) {
-    case EntryType::SECTION:
-      return tr("Section");
-    case EntryType::SYMBOL:
-      return tr("Symbol");
-    case EntryType::STRING:
-      return tr("String");
-    case EntryType::TAG:
-      return tr("Tag");
-    case EntryType::TEXT:
-      return tr("Text");
-    }
-    return {};
-  }();
-
-  const auto fullText = text;
-
   // Spaces are only removed on left and right, not internally.
   static const QRegularExpression whiteSpace("[\\n\\r\\t\\v]");
   const auto title = text.trimmed().remove(whiteSpace);
 
-  auto *item =
-    new OmniSearchItem({title, typeString, QString::number(double(similarity) * 100.0, 'f', 1)});
+  auto *item = new OmniSearchItem(
+    {title, entryTypeString(type), QString::number(double(similarity) * 100.0, 'f', 1)});
   item->setData(0, Qt::UserRole, data);
-  item->setData(0, Qt::UserRole + 1, fullText);
-  item->setToolTip(0, fullText);
+  item->setData(0, Qt::UserRole + 1, text);
+  item->setToolTip(0, text);
   item->setData(1, Qt::UserRole, int(type));
   item->setTextAlignment(2, Qt::AlignRight);
   return item;
@@ -493,6 +476,23 @@ void OmniSearchDialog::copyCurrentText()
 
   const auto fullText = selectedItem->data(0, Qt::UserRole + 1).toString();
   QApplication::clipboard()->setText(fullText);
+}
+
+QString OmniSearchDialog::entryTypeString(const EntryType type)
+{
+  switch (type) {
+  case EntryType::SECTION:
+    return tr("Section");
+  case EntryType::SYMBOL:
+    return tr("Symbol");
+  case EntryType::STRING:
+    return tr("String");
+  case EntryType::TAG:
+    return tr("Tag");
+  case EntryType::TEXT:
+    return tr("Text");
+  }
+  return {};
 }
 
 } // namespace dispar
