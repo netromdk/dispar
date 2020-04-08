@@ -5,6 +5,7 @@
 #include "widgets/BinaryWidget.h"
 #include "widgets/LineEdit.h"
 
+#include <QThread>
 #include <QApplication>
 #include <QCheckBox>
 #include <QClipboard>
@@ -201,7 +202,8 @@ void OmniSearchDialog::search()
   futures.emplace_back(
     std::async(std::launch::async, &OmniSearchDialog::flexMatchSections, this, object->sections()));
 
-  const int chunkSize = 4092 * 4;
+  const int threads = QThread::idealThreadCount();
+  const int chunkSize = threads * 2048;
   for (const auto listPair :
        QList<QPair<QListWidget *, EntryType>>{{binaryWidget->symbolList_, EntryType::SYMBOL},
                                               {binaryWidget->stringList_, EntryType::STRING},
