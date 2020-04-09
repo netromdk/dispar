@@ -5,7 +5,6 @@
 #include "widgets/BinaryWidget.h"
 #include "widgets/LineEdit.h"
 
-#include <QThread>
 #include <QApplication>
 #include <QCheckBox>
 #include <QClipboard>
@@ -217,7 +216,27 @@ void OmniSearchDialog::search()
   }
 
   if (searchTextChk->isChecked()) {
-    items += flexMatchText();
+    const auto plainText = binaryWidget->mainView->toPlainText();
+    const int size = plainText.size();
+
+    // Create half as many chunks to search that there are threads.
+    const int textChunkSize = size / std::max(threads / 2, 1);
+
+    int offset = 0;
+    while (offset < size) {
+      auto textChunk = plainText.mid(offset, textChunkSize);
+
+      // Include until next newline such that line boundaries aren't broken in seaches.
+      const auto end = offset + textChunkSize;
+      const auto nextNewline = plainText.indexOf('\n', end);
+      if (nextNewline != -1) {
+        textChunk.append(plainText.mid(end, nextNewline - end + 1));
+      }
+
+      futures.emplace_back(std::async(std::launch::async, &OmniSearchDialog::flexMatchTextOffset,
+                                      this, textChunk, offset));
+      offset += textChunk.size();
+    }
   }
 
   for (auto &future : futures) {
@@ -307,48 +326,48 @@ QList<QTreeWidgetItem *> OmniSearchDialog::flexMatchListRows(const QListWidget *
   return items;
 }
 
-QList<QTreeWidgetItem *> OmniSearchDialog::flexMatchText() const
+QList<QTreeWidgetItem *> OmniSearchDialog::flexMatchTextOffset(const QString &text,
+                                                               const int offset) const
 {
-  auto *view = binaryWidget->mainView;
-  view->setUpdatesEnabled(false);
-
-  const auto oldCursor = view->textCursor();
-  view->moveCursor(QTextCursor::Start);
-
   QList<QTreeWidgetItem *> items;
 
-  const int contextChars = 5;
+  auto matchs = regex.globalMatch(text);
+  while (matchs.hasNext()) {
+    const auto m = matchs.next();
+    if (!m.hasMatch()) continue;
 
-  static const QRegularExpression spacesBefore("^\\s+");
-  static const QRegularExpression spacesAfter("\\s+$");
+    const auto start = m.capturedStart(), end = m.capturedEnd(), len = m.capturedLength();
 
-  // find() can only be run in GUI thread?!
-  while (regex.pattern().size() >= 3 && view->find(regex)) {
-    const auto cursor = view->textCursor();
-    const int endCol = cursor.columnNumber(); // This is the end column!
-    const int col = endCol - cursor.selectedText().size();
+    // Find previous newline or start of text.
+    int previousNewline = start - 1;
+    while (previousNewline > 0) {
+      if (text[previousNewline] == '\n') {
+        previousNewline++;
+        break;
+      }
+      previousNewline--;
+    }
 
-    auto textBefore = cursor.block().text().mid(col - contextChars, contextChars);
-    textBefore.remove(spacesBefore);
+    // Find next newline or end of text.
+    auto nextNewline = text.indexOf('\n', end);
+    if (nextNewline == -1) {
+      nextNewline = text.size() - 1;
+    }
 
-    auto textAfter = cursor.block().text().mid(endCol, contextChars);
-    textAfter.remove(spacesAfter);
+    const auto lineLength = nextNewline - previousNewline;
 
-    const auto text = QString("%1[%2]%3     (line %4, col %5)")
-                        .arg(textBefore)
-                        .arg(cursor.selectedText())
-                        .arg(textAfter)
-                        .arg(cursor.block().firstLineNumber())
-                        .arg(col);
+    // Show search context with up to 10 characters on each side, but stopping before previous
+    // newline and before next newline.
+    static const int contextChars = 10;
+    const auto textCtxStart = std::max(start - contextChars, previousNewline);
+    const auto textContext =
+      text.mid(textCtxStart, std::min(len + contextChars * 2, nextNewline - textCtxStart));
 
-    items << createCandidate(text, EntryType::TEXT,
-                             float(cursor.selectedText().size()) /
-                               float(cursor.block().text().trimmed().size()),
-                             QVariant::fromValue(cursor.blockNumber()));
+    const auto sim = float(m.capturedLength()) / float(lineLength);
+    items << createCandidate(textContext, EntryType::TEXT, sim,
+                             QVariant::fromValue(start + offset));
   }
 
-  view->setTextCursor(oldCursor);
-  view->setUpdatesEnabled(true);
   return items;
 }
 
@@ -433,9 +452,9 @@ void OmniSearchDialog::activateItem(const QTreeWidgetItem *item)
 
   case EntryType::TEXT: {
     bool ok;
-    const auto blockNumber = data.toInt(&ok);
+    const auto pos = data.toInt(&ok);
     if (ok) {
-      binaryWidget->selectBlock(blockNumber);
+      binaryWidget->selectPosition(pos);
     }
     break;
   }

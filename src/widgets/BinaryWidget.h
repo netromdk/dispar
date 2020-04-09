@@ -61,6 +61,7 @@ private:
   void selectAddress(quint64 address);
   void selectBlock(int number);
   void selectSection(const Section *section);
+  void selectPosition(int pos);
   void removeSelectedTags();
 
   /// Check if section has different modifications than \p priorModifications and emit modified.

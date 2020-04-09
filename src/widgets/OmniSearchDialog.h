@@ -66,7 +66,7 @@ private:
   QList<QTreeWidgetItem *> flexMatchSections(const QList<Section *> &sections) const;
   QList<QTreeWidgetItem *> flexMatchListRows(const QListWidget *list, const int startRow,
                                              const int amount, const EntryType type) const;
-  QList<QTreeWidgetItem *> flexMatchText() const;
+  QList<QTreeWidgetItem *> flexMatchTextOffset(const QString &text, const int offset) const;
   QTreeWidgetItem *createCandidate(const QString &text, const EntryType type,
                                    const float similarity, const QVariant data) const;
   void navigateCandidates(const Navigation nav);

@@ -650,6 +650,14 @@ void BinaryWidget::selectSection(const Section *section)
   }
 }
 
+void BinaryWidget::selectPosition(int pos)
+{
+  auto cursor = mainView->textCursor();
+  cursor.setPosition(pos);
+  mainView->setTextCursor(cursor);
+  mainView->ensureCursorVisible();
+}
+
 void BinaryWidget::removeSelectedTags()
 {
   QStringList tags;
