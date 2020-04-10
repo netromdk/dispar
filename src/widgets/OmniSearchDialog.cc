@@ -361,8 +361,17 @@ QList<QTreeWidgetItem *> OmniSearchDialog::flexMatchTextOffset(const QString &te
     // newline and before next newline.
     static const int contextChars = 10;
     const auto textCtxStart = std::max(start - contextChars, previousNewline);
-    const auto textContext =
-      text.mid(textCtxStart, std::min(len + contextChars * 2, nextNewline - textCtxStart));
+    const auto textCtxLen = std::min(len + contextChars * 2, nextNewline - textCtxStart);
+    auto textContext = text.mid(textCtxStart, textCtxLen);
+
+    // Show in search context whether the start/end of line was reached or whether more content is
+    // available.
+    if (textCtxStart != previousNewline) {
+      textContext.prepend("[..] ");
+    }
+    if (textCtxLen != nextNewline - textCtxStart) {
+      textContext.append(" [..]");
+    }
 
     const auto sim = float(m.capturedLength()) / float(lineLength);
     items << createCandidate(textContext, EntryType::TEXT, sim, QVariant::fromValue(start + offset),
