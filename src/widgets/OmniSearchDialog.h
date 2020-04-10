@@ -68,7 +68,8 @@ private:
                                              const int amount, const EntryType type) const;
   QList<QTreeWidgetItem *> flexMatchTextOffset(const QString &text, const int offset) const;
   QTreeWidgetItem *createCandidate(const QString &text, const EntryType type,
-                                   const float similarity, const QVariant data) const;
+                                   const float similarity, const QVariant data,
+                                   const QString &fullText = {}) const;
   void navigateCandidates(const Navigation nav);
   void activateItem(const QTreeWidgetItem *item);
 

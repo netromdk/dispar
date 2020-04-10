@@ -355,6 +355,7 @@ QList<QTreeWidgetItem *> OmniSearchDialog::flexMatchTextOffset(const QString &te
     }
 
     const auto lineLength = nextNewline - previousNewline;
+    const auto line = text.mid(previousNewline, lineLength);
 
     // Show search context with up to 10 characters on each side, but stopping before previous
     // newline and before next newline.
@@ -364,26 +365,28 @@ QList<QTreeWidgetItem *> OmniSearchDialog::flexMatchTextOffset(const QString &te
       text.mid(textCtxStart, std::min(len + contextChars * 2, nextNewline - textCtxStart));
 
     const auto sim = float(m.capturedLength()) / float(lineLength);
-    items << createCandidate(textContext, EntryType::TEXT, sim,
-                             QVariant::fromValue(start + offset));
+    items << createCandidate(textContext, EntryType::TEXT, sim, QVariant::fromValue(start + offset),
+                             line);
   }
 
   return items;
 }
 
 QTreeWidgetItem *OmniSearchDialog::createCandidate(const QString &text, const EntryType type,
-                                                   const float similarity,
-                                                   const QVariant data) const
+                                                   const float similarity, const QVariant data,
+                                                   const QString &fullText) const
 {
   // Spaces are only removed on left and right, not internally.
   static const QRegularExpression whiteSpace("[\\n\\r\\t\\v]");
   const auto title = text.trimmed().remove(whiteSpace);
 
+  const QString &line = fullText.isEmpty() ? text : fullText;
+
   auto *item = new OmniSearchItem(
     {title, entryTypeString(type), QString::number(double(similarity) * 100.0, 'f', 1)});
   item->setData(0, Qt::UserRole, data);
-  item->setData(0, Qt::UserRole + 1, text);
-  item->setToolTip(0, text);
+  item->setData(0, Qt::UserRole + 1, line);
+  item->setToolTip(0, line);
   item->setData(1, Qt::UserRole, int(type));
   item->setTextAlignment(2, Qt::AlignRight);
   return item;
