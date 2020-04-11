@@ -178,6 +178,16 @@ elseif (WIN32)
       )
   endif()
   install(
+    FILES "${plugin_dir}/styles/qwindowsvistastyle.dll"
+    DESTINATION "${INSTALL_BIN_DIR}/styles/"
+    )
+  if ("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
+    install(
+      FILES "${plugin_dir}/styles/qwindowsvistastyled.dll"
+      DESTINATION "${INSTALL_BIN_DIR}/styles/"
+      )
+  endif()
+  install(
     FILES
       "${bin_dir}/Qt5Core.dll"
       "${bin_dir}/Qt5Gui.dll"
