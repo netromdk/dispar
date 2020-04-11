@@ -5,8 +5,8 @@ using namespace dispar;
 
 TEST(Version, versionString)
 {
-  EXPECT_EQ("0.2", versionString());
-  EXPECT_EQ("0.2 [November 23, 2017]", versionString(true));
+  EXPECT_EQ("0.3", versionString());
+  EXPECT_EQ("0.3 [April 11, 2020]", versionString(true));
   EXPECT_EQ("9.3", versionString(9, 3));
-  EXPECT_EQ("3.7 [November 23, 2017]", versionString(3, 7, true));
+  EXPECT_EQ("3.7 [April 11, 2020]", versionString(3, 7, true));
 }

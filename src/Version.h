@@ -7,8 +7,8 @@
 namespace dispar {
 
 static constexpr int MAJOR_VERSION = 0;
-static constexpr int MINOR_VERSION = 2;
-static const QString VERSION_DATE("November 23, 2017");
+static constexpr int MINOR_VERSION = 3;
+static const QString VERSION_DATE("April 11, 2020");
 
 static inline QString versionString(int major, int minor, bool showDate = false)
 {
