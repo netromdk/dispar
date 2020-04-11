@@ -10,7 +10,7 @@ endif()
 set(other_libs "")
 
 if (APPLE)
-  set(other_libs "${other_libs};@INSTALL_BIN_DIR@/platforms/libqcocoa.dylib")
+  set(other_libs "${other_libs};@INSTALL_BIN_DIR@/platforms/libqcocoa.dylib;@INSTALL_BIN_DIR@/styles/libqmacstyle.dylib")
 elseif (WIN32)
   set(other_libs "${other_libs};@INSTALL_BIN_DIR@/platforms/qwindows.dll")
   if ("@CMAKE_BUILD_TYPE@" MATCHES "Debug")
@@ -33,6 +33,7 @@ set(
   # Qt plugins.
   @Qt5Core_DIR@/../../../plugins/
   @Qt5Core_DIR@/../../../plugins/platforms/
+  @Qt5Core_DIR@/../../../plugins/styles/
   )
 
 fixup_bundle("${bundle}" "${other_libs}" "${dirs}")

@@ -162,6 +162,10 @@ if (APPLE)
     FILES "${plugin_dir}/platforms/libqcocoa.dylib"
     DESTINATION "${INSTALL_BIN_DIR}/platforms/"
     )
+  install(
+    FILES "${plugin_dir}/styles/libqmacstyle.dylib"
+    DESTINATION "${INSTALL_BIN_DIR}/styles/"
+    )
 elseif (WIN32)
   install(
     FILES "${plugin_dir}/platforms/qwindows.dll"
