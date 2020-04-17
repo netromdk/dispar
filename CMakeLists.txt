@@ -105,6 +105,18 @@ if (TIME_REPORT)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftime-report")
 endif()
 
+# Detect major and minor program version from "Version.h".
+file(
+  STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/src/Version.h" _versions
+  REGEX "_VERSION ="
+  )
+list(GET _versions 0 _version)
+string(REGEX MATCH "[0-9]+" num ${_version})
+set(MAJOR_VERSION ${num})
+list(GET _versions 1 _version)
+string(REGEX MATCH "[0-9]+" num ${_version})
+set(MINOR_VERSION ${num})
+
 # Names
 set(libName core)
 set(binName dispar)
@@ -177,6 +189,7 @@ add_custom_target(
   )
 
 message(STATUS "====================================================================")
+message(STATUS "Program version: ${MAJOR_VERSION}.${MINOR_VERSION}")
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
 
