@@ -126,7 +126,8 @@ add_dispar_executable(
   main.cc
   )
 
-# Create bundle on Mac.
+# Create bundle on Mac. Note that "misc/MacOSXBundleInfo.plist.in" is used as template for the
+# "Info.plist" of the app, including subsituting in MAJOR_VERSION and MINOR_VERSION from this file.
 set_target_properties(
   ${binName}
   PROPERTIES MACOSX_BUNDLE TRUE
