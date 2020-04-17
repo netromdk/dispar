@@ -153,6 +153,21 @@ endif()
 add_subdirectory(lib)
 add_subdirectory(src)
 
+if (APPLE)
+  set(INSTALL_DIR "dispar.app")
+else()
+  set(INSTALL_DIR "dispar")
+endif()
+set(DIST_ZIP "dispar-${MAJOR_VERSION}.${MINOR_VERSION}-${CMAKE_HOST_SYSTEM_NAME}.zip")
+string(TOLOWER ${DIST_ZIP} DIST_ZIP)
+add_custom_target(
+  dist
+  ${CMAKE_COMMAND} -E tar c ${DIST_ZIP} --format=zip -- ${INSTALL_DIR}
+  USES_TERMINAL
+  DEPENDS install
+  COMMENT "Generating distribution: ${DIST_ZIP}"
+  )
+
 # Requires llvm/clang v4+!
 # Setup: CC=clang-10 CXX=clang++ cmake -G Ninja -DCODE_COVERAGE=ON ../../
 # Setup: CC=clang-mp-5.0 CXX=clang++-mp-5.0 cmake -G Ninja -DCODE_COVERAGE=ON -DLLVM_PROFDATA=llvm-profdata-mp-5.0 -DLLVM_COV=llvm-cov-mp-5.0 ../../
