@@ -18,5 +18,9 @@
   <string>@MAJOR_VERSION@.@MINOR_VERSION@</string>
   <key>CFBundleVersion</key>
   <string>@MAJOR_VERSION@.@MINOR_VERSION@</string>
+  <key>NSPrincipalClass</key>
+  <string>NSApplication</string>
+  <key>NSHighResolutionCapable</key>
+  <true/>
 </dict>
 </plist>
