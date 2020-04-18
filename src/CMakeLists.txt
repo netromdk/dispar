@@ -85,6 +85,8 @@ add_library(
   widgets/LogDialog.cc
   widgets/OmniSearchDialog.h
   widgets/OmniSearchDialog.cc
+  widgets/CenterLabel.h
+  widgets/CenterLabel.cc
 
   formats/Format.h
   formats/Format.cc

@@ -8,6 +8,7 @@
 #include "formats/FormatLoader.h"
 #include "widgets/AboutDialog.h"
 #include "widgets/BinaryWidget.h"
+#include "widgets/CenterLabel.h"
 #include "widgets/ConversionHelper.h"
 #include "widgets/DisassemblerDialog.h"
 #include "widgets/LogDialog.h"
@@ -23,7 +24,6 @@
 #include <QElapsedTimer>
 #include <QFileDialog>
 #include <QInputDialog>
-#include <QLabel>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QProgressDialog>
@@ -479,13 +479,8 @@ void MainWindow::setTitle(const QString &file)
 
 void MainWindow::createLayout()
 {
-  auto *label = new QLabel(tr("Open a project file or load a binary!"));
-  label->setAlignment(Qt::AlignCenter);
-
-  auto font = label->font();
-  font.setPointSize(24);
-  font.setBold(true);
-  label->setFont(font);
+  auto *label = new CenterLabel(tr("Open a project file or load a binary!"));
+  connect(label, &CenterLabel::droppedFileName, this, &MainWindow::loadFile);
 
   setCentralWidget(label);
 }
