@@ -59,16 +59,7 @@ void MainWindow::showEvent(QShowEvent *event)
   }
 
   // Load specified files or open file dialog.
-  Util::delayFunc([this] {
-    if (!startupFile.isEmpty()) {
-      if (startupFile.toLower().endsWith(".dispar")) {
-        openProject(startupFile);
-      }
-      else {
-        loadBinary(startupFile);
-      }
-    }
-  });
+  Util::delayFunc([this] { loadFile(startupFile); });
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -624,6 +615,16 @@ void MainWindow::loadBinary(QString file)
   });
 
   loader->start();
+}
+
+void MainWindow::loadFile(const QString &file)
+{
+  if (file.toLower().endsWith(".dispar")) {
+    openProject(file);
+  }
+  else {
+    loadBinary(file);
+  }
 }
 
 void MainWindow::saveBackup(const QString &file)

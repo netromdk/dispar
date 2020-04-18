@@ -48,6 +48,8 @@ private slots:
   void reloadBinary();
   void reloadBinaryUi();
 
+  void loadFile(const QString &file);
+
   void omniSearch();
 
   void onRecentProject();
