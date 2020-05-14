@@ -3,22 +3,26 @@ set(SDK_MIN 10.8)
 # Try to pick the newest!
 set(SDKS 10.15 10.14 10.13 10.12 10.11 10.10 10.9 10.8)
 
+set(SDK_PATHS "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/"
+              "/Library/Developer/CommandLineTools/SDKs/"
+              "/Developer/SDKs/")
+
 # Force a specific version if defined.
 if (FORCE_MAC_SDK)
   message("Trying to force Mac SDK: ${FORCE_MAC_SDK}")
   set(SDKS ${FORCE_MAC_SDK})
 endif()
 
-foreach (sdk ${SDKS})
-  set(DEV_SDK "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX${sdk}.sdk")
-  if (EXISTS "${DEV_SDK}" AND IS_DIRECTORY "${DEV_SDK}")
-    set(found_sdk YES)
-    break()
-  endif()
+foreach (sdk_path ${SDK_PATHS})
+  foreach(sdk ${SDKS})
+    set(DEV_SDK "${sdk_path}MacOSX${sdk}.sdk")
+    if (EXISTS "${DEV_SDK}" AND IS_DIRECTORY "${DEV_SDK}")
+      set(found_sdk YES)
+      break()
+    endif()
+  endforeach()
 
-  set(DEV_SDK "/Developer/SDKs/MacOSX${sdk}.sdk")
-  if (EXISTS "${DEV_SDK}" AND IS_DIRECTORY "${DEV_SDK}")
-    set(found_sdk YES)
+  if (found_sdk)
     break()
   endif()
 endforeach()
