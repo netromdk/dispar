@@ -1,6 +1,7 @@
 #include "widgets/TagItemDelegate.h"
 
 #include <QPainter>
+#include <QPainterPath>
 
 namespace dispar {
 
