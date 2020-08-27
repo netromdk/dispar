@@ -108,7 +108,7 @@ void BinaryWidget::onSymbolChosen(int row)
 
   // If offset is found then put the cursor at that line.
   const auto *item = list->item(row);
-  if (!item) return;
+  if (item == nullptr) return;
 
   // Ensure the corresponding tab widget is shown.
   tabWidget->setCurrentWidget(list);
@@ -132,7 +132,7 @@ void BinaryWidget::onCursorPositionChanged()
 
   const auto block = cursor.block();
   const auto *userData = dynamic_cast<TextBlockUserData *>(block.userData());
-  if (userData) {
+  if (userData != nullptr) {
     addressLabel->setText(
       tr("Address: 0x%1 (%2)").arg(userData->address, 0, 16).arg(userData->address));
     offsetLabel->setText(
@@ -170,7 +170,7 @@ void BinaryWidget::onShowMachineCodeChanged(bool show)
   auto block = doc->findBlockByNumber(codeBlocks.first());
   while (block.isValid()) {
     auto *userData = dynamic_cast<TextBlockUserData *>(block.userData());
-    if (userData && !userData->bytes.isEmpty()) {
+    if ((userData != nullptr) && !userData->bytes.isEmpty()) {
       cursor.setPosition(block.position() + userData->bytesStart - 1);
       if (show && userData->bytesEnd == -1) {
         cursor.insertText(QString("%1").arg(userData->bytes, -24));
@@ -205,7 +205,7 @@ void BinaryWidget::onCustomContextMenuRequested(const QPoint &pos)
 
   auto cursor = mainView->textCursor();
   const auto *userData = dynamic_cast<TextBlockUserData *>(cursor.block().userData());
-  if (userData) {
+  if (userData != nullptr) {
     for (auto *section : object_->sections()) {
       if (!section->hasAddress(userData->address)) {
         continue;
@@ -217,7 +217,7 @@ void BinaryWidget::onCustomContextMenuRequested(const QPoint &pos)
           const auto priorModRegions = section->modifiedRegions();
 
           auto *editor = disassemblyEditors.value(section, nullptr);
-          if (!editor) {
+          if (editor == nullptr) {
             editor = new DisassemblyEditor(section, object_, this);
             disassemblyEditors[section] = editor;
           }
@@ -233,7 +233,7 @@ void BinaryWidget::onCustomContextMenuRequested(const QPoint &pos)
                section->type() == Section::Type::LC_VERSION_MIN_TVOS) {
         menu.addAction(tr("Edit versions '%1'").arg(section->toString()), this, [this, section] {
           auto *editor = macSdkVersionsEditors.value(section, nullptr);
-          if (!editor) {
+          if (editor == nullptr) {
             editor = new MacSdkVersionsEditor(section, object_, this);
             macSdkVersionsEditors[section] = editor;
           }
@@ -248,7 +248,7 @@ void BinaryWidget::onCustomContextMenuRequested(const QPoint &pos)
         const auto priorModRegions = section->modifiedRegions();
 
         auto *editor = hexEditors.value(section, nullptr);
-        if (!editor) {
+        if (editor == nullptr) {
           editor = new HexEditor(section, object_, this);
           hexEditors[section] = editor;
         }
@@ -765,7 +765,7 @@ qint64 BinaryWidget::setupDisassembledSections()
   firstAddress = 0;
   for (auto *section : object_->sections()) {
     const auto *disasm = section->disassembly();
-    if (!disasm) continue;
+    if (disasm == nullptr) continue;
 
     setupCursor->movePosition(QTextCursor::End);
 

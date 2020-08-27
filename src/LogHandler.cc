@@ -55,7 +55,7 @@ LogHandler::LogHandler(Context &context) : entries_(Constants::Log::MEMORY_ENTRI
   fileFlushTimer.setInterval(Constants::Log::FLUSH_INTERVAL);
   fileFlushTimer.start();
 
-  qInstallMessageHandler(this->messageHandler);
+  qInstallMessageHandler(dispar::LogHandler::messageHandler);
 }
 
 LogHandler::~LogHandler()
@@ -100,7 +100,7 @@ QString LogHandler::messageString(QtMsgType type, const QMessageLogContext &cont
 #ifndef NDEBUG
   // Include file name and two immediate parent folder names.
   QString file;
-  if (context.file) {
+  if (context.file != nullptr) {
     const QFileInfo fi(context.file);
     const auto path = fi.absoluteFilePath();
     auto parent = QFileInfo(path).dir();
@@ -158,7 +158,7 @@ void LogHandler::messageHandler(QtMsgType type, const QMessageLogContext &contex
     }
   }
 
-  if (instance) {
+  if (instance != nullptr) {
     instance->addEntry({QDateTime::currentDateTime(), type, output});
   }
 }
@@ -175,7 +175,7 @@ const LogHandler::Container &LogHandler::entries() const
   return entries_;
 }
 
-QString LogHandler::logPath() const
+QString LogHandler::logPath()
 {
   return QDir::home().absoluteFilePath(".dispar.log");
 }

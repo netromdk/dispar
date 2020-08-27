@@ -46,7 +46,7 @@ void DisassemblerDialog::onConvert()
   const auto textOffset = offsetEdit->text().toULongLong(nullptr, 16);
 
   auto obj = std::make_unique<BinaryObject>(cpuType);
-  Disassembler dis(*obj.get(), syntax);
+  Disassembler dis(*obj, syntax);
 
   auto result = dis.disassemble(text, textOffset);
   if (result) {

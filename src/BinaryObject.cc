@@ -79,7 +79,7 @@ QString BinaryObject::toString() const
 QList<Section *> BinaryObject::sections() const
 {
   QList<Section *> res;
-  for (auto &section : sections_) {
+  for (const auto &section : sections_) {
     res << section.get();
   }
   return res;
@@ -88,7 +88,7 @@ QList<Section *> BinaryObject::sections() const
 QList<Section *> BinaryObject::sectionsByType(Section::Type type) const
 {
   QList<Section *> res;
-  for (auto &section : sections_) {
+  for (const auto &section : sections_) {
     if (section->type() == type) {
       res << section.get();
     }
@@ -99,7 +99,7 @@ QList<Section *> BinaryObject::sectionsByType(Section::Type type) const
 QList<Section *> BinaryObject::sectionsByTypes(const QList<Section::Type> &types) const
 {
   QList<Section *> res;
-  for (auto &section : sections_) {
+  for (const auto &section : sections_) {
     if (types.contains(section->type())) {
       res << section.get();
     }

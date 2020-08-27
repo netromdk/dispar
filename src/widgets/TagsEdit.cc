@@ -60,7 +60,7 @@ void TagsEdit::onReturnPressed()
   auto tag = lineEdit->text().simplified();
   if (tag.isEmpty()) return;
 
-  auto project = Context::get().project();
+  auto *project = Context::get().project();
   if (!project->addAddressTag(tag, address_)) {
     QMessageBox::warning(this, "dispar", tr("Tag is already used!"));
     return;
@@ -100,7 +100,7 @@ void TagsEdit::createLayout()
 void TagsEdit::removeTag()
 {
   auto *item = listWidget->currentItem();
-  if (!item) return;
+  if (item == nullptr) return;
 
   auto tag = item->text();
   Context::get().project()->removeAddressTag(tag);

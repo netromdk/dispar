@@ -30,9 +30,9 @@ public:
   static QString padString(const QString &str, int size, bool before = true, char pad = 48);
 
   static QString dataToAscii(const QByteArray &data, int offset, int size);
-  static QString hexToAscii(const QString &data, int offset, int blocks, int blocksize = 2,
+  static QString hexToAscii(const QString &str, int offset, int blocks, int blocksize = 2,
                             bool unicode = false);
-  static QString hexToUnicode(const QString &data);
+  static QString hexToUnicode(const QString &str);
   static QString hexToString(const QString &str);
   static QByteArray hexToData(const QString &str);
 
@@ -113,12 +113,12 @@ public:
   static QString escapeWhitespace(QString value);
 
   /// Decode version from format 0xXXYYY as x.y.
-  static std::tuple<int, int> decodeMacSdkVersion(const quint32 version);
+  static std::tuple<int, int> decodeMacSdkVersion(quint32 version);
 
   /// Encode version x.y as 0xXXYYY.
   static quint32 encodeMacSdkVersion(const std::tuple<int, int> &version);
 
-  static QByteArray longToData(const unsigned long n);
+  static QByteArray longToData(unsigned long n);
 };
 
 } // namespace dispar

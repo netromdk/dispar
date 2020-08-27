@@ -15,7 +15,8 @@
 
 namespace dispar {
 
-MacSdkVersionsEditor::MacSdkVersionsEditor(Section *section_, BinaryObject *object_, QWidget *parent)
+MacSdkVersionsEditor::MacSdkVersionsEditor(Section *section_, BinaryObject *object_,
+                                           QWidget *parent)
   : QDialog(parent), section(section_), patcher(*section_)
 {
   assert(section);
@@ -65,7 +66,8 @@ void MacSdkVersionsEditor::accept()
 
   // OR to call both setter functions and yield true if one of them were true. If || is used then
   // only the first setter is called if it returns true.
-  if (patcher.setTarget(newTarget) | patcher.setSdk(newSdk)) {
+  if (((static_cast<int>(patcher.setTarget(newTarget)) |
+        static_cast<int>(patcher.setSdk(newSdk))) != 0)) {
     sectionModified = QDateTime::currentDateTime();
     done(QDialog::Accepted);
     return;

@@ -211,7 +211,7 @@ void Util::centerWidget(QWidget *widget)
 void Util::resizeRatioOfScreen(QWidget *widget, float percentage, const QSize &minimum)
 {
   const auto *screen = screenOfWidget(widget);
-  if (!screen) return;
+  if (screen == nullptr) return;
 
   auto rect = screen->availableGeometry();
   rect.setWidth(static_cast<float>(rect.width()) * percentage);
@@ -280,7 +280,7 @@ void Util::scrollToTop(QAbstractScrollArea *widget)
 {
   QTimer::singleShot(1, widget, [widget] {
     auto *bar = widget->verticalScrollBar();
-    if (bar) {
+    if (bar != nullptr) {
       bar->triggerAction(QScrollBar::SliderToMinimum);
     }
   });
@@ -377,7 +377,7 @@ quint64 Util::convertAddress(QString input, bool *ok)
     return addr;
   }
 
-  if (ok) *ok = false;
+  if (ok != nullptr) *ok = false;
   return 0;
 }
 

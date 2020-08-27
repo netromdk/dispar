@@ -10,13 +10,12 @@ class AddrHexAsciiEncoderTask : public QObject, public QRunnable {
   Q_OBJECT
 
 public:
-  AddrHexAsciiEncoderTask(const QByteArray &data, const quint64 address, const quint64 index,
-                 const quint64 size);
+  AddrHexAsciiEncoderTask(const QByteArray &data, quint64 address, quint64 index, quint64 size);
 
   void run() override;
 
 signals:
-  void result(const quint64 index, const QString &data);
+  void result(quint64 index, const QString &data);
 
 private:
   const QByteArray &data;
@@ -29,14 +28,14 @@ class AddrHexAsciiEncoder : public QObject {
 public:
   AddrHexAsciiEncoder(const Section *section);
 
-  void start(const bool blocking = false);
+  void start(bool blocking = false);
   QString result() const;
 
 signals:
   void finished();
 
 private slots:
-  void addResult(const quint64 index, const QString &result);
+  void addResult(quint64 index, const QString &result);
 
 private:
   const Section *section;

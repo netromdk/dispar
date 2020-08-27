@@ -44,7 +44,7 @@ public:
   void addEntry(const Entry &entry);
   const Container &entries() const;
 
-  QString logPath() const;
+  static QString logPath();
 
 signals:
   void newEntry(const Entry &entry);

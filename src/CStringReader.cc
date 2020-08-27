@@ -17,7 +17,7 @@ bool CStringReader::next()
     offset_ = pos;
   }
 
-  auto it = data.cbegin() + offset_;
+  const auto *it = data.cbegin() + offset_;
   if (it >= data.cend()) return false;
 
   // Read until null byte but skip for empty strings until at least one character is read or the end

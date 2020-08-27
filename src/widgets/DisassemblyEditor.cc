@@ -63,7 +63,7 @@ public:
                     const QModelIndex &index) const override
   {
     auto *edit = qobject_cast<QLineEdit *>(editor);
-    if (!edit) return;
+    if (edit == nullptr) return;
 
     const auto oldStr = model->data(index).toString().trimmed();
     auto newStr = edit->text().toUpper();
@@ -73,7 +73,7 @@ public:
 
     model->setData(index, newStr);
     auto *item = tree->topLevelItem(index.row());
-    if (!item) return;
+    if (item == nullptr) return;
     Util::setTreeItemMarked(item, index.column());
 
     // Change region.
@@ -328,14 +328,15 @@ void DisassemblyEditor::markModifiedRegions()
 
         for (int row2 = row + 1; row2 < rows; row2++) {
           auto *item2 = treeWidget->topLevelItem(row2);
-          if (item2) {
+          if (item2 != nullptr) {
             int size2 = item2->text(1).split(" ", QString::SkipEmptyParts).size();
             Util::setTreeItemMarked(item2, 1);
             excess -= size2;
             if (excess <= 0) break;
           }
-          else
+          else {
             break;
+          }
         }
       }
     }

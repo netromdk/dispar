@@ -27,7 +27,7 @@ ConversionHelper::ConversionHelper(QWidget *parent) : QDialog(parent)
 void ConversionHelper::onTextEdited(const QString &text)
 {
   auto *edit = qobject_cast<QLineEdit *>(sender());
-  if (!edit) return;
+  if (edit == nullptr) return;
 
   quint64 val{0};
   bool ok{true};

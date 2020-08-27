@@ -38,7 +38,7 @@ char Reader::getChar(bool *ok)
 {
   char c{0};
   bool res = dev.getChar(&c);
-  if (ok) *ok = res;
+  if (ok != nullptr) *ok = res;
   return c;
 }
 
@@ -51,7 +51,7 @@ char Reader::peekChar(bool *ok)
 {
   char c{0};
   qint64 num = dev.peek(&c, 1);
-  if (ok) *ok = (num == 1);
+  if (ok != nullptr) *ok = (num == 1);
   return c;
 }
 
@@ -92,7 +92,7 @@ bool Reader::peekList(std::initializer_list<unsigned char> list)
   }
 
   int i{0};
-  for (auto it = list.begin(); it != list.end(); it++, i++) {
+  for (const auto *it = list.begin(); it != list.end(); it++, i++) {
     if (*it != static_cast<unsigned char>(parr[i])) {
       return false;
     }

@@ -86,7 +86,7 @@ void TreeWidget::keyPressEvent(QKeyEvent *event)
 
   bool ctrl{false};
 #ifdef MAC
-  ctrl = event->modifiers() | Qt::MetaModifier;
+  ctrl = ((event->modifiers() | Qt::MetaModifier) != 0U);
 #else
   ctrl = event->modifiers() | Qt::ControlModifier;
 #endif
@@ -128,7 +128,7 @@ void TreeWidget::onShowContextMenu(const QPoint &pos)
   }
 
   ctxItem = itemAt(pos);
-  if (ctxItem) {
+  if (ctxItem != nullptr) {
     ctxCol = indexAt(pos).column();
 
     menu.addSeparator();
@@ -161,7 +161,7 @@ void TreeWidget::doSearch()
 
 void TreeWidget::disassemble()
 {
-  if (!ctxItem) return;
+  if (ctxItem == nullptr) return;
   QString text = ctxItem->text(ctxCol);
   quint64 offset{0};
   if (addrColumn != -1) {
@@ -175,14 +175,14 @@ void TreeWidget::disassemble()
 
 void TreeWidget::copyField()
 {
-  if (!ctxItem) return;
+  if (ctxItem == nullptr) return;
   QString text = ctxItem->text(ctxCol);
   QApplication::clipboard()->setText(text);
 }
 
 void TreeWidget::copyRow()
 {
-  if (!ctxItem) return;
+  if (ctxItem == nullptr) return;
   QString text;
   for (int i = 0; i < columnCount(); i++) {
     text += ctxItem->text(i);

@@ -68,10 +68,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
     event->ignore();
     return;
   }
-  else {
-    modified = false;
-    event->accept();
-  }
+  modified = false;
+  event->accept();
 
   QMainWindow::closeEvent(event);
 }
@@ -96,7 +94,7 @@ void MainWindow::openProject(const QString &projectFile)
     QFileDialog diag(this, tr("Open Project"), QDir::homePath());
     diag.setNameFilters(QStringList{"Dispar project (*.dispar)"});
 
-    if (!diag.exec()) return;
+    if (diag.exec() == 0) return;
 
     file = diag.selectedFiles().first();
   }
@@ -105,7 +103,7 @@ void MainWindow::openProject(const QString &projectFile)
   closeProject();
 
   auto *project = Context::get().loadProject(file);
-  if (!project) {
+  if (project == nullptr) {
     modified = false;
     QMessageBox::critical(this, "dispar",
                           tr("Failed to load \"%1\"!\nMake sure file is valid.").arg(file));
@@ -147,7 +145,7 @@ bool MainWindow::saveProject()
 {
   bool saveAs = (sender() == saveAsProjectAction);
 
-  auto project = Context::get().project();
+  auto *project = Context::get().project();
   assert(project);
 
   auto ask = project->file().isEmpty() || saveAs;
@@ -207,11 +205,11 @@ void MainWindow::closeProject()
   reloadBinaryUiAction->setEnabled(false);
   omniSearchAction->setEnabled(false);
 
-  if (binaryWidget) {
+  if (binaryWidget != nullptr) {
     binaryWidget->deleteLater();
   }
 
-  if (omniSearchDialog) {
+  if (omniSearchDialog != nullptr) {
     delete omniSearchDialog;
   }
 
@@ -223,7 +221,7 @@ void MainWindow::openBinary()
   QFileDialog diag(this, tr("Open Binary"), QDir::homePath());
   diag.setNameFilters({"Mach-O binary (*.o *.dylib *.dylinker *.bundle *.app *)", "Any file (*)"});
 
-  if (!diag.exec()) return;
+  if (diag.exec() == 0) return;
 
   auto file = diag.selectedFiles().first();
   loadBinary(file);
@@ -261,16 +259,16 @@ void MainWindow::reloadBinary()
 
 void MainWindow::reloadBinaryUi()
 {
-  if (binaryWidget) {
+  if (binaryWidget != nullptr) {
     binaryWidget->reloadUi();
   }
 }
 
 void MainWindow::omniSearch()
 {
-  if (!binaryWidget) return;
+  if (binaryWidget == nullptr) return;
 
-  if (!omniSearchDialog) {
+  if (omniSearchDialog == nullptr) {
     omniSearchDialog = new OmniSearchDialog(this);
   }
 
@@ -286,14 +284,14 @@ void MainWindow::omniSearch()
 void MainWindow::onRecentProject()
 {
   auto *action = qobject_cast<QAction *>(sender());
-  if (!action) return;
+  if (action == nullptr) return;
   openProject(action->text());
 }
 
 void MainWindow::onRecentBinary()
 {
   auto *action = qobject_cast<QAction *>(sender());
-  if (!action) return;
+  if (action == nullptr) return;
   loadBinary(action->text());
 }
 
@@ -340,7 +338,7 @@ void MainWindow::onLoadSuccess(const std::shared_ptr<Format> &fmt)
   // If no project was active then create one, and if a project was not already saved then reset it.
   auto &ctx = Context::get();
   auto *project = ctx.project();
-  if (!project || project->file().isEmpty()) {
+  if ((project == nullptr) || project->file().isEmpty()) {
     project = ctx.resetProject();
     connect(project, &Project::modified, this, &MainWindow::onProjectModified);
   }
@@ -435,7 +433,7 @@ void MainWindow::onLoadSuccess(const std::shared_ptr<Format> &fmt)
     disDiag.close();
     qDebug() << ">" << elapsedTimer.restart() << "ms";
 
-    if (centralWidget()) {
+    if (centralWidget() != nullptr) {
       centralWidget()->deleteLater();
     }
 
@@ -445,7 +443,7 @@ void MainWindow::onLoadSuccess(const std::shared_ptr<Format> &fmt)
             [this] { omniSearchAction->setEnabled(true); });
 
     // Clear active omni search.
-    if (omniSearchDialog) {
+    if (omniSearchDialog != nullptr) {
       delete omniSearchDialog;
     }
 
@@ -668,11 +666,7 @@ bool MainWindow::checkSave()
   if (QMessageBox::Yes == ret) {
     return saveProject();
   }
-  else if (QMessageBox::Cancel == ret) {
-    return false;
-  }
-
-  return true;
+  return QMessageBox::Cancel != ret;
 }
 
 bool MainWindow::checkSaveBinary()
@@ -684,16 +678,12 @@ bool MainWindow::checkSaveBinary()
   if (QMessageBox::Yes == ret) {
     return saveBinary();
   }
-  else if (QMessageBox::Cancel == ret) {
-    return false;
-  }
-
-  return true;
+  return QMessageBox::Cancel != ret;
 }
 
 void MainWindow::applyModifiedRegions(BinaryObject *object)
 {
-  auto project = Context::get().project();
+  auto *project = Context::get().project();
   const auto &modifiedRegions = project->modifiedRegions();
   if (modifiedRegions.isEmpty()) {
     return;

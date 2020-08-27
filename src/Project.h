@@ -27,7 +27,7 @@ public:
   static std::unique_ptr<Project> load(const QString &file);
 
   /// Save project to \p file, if specified, otherwise save to \p file().
-  bool save(const QString &file = QString());
+  bool save(const QString &path = QString());
 
   [[nodiscard]] QString binary() const;
   void setBinary(const QString &file);
@@ -57,7 +57,7 @@ public:
 
   /// Add modified region \p data at absolute \p address.
   /** This is only used to be able to save to project file. */
-  void addModifiedRegion(const quint64 address, const QByteArray &data);
+  void addModifiedRegion(quint64 address, const QByteArray &data);
 
   /// Remove all modified regions from project.
   void clearModifiedRegions();

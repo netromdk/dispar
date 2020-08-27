@@ -15,7 +15,7 @@ Disassembler::Result::Result(cs_insn *insn_, size_t count) : insn(insn_), count_
 
 Disassembler::Result::~Result()
 {
-  if (insn) {
+  if (insn != nullptr) {
     cs_free(insn, count_);
   }
 }
@@ -65,7 +65,7 @@ Disassembler::Disassembler(const BinaryObject &object, Syntax syntax) : valid_(f
   mode += (object.isLittleEndian() ? cs_mode::CS_MODE_LITTLE_ENDIAN : cs_mode::CS_MODE_BIG_ENDIAN);
 
   cs_err err = cs_open(arch, static_cast<cs_mode>(mode), &handle);
-  if (err) {
+  if (err != 0U) {
     qCritical() << "Failed to create cs disassembler!" << (int) err;
     return;
   }
@@ -88,7 +88,7 @@ Disassembler::Disassembler(const BinaryObject &object, Syntax syntax) : valid_(f
     break;
   }
 
-  valid_ = !cs_option(handle, cs_opt_type::CS_OPT_SYNTAX, csSyntax);
+  valid_ = (cs_option(handle, cs_opt_type::CS_OPT_SYNTAX, csSyntax) == 0U);
 }
 
 Disassembler::~Disassembler()
@@ -99,7 +99,7 @@ Disassembler::~Disassembler()
 }
 
 std::unique_ptr<Disassembler::Result> Disassembler::disassemble(const QByteArray &data,
-                                                                quint64 baseAddr)
+                                                                quint64 baseAddr) const
 {
   const void *code = data.constData();
   cs_insn *insn = nullptr;
@@ -112,7 +112,7 @@ std::unique_ptr<Disassembler::Result> Disassembler::disassemble(const QByteArray
 }
 
 std::unique_ptr<Disassembler::Result> Disassembler::disassemble(const QString &text,
-                                                                quint64 baseAddr)
+                                                                quint64 baseAddr) const
 {
   auto input = Util::hexToData(text.simplified().trimmed().replace(" ", ""));
   return disassemble(input, baseAddr);

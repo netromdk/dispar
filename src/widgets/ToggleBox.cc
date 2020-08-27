@@ -24,7 +24,7 @@ ToggleBox::~ToggleBox()
 void ToggleBox::setContentLayout(QLayout *layout)
 {
   assert(layout);
-  if (contentWidget->layout()) {
+  if (contentWidget->layout() != nullptr) {
     delete contentWidget->layout();
   }
 

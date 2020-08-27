@@ -105,7 +105,7 @@ int handlePatchSdk(const std::shared_ptr<Format> &format, const Section::Type ty
   bool modified = false;
   for (const auto *object : format->objects()) {
     auto *section = object->section(type);
-    if (!section) {
+    if (section == nullptr) {
       qInfo() << "[" << qPrintable(object->toString()) << "]";
       qWarning() << "Does not have section" << Section::typeName(type);
       continue;
@@ -156,9 +156,9 @@ int main(int argc, char **argv)
   }
 
   QApplication app(argc, argv);
-  app.setApplicationName("Dispar");
-  app.setOrganizationName("dispar");
-  app.setApplicationVersion(versionString());
+  QApplication::setApplicationName("Dispar");
+  QApplication::setOrganizationName("dispar");
+  QApplication::setApplicationVersion(versionString());
 
   // Register software signals.
   signal(SIGINT, &signalHandler);
@@ -210,7 +210,9 @@ int main(int argc, char **argv)
   const bool patchiOS = parser.isSet(patchiOSSdkOption);
   const bool patchWatchOS = parser.isSet(patchWatchOSSdkOption);
   const bool patchTvOS = parser.isSet(patchTvOSSdkOption);
-  const bool patchSdk = patchMac | patchiOS | patchWatchOS | patchTvOS;
+  const bool patchSdk =
+    (static_cast<int>(patchMac) | static_cast<int>(patchiOS) | static_cast<int>(patchWatchOS) |
+     static_cast<int>(static_cast<int>(patchTvOS) != 0)) != 0;
 
   const bool version = parser.isSet(versionOption);
   const bool verbose = parser.isSet(verboseOption);
@@ -258,11 +260,11 @@ int main(int argc, char **argv)
       return handlePatchSdk(format, Section::Type::LC_VERSION_MIN_MACOSX,
                             parser.value(patchMacSdkOption));
     }
-    else if (patchiOS) {
+    if (patchiOS) {
       return handlePatchSdk(format, Section::Type::LC_VERSION_MIN_IPHONEOS,
                             parser.value(patchiOSSdkOption));
     }
-    else if (patchWatchOS) {
+    if (patchWatchOS) {
       return handlePatchSdk(format, Section::Type::LC_VERSION_MIN_WATCHOS,
                             parser.value(patchWatchOSSdkOption));
     }
@@ -277,5 +279,5 @@ int main(int argc, char **argv)
   MainWindow main(file);
   QTimer::singleShot(0, &main, SLOT(show()));
 
-  return app.exec();
+  return QApplication::exec();
 }

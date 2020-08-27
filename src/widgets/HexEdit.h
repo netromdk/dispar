@@ -31,7 +31,7 @@ private slots:
   void customContextMenuRequested(const QPoint &pos);
   void editAtCursor();
   void findAddress();
-  void copyContent(const Copy type);
+  void copyContent(Copy type);
   void disassemble();
   void showConversionHelper();
 
@@ -46,7 +46,7 @@ private:
     [[nodiscard]] bool hasHexHigh() const;
   };
 
-  [[nodiscard]] Block cursorBlock(const QTextBlock &block) const;
+  [[nodiscard]] static Block cursorBlock(const QTextBlock &block);
   [[nodiscard]] Block currentBlock() const;
   void markModifiedRegions();
 

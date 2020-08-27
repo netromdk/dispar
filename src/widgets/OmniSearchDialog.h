@@ -64,17 +64,16 @@ private:
   void setupLayout();
   [[nodiscard]] float flexMatch(const QString &haystack) const;
   [[nodiscard]] QList<QTreeWidgetItem *> flexMatchSections(const QList<Section *> &sections) const;
-  QList<QTreeWidgetItem *> flexMatchListRows(const QListWidget *list, const int startRow,
-                                             const int amount, const EntryType type) const;
-  [[nodiscard]] QList<QTreeWidgetItem *> flexMatchTextOffset(const QString &text,
-                                                             const int offset) const;
-  [[nodiscard]] QTreeWidgetItem *createCandidate(const QString &text, const EntryType type,
-                                                 const float similarity, const QVariant &data,
-                                                 const QString &fullText = {}) const;
-  void navigateCandidates(const Navigation nav);
+  QList<QTreeWidgetItem *> flexMatchListRows(const QListWidget *list, int startRow, int amount,
+                                             EntryType type) const;
+  [[nodiscard]] QList<QTreeWidgetItem *> flexMatchTextOffset(const QString &text, int offset) const;
+  [[nodiscard]] static QTreeWidgetItem *createCandidate(const QString &text, EntryType type,
+                                                        float similarity, const QVariant &data,
+                                                        const QString &fullText = {});
+  void navigateCandidates(Navigation nav);
   void activateItem(const QTreeWidgetItem *item);
 
-  static QString entryTypeString(const EntryType type);
+  static QString entryTypeString(EntryType type);
 
   BinaryWidget *binaryWidget = nullptr;
 

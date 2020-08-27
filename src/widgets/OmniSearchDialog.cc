@@ -111,7 +111,7 @@ void OmniSearchDialog::inputKeyUp()
 void OmniSearchDialog::inputKeyCtrlNumber(int num)
 {
   auto *item = candidatesWidget->topLevelItem(num - 1);
-  if (!item) return;
+  if (item == nullptr) return;
   candidatesWidget->setCurrentItem(item);
   activateCurrentItem();
 }
@@ -280,14 +280,14 @@ void OmniSearchDialog::search()
 float OmniSearchDialog::flexMatch(const QString &haystack) const
 {
   if (!regex.isValid()) {
-    return 0.0f;
+    return 0.0F;
   }
 
   if (const auto m = regex.match(haystack); m.hasMatch()) {
     return float(m.captured().size()) / float(haystack.size());
   }
 
-  return 0.0f;
+  return 0.0F;
 }
 
 QList<QTreeWidgetItem *> OmniSearchDialog::flexMatchSections(const QList<Section *> &sections) const
@@ -296,7 +296,7 @@ QList<QTreeWidgetItem *> OmniSearchDialog::flexMatchSections(const QList<Section
   for (const auto *section : sections) {
     const float sim = flexMatch(section->name()),
                 sim2 = flexMatch(Section::typeName(section->type()));
-    if (sim > 0.0f || sim2 > 0.0f) {
+    if (sim > 0.0F || sim2 > 0.0F) {
       items << createCandidate(section->toString(), EntryType::SECTION, std::max(sim, sim2),
                                QVariant::fromValue((void *) section));
     }
@@ -311,12 +311,12 @@ QList<QTreeWidgetItem *> OmniSearchDialog::flexMatchListRows(const QListWidget *
   QList<QTreeWidgetItem *> items;
   for (int row = startRow, count = list->count(); row < startRow + amount && row < count; ++row) {
     const auto *item = list->item(row);
-    if (!item) continue;
+    if (item == nullptr) continue;
     auto itemText = item->text().trimmed();
     if (type == EntryType::SYMBOL && itemText.endsWith(" *")) {
       itemText.chop(2);
     }
-    if (const float sim = flexMatch(itemText); sim > 0.0f) {
+    if (const float sim = flexMatch(itemText); sim > 0.0F) {
       items << createCandidate(itemText, type, sim, QVariant::fromValue((void *) item));
     }
   }
@@ -381,7 +381,7 @@ QList<QTreeWidgetItem *> OmniSearchDialog::flexMatchTextOffset(const QString &te
 
 QTreeWidgetItem *OmniSearchDialog::createCandidate(const QString &text, const EntryType type,
                                                    const float similarity, const QVariant &data,
-                                                   const QString &fullText) const
+                                                   const QString &fullText)
 {
   // Spaces are only removed on left and right, not internally.
   static const QRegularExpression whiteSpace(R"([\n\r\t\v])");
@@ -474,7 +474,7 @@ void OmniSearchDialog::activateItem(const QTreeWidgetItem *item)
 void OmniSearchDialog::activateCurrentItem()
 {
   const auto *item = candidatesWidget->currentItem();
-  if (!item) return;
+  if (item == nullptr) return;
 
   // Delay activation until after scope such that dialog is closed before activation, which ensures
   // the blue activation line is shown in the binary view.
@@ -488,11 +488,11 @@ void OmniSearchDialog::candidateContextMenu(const QPoint &pos)
   const auto *selectedItem = candidatesWidget->currentItem();
 
   // Currently no other actions apply, so don't show context menu if no item is selected.
-  if (!selectedItem) return;
+  if (selectedItem == nullptr) return;
 
   QMenu menu;
 
-  if (selectedItem) {
+  if (selectedItem != nullptr) {
     menu.addAction(tr("Jump to match"), this, &OmniSearchDialog::activateCurrentItem);
     menu.addAction(tr("Copy matched text"), this, &OmniSearchDialog::copyCurrentText);
   }
@@ -503,7 +503,7 @@ void OmniSearchDialog::candidateContextMenu(const QPoint &pos)
 void OmniSearchDialog::copyCurrentText()
 {
   const auto *selectedItem = candidatesWidget->currentItem();
-  if (!selectedItem) return;
+  if (selectedItem == nullptr) return;
 
   const auto fullText = selectedItem->data(0, Qt::UserRole + 1).toString();
   QApplication::clipboard()->setText(fullText);

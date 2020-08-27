@@ -298,7 +298,7 @@ void HexEdit::showConversionHelper()
   helper->show();
 }
 
-HexEdit::Block HexEdit::cursorBlock(const QTextBlock &block) const
+HexEdit::Block HexEdit::cursorBlock(const QTextBlock &block)
 {
   const auto oldText = block.text().trimmed();
 

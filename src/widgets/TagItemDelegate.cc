@@ -14,9 +14,9 @@ void TagItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
 
   // Use a rectangle that is 5% smaller to give some room.
   auto lessRect = option.rect;
-  auto w = float(lessRect.width()) * 0.95f;
+  auto w = float(lessRect.width()) * 0.95F;
   auto diffW = lessRect.width() - w;
-  auto h = float(lessRect.height()) * 0.95f;
+  auto h = float(lessRect.height()) * 0.95F;
   auto diffH = lessRect.height() - h;
   lessRect.setWidth(w);
   lessRect.setHeight(h);
@@ -27,7 +27,8 @@ void TagItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
   path.addRoundedRect(lessRect, 10, 10);
 
   QBrush bg("#cce0ff");
-  if (option.state & QStyle::State_Selected && option.state & QStyle::State_HasFocus) {
+  if (((option.state & QStyle::State_Selected) != 0U) &&
+      ((option.state & QStyle::State_HasFocus) != 0U)) {
     bg = QBrush("#80b3ff");
   }
 
@@ -48,7 +49,7 @@ QSize TagItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModel
 {
   auto tag = index.data().toString();
   QFontMetrics fm(option.font);
-  return QSize(float(fm.horizontalAdvance(tag)) * 1.3f, float(fm.height()) * 1.5f);
+  return QSize(float(fm.horizontalAdvance(tag)) * 1.3F, float(fm.height()) * 1.5F);
 }
 
 } // namespace dispar

@@ -104,7 +104,7 @@ bool MachO::parse()
 QList<BinaryObject *> MachO::objects() const
 {
   QList<BinaryObject *> res;
-  for (auto &object : objects_) {
+  for (const auto &object : objects_) {
     res << object.get();
   }
   return res;
@@ -886,9 +886,9 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
 
   // If symbol table loaded then merge string table entries into it.
   if (symnum > 0) {
-    auto strTable = binaryObject->section(Section::Type::STRING);
-    if (strTable) {
-      auto &data = strTable->data();
+    auto *strTable = binaryObject->section(Section::Type::STRING);
+    if (strTable != nullptr) {
+      const auto &data = strTable->data();
       auto &symbols = symTable.symbols();
       for (auto &symbol : symbols) {
         QByteArray tmp;
@@ -907,8 +907,8 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
 
   // If dynamic symbol table loaded then merge data from symbol table and symbol stubs into it.
   if (indirsymnum > 0 && symnum > 0) {
-    auto stubs = binaryObject->section(Section::Type::SYMBOL_STUBS);
-    if (stubs) {
+    auto *stubs = binaryObject->section(Section::Type::SYMBOL_STUBS);
+    if (stubs != nullptr) {
       quint64 stubAddr = stubs->address();
       const auto &symbols = symTable.symbols();
       auto &dynsymbols = dynsymTable.symbols();

@@ -42,7 +42,7 @@ public:
   [[nodiscard]] virtual QList<BinaryObject *> objects() const = 0;
 
   /// Write modified sections of objects to \p device.
-  void write(QIODevice &device);
+  void write(QIODevice &device) const;
 
   /// Try each of the known formats and see if any of them are compatible with the file.
   static std::shared_ptr<Format> detect(const QString &file);

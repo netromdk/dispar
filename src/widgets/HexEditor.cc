@@ -63,7 +63,7 @@ void HexEditor::showEvent(QShowEvent *event)
 void HexEditor::updateDisassembly()
 {
   // Only update if section has a disassembly!
-  if (!section->disassembly()) {
+  if (section->disassembly() == nullptr) {
     return;
   }
 
@@ -147,7 +147,7 @@ void HexEditor::createEntries()
     return;
   }
 
-  if (progDiag) {
+  if (progDiag != nullptr) {
     progDiag->setLabelText(tr("Loading %1 data)").arg(Util::formatSize(len)));
     qApp->processEvents();
   }

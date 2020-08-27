@@ -9,7 +9,7 @@
 
 namespace {
 
-static constexpr int PROJECT_VERSION = 1;
+constexpr int PROJECT_VERSION = 1;
 
 } // namespace
 

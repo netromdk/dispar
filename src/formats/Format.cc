@@ -59,7 +59,7 @@ QString Format::typeName(Type type)
   return "";
 }
 
-void Format::write(QIODevice &device)
+void Format::write(QIODevice &device) const
 {
   for (const auto *object : objects()) {
     for (const auto *section : object->sections()) {

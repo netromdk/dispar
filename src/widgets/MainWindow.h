@@ -56,8 +56,8 @@ private slots:
   void onRecentBinary();
   void onConversionHelper();
   void onDisassembler();
-  void onAbout();
-  void onOptions();
+  static void onAbout();
+  static void onOptions();
   void onLog();
   void onLoadSuccess(const std::shared_ptr<Format> &fmt);
   void onProjectModified();

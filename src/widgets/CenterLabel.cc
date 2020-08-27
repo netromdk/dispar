@@ -21,7 +21,7 @@ CenterLabel::~CenterLabel() = default;
 void CenterLabel::dragEnterEvent(QDragEnterEvent *event)
 {
   const auto *mime = event->mimeData();
-  if (!mime || !mime->hasUrls()) {
+  if ((mime == nullptr) || !mime->hasUrls()) {
     event->ignore();
     return;
   }
