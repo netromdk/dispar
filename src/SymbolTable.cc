@@ -38,7 +38,7 @@ const SymbolTable::EntryList &SymbolTable::symbols() const
 
 SymbolTable &SymbolTable::operator=(const SymbolTable &other) = default;
 
-SymbolTable &SymbolTable::operator=(SymbolTable &&other)
+SymbolTable &SymbolTable::operator=(SymbolTable &&other) noexcept
 {
   entries = std::move(other.entries);
   return *this;

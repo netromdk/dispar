@@ -13,7 +13,7 @@ SymbolEntry::SymbolEntry(quint32 index, quint64 value, const QString &strValue_)
 {
 }
 
-SymbolEntry::SymbolEntry(SymbolEntry &&other) : SymbolEntry()
+SymbolEntry::SymbolEntry(SymbolEntry &&other) noexcept : SymbolEntry()
 {
   *this = std::move(other);
 }
@@ -50,7 +50,7 @@ const QString &SymbolEntry::string() const
 
 SymbolEntry &SymbolEntry::operator=(const SymbolEntry &other) = default;
 
-SymbolEntry &SymbolEntry::operator=(SymbolEntry &&other)
+SymbolEntry &SymbolEntry::operator=(SymbolEntry &&other) noexcept
 {
   std::swap(index_, other.index_);
   std::swap(value_, other.value_);
