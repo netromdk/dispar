@@ -9,9 +9,7 @@
 
 namespace dispar {
 
-Debugger::Debugger()
-{
-}
+Debugger::Debugger() = default;
 
 Debugger::Debugger(const QString &program, const QString &versionArgument,
                    const QString &launchPattern)
@@ -51,7 +49,7 @@ QString Debugger::launchPattern() const
 
 QString Debugger::toString() const
 {
-  return QString("Debugger[program = \"%1\", version = \"%2\", launch = \"%3\"]")
+  return QString(R"(Debugger[program = "%1", version = "%2", launch = "%3"])")
     .arg(program())
     .arg(versionArgument())
     .arg(launchPattern());

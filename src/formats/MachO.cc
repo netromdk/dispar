@@ -890,8 +890,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
     if (strTable) {
       auto &data = strTable->data();
       auto &symbols = symTable.symbols();
-      for (std::size_t h = 0; h < symbols.size(); h++) {
-        auto &symbol = symbols[h];
+      for (auto &symbol : symbols) {
         QByteArray tmp;
         for (quint32 i = symbol.index(), n = data.size(); i < n; ++i) {
           char c = data[i];

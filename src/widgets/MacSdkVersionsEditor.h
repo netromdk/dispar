@@ -14,7 +14,7 @@ namespace dispar {
 class MacSdkVersionsEditor : public QDialog {
 public:
   MacSdkVersionsEditor(Section *section, BinaryObject *object, QWidget *parent = nullptr);
-  virtual ~MacSdkVersionsEditor() override;
+  ~MacSdkVersionsEditor() override;
 
   void accept() override;
 

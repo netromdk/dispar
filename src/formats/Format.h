@@ -24,11 +24,11 @@ public:
   Format(Type type);
   virtual ~Format() = default;
 
-  Type type() const;
+  [[nodiscard]] Type type() const;
 
-  virtual QString toString() const;
+  [[nodiscard]] virtual QString toString() const;
 
-  virtual QString file() const = 0;
+  [[nodiscard]] virtual QString file() const = 0;
 
   /// Detect whether the magic code of the file corresponds to the format.
   /** Only reads the first chunk of the file and not all of it! */
@@ -39,7 +39,7 @@ public:
 
   /// Get the list of probed binary objects of the file.
   /** Format keeps ownership of objects. */
-  virtual QList<BinaryObject *> objects() const = 0;
+  [[nodiscard]] virtual QList<BinaryObject *> objects() const = 0;
 
   /// Write modified sections of objects to \p device.
   void write(QIODevice &device);

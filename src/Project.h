@@ -20,7 +20,7 @@ class Project : public QObject {
 
 public:
   Project();
-  ~Project();
+  ~Project() override;
 
   /// Load project from \p file.
   /** Returns \p nullptr if nonexistent or failed. */
@@ -29,16 +29,16 @@ public:
   /// Save project to \p file, if specified, otherwise save to \p file().
   bool save(const QString &file = QString());
 
-  QString binary() const;
+  [[nodiscard]] QString binary() const;
   void setBinary(const QString &file);
 
-  QString file() const;
+  [[nodiscard]] QString file() const;
 
   /// Tags for a specified address.
-  QStringList addressTags(quint64 address) const;
+  [[nodiscard]] QStringList addressTags(quint64 address) const;
 
   /// All tags.
-  const QHash<quint64, QStringList> &tags() const;
+  [[nodiscard]] const QHash<quint64, QStringList> &tags() const;
 
   /// Associates \p tag with \p address.
   /** Checks if tag is not taken already, too. */
@@ -53,7 +53,7 @@ public:
   bool removeAddressTags(const QStringList &tags);
 
   /// All modified regions.
-  const QMap<quint64, QByteArray> &modifiedRegions() const;
+  [[nodiscard]] const QMap<quint64, QByteArray> &modifiedRegions() const;
 
   /// Add modified region \p data at absolute \p address.
   /** This is only used to be able to save to project file. */

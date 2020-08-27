@@ -21,7 +21,7 @@ public:
   void addSymbol(SymbolEntry &&entry);
 
   EntryList &symbols();
-  const EntryList &symbols() const;
+  [[nodiscard]] const EntryList &symbols() const;
 
   bool string(quint64 value, QString &str) const;
 

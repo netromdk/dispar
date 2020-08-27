@@ -12,14 +12,14 @@ class Reader;
 class MachO : public Format {
 public:
   MachO(const QString &file);
-  virtual ~MachO() override = default;
+  ~MachO() override = default;
 
-  QString file() const override;
+  [[nodiscard]] QString file() const override;
 
   bool detect() override;
   bool parse() override;
 
-  QList<BinaryObject *> objects() const override;
+  [[nodiscard]] QList<BinaryObject *> objects() const override;
 
 private:
   bool parseHeader(quint32 offset, quint32 size, Reader &reader);

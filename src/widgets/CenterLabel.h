@@ -10,7 +10,7 @@ class CenterLabel : public QLabel {
 
 public:
   CenterLabel(const QString &text, QWidget *parent = nullptr);
-  virtual ~CenterLabel() override;
+  ~CenterLabel() override;
 
 signals:
   void droppedFileName(const QString &fileName);

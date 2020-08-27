@@ -33,7 +33,7 @@ class BinaryWidget : public QWidget {
 
 public:
   BinaryWidget(BinaryObject *object);
-  virtual ~BinaryWidget();
+  ~BinaryWidget() override;
 
   void reloadUi();
 
@@ -42,8 +42,8 @@ signals:
   void loaded();
 
 protected:
-  void showEvent(QShowEvent *event);
-  bool eventFilter(QObject *obj, QEvent *event);
+  void showEvent(QShowEvent *event) override;
+  bool eventFilter(QObject *obj, QEvent *event) override;
 
 private slots:
   void onSymbolChosen(int row);

@@ -49,27 +49,27 @@ public:
   /// Get string representation of type.
   static QString typeName(Type type);
 
-  Type type() const;
-  QString name() const;
-  quint64 address() const;
-  quint64 size() const;
-  quint32 offset() const;
+  [[nodiscard]] Type type() const;
+  [[nodiscard]] QString name() const;
+  [[nodiscard]] quint64 address() const;
+  [[nodiscard]] quint64 size() const;
+  [[nodiscard]] quint32 offset() const;
 
-  QString toString() const;
+  [[nodiscard]] QString toString() const;
 
-  bool hasAddress(quint64 address) const;
+  [[nodiscard]] bool hasAddress(quint64 address) const;
 
-  const QByteArray &data() const;
+  [[nodiscard]] const QByteArray &data() const;
   void setData(const QByteArray &data);
 
   void setSubData(const QByteArray &subData, int pos);
-  bool isModified() const;
-  QDateTime modifiedWhen() const;
-  const QList<ModifiedRegion> &modifiedRegions() const;
+  [[nodiscard]] bool isModified() const;
+  [[nodiscard]] QDateTime modifiedWhen() const;
+  [[nodiscard]] const QList<ModifiedRegion> &modifiedRegions() const;
 
   /// Takes ownership of \p disasm.
   void setDisassembly(std::unique_ptr<Disassembler::Result> disasm);
-  Disassembler::Result *disassembly() const;
+  [[nodiscard]] Disassembler::Result *disassembly() const;
 
 private:
   Type type_;

@@ -16,10 +16,10 @@ public:
   bool next();
 
   /// If a string was read it is retrieved here.
-  QString string() const;
+  [[nodiscard]] QString string() const;
 
   /// Offset of string beginning in data block.
-  quint64 offset() const;
+  [[nodiscard]] quint64 offset() const;
 
   /// Read all strings of data.
   QStringList readAll();

@@ -40,14 +40,14 @@ private:
     quint64 addr = 0;
     QString hexLow, hexHigh, ascii, line;
 
-    QString addrStr() const;
-    QString addrEndStr() const;
-    QString hex() const;
-    bool hasHexHigh() const;
+    [[nodiscard]] QString addrStr() const;
+    [[nodiscard]] QString addrEndStr() const;
+    [[nodiscard]] QString hex() const;
+    [[nodiscard]] bool hasHexHigh() const;
   };
 
-  Block cursorBlock(const QTextBlock &block) const;
-  Block currentBlock() const;
+  [[nodiscard]] Block cursorBlock(const QTextBlock &block) const;
+  [[nodiscard]] Block currentBlock() const;
   void markModifiedRegions();
 
   Section *section = nullptr;

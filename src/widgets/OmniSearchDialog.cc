@@ -57,9 +57,7 @@ OmniSearchDialog::OmniSearchDialog(QWidget *parent) : QDialog(parent)
   setupLayout();
 }
 
-OmniSearchDialog::~OmniSearchDialog()
-{
-}
+OmniSearchDialog::~OmniSearchDialog() = default;
 
 void OmniSearchDialog::setBinaryWidget(BinaryWidget *widget)
 {
@@ -386,7 +384,7 @@ QTreeWidgetItem *OmniSearchDialog::createCandidate(const QString &text, const En
                                                    const QString &fullText) const
 {
   // Spaces are only removed on left and right, not internally.
-  static const QRegularExpression whiteSpace("[\\n\\r\\t\\v]");
+  static const QRegularExpression whiteSpace(R"([\n\r\t\v])");
   const auto title = text.trimmed().remove(whiteSpace);
 
   const QString &line = fullText.isEmpty() ? text : fullText;

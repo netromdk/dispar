@@ -24,7 +24,7 @@ class Context : public QObject {
 
 public:
   Context();
-  ~Context();
+  ~Context() override;
 
   /// Singleton instance.
   static Context &get();
@@ -33,18 +33,18 @@ public:
   void init();
 
   void setVerbose(bool verbose);
-  bool verbose() const;
+  [[nodiscard]] bool verbose() const;
 
-  bool showMachineCode() const;
+  [[nodiscard]] bool showMachineCode() const;
   void setShowMachineCode(bool show);
 
-  Disassembler::Syntax disassemblerSyntax() const;
+  [[nodiscard]] Disassembler::Syntax disassemblerSyntax() const;
   void setDisassemblerSyntax(Disassembler::Syntax syntax);
 
-  bool backupEnabled() const;
+  [[nodiscard]] bool backupEnabled() const;
   void setBackupEnabled(bool enabled);
 
-  int backupAmount() const;
+  [[nodiscard]] int backupAmount() const;
   void setBackupAmount(int amount);
 
   const QStringList &recentProjects();
@@ -54,16 +54,16 @@ public:
   void addRecentBinary(const QString &binary);
 
   void setValue(const QString &key, const QVariant &value);
-  QVariant value(const QString &key, const QVariant &defaultValue = {}) const;
+  [[nodiscard]] QVariant value(const QString &key, const QVariant &defaultValue = {}) const;
 
   void setDebugger(const Debugger &debugger);
-  Debugger debugger() const;
+  [[nodiscard]] Debugger debugger() const;
 
   void loadSettings();
   void saveSettings();
 
   /// Keeps ownership.
-  Project *project() const;
+  [[nodiscard]] Project *project() const;
 
   /// Reset to empty project state and returns newly created instance.
   /** Keeps ownership. */
@@ -75,12 +75,12 @@ public:
   /** Keeps ownership. */
   Project *loadProject(const QString &file);
 
-  LogHandler *logHandler() const;
-  int logLevel() const;
+  [[nodiscard]] LogHandler *logHandler() const;
+  [[nodiscard]] int logLevel() const;
   void setLogLevel(int level);
-  bool acceptMsgType(QtMsgType type) const;
+  [[nodiscard]] bool acceptMsgType(QtMsgType type) const;
 
-  int omniSearchLimit() const;
+  [[nodiscard]] int omniSearchLimit() const;
   void setOmniSearchLimit(int limit);
 
 signals:

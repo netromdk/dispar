@@ -48,13 +48,7 @@ const QString &SymbolEntry::string() const
   return strValue;
 }
 
-SymbolEntry &SymbolEntry::operator=(const SymbolEntry &other)
-{
-  index_ = other.index_;
-  value_ = other.value_;
-  strValue = other.strValue;
-  return *this;
-}
+SymbolEntry &SymbolEntry::operator=(const SymbolEntry &other) = default;
 
 SymbolEntry &SymbolEntry::operator=(SymbolEntry &&other)
 {

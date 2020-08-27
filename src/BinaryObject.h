@@ -19,41 +19,41 @@ public:
                bool littleEndian = true, int systemBits = 32,
                FileType fileType = FileType::EXECUTE);
 
-  CpuType cpuType() const;
+  [[nodiscard]] CpuType cpuType() const;
   void setCpuType(CpuType type);
 
-  CpuType cpuSubType() const;
+  [[nodiscard]] CpuType cpuSubType() const;
   void setCpuSubType(CpuType type);
 
-  bool isLittleEndian() const;
+  [[nodiscard]] bool isLittleEndian() const;
   void setLittleEndian(bool little);
 
-  int systemBits() const;
+  [[nodiscard]] int systemBits() const;
   void setSystemBits(int bits);
 
-  FileType fileType() const;
+  [[nodiscard]] FileType fileType() const;
   void setFileType(FileType type);
 
-  QString toString() const;
+  [[nodiscard]] QString toString() const;
 
   /// Takes ownership of \p section.
   void addSection(std::unique_ptr<Section> section);
 
-  QList<Section *> sections() const;
-  QList<Section *> sectionsByType(Section::Type type) const;
-  QList<Section *> sectionsByTypes(const QList<Section::Type> &types) const;
+  [[nodiscard]] QList<Section *> sections() const;
+  [[nodiscard]] QList<Section *> sectionsByType(Section::Type type) const;
+  [[nodiscard]] QList<Section *> sectionsByTypes(const QList<Section::Type> &types) const;
 
   /// First section of \p type.
   /** Returns \p nullptr if none were found. */
-  Section *section(Section::Type type) const;
+  [[nodiscard]] Section *section(Section::Type type) const;
 
   void setSymbolTable(const SymbolTable &table);
   void setSymbolTable(SymbolTable &&table);
-  const SymbolTable &symbolTable() const;
+  [[nodiscard]] const SymbolTable &symbolTable() const;
 
   void setDynSymbolTable(const SymbolTable &table);
   void setDynSymbolTable(SymbolTable &&table);
-  const SymbolTable &dynSymbolTable() const;
+  [[nodiscard]] const SymbolTable &dynSymbolTable() const;
 
 private:
   CpuType cpuType_, cpuSubType_;

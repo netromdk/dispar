@@ -36,11 +36,7 @@ const SymbolTable::EntryList &SymbolTable::symbols() const
   return entries;
 }
 
-SymbolTable &SymbolTable::operator=(const SymbolTable &other)
-{
-  entries = other.entries;
-  return *this;
-}
+SymbolTable &SymbolTable::operator=(const SymbolTable &other) = default;
 
 SymbolTable &SymbolTable::operator=(SymbolTable &&other)
 {

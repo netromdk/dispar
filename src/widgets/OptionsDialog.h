@@ -28,7 +28,7 @@ private:
   void createLayout();
 
   /// Returns instance of debugger from values in UI.
-  Debugger currentDebugger() const;
+  [[nodiscard]] Debugger currentDebugger() const;
 
   QCheckBox *showMachineCode;
   QComboBox *disAsmSyntax, *logLevelBox;

@@ -8,8 +8,7 @@
 
 #include "LogHandler.h"
 
-namespace dispar {
-namespace Constants {
+namespace dispar::Constants {
 
 static const QString PROJECT_URL("https://github.com/netromdk/dispar");
 static const QFont FIXED_FONT("Courier");
@@ -80,7 +79,6 @@ static const QString VERSION("2.27");
 
 } // namespace Deps
 
-} // namespace Constants
-} // namespace dispar
+} // namespace dispar::Constants
 
 #endif // SRC_CONSTANTS_H

@@ -25,25 +25,26 @@ public:
   /// Detect known debuggers on the system.
   static QList<Debugger> detect();
 
-  QString program() const;
-  QString versionArgument() const;
-  QString launchPattern() const;
+  [[nodiscard]] QString program() const;
+  [[nodiscard]] QString versionArgument() const;
+  [[nodiscard]] QString launchPattern() const;
 
-  QString toString() const;
+  [[nodiscard]] QString toString() const;
 
   /// Substitutes launch pattern with \p binary and optional \p args.
-  QString substituteLaunchPattern(const QString &binary, const QStringList &args = {}) const;
+  [[nodiscard]] QString substituteLaunchPattern(const QString &binary,
+                                                const QStringList &args = {}) const;
 
   /// Checks if debugger values are valid.
-  bool valid() const;
+  [[nodiscard]] bool valid() const;
 
   /// Checks if the debugger is runnable on the system.
   /** It will \p timeout in milliseconds if program doesn't exit before that. */
-  bool runnable(int timeout = Constants::Debugger::runnableTimeout) const;
+  [[nodiscard]] bool runnable(int timeout = Constants::Debugger::runnableTimeout) const;
 
   /// Start debugger detached to execute \p binary with optional \p args.
   /** Returns true if the debugger was started successfully. */
-  bool detachStart(const QString &binary, const QStringList &args = {}) const;
+  [[nodiscard]] bool detachStart(const QString &binary, const QStringList &args = {}) const;
 
   bool operator==(const Debugger &rhs) const;
   bool operator!=(const Debugger &rhs) const;

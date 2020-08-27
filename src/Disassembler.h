@@ -22,11 +22,11 @@ public:
     Result(cs_insn *insn, size_t count);
     ~Result();
 
-    size_t count() const;
-    cs_insn *instructions(size_t pos) const;
+    [[nodiscard]] size_t count() const;
+    [[nodiscard]] cs_insn *instructions(size_t pos) const;
 
     /// Lines of addresses, mnemonics, and instruction strings.
-    QString toString() const;
+    [[nodiscard]] QString toString() const;
 
   private:
     cs_insn *insn;
@@ -39,7 +39,7 @@ public:
   std::unique_ptr<Result> disassemble(const QByteArray &data, quint64 baseAddr = 0);
   std::unique_ptr<Result> disassemble(const QString &text, quint64 baseAddr = 0);
 
-  bool valid() const;
+  [[nodiscard]] bool valid() const;
 
 private:
   csh handle;

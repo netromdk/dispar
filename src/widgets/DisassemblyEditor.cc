@@ -32,7 +32,7 @@ public:
   }
 
   QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-                        const QModelIndex &index) const
+                        const QModelIndex &index) const override
   {
     const auto col = index.column();
     if (col != 1) {
@@ -59,7 +59,8 @@ public:
     return edit;
   }
 
-  void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
+  void setModelData(QWidget *editor, QAbstractItemModel *model,
+                    const QModelIndex &index) const override
   {
     auto *edit = qobject_cast<QLineEdit *>(editor);
     if (!edit) return;

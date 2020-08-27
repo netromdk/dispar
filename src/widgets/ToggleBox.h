@@ -14,15 +14,15 @@ class ToggleBox : public QWidget {
 
 public:
   ToggleBox(const QString &title, const QString &settingsKey, QWidget *parent = nullptr);
-  ~ToggleBox();
+  ~ToggleBox() override;
 
   void setContentLayout(QLayout *layout);
 
   void setCollapsed(bool collapsed = true);
   void setExpanded(bool expanded = true);
 
-  bool isCollapsed() const;
-  bool isExpanded() const;
+  [[nodiscard]] bool isCollapsed() const;
+  [[nodiscard]] bool isExpanded() const;
 
 signals:
   void expanded();
@@ -30,7 +30,7 @@ signals:
   void stateChanged(bool collapsed);
 
 protected:
-  void showEvent(QShowEvent *event);
+  void showEvent(QShowEvent *event) override;
 
 private:
   void createLayout();

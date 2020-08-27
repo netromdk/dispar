@@ -12,7 +12,7 @@ class Reader {
 public:
   Reader(QIODevice &dev, bool littleEndian = true);
 
-  bool isLittleEndian() const;
+  [[nodiscard]] bool isLittleEndian() const;
   void setLittleEndian(bool little);
 
   /// Read 2 bytes = 16 bits.
@@ -31,9 +31,9 @@ public:
 
   QByteArray read(qint64 max);
 
-  qint64 pos() const;
+  [[nodiscard]] qint64 pos() const;
   bool seek(qint64 pos);
-  bool atEnd() const;
+  [[nodiscard]] bool atEnd() const;
 
   bool peekList(std::initializer_list<unsigned char> list);
 

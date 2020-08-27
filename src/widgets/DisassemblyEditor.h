@@ -16,7 +16,7 @@ class BinaryObject;
 class DisassemblyEditor : public QDialog {
 public:
   DisassemblyEditor(Section *section, BinaryObject *object, QWidget *parent = nullptr);
-  virtual ~DisassemblyEditor() override;
+  ~DisassemblyEditor() override;
 
   void showUpdateButton();
   void updateModified();

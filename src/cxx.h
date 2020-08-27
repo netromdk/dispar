@@ -13,8 +13,7 @@
 #define ASSERT_X(cond, what) static_cast<void>(0)
 #endif
 
-namespace dispar {
-namespace cxx {
+namespace dispar::cxx {
 
 [[noreturn]] static inline void assert_x(const char *where, const char *what, const char *file,
                                          int line)
@@ -82,7 +81,6 @@ auto find_if(const Container &src, UnaryPredicate pred)
   return std::find_if(std::cbegin(src), std::cend(src), pred);
 }
 
-} // namespace cxx
-} // namespace dispar
+} // namespace dispar::cxx
 
 #endif // DISPAR_CXX_H

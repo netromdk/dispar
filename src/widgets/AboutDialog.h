@@ -8,7 +8,7 @@ namespace dispar {
 class AboutDialog : public QDialog {
 public:
   AboutDialog(QWidget *parent = nullptr);
-  virtual ~AboutDialog() override;
+  ~AboutDialog() override;
 
 private:
   void createLayout();

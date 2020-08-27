@@ -12,9 +12,7 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent)
   createLayout();
 }
 
-AboutDialog::~AboutDialog()
-{
-}
+AboutDialog::~AboutDialog() = default;
 
 void AboutDialog::createLayout()
 {

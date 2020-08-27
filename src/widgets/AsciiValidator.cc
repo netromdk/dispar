@@ -17,8 +17,8 @@ QValidator::State AsciiValidator::validate(QString &input, int &pos) const
   }
 
   bool ok = true;
-  for (int i = 0, n = input.size(); i < n; ++i) {
-    const auto ch = uint(input[i].toLatin1());
+  for (auto &&i : input) {
+    const auto ch = uint(i.toLatin1());
     ok &= std::isprint(ch) > 0;
     if (!ok) break;
   }

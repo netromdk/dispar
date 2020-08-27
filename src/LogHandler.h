@@ -21,13 +21,13 @@ public:
     QDateTime time;
     QtMsgType type = QtMsgType::QtInfoMsg;
     QString msg;
-    QString typeString() const;
+    [[nodiscard]] QString typeString() const;
   };
 
   using Container = QContiguousCache<Entry>;
 
   LogHandler(Context &context);
-  virtual ~LogHandler();
+  ~LogHandler() override;
 
   static void registerType();
 

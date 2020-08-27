@@ -359,7 +359,7 @@ CpuType Util::currentCpuType()
 quint64 Util::convertAddress(QString input, bool *ok)
 {
   // Simplify.
-  input.replace(QRegExp("[\\s\\t\\n\\r]"), "");
+  input.replace(QRegExp(R"([\s\t\n\r])"), "");
 
   // Try with different bases, starting with auto-detection ("0x" = 16 and "0" = 8).
   for (const auto base : {0, 16, 8, 10}) {
@@ -425,8 +425,8 @@ QByteArray Util::longToData(const unsigned long n)
   } ci;
   ci.n = n;
   QByteArray data;
-  for (int i = 0; i < 4; ++i) {
-    data.append(ci.chars[i]);
+  for (char i : ci.chars) {
+    data.append(i);
   }
   return data;
 }

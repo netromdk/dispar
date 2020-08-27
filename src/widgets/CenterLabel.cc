@@ -16,9 +16,7 @@ CenterLabel::CenterLabel(const QString &text, QWidget *parent) : QLabel(text, pa
   setFont(f);
 }
 
-CenterLabel::~CenterLabel()
-{
-}
+CenterLabel::~CenterLabel() = default;
 
 void CenterLabel::dragEnterEvent(QDragEnterEvent *event)
 {

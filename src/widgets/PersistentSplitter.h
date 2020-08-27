@@ -10,10 +10,10 @@ class PersistentSplitter : public QSplitter {
 public:
   PersistentSplitter(const QString &settingsKey, Qt::Orientation = Qt::Horizontal,
                      QWidget *parent = nullptr);
-  ~PersistentSplitter();
+  ~PersistentSplitter() override;
 
 protected:
-  void showEvent(QShowEvent *event);
+  void showEvent(QShowEvent *event) override;
 
 private:
   QString settingsKey;

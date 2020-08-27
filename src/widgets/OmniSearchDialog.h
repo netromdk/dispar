@@ -41,7 +41,7 @@ class OmniSearchDialog : public QDialog {
 
 public:
   OmniSearchDialog(QWidget *parent = nullptr);
-  virtual ~OmniSearchDialog() override;
+  ~OmniSearchDialog() override;
 
   void setBinaryWidget(BinaryWidget *widget);
 
@@ -62,14 +62,15 @@ private slots:
 
 private:
   void setupLayout();
-  float flexMatch(const QString &haystack) const;
-  QList<QTreeWidgetItem *> flexMatchSections(const QList<Section *> &sections) const;
+  [[nodiscard]] float flexMatch(const QString &haystack) const;
+  [[nodiscard]] QList<QTreeWidgetItem *> flexMatchSections(const QList<Section *> &sections) const;
   QList<QTreeWidgetItem *> flexMatchListRows(const QListWidget *list, const int startRow,
                                              const int amount, const EntryType type) const;
-  QList<QTreeWidgetItem *> flexMatchTextOffset(const QString &text, const int offset) const;
-  QTreeWidgetItem *createCandidate(const QString &text, const EntryType type,
-                                   const float similarity, const QVariant data,
-                                   const QString &fullText = {}) const;
+  [[nodiscard]] QList<QTreeWidgetItem *> flexMatchTextOffset(const QString &text,
+                                                             const int offset) const;
+  [[nodiscard]] QTreeWidgetItem *createCandidate(const QString &text, const EntryType type,
+                                                 const float similarity, const QVariant data,
+                                                 const QString &fullText = {}) const;
   void navigateCandidates(const Navigation nav);
   void activateItem(const QTreeWidgetItem *item);
 

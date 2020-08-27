@@ -9,7 +9,8 @@ class TagItemDelegate : public QAbstractItemDelegate {
 public:
   void paint(QPainter *painter, const QStyleOptionViewItem &option,
              const QModelIndex &index) const override;
-  QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+  [[nodiscard]] QSize sizeHint(const QStyleOptionViewItem &option,
+                               const QModelIndex &index) const override;
 };
 
 } // namespace dispar

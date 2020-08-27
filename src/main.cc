@@ -8,7 +8,7 @@
 #include <QTimer>
 
 #include <algorithm>
-#include <signal.h>
+#include <csignal>
 
 #include "BinaryObject.h"
 #include "Context.h"
@@ -74,7 +74,7 @@ int handlePatchSdk(std::shared_ptr<Format> format, const Section::Type type, con
 
   MacSdkVersionPatcher::Version newTarget;
   if (!list) {
-    QRegularExpression re("(\\d+)\\.(\\d+)");
+    QRegularExpression re(R"((\d+)\.(\d+))");
     const auto m = re.match(version);
     if (!m.hasMatch()) {
       qCritical() << "Invalid version:" << version;

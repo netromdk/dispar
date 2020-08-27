@@ -15,12 +15,12 @@ class TagsEdit : public QWidget {
 
 public:
   TagsEdit();
-  ~TagsEdit();
+  ~TagsEdit() override;
 
   void setAddress(quint64 address);
 
 protected:
-  bool eventFilter(QObject *obj, QEvent *event);
+  bool eventFilter(QObject *obj, QEvent *event) override;
 
 private slots:
   void onReturnPressed();

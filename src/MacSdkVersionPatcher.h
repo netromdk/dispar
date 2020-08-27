@@ -13,12 +13,12 @@ public:
 
   MacSdkVersionPatcher(Section &section);
 
-  bool valid() const;
+  [[nodiscard]] bool valid() const;
 
-  Version target() const;
+  [[nodiscard]] Version target() const;
   bool setTarget(const Version &version);
 
-  Version sdk() const;
+  [[nodiscard]] Version sdk() const;
   bool setSdk(const Version &version);
 
 private:

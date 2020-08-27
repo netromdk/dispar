@@ -13,7 +13,7 @@ namespace dispar {
 class LogDialog : public QDialog {
 public:
   LogDialog(QWidget *parent = nullptr);
-  virtual ~LogDialog() override;
+  ~LogDialog() override;
 
 protected:
   void showEvent(QShowEvent *event) override;

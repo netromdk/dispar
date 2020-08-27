@@ -24,7 +24,7 @@ class MainWindow : public QMainWindow {
 
 public:
   MainWindow(const QString &file = QString());
-  virtual ~MainWindow() override;
+  ~MainWindow() override;
 
 protected:
   void showEvent(QShowEvent *event) override;

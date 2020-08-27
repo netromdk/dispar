@@ -12,13 +12,13 @@ public:
   SymbolEntry(const SymbolEntry &other);
   SymbolEntry(SymbolEntry &&other);
 
-  quint32 index() const;
+  [[nodiscard]] quint32 index() const;
 
   void setValue(quint64 value);
-  quint64 value() const;
+  [[nodiscard]] quint64 value() const;
 
   void setString(const QString &str);
-  const QString &string() const;
+  [[nodiscard]] const QString &string() const;
 
   SymbolEntry &operator=(const SymbolEntry &other);
   SymbolEntry &operator=(SymbolEntry &&other);
