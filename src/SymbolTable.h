@@ -26,7 +26,7 @@ public:
   bool string(quint64 value, QString &str) const;
 
   SymbolTable &operator=(const SymbolTable &other);
-  SymbolTable &operator=(SymbolTable &&other);
+  SymbolTable &operator=(SymbolTable &&other) noexcept;
   bool operator==(const SymbolTable &other) const;
   bool operator!=(const SymbolTable &other) const;
 

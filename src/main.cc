@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <csignal>
+#include <utility>
 
 #include "BinaryObject.h"
 #include "Context.h"
@@ -41,7 +42,7 @@ std::shared_ptr<Format> loadFile(const QString &fileName)
 
   std::shared_ptr<Format> res = nullptr;
   QObject::connect(&loader, &FormatLoader::success,
-                   [&](std::shared_ptr<Format> fmt) { res = fmt; });
+                   [&](std::shared_ptr<Format> fmt) { res = std::move(fmt); });
 
   loader.start();
   loader.wait();
@@ -50,7 +51,7 @@ std::shared_ptr<Format> loadFile(const QString &fileName)
   return res;
 }
 
-bool saveFile(std::shared_ptr<Format> format)
+bool saveFile(const std::shared_ptr<Format> &format)
 {
   QFile f(format->file());
   if (!f.open(QIODevice::ReadWrite)) {
@@ -61,14 +62,15 @@ bool saveFile(std::shared_ptr<Format> format)
   return true;
 }
 
-int handleParse(std::shared_ptr<Format> format)
+int handleParse(const std::shared_ptr<Format> &format)
 {
   qInfo() << "Binary parsed successfully!";
   qInfo().noquote() << format->toString();
   return 0;
 }
 
-int handlePatchSdk(std::shared_ptr<Format> format, const Section::Type type, const QString &version)
+int handlePatchSdk(const std::shared_ptr<Format> &format, const Section::Type type,
+                   const QString &version)
 {
   const bool list = (version == "list");
 

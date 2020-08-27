@@ -18,6 +18,7 @@
 
 #include <cctype>
 #include <cmath>
+#include <utility>
 
 #include "libiberty/demangle.h"
 
@@ -321,7 +322,7 @@ QString Util::demangle(const QString &name)
 
 void Util::delayFunc(std::function<void()> func)
 {
-  QTimer::singleShot(1, func);
+  QTimer::singleShot(1, std::move(func));
 }
 
 // Great list: https://sourceforge.net/p/predef/wiki/Architectures/

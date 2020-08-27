@@ -333,7 +333,7 @@ void MainWindow::onLog()
   diag->activateWindow();
 }
 
-void MainWindow::onLoadSuccess(std::shared_ptr<Format> fmt)
+void MainWindow::onLoadSuccess(const std::shared_ptr<Format> &fmt)
 {
   format = fmt;
 

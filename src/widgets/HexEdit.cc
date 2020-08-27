@@ -180,7 +180,7 @@ void HexEdit::editAtCursor()
 
     // Update ASCII on editing hex.
     connect(edit, &QLineEdit::textEdited, label,
-            [label](const QString newHex) { label->setText(Util::hexToAscii(newHex, 0, 8)); });
+            [label](const QString &newHex) { label->setText(Util::hexToAscii(newHex, 0, 8)); });
 
     return edit;
   };

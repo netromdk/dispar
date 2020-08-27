@@ -59,7 +59,7 @@ private slots:
   void onAbout();
   void onOptions();
   void onLog();
-  void onLoadSuccess(std::shared_ptr<Format> fmt);
+  void onLoadSuccess(const std::shared_ptr<Format> &fmt);
   void onProjectModified();
   void onBinaryModified();
 

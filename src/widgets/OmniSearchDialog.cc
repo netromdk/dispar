@@ -380,7 +380,7 @@ QList<QTreeWidgetItem *> OmniSearchDialog::flexMatchTextOffset(const QString &te
 }
 
 QTreeWidgetItem *OmniSearchDialog::createCandidate(const QString &text, const EntryType type,
-                                                   const float similarity, const QVariant data,
+                                                   const float similarity, const QVariant &data,
                                                    const QString &fullText) const
 {
   // Spaces are only removed on left and right, not internally.

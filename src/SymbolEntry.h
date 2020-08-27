@@ -10,7 +10,7 @@ public:
   SymbolEntry();
   SymbolEntry(quint32 index, quint64 value, const QString &strValue = {});
   SymbolEntry(const SymbolEntry &other);
-  SymbolEntry(SymbolEntry &&other);
+  SymbolEntry(SymbolEntry &&other) noexcept;
 
   [[nodiscard]] quint32 index() const;
 
@@ -21,7 +21,7 @@ public:
   [[nodiscard]] const QString &string() const;
 
   SymbolEntry &operator=(const SymbolEntry &other);
-  SymbolEntry &operator=(SymbolEntry &&other);
+  SymbolEntry &operator=(SymbolEntry &&other) noexcept;
   bool operator==(const SymbolEntry &other) const;
   bool operator!=(const SymbolEntry &other) const;
 
