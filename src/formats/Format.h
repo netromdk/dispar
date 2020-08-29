@@ -24,6 +24,12 @@ public:
   Format(Type type);
   virtual ~Format() = default;
 
+  Format(const Format &other) = default;
+  Format &operator=(const Format &rhs) = default;
+
+  Format(Format &&other) = default;
+  Format &operator=(Format &&rhs) = default;
+
   [[nodiscard]] Type type() const;
 
   [[nodiscard]] virtual QString toString() const;

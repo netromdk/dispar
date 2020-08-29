@@ -14,6 +14,12 @@ public:
   MachO(const QString &file);
   ~MachO() override = default;
 
+  MachO(const MachO &other) = default;
+  MachO &operator=(const MachO &rhs) = default;
+
+  MachO(MachO &&other) = default;
+  MachO &operator=(MachO &&rhs) = default;
+
   [[nodiscard]] QString file() const override;
 
   bool detect() override;
