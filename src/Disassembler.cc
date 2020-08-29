@@ -28,7 +28,7 @@ size_t Disassembler::Result::count() const
 cs_insn *Disassembler::Result::instructions(size_t pos) const
 {
   assert(pos < count());
-  return insn + pos;
+  return insn + pos; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
 }
 
 QString Disassembler::Result::toString() const
