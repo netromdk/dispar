@@ -22,6 +22,12 @@ public:
   Project();
   ~Project() override;
 
+  Project(const Project &other) = delete;
+  Project &operator=(const Project &rhs) = delete;
+
+  Project(Project &&other) = delete;
+  Project &operator=(Project &&rhs) = delete;
+
   /// Load project from \p file.
   /** Returns \p nullptr if nonexistent or failed. */
   static std::unique_ptr<Project> load(const QString &file);
