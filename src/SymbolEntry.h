@@ -8,6 +8,8 @@ namespace dispar {
 class SymbolEntry {
 public:
   SymbolEntry() = default;
+  ~SymbolEntry() = default;
+
   SymbolEntry(quint32 index, quint64 value, const QString &strValue = {});
   SymbolEntry(const SymbolEntry &other);
   SymbolEntry(SymbolEntry &&other) noexcept;
