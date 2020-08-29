@@ -308,8 +308,16 @@ QString Util::demangle(const QString &name)
 
   const auto mangledName = name.mid(skip).toUtf8();
   const int flags = DMGL_PARAMS | DMGL_ANSI | DMGL_VERBOSE;
-  if (std::unique_ptr<char> res(cplus_demangle(mangledName.constData(), flags)); res != nullptr) {
-    return QString::fromUtf8(res.get());
+
+  // Demangled char* result must be freed instead of deleted!
+  const auto deleter = [](char *c) {
+    free(c); // NOLINT
+  };
+
+  if (std::unique_ptr<char, decltype(deleter)> demangled(
+        cplus_demangle(mangledName.constData(), flags), deleter);
+      demangled != nullptr) {
+    return QString::fromUtf8(demangled.get());
   }
 
   return name;
