@@ -18,7 +18,13 @@ class HexEdit;
 class HexEditor : public QDialog {
 public:
   HexEditor(Section *section, BinaryObject *object, QWidget *parent = nullptr);
-  virtual ~HexEditor() override;
+  ~HexEditor() override;
+
+  HexEditor(const HexEditor &other) = delete;
+  HexEditor &operator=(const HexEditor &rhs) = delete;
+
+  HexEditor(HexEditor &&other) = delete;
+  HexEditor &operator=(HexEditor &&rhs) = delete;
 
   void updateModified();
 
