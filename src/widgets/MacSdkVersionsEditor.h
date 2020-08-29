@@ -16,6 +16,12 @@ public:
   MacSdkVersionsEditor(Section *section, BinaryObject *object, QWidget *parent = nullptr);
   ~MacSdkVersionsEditor() override;
 
+  MacSdkVersionsEditor(const MacSdkVersionsEditor &other) = delete;
+  MacSdkVersionsEditor &operator=(const MacSdkVersionsEditor &rhs) = delete;
+
+  MacSdkVersionsEditor(MacSdkVersionsEditor &&other) = delete;
+  MacSdkVersionsEditor &operator=(MacSdkVersionsEditor &&rhs) = delete;
+
   void accept() override;
 
 protected:

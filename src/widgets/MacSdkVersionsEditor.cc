@@ -99,7 +99,10 @@ void MacSdkVersionsEditor::createLayout()
   targetMinorSpin->setRange(1, 100);
 
   auto *targetLayout = new QHBoxLayout;
+
+  // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
   targetLayout->addWidget(new QLabel(tr("Target SDK version:")));
+
   targetLayout->addWidget(targetMajorSpin);
   targetLayout->addWidget(targetMinorSpin);
 
@@ -110,7 +113,10 @@ void MacSdkVersionsEditor::createLayout()
   sdkMinorSpin->setRange(1, 100);
 
   auto *sdkLayout = new QHBoxLayout;
+
+  // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
   sdkLayout->addWidget(new QLabel(tr("SDK version:")));
+
   sdkLayout->addWidget(sdkMajorSpin);
   sdkLayout->addWidget(sdkMinorSpin);
 
