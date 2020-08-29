@@ -10,6 +10,7 @@ namespace dispar::cxx {
 
 #ifdef NDEBUG
 
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define ASSERT_X(cond, what) static_cast<void>(0)
 
 #else
@@ -22,7 +23,8 @@ namespace dispar::cxx {
   std::abort();
 }
 
-#define ASSERT_X(cond, what) /* NOLINT(cppcoreguidelines-macro-usage) */                           \
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
+#define ASSERT_X(cond, what)                                                                       \
   ((cond) ? static_cast<void>(0) : dispar::cxx::assert_x(__FUNCTION__, what, __FILE__, __LINE__))
 
 #endif // NDEBUG

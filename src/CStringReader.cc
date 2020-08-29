@@ -17,6 +17,9 @@ bool CStringReader::next()
     offset_ = pos;
   }
 
+  // Don't change `auto it` into `const auto *it` because it would yield
+  // cppcoreguidelines-pro-bounds-pointer-arithmetic wrt `it++` in the for-loop beneath.
+  // NOLINTNEXTLINE(readability-qualified-auto)
   auto it = data.cbegin() + offset_;
   if (it >= data.cend()) return false;
 

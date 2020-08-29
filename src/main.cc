@@ -149,7 +149,7 @@ int main(int argc, char **argv)
   // only when plugins are found inside the binary folder because otherwise it's before install is
   // run.
   QDir curDir(QDir::current());
-  QFileInfo fi(argv[0]);
+  QFileInfo fi(argv[0]); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
   auto path = curDir.absoluteFilePath(fi.dir().absolutePath());
   if (QFile::exists(QDir(path).absoluteFilePath("platforms"))) {
     QCoreApplication::setLibraryPaths({path});
@@ -268,12 +268,11 @@ int main(int argc, char **argv)
       return handlePatchSdk(format, Section::Type::LC_VERSION_MIN_WATCHOS,
                             parser.value(patchWatchOSSdkOption));
     }
-    else if (patchTvOS) {
+    if (patchTvOS) {
       return handlePatchSdk(format, Section::Type::LC_VERSION_MIN_TVOS,
                             parser.value(patchTvOSSdkOption));
     }
   }
-
 
   // Start in event loop.
   MainWindow main(file);
