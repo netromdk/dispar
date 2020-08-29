@@ -37,10 +37,11 @@ public:
     bool operator==(const ModifiedRegion &rhs) const;
     bool operator!=(const ModifiedRegion &rhs) const;
 
-    int position = -1;
-    int size = 0;
+    [[nodiscard]] int position() const;
+    [[nodiscard]] int size() const;
 
   private:
+    int position_ = -1, size_ = 0;
     QByteArray hash;
   };
 

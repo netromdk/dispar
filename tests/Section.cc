@@ -125,8 +125,8 @@ TEST(Section, setSubData)
     const auto &pairs = s.modifiedRegions();
     ASSERT_EQ(pairs.size(), 1);
     auto pair = pairs[0];
-    EXPECT_EQ(pair.position, 1);
-    EXPECT_EQ(pair.size, 1);
+    EXPECT_EQ(pair.position(), 1);
+    EXPECT_EQ(pair.size(), 1);
   }
 
   {
@@ -177,8 +177,8 @@ TEST(Section, setSubData)
     Section s(Section::Type::TEXT, "test", 0x1, 1);
     s.setData("ABCD");
     s.setSubData("1234", 0); // 1234
-    s.setSubData("XY", 1); // 1XY4
-    s.setSubData("Z", 2); // 1XZ4
+    s.setSubData("XY", 1);   // 1XY4
+    s.setSubData("Z", 2);    // 1XZ4
 
     // All three are still left.
     ASSERT_EQ(s.modifiedRegions().size(), 3);

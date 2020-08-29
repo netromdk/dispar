@@ -5,8 +5,8 @@
 
 namespace dispar {
 
-Section::ModifiedRegion::ModifiedRegion(int position_, const QByteArray &data)
-  : position(position_), size(data.size())
+Section::ModifiedRegion::ModifiedRegion(int position, const QByteArray &data)
+  : position_(position), size_(data.size())
 {
   // Hash must be fast and shouldn't be overkill, so SHA-1 is sufficient.
   hash = QCryptographicHash::hash(data, QCryptographicHash::Sha1);
@@ -14,12 +14,22 @@ Section::ModifiedRegion::ModifiedRegion(int position_, const QByteArray &data)
 
 bool Section::ModifiedRegion::operator==(const ModifiedRegion &rhs) const
 {
-  return position == rhs.position && size == rhs.size && hash == rhs.hash;
+  return position() == rhs.position() && size() == rhs.size() && hash == rhs.hash;
 }
 
 bool Section::ModifiedRegion::operator!=(const ModifiedRegion &rhs) const
 {
   return !(*this == rhs);
+}
+
+int Section::ModifiedRegion::position() const
+{
+  return position_;
+}
+
+int Section::ModifiedRegion::size() const
+{
+  return size_;
 }
 
 Section::Section(Section::Type type, const QString &name, quint64 addr_, quint64 size,
@@ -136,7 +146,7 @@ void Section::setSubData(const QByteArray &subData, int pos)
     const auto &r = modifiedRegions_[i];
     for (int j = i + 1; j < n; ++j) {
       const auto &r2 = modifiedRegions_[j];
-      if (r.position >= r2.position && r.position + r.size <= r2.position + r2.size) {
+      if (r.position() >= r2.position() && r.position() + r.size() <= r2.position() + r2.size()) {
         remove << i;
         break;
       }

@@ -330,7 +330,7 @@ void HexEdit::markModifiedRegions()
   modSelections.clear();
 
   for (const auto &reg : modRegs) {
-    const auto offset = reg.position;
+    const auto offset = reg.position();
     const auto block = doc->findBlockByNumber(offset / 16);
 
     QTextEdit::ExtraSelection selection;

@@ -319,10 +319,10 @@ void DisassemblyEditor::markModifiedRegions()
     addr = item->text(0).toULongLong(nullptr, 16) - offset;
     int size = item->text(1).split(" ", QString::SkipEmptyParts).size();
     for (const auto &reg : modRegs) {
-      const auto first = static_cast<quint64>(reg.position);
+      const auto first = static_cast<quint64>(reg.position());
       if (first >= addr && first < addr + size) {
         Util::setTreeItemMarked(item, 1);
-        auto excess = static_cast<quint64>(reg.position + reg.size) - (addr + size);
+        auto excess = static_cast<quint64>(reg.position() + reg.size()) - (addr + size);
         if (excess == 0) continue;
 
         for (int row2 = row + 1; row2 < rows; row2++) {

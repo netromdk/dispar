@@ -169,8 +169,8 @@ bool MainWindow::saveProject()
 
       const auto &sectionData = section->data();
       for (const auto &region : section->modifiedRegions()) {
-        project->addModifiedRegion(section->offset() + region.position,
-                                   sectionData.mid(region.position, region.size));
+        project->addModifiedRegion(section->offset() + region.position(),
+                                   sectionData.mid(region.position(), region.size()));
       }
     }
   }
