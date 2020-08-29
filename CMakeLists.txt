@@ -199,15 +199,18 @@ if (STATIC_ANALYZER)
 endif()
 
 # cppcheck can be cloned and compiled: git clone git@github.com:danmar/cppcheck.git
-add_custom_target(
-  cppcheck
+find_program(found_cppcheck cppcheck)
+if (found_cppcheck)
+  add_custom_target(
+    cppcheck
 
-  cppcheck -j ${CPU_COUNT} --enable=all --std=c++17 --suppress=*:${CMAKE_SOURCE_DIR}/lib/* --suppress=*:${CMAKE_SOURCE_DIR}/tests/gtest/* --project=${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json --xml 2> cppcheck.xml && python ${CMAKE_SOURCE_DIR}/scripts/cppcheck-htmlreport.py --file=cppcheck.xml --report-dir=cppcheck
+    cppcheck -j ${CPU_COUNT} --enable=all --std=c++17 --suppress=*:${CMAKE_SOURCE_DIR}/lib/* --suppress=*:${CMAKE_SOURCE_DIR}/tests/gtest/* --project=${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json --xml 2> cppcheck.xml && python ${CMAKE_SOURCE_DIR}/scripts/cppcheck-htmlreport.py --file=cppcheck.xml --report-dir=cppcheck
 
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  USES_TERMINAL
-  COMMENT "Running cppcheck"
-  )
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    USES_TERMINAL
+    COMMENT "Running cppcheck"
+    )
+endif()
 
 message(STATUS "====================================================================")
 message(STATUS "Program version: ${MAJOR_VERSION}.${MINOR_VERSION}")
@@ -257,6 +260,12 @@ if (TIME_REPORT)
   message(STATUS "Compilation time report: ${TIME_REPORT} (-ftime-report)")
 else()
   message(STATUS "Compilation time report: OFF")
+endif()
+
+if (found_cppcheck)
+  message(STATUS "cppcheck target: enabled")
+else()
+  message(STATUS "cppcheck target: disabled (cppcheck not found)")
 endif()
 
 message(STATUS "Found Qt: ${FOUND_QT} (min. v. ${QT_MINIMUM_VERSION})")
