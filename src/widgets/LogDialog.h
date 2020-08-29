@@ -15,6 +15,12 @@ public:
   LogDialog(QWidget *parent = nullptr);
   ~LogDialog() override;
 
+  LogDialog(const LogDialog &other) = delete;
+  LogDialog &operator=(const LogDialog &rhs) = delete;
+
+  LogDialog(LogDialog &&other) = delete;
+  LogDialog &operator=(LogDialog &&rhs) = delete;
+
 protected:
   void showEvent(QShowEvent *event) override;
 

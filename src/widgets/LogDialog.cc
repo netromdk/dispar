@@ -82,7 +82,8 @@ void LogDialog::addEntry(const LogHandler::Entry &entry)
   // Remove initial entries when exceeding set amount.
   for (int i = 0, tooMany = treeWidget->topLevelItemCount() - Constants::Log::MEMORY_ENTRIES;
        i < tooMany; ++i) {
-    delete treeWidget->takeTopLevelItem(i);
+    // Take the item and delete it since the tree relinquishes ownership.
+    std::unique_ptr<QTreeWidgetItem> taken(treeWidget->takeTopLevelItem(i));
   }
 }
 
