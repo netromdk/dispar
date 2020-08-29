@@ -12,6 +12,12 @@ public:
                      QWidget *parent = nullptr);
   ~PersistentSplitter() override;
 
+  PersistentSplitter(const PersistentSplitter &other) = delete;
+  PersistentSplitter &operator=(const PersistentSplitter &rhs) = delete;
+
+  PersistentSplitter(PersistentSplitter &&other) = delete;
+  PersistentSplitter &operator=(PersistentSplitter &&rhs) = delete;
+
 protected:
   void showEvent(QShowEvent *event) override;
 
