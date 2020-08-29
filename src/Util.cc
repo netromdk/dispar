@@ -45,10 +45,10 @@ QString Util::padString(const QString &str, int size, bool before, char pad)
 {
   int addrLen = str.size();
   if (addrLen < size) {
-    QString res{str}, padStr{QString(size - addrLen, pad)};
+    const QString padStr(size - addrLen, pad);
 
     // cppcheck: No, they are not the same in both branches!
-    return (before ? padStr + res : res + padStr);
+    return (before ? padStr + str : str + padStr);
   }
   return str;
 }
@@ -307,16 +307,12 @@ QString Util::demangle(const QString &name)
   }
 
   const auto mangledName = name.mid(skip).toUtf8();
-
-  int flags = DMGL_PARAMS | DMGL_ANSI | DMGL_VERBOSE;
-  auto *res = cplus_demangle(mangledName.constData(), flags);
-  if (res == nullptr) {
-    return name;
+  const int flags = DMGL_PARAMS | DMGL_ANSI | DMGL_VERBOSE;
+  if (std::unique_ptr<char> res(cplus_demangle(mangledName.constData(), flags)); res != nullptr) {
+    return QString::fromUtf8(res.get());
   }
 
-  auto output = QString::fromUtf8(res);
-  free(res);
-  return output;
+  return name;
 #endif
 }
 
@@ -420,13 +416,17 @@ quint32 Util::encodeMacSdkVersion(const std::tuple<int, int> &version)
 
 QByteArray Util::longToData(const unsigned long n)
 {
-  union char_int32 {
-    char chars[4];
+  // Union is used to convert from unsigned long to char[4], and a std::variant cannot achieve that
+  // wrt. cppcoreguidelines-pro-type-union-access.
+  union {
+    std::array<char, 4> chars;
     unsigned long n;
   } ci{};
-  ci.n = n;
+  ci.n = n;                     // NOLINT(cppcoreguidelines-pro-type-union-access)
+  const auto &chars = ci.chars; // NOLINT(cppcoreguidelines-pro-type-union-access)
+
   QByteArray data;
-  for (char i : ci.chars) {
+  for (char i : chars) {
     data.append(i);
   }
   return data;
