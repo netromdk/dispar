@@ -91,11 +91,12 @@ bool Reader::peekList(std::initializer_list<unsigned char> list)
     return false;
   }
 
-  int i{0};
-  for (const auto *it = list.begin(); it != list.end(); it++, i++) {
-    if (*it != static_cast<unsigned char>(parr[i])) {
+  int i = 0;
+  for (const auto &c : list) {
+    if (c != static_cast<unsigned char>(parr[i])) {
       return false;
     }
+    i++;
   }
   return true;
 }
