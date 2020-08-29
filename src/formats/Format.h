@@ -64,6 +64,7 @@ private:
 
 } // namespace dispar
 
+// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
 Q_DECLARE_METATYPE(std::shared_ptr<dispar::Format>)
 
 #endif // DISPAR_FORMAT_H

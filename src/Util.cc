@@ -214,8 +214,8 @@ void Util::resizeRatioOfScreen(QWidget *widget, float percentage, const QSize &m
   if (screen == nullptr) return;
 
   auto rect = screen->availableGeometry();
-  rect.setWidth(static_cast<float>(rect.width()) * percentage);
-  rect.setHeight(static_cast<float>(rect.height()) * percentage);
+  rect.setWidth(int(float(rect.width()) * percentage));
+  rect.setHeight(int(float(rect.height()) * percentage));
 
   auto size = rect.size();
   if (size.width() < minimum.width()) {
