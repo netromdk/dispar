@@ -212,6 +212,32 @@ if (found_cppcheck)
     )
 endif()
 
+find_program(found_clang_tidy clang-tidy)
+if (found_clang_tidy)
+  set(clang_tidy_cmd_pre find src \\\( -iname '*.cc' -or -iname '*.h' \\\) | xargs -I{} clang-tidy)
+  set(clang_tidy_cmd_post {})
+
+  add_custom_target(
+    clang-tidy
+
+    ${clang_tidy_cmd_pre} ${clang_tidy_cmd_post}
+
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Checking with clang-tidy"
+    USES_TERMINAL
+    )
+
+  add_custom_target(
+    clang-tidy-fix
+
+    ${clang_tidy_cmd_pre} --fix --fix-errors ${clang_tidy_cmd_post}
+
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Fixing with clang-tidy"
+    USES_TERMINAL
+    )
+endif()
+
 message(STATUS "====================================================================")
 message(STATUS "Program version: ${MAJOR_VERSION}.${MINOR_VERSION}")
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
@@ -266,6 +292,12 @@ if (found_cppcheck)
   message(STATUS "cppcheck target: enabled")
 else()
   message(STATUS "cppcheck target: disabled (cppcheck not found)")
+endif()
+
+if (found_clang_tidy)
+  message(STATUS "clang-tidy targets: clang-tidy, clang-tidy-fix")
+else()
+  message(STATUS "clang-tidy targets: disabled (clang-tidy not found)")
 endif()
 
 message(STATUS "Found Qt: ${FOUND_QT} (min. v. ${QT_MINIMUM_VERSION})")
