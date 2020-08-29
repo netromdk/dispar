@@ -16,6 +16,12 @@ public:
   ToggleBox(const QString &title, const QString &settingsKey, QWidget *parent = nullptr);
   ~ToggleBox() override;
 
+  ToggleBox(const ToggleBox &other) = delete;
+  ToggleBox &operator=(const ToggleBox &rhs) = delete;
+
+  ToggleBox(ToggleBox &&other) = delete;
+  ToggleBox &operator=(ToggleBox &&rhs) = delete;
+
   void setContentLayout(QLayout *layout);
 
   void setCollapsed(bool collapsed = true);
