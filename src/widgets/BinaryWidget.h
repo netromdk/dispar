@@ -35,6 +35,12 @@ public:
   BinaryWidget(BinaryObject *object);
   ~BinaryWidget() override;
 
+  BinaryWidget(const BinaryWidget &other) = delete;
+  BinaryWidget &operator=(const BinaryWidget &rhs) = delete;
+
+  BinaryWidget(BinaryWidget &&other) = delete;
+  BinaryWidget &operator=(BinaryWidget &&rhs) = delete;
+
   void reloadUi();
 
 signals:

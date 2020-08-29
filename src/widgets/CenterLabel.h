@@ -12,6 +12,12 @@ public:
   CenterLabel(const QString &text, QWidget *parent = nullptr);
   ~CenterLabel() override;
 
+  CenterLabel(const CenterLabel &other) = delete;
+  CenterLabel &operator=(const CenterLabel &rhs) = delete;
+
+  CenterLabel(CenterLabel &&other) = delete;
+  CenterLabel &operator=(CenterLabel &&rhs) = delete;
+
 signals:
   void droppedFileName(const QString &fileName);
 

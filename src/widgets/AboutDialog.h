@@ -10,6 +10,12 @@ public:
   AboutDialog(QWidget *parent = nullptr);
   ~AboutDialog() override;
 
+  AboutDialog(const AboutDialog &other) = delete;
+  AboutDialog &operator=(const AboutDialog &rhs) = delete;
+
+  AboutDialog(AboutDialog &&other) = delete;
+  AboutDialog &operator=(AboutDialog &&rhs) = delete;
+
 private:
   void createLayout();
   void addLinkLabel(const QString &url, const QString &text, const QString &pretext = {});

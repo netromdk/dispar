@@ -43,6 +43,12 @@ public:
   OmniSearchDialog(QWidget *parent = nullptr);
   ~OmniSearchDialog() override;
 
+  OmniSearchDialog(const OmniSearchDialog &other) = delete;
+  OmniSearchDialog &operator=(const OmniSearchDialog &rhs) = delete;
+
+  OmniSearchDialog(OmniSearchDialog &&other) = delete;
+  OmniSearchDialog &operator=(OmniSearchDialog &&rhs) = delete;
+
   void setBinaryWidget(BinaryWidget *widget);
 
   void done(int result) override;
