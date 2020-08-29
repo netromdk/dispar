@@ -18,6 +18,12 @@ public:
   DisassemblyEditor(Section *section, BinaryObject *object, QWidget *parent = nullptr);
   ~DisassemblyEditor() override;
 
+  DisassemblyEditor(const DisassemblyEditor &other) = delete;
+  DisassemblyEditor &operator=(const DisassemblyEditor &rhs) = delete;
+
+  DisassemblyEditor(DisassemblyEditor &&other) = delete;
+  DisassemblyEditor &operator=(DisassemblyEditor &&rhs) = delete;
+
   void showUpdateButton();
   void updateModified();
 

@@ -218,7 +218,10 @@ void DisassemblyEditor::createLayout()
   treeWidget->setColumnWidth(0, object->systemBits() == 64 ? 110 : 70);
   treeWidget->setColumnWidth(1, 200);
   treeWidget->setColumnWidth(2, 200);
+
+  // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
   treeWidget->setItemDelegate(new ItemDelegate(this, treeWidget, object, section));
+
   treeWidget->setMachineCodeColumns({1});
   treeWidget->setCpuType(object->cpuType());
   treeWidget->setAddressColumn(0);
@@ -278,6 +281,7 @@ void DisassemblyEditor::createEntries()
       item->setFont(col, font);
 
       if (i > 0) {
+        // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
         treeWidget->addTopLevelItem(new QTreeWidgetItem);
       }
       treeWidget->addTopLevelItem(item);
