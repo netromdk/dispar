@@ -27,7 +27,7 @@ bool MachO::detect()
   }
 
   Reader r(f);
-  bool ok;
+  bool ok = false;
   quint32 magic = r.getUInt32(&ok);
   if (!ok) return false;
 
@@ -47,7 +47,7 @@ bool MachO::parse()
   }
 
   Reader r(f);
-  bool ok;
+  bool ok = false;
   quint32 magic = r.getUInt32(&ok);
   if (!ok) return false;
 
@@ -117,7 +117,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
   r.seek(offset);
   r.setLittleEndian(true);
 
-  bool ok;
+  bool ok = false;
   quint32 magic = r.getUInt32(&ok);
   if (!ok) return false;
 
@@ -146,7 +146,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
   // Read info in the endianness of the file.
   r.setLittleEndian(littleEndian);
 
-  quint32 cputype, cpusubtype, filetype, ncmds, sizeofcmds, flags;
+  quint32 cputype = 0, cpusubtype = 0, filetype = 0, ncmds = 0, sizeofcmds = 0, flags = 0;
 
   cputype = r.getUInt32(&ok);
   if (!ok) return false;
@@ -329,7 +329,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
       QString name{r.read(16)};
 
       // Memory address of this segment.
-      quint64 vmaddr;
+      quint64 vmaddr = 0;
       if (systemBits == 32) {
         vmaddr = r.getUInt32(&ok);
         if (!ok) return false;
@@ -341,7 +341,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
       (void) vmaddr; // Mark used.
 
       // Memory size of this segment.
-      quint64 vmsize;
+      quint64 vmsize = 0;
       if (systemBits == 32) {
         vmsize = r.getUInt32(&ok);
         if (!ok) return false;
@@ -353,7 +353,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
       (void) vmsize; // Mark used.
 
       // File offset of this segment.
-      quint64 fileoff;
+      quint64 fileoff = 0;
       if (systemBits == 32) {
         fileoff = r.getUInt32(&ok);
         if (!ok) return false;
@@ -365,7 +365,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
       (void) fileoff; // Mark used.
 
       // Amount to map from the file.
-      quint64 filesize;
+      quint64 filesize = 0;
       if (systemBits == 32) {
         filesize = r.getUInt32(&ok);
         if (!ok) return false;
@@ -400,7 +400,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
           QString segname{r.read(16)};
 
           // Memory address of this section.
-          quint64 addr;
+          quint64 addr = 0;
           if (systemBits == 32) {
             addr = r.getUInt32(&ok);
             if (!ok) return false;
@@ -411,7 +411,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
           }
 
           // Size in bytes of this section.
-          quint64 secsize;
+          quint64 secsize = 0;
           if (systemBits == 32) {
             secsize = r.getUInt32(&ok);
             if (!ok) return false;
@@ -806,7 +806,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
   SymbolTable symTable;
   if (symnum > 0) {
     r.seek(symoff);
-    qint64 pos;
+    qint64 pos = 0;
     for (decltype(symnum) i = 0; i < symnum; i++) {
       pos = r.pos();
 
@@ -827,7 +827,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
       if (!ok) return false;
 
       // Value of the symbol (or stab offset).
-      quint64 value;
+      quint64 value = 0;
       if (systemBits == 32) {
         value = r.getUInt32(&ok);
         if (!ok) return false;
@@ -852,7 +852,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
   SymbolTable dynsymTable;
   if (indirsymnum > 0) {
     r.seek(indirsymoff);
-    qint64 pos;
+    qint64 pos = 0;
     for (decltype(indirsymnum) i = 0; i < indirsymnum; i++) {
       pos = r.pos();
 

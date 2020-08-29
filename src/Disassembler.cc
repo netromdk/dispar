@@ -47,9 +47,9 @@ QString Disassembler::Result::toString() const
   return lines.join("\n");
 }
 
-Disassembler::Disassembler(const BinaryObject &object, Syntax syntax) : valid_(false)
+Disassembler::Disassembler(const BinaryObject &object, Syntax syntax)
 {
-  cs_arch arch;
+  cs_arch arch = CS_ARCH_ALL;
   switch (object.cpuType()) {
   case CpuType::X86:
   case CpuType::X86_64:

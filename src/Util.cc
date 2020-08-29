@@ -69,7 +69,7 @@ QString Util::hexToAscii(const QString &str, int offset, int blocks, int blocksi
   QString res;
   int len = str.size();
   int size = blocks * blocksize;
-  bool ok;
+  bool ok = false;
   for (int i = offset; i - offset <= size && i < len; i += blocksize) {
     if (str[i] == ' ') {
       size++;
@@ -113,7 +113,7 @@ QByteArray Util::hexToData(const QString &str)
 {
   QByteArray data;
   int size = str.size();
-  bool ok;
+  bool ok = false;
   for (int i = 0; i < size; i += 2) {
     data += str.mid(i, 2).toInt(&ok, 16);
     if (!ok) return QByteArray();
@@ -423,7 +423,7 @@ QByteArray Util::longToData(const unsigned long n)
   union char_int32 {
     char chars[4];
     unsigned long n;
-  } ci;
+  } ci{};
   ci.n = n;
   QByteArray data;
   for (char i : ci.chars) {

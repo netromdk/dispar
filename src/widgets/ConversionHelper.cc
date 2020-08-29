@@ -129,7 +129,7 @@ void ConversionHelper::onTextToHex()
 
   QString hex;
   for (const auto &c : text) {
-    int ic;
+    int ic = 0;
     if (unicode) {
       ic = c.unicode();
     }

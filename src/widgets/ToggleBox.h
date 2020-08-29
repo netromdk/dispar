@@ -36,8 +36,8 @@ private:
   void createLayout();
 
   QString title, settingsKey;
-  QToolButton *toggleButton;
-  QScrollArea *contentWidget;
+  QToolButton *toggleButton = nullptr;
+  QScrollArea *contentWidget = nullptr;
 };
 
 } // namespace dispar

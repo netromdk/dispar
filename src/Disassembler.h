@@ -36,14 +36,16 @@ public:
   Disassembler(const BinaryObject &object, Syntax syntax = Syntax::INTEL);
   ~Disassembler();
 
-  std::unique_ptr<Result> disassemble(const QByteArray &data, quint64 baseAddr = 0) const;
-  std::unique_ptr<Result> disassemble(const QString &text, quint64 baseAddr = 0) const;
+  [[nodiscard]] std::unique_ptr<Result> disassemble(const QByteArray &data,
+                                                    quint64 baseAddr = 0) const;
+  [[nodiscard]] std::unique_ptr<Result> disassemble(const QString &text,
+                                                    quint64 baseAddr = 0) const;
 
   [[nodiscard]] bool valid() const;
 
 private:
-  csh handle;
-  bool valid_;
+  csh handle{};
+  bool valid_ = false;
 };
 
 } // namespace dispar

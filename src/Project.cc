@@ -63,7 +63,7 @@ std::unique_ptr<Project> Project::load(const QString &file)
 
     auto tagsObj = tmp.toObject();
     for (const auto &key : tagsObj.keys()) {
-      bool ok;
+      bool ok = false;
       quint64 addr = key.toLongLong(&ok);
       if (!ok) return nullptr;
 
@@ -82,7 +82,7 @@ std::unique_ptr<Project> Project::load(const QString &file)
 
     const auto modsObj = tmp.toObject();
     for (const auto &key : modsObj.keys()) {
-      bool ok;
+      bool ok = false;
       auto const addr = key.toLongLong(&ok);
       if (!ok) return nullptr;
 

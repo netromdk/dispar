@@ -35,11 +35,11 @@ private:
   quint64 offset;
   Disassembler::Syntax syntax;
 
-  QTextEdit *machineText, *asmText;
-  QSplitter *splitter;
-  QLineEdit *offsetEdit;
-  QComboBox *cpuTypeBox, *syntaxBox;
-  QPushButton *convertBtn;
+  QTextEdit *machineText = nullptr, *asmText = nullptr;
+  QSplitter *splitter = nullptr;
+  QLineEdit *offsetEdit = nullptr;
+  QComboBox *cpuTypeBox = nullptr, *syntaxBox = nullptr;
+  QPushButton *convertBtn = nullptr;
 };
 
 } // namespace dispar

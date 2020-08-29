@@ -117,8 +117,7 @@ private:
 } // namespace
 
 DisassemblyEditor::DisassemblyEditor(Section *section_, BinaryObject *object_, QWidget *parent)
-  : QDialog(parent), section(section_), object(object_), shown(false), label(nullptr),
-    treeWidget(nullptr)
+  : QDialog(parent), section(section_), object(object_)
 {
   assert(section);
   assert(section->disassembly());

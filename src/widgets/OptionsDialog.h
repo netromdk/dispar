@@ -30,10 +30,10 @@ private:
   /// Returns instance of debugger from values in UI.
   [[nodiscard]] Debugger currentDebugger() const;
 
-  QCheckBox *showMachineCode;
-  QComboBox *disAsmSyntax, *logLevelBox;
-  QLineEdit *debuggerEdit, *launchPatternEdit, *versionArgumentEdit;
-  QLabel *disAsmExample;
+  QCheckBox *showMachineCode = nullptr;
+  QComboBox *disAsmSyntax = nullptr, *logLevelBox = nullptr;
+  QLineEdit *debuggerEdit = nullptr, *launchPatternEdit = nullptr, *versionArgumentEdit = nullptr;
+  QLabel *disAsmExample = nullptr;
 };
 
 } // namespace dispar

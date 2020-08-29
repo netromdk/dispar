@@ -81,11 +81,12 @@ private:
   /// Apply any saved modified regions from project to \p object.
   void applyModifiedRegions(BinaryObject *object);
 
-  bool modified, binaryModified;
+  bool modified = false, binaryModified = false;
   QString startupFile;
 
-  QAction *newProjectAction, *saveProjectAction, *saveAsProjectAction, *closeProjectAction,
-    *saveBinaryAction, *reloadBinaryAction, *reloadBinaryUiAction, *omniSearchAction;
+  QAction *newProjectAction = nullptr, *saveProjectAction = nullptr, *saveAsProjectAction = nullptr,
+          *closeProjectAction = nullptr, *saveBinaryAction = nullptr, *reloadBinaryAction = nullptr,
+          *reloadBinaryUiAction = nullptr, *omniSearchAction = nullptr;
 
   std::unique_ptr<FormatLoader> loader;
   std::shared_ptr<Format> format;

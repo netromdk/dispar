@@ -56,8 +56,7 @@ public:
 
 namespace dispar {
 
-BinaryWidget::BinaryWidget(BinaryObject *object)
-  : object_(object), context(Context::get()), shown(false), doc(nullptr)
+BinaryWidget::BinaryWidget(BinaryObject *object) : object_(object), context(Context::get())
 {
   assert(object_);
   createLayout();

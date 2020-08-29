@@ -77,10 +77,10 @@ private:
 
   BinaryWidget *binaryWidget = nullptr;
 
-  LineEdit *inputEdit;
-  QTreeWidget *candidatesWidget;
-  QLabel *statusLabel;
-  QCheckBox *searchTextChk;
+  LineEdit *inputEdit = nullptr;
+  QTreeWidget *candidatesWidget = nullptr;
+  QLabel *statusLabel = nullptr;
+  QCheckBox *searchTextChk = nullptr;
 
   QTimer searchTimer;
   QString input;

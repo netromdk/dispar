@@ -14,7 +14,7 @@ QValidator::State NumberValidator::validate(QString &input, int &pos) const
     return QValidator::Intermediate;
   }
 
-  bool ok;
+  bool ok = false;
   input.toULongLong(&ok, base);
   return ok ? QValidator::Acceptable : QValidator::Invalid;
 }

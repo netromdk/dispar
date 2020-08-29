@@ -7,7 +7,7 @@ namespace dispar {
 
 class SymbolEntry {
 public:
-  SymbolEntry();
+  SymbolEntry() = default;
   SymbolEntry(quint32 index, quint64 value, const QString &strValue = {});
   SymbolEntry(const SymbolEntry &other);
   SymbolEntry(SymbolEntry &&other) noexcept;
@@ -26,9 +26,9 @@ public:
   bool operator!=(const SymbolEntry &other) const;
 
 private:
-  quint32 index_;   // of string table
-  quint64 value_;   // of symbol
-  QString strValue; // String table value
+  quint32 index_ = 0; // of string table
+  quint64 value_ = 0; // of symbol
+  QString strValue;   // String table value
 };
 
 } // namespace dispar

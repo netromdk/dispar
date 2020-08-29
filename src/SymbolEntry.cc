@@ -4,10 +4,6 @@
 
 namespace dispar {
 
-SymbolEntry::SymbolEntry() : index_(0), value_(0), strValue()
-{
-}
-
 SymbolEntry::SymbolEntry(quint32 index, quint64 value, const QString &strValue_)
   : index_{index}, value_{value}, strValue{strValue_}
 {

@@ -13,7 +13,7 @@
 
 namespace dispar {
 
-TagsEdit::TagsEdit() : address_(0)
+TagsEdit::TagsEdit()
 {
   itemDelegate = new TagItemDelegate;
   createLayout();

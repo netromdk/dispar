@@ -56,7 +56,7 @@ void OptionsDialog::onDetectInstalledDebuggers()
     items << dbg.program();
   }
 
-  bool ok;
+  bool ok = false;
   const auto chosenDbg =
     QInputDialog::getItem(this, tr("Select debugger"), tr("Debugger:"), items, 0, false, &ok);
   if (!ok || chosenDbg.isEmpty()) {

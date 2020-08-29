@@ -21,7 +21,7 @@
 namespace dispar {
 
 HexEditor::HexEditor(Section *section_, BinaryObject *object_, QWidget *parent)
-  : QDialog(parent), section(section_), object(object_), shown(false)
+  : QDialog(parent), section(section_), object(object_)
 {
   assert(section);
   assert(object);

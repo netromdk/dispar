@@ -73,19 +73,20 @@ private:
 
   Context &context;
 
-  bool shown;
-  QListWidget *symbolList_, *stringList_, *tagList_;
-  QTabWidget *tabWidget;
+  bool shown = false;
+  QListWidget *symbolList_ = nullptr, *stringList_ = nullptr, *tagList_ = nullptr;
+  QTabWidget *tabWidget = nullptr;
   QList<QListWidget *> symbolLists;
   QHash<QListWidget *, QString> listFilters;
-  QPlainTextEdit *mainView;
-  QTextDocument *doc;
+  QPlainTextEdit *mainView = nullptr;
+  QTextDocument *doc = nullptr;
   QHash<quint64, int> offsetBlock;          ///< Offset -> block
   QHash<const Section *, int> sectionBlock; ///< Section -> block
   QList<int> codeBlocks;
-  QLabel *addressLabel, *offsetLabel, *machineCodeLabel, *binaryLabel, *sizeLabel, *archLabel,
-    *fileTypeLabel;
-  TagsEdit *tagsEdit;
+  QLabel *addressLabel = nullptr, *offsetLabel = nullptr, *machineCodeLabel = nullptr,
+         *binaryLabel = nullptr, *sizeLabel = nullptr, *archLabel = nullptr,
+         *fileTypeLabel = nullptr;
+  TagsEdit *tagsEdit = nullptr;
   QHash<Section *, DisassemblyEditor *> disassemblyEditors;
   QHash<Section *, MacSdkVersionsEditor *> macSdkVersionsEditors;
   QHash<Section *, HexEditor *> hexEditors;

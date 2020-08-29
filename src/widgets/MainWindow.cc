@@ -32,8 +32,7 @@
 
 namespace dispar {
 
-MainWindow::MainWindow(const QString &file)
-  : modified(false), binaryModified(false), startupFile(file)
+MainWindow::MainWindow(const QString &file) : startupFile(file)
 {
   setTitle();
   createLayout();
@@ -384,7 +383,7 @@ void MainWindow::onLoadSuccess(const std::shared_ptr<Format> &fmt)
         }
       }
 
-      bool ok;
+      bool ok = false;
       auto choice = QInputDialog::getItem(this, tr("%1 binary objects in file").arg(objects.size()),
                                           tr("Choose:"), items, current, false, &ok);
 

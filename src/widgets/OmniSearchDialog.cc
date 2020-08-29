@@ -461,7 +461,7 @@ void OmniSearchDialog::activateItem(const QTreeWidgetItem *item)
   }
 
   case EntryType::TEXT: {
-    bool ok;
+    bool ok = false;
     const auto pos = data.toInt(&ok);
     if (ok) {
       binaryWidget->selectPosition(pos);

@@ -165,7 +165,7 @@ void TreeWidget::disassemble()
   QString text = ctxItem->text(ctxCol);
   quint64 offset{0};
   if (addrColumn != -1) {
-    bool ok;
+    bool ok = false;
     offset = ctxItem->text(addrColumn).toULongLong(&ok, 16);
     if (!ok) offset = 0;
   }
@@ -195,7 +195,7 @@ void TreeWidget::copyRow()
 
 void TreeWidget::findAddress()
 {
-  bool ok;
+  bool ok = false;
   QString text = QInputDialog::getText(this, tr("Find Address"), tr("Address (hex):"),
                                        QLineEdit::Normal, QString(), &ok);
   if (!ok || text.isEmpty()) {

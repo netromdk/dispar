@@ -27,7 +27,7 @@ void PersistentSplitter::showEvent(QShowEvent *event)
 
   const auto list = Context::get().value(settingsKey, QVariantList()).toList();
   QList<int> sizes;
-  bool ok;
+  bool ok = false;
   for (const auto &elm : list) {
     auto tmp = elm.toInt(&ok);
     if (ok) {

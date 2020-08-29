@@ -83,7 +83,7 @@ int handlePatchSdk(const std::shared_ptr<Format> &format, const Section::Type ty
       return 1;
     }
 
-    bool ok, ok2;
+    bool ok = false, ok2 = false;
     const auto major = m.captured(1).toInt(&ok);
     const auto minor = m.captured(2).toInt(&ok2);
     if (!ok || !ok2 || major < 0 || minor < 0) {

@@ -40,9 +40,9 @@ private:
   BinaryObject *object;
   QDateTime sectionModified, lastModified;
 
-  bool shown;
-  QLabel *label;
-  HexEdit *textEdit;
+  bool shown = false;
+  QLabel *label = nullptr;
+  HexEdit *textEdit = nullptr;
 
   QPointer<QProgressDialog> progDiag = nullptr;
 };

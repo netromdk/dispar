@@ -25,8 +25,8 @@ private:
   void createLayout();
 
   QList<QLineEdit *> edits;
-  QTextEdit *hexEdit, *textEdit;
-  QComboBox *encBox;
+  QTextEdit *hexEdit = nullptr, *textEdit = nullptr;
+  QComboBox *encBox = nullptr;
 };
 
 } // namespace dispar

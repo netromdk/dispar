@@ -31,10 +31,10 @@ private:
   void createLayout();
   void removeTag();
 
-  quint64 address_;
-  QListWidget *listWidget;
-  QLineEdit *lineEdit;
-  TagItemDelegate *itemDelegate;
+  quint64 address_ = 0;
+  QListWidget *listWidget = nullptr;
+  QLineEdit *lineEdit = nullptr;
+  TagItemDelegate *itemDelegate = nullptr;
 };
 
 } // namespace dispar

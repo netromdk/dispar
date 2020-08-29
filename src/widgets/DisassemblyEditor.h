@@ -40,10 +40,10 @@ private:
   BinaryObject *object;
   QDateTime sectionModified, lastModified;
 
-  bool shown;
-  QLabel *label;
-  QPushButton *updateButton;
-  TreeWidget *treeWidget;
+  bool shown = false;
+  QLabel *label = nullptr;
+  QPushButton *updateButton = nullptr;
+  TreeWidget *treeWidget = nullptr;
 };
 
 } // namespace dispar

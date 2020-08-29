@@ -29,7 +29,8 @@ private:
   Section *section;
   MacSdkVersionPatcher patcher;
 
-  QSpinBox *targetMajorSpin, *targetMinorSpin, *sdkMajorSpin, *sdkMinorSpin;
+  QSpinBox *targetMajorSpin = nullptr, *targetMinorSpin = nullptr, *sdkMajorSpin = nullptr,
+           *sdkMinorSpin = nullptr;
 
   bool shown = false;
   QDateTime sectionModified;

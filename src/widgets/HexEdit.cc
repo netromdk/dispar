@@ -250,7 +250,7 @@ void HexEdit::editAtCursor()
 
 void HexEdit::findAddress()
 {
-  bool ok;
+  bool ok = false;
   QString text = QInputDialog::getText(this, tr("Find Address"), tr("Address (hex):"),
                                        QLineEdit::Normal, QString(), &ok);
   if (!ok || text.isEmpty()) {
