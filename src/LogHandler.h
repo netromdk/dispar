@@ -29,6 +29,12 @@ public:
   LogHandler(Context &context);
   ~LogHandler() override;
 
+  LogHandler(const LogHandler &other) = delete;
+  LogHandler &operator=(const LogHandler &rhs) = delete;
+
+  LogHandler(LogHandler &&other) = delete;
+  LogHandler &operator=(LogHandler &&rhs) = delete;
+
   static void registerType();
 
   /// Log level corresponding to \p type.
