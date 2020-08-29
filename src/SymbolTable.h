@@ -14,6 +14,8 @@ public:
   using EntryList = std::vector<SymbolEntry>;
 
   SymbolTable() = default;
+  ~SymbolTable() = default;
+
   SymbolTable(const SymbolTable &other) = default;
   SymbolTable(SymbolTable &&other) = default;
 
