@@ -26,6 +26,12 @@ public:
   MainWindow(const QString &file = QString());
   ~MainWindow() override;
 
+  MainWindow(const MainWindow &other) = delete;
+  MainWindow &operator=(const MainWindow &rhs) = delete;
+
+  MainWindow(MainWindow &&other) = delete;
+  MainWindow &operator=(MainWindow &&rhs) = delete;
+
 protected:
   void showEvent(QShowEvent *event) override;
   void closeEvent(QCloseEvent *event) override;
