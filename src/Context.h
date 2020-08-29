@@ -26,6 +26,12 @@ public:
   Context();
   ~Context() override;
 
+  Context(const Context &other) = delete;
+  Context &operator=(const Context &rhs) = delete;
+
+  Context(Context &&other) = delete;
+  Context &operator=(Context &&rhs) = delete;
+
   /// Singleton instance.
   static Context &get();
 
