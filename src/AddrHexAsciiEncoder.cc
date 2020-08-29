@@ -39,6 +39,9 @@ void AddrHexAsciiEncoder::start(const bool blocking)
     }
     tasks++;
 
+    // The thread pool handles the destruction of the task, because AddrHexAsciiEncoder has
+    // QRunnable::autoDelete() enabled by default, so it isn't necessary to use std::unique_ptr or
+    // similar. NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
     auto *task = new AddrHexAsciiEncoderTask(section->data(), section->address(), i, size);
     connect(task, &AddrHexAsciiEncoderTask::result, this, &AddrHexAsciiEncoder::addResult);
 
