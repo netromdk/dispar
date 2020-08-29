@@ -20,7 +20,13 @@ public:
   class Result {
   public:
     Result(cs_insn *insn, size_t count);
-    ~Result();
+    virtual ~Result();
+
+    Result(const Result &other) = delete;
+    Result &operator=(const Result &rhs) = delete;
+
+    Result(Result &&other) = delete;
+    Result &operator=(Result &&rhs) = delete;
 
     [[nodiscard]] size_t count() const;
     [[nodiscard]] cs_insn *instructions(size_t pos) const;
@@ -34,7 +40,13 @@ public:
   };
 
   Disassembler(const BinaryObject &object, Syntax syntax = Syntax::INTEL);
-  ~Disassembler();
+  virtual ~Disassembler();
+
+  Disassembler(const Disassembler &other) = delete;
+  Disassembler &operator=(const Disassembler &rhs) = delete;
+
+  Disassembler(Disassembler &&other) = delete;
+  Disassembler &operator=(Disassembler &&rhs) = delete;
 
   [[nodiscard]] std::unique_ptr<Result> disassemble(const QByteArray &data,
                                                     quint64 baseAddr = 0) const;
