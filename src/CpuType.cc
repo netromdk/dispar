@@ -18,7 +18,7 @@ QString cpuTypeName(CpuType type)
     return "ARM";
 
   case CpuType::ARM_64:
-    return "ARM";
+    return "ARM 64";
 
   case CpuType::SPARC:
     return "SPARC";

@@ -774,33 +774,24 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
       r.read(cmdsize - off);
     }
 
-    // LC_SUB_CLIENT, LC_SUB_UMBRELLA, LC_SUB_FRAMEWORK or LC_SUB_LIBRARY
-    else if (type == 0x12 || type == 0x13 || type == 0x14 || type == 0x15) {
-      r.read(cmdsize);
-    }
+    else if (
+      // LC_SUB_CLIENT, LC_SUB_UMBRELLA, LC_SUB_FRAMEWORK or LC_SUB_LIBRARY
+      type == 0x12 || type == 0x13 || type == 0x14 || type == 0x15 ||
 
-    // LC_ROUTINES or LC_ROUTINES_64
-    else if (type == 0x11 || type == 0x1A) {
-      r.read(cmdsize);
-    }
+      // LC_ROUTINES or LC_ROUTINES_64
+      type == 0x11 || type == 0x1A ||
 
-    // LC_ENCRYPTION_INFO or LC_ENCRYPTION_INFO_64
-    else if (type == 0x21 || type == 0x2C) {
-      r.read(cmdsize);
-    }
+      // LC_ENCRYPTION_INFO or LC_ENCRYPTION_INFO_64
+      type == 0x21 || type == 0x2C ||
 
-    // LC_LINKER_OPTION
-    else if (type == 0x2D) {
-      r.read(cmdsize);
-    }
+      // LC_LINKER_OPTION
+      type == 0x2D ||
 
-    // LC_NOTE
-    else if (type == 0x31) {
-      r.read(cmdsize);
-    }
+      // LC_NOTE
+      type == 0x31 ||
 
-    // LC_BUILD_VERSION
-    else if (type == 0x32) {
+      // LC_BUILD_VERSION
+      type == 0x32) {
       r.read(cmdsize);
     }
 

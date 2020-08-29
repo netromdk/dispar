@@ -41,6 +41,7 @@ TEST(CpuType, typeNames)
   EXPECT_EQ(cpuTypeName(CpuType::X86_64), "x86 64");
   EXPECT_EQ(cpuTypeName(CpuType::HPPA), "HPPA");
   EXPECT_EQ(cpuTypeName(CpuType::ARM), "ARM");
+  EXPECT_EQ(cpuTypeName(CpuType::ARM_64), "ARM 64");
   EXPECT_EQ(cpuTypeName(CpuType::SPARC), "SPARC");
   EXPECT_EQ(cpuTypeName(CpuType::I860), "i860");
   EXPECT_EQ(cpuTypeName(CpuType::POWER_PC), "PowerPC");
