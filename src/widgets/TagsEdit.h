@@ -17,6 +17,12 @@ public:
   TagsEdit();
   ~TagsEdit() override;
 
+  TagsEdit(const TagsEdit &other) = delete;
+  TagsEdit &operator=(const TagsEdit &rhs) = delete;
+
+  TagsEdit(TagsEdit &&other) = delete;
+  TagsEdit &operator=(TagsEdit &&rhs) = delete;
+
   void setAddress(quint64 address);
 
 protected:

@@ -105,7 +105,8 @@ void TagsEdit::removeTag()
   auto tag = item->text();
   Context::get().project()->removeAddressTag(tag);
 
-  delete listWidget->takeItem(listWidget->row(item));
+  // Take the item and delete it since the list relinquishes ownership.
+  std::unique_ptr<QListWidgetItem> taken(listWidget->takeItem(listWidget->row(item)));
 }
 
 } // namespace dispar
