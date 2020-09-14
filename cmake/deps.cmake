@@ -5,21 +5,29 @@ set(QT_MINIMUM_VERSION "5.14.0")
 if (NOT WIN32)
   set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}
     "/usr/local/Cellar/qt"
+    "/usr/local/Qt-5.15.1"
+    "/usr/local/Qt-5.15.0"
+    "/usr/local/Qt-5.14.2"
     "/usr/local/Qt-5.14.1"
     "/usr/local/Qt-5.14.0"
+    "$ENV{HOME}/Qt/5.15.1/gcc_64"
+    "$ENV{HOME}/Qt/5.15.0/gcc_64"
+    "$ENV{HOME}/Qt/5.14.2/gcc_64"
     "$ENV{HOME}/Qt/5.14.1/gcc_64"
     "$ENV{HOME}/Qt/5.14.0/gcc_64"
     "/usr/local/opt"
     "/usr/local/opt/qt5"
     "/opt/local/libexec/qt5"
+    "/opt/qt515"
     "/opt/qt514"
     )
 else()
   set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}
+    "C:/Qt/5.15.1/msvc2017_64/lib/cmake"
+    "C:/Qt/5.15.0/msvc2017_64/lib/cmake"
+    "C:/Qt/5.14.2/msvc2017_64/lib/cmake"
     "C:/Qt/5.14.1/msvc2017_64/lib/cmake"
-    "C:/qt-everywhere-opensource-src-5.6.0-w64/qtbase/lib/cmake"
-    "C:/qt-everywhere-opensource-src-5.4.1-w64/qtbase/lib/cmake"
-    "C:/qt-everywhere-opensource-src-5.4.0-w64/qtbase/lib/cmake"
+    "C:/Qt/5.14.0/msvc2017_64/lib/cmake"
     )
 endif()
 
