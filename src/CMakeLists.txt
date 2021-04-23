@@ -94,6 +94,8 @@ add_library(
   formats/FormatLoader.cc
   formats/MachO.h
   formats/MachO.cc
+  formats/ELF.h
+  formats/ELF.cc
 
   AddrHexAsciiEncoder.h
   AddrHexAsciiEncoder.cc

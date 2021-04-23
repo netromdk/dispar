@@ -1,6 +1,7 @@
 #include "formats/Format.h"
 #include "BinaryObject.h"
 #include "Util.h"
+#include "formats/ELF.h"
 #include "formats/MachO.h"
 
 #include <QIODevice>
@@ -46,6 +47,12 @@ std::shared_ptr<Format> Format::detect(const QString &file)
   if (res->detect()) {
     return res;
   }
+
+  auto elf = std::make_shared<ELF>(file);
+  if (elf->detect()) {
+    return elf;
+  }
+
   return nullptr;
 }
 
@@ -54,6 +61,8 @@ QString Format::typeName(Type type)
   switch (type) {
   case Type::MACH_O:
     return "Mach-O";
+  case Type::ELF:
+    return "ELF";
   }
 
   return "";

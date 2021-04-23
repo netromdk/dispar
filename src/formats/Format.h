@@ -19,7 +19,7 @@ class BinaryObject;
 
 class Format {
 public:
-  enum class Type { MACH_O };
+  enum class Type { MACH_O, ELF };
 
   Format(Type type);
   virtual ~Format() = default;
