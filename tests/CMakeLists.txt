@@ -13,19 +13,60 @@ add_library(
 
 disable_all_warnings(gtest)
 
-add_dispar_executable(
-  ${testName}
+macro(add_dispar_test name)
+  set(targetName "test_${name}")
+  add_dispar_executable(
+    ${targetName}
 
-  main.cc
+    main.cc
 
-  testutils.h
-  testutils.cc
+    testutils.h
+    testutils.cc
+
+    binaries.qrc
+
+    ${ARGN}
+    )
+
+  add_test(
+    NAME ${name}
+    COMMAND ${targetName}
+    )
+
+  target_link_libraries(
+    ${targetName}
+    gtest
+    ${libName}
+    )
+
+  if (LINUX)
+    target_link_libraries(
+      ${targetName}
+      pthread
+      )
+  endif()
+
+  include_directories(
+    gtest/include
+    ../src
+    )
+
+  qt5_use_modules(
+    ${targetName}
+    Core
+    )
+endmacro()
+
+add_dispar_test(
+  general
 
   Version.cc
-
   Util.cc
-
   Project.cc
+  )
+
+add_dispar_test(
+  binary
 
   Reader.cc
   CStringReader.cc
@@ -38,49 +79,32 @@ add_dispar_executable(
   SymbolTable.cc
   Section.cc
   BinaryObject.cc
+  )
+
+add_dispar_test(
+  formats
 
   formats/Format.cc
   formats/FormatLoader.cc
+  )
+
+add_dispar_test(
+  formats_macho
+
   formats/MachO.cc
+  )
+
+add_dispar_test(
+  widgets
 
   widgets/NumberValidator.cc
   widgets/AsciiValidator.cc
+  )
+
+add_dispar_test(
+  misc
 
   Debugger.cc
-
   AddrHexAsciiEncoder.cc
-
   MacSdkVersionPatcher.cc
-
-  binaries.qrc
-  )
-
-add_test(
-  NAME ${testName}
-  COMMAND ${testName}
-  )
-
-if (NOT LINUX)
-  target_link_libraries(
-    ${testName}
-    gtest
-    ${libName}
-    )
-else()
-  target_link_libraries(
-    ${testName}
-    gtest
-    ${libName}
-    pthread
-    )
-endif()
-
-include_directories(
-  gtest/include
-  ../src
-  )
-
-qt5_use_modules(
-  ${testName}
-  Core
   )
