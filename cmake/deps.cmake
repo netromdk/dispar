@@ -4,22 +4,26 @@ set(QT_MINIMUM_VERSION "5.15.0")
 # Added some paths to help find the modules on some systems.
 if (NOT WIN32)
   set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}
-    "/usr/local/Cellar/qt"
+    "/usr/local/opt/qt5"
+    "/usr/local/opt"
+    "/usr/local/Qt-5.15.2"
     "/usr/local/Qt-5.15.1"
     "/usr/local/Qt-5.15.0"
     "/usr/local/Qt-5.14.2"
     "/usr/local/Qt-5.14.1"
     "/usr/local/Qt-5.14.0"
+    "/usr/local/Cellar/qt"
+    "/opt/qt515"
+    "/opt/qt514"
+    "/opt/local/libexec/qt5"
+    "$ENV{HOME}/homebrew/opt/qt@5"
+    "$ENV{HOME}/homebrew/opt/qt"
+    "$ENV{HOME}/Qt/5.15.2/gcc_64"
     "$ENV{HOME}/Qt/5.15.1/gcc_64"
     "$ENV{HOME}/Qt/5.15.0/gcc_64"
     "$ENV{HOME}/Qt/5.14.2/gcc_64"
     "$ENV{HOME}/Qt/5.14.1/gcc_64"
     "$ENV{HOME}/Qt/5.14.0/gcc_64"
-    "/usr/local/opt"
-    "/usr/local/opt/qt5"
-    "/opt/local/libexec/qt5"
-    "/opt/qt515"
-    "/opt/qt514"
     )
 else()
   set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}
