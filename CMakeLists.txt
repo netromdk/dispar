@@ -250,7 +250,7 @@ endif()
 message(STATUS "Detected processor count: ${CPU_COUNT}")
 message(STATUS "Building test suite: ${BUILD_TESTS}")
 
-if (CCACHE)
+if (USE_CCACHE)
   message(STATUS "CCache: ${CCACHE} (using to speed up compile + link)")
 else()
   message(STATUS "CCache: OFF")
