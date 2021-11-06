@@ -761,7 +761,7 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
       if (!ok) return false;
 
       // Data.
-      r.read(flavor * count);
+      r.read(qint64(flavor) * qint64(count));
     }
 
     // LC_RPATH
