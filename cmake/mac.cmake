@@ -1,4 +1,4 @@
-set(SDK_MIN 10.8)
+set(SDK_MIN 10.13)
 
 # Try to pick the newest!
 set(SDKS 10.15 10.14 10.13 10.12 10.11 10.10 10.9 10.8)
