@@ -1,5 +1,5 @@
 # Qt 5
-set(QT_MINIMUM_VERSION "5.14.0")
+set(QT_MINIMUM_VERSION "5.15.0")
 
 # Added some paths to help find the modules on some systems.
 if (NOT WIN32)
