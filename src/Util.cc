@@ -16,6 +16,7 @@
 #include <QTreeWidgetItem>
 #include <QXmlStreamReader>
 
+#include <array>
 #include <cctype>
 #include <cmath>
 #include <utility>
