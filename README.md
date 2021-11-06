@@ -1,4 +1,6 @@
-[![Build Status](https://travis-ci.org/netromdk/dispar.svg?branch=master)](https://travis-ci.org/netromdk/dispar)
+[![Test](https://github.com/netromdk/dispar/actions/workflows/test.yml/badge.svg)](https://github.com/netromdk/dispar/actions/)
+[![Clang Sanitizers](https://github.com/netromdk/dispar/actions/workflows/test-sanitizers.yml/badge.svg)](https://github.com/netromdk/dispar/actions/)
+[![CodeQL](https://github.com/netromdk/dispar/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/netromdk/dispar/security/code-scanning/)
 
 # dispar
 Dispar is short for "[Dis]assemling binary [Par]ser" written in C++17. The whole concept of the project is to load binaries, like executables, libraries, core dumps etc., and do analysis of their structure and data; most notably their strings, symbols, and functions. Currently, it supports only 32+64 bit [Mach-O](https://en.wikipedia.org/wiki/Mach-O) binaries (including [universal binaries](https://en.wikipedia.org/wiki/Universal_binary)) but there are plans for supporting [ELF](https://en.wikipedia.org/wiki/Executable_and_Linkable_Format) and [PE/PE+](https://en.wikipedia.org/wiki/Portable_Executable) later on.
@@ -25,7 +27,7 @@ There are both external and internal libraries and tools required to build and r
 
 ## External
 * CMake 3.12+
-* Qt 5.14+
+* Qt 5.15+
   * QtCore
   * QtGui
   * QtWidgets
