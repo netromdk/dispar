@@ -321,7 +321,7 @@ void DisassemblyEditor::markModifiedRegions()
     }
 
     addr = item->text(0).toULongLong(nullptr, 16) - offset;
-    int size = item->text(1).split(" ", QString::SkipEmptyParts).size();
+    int size = item->text(1).split(" ", Qt::SkipEmptyParts).size();
     for (const auto &reg : modRegs) {
       const auto first = static_cast<quint64>(reg.position());
       if (first >= addr && first < addr + size) {
@@ -332,7 +332,7 @@ void DisassemblyEditor::markModifiedRegions()
         for (int row2 = row + 1; row2 < rows; row2++) {
           auto *item2 = treeWidget->topLevelItem(row2);
           if (item2 != nullptr) {
-            int size2 = item2->text(1).split(" ", QString::SkipEmptyParts).size();
+            int size2 = item2->text(1).split(" ", Qt::SkipEmptyParts).size();
             Util::setTreeItemMarked(item2, 1);
             excess -= size2;
             if (excess <= 0) break;

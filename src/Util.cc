@@ -93,7 +93,7 @@ QString Util::hexToUnicode(const QString &str)
   QString res;
 
   // Split on whitespace and treat each part separately.
-  for (const auto &part : str.split(QRegularExpression("\\s+"), QString::SkipEmptyParts)) {
+  for (const auto &part : str.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts)) {
     int blocksize = part.size();
     if (blocksize < 2 || blocksize > 4) {
       blocksize = 2;
