@@ -1,0 +1,62 @@
+name: Test
+
+# On all pushes to branches and pull requests in general.
+on:
+  push:
+  pull_request:
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        # NOTE: Windows stalls on linking for some reason. Disabled for now.
+        # os: [windows-latest, macos-latest, ubuntu-latest]
+        os: [macos-latest, ubuntu-latest]
+
+        include:
+          - os: macos-latest
+            install_script_name: ./scripts/actions/install.sh
+            cmake_generator: -G Ninja
+          - os: ubuntu-latest
+            install_script_name: ./scripts/actions/install.sh
+            cmake_generator: -G Ninja
+          # - os: windows-latest
+          #   install_script_name: ./scripts/actions/install.sh
+          #   cmake_generator: # use default
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Initialize Git submodules
+      run: git submodule update --init --recursive
+
+    - name: Install dependencies
+      run: ${{matrix.install_script_name}}
+
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v1  # not v2!
+      with:
+        path: ../Qt
+        key: ${{matrix.os}}-QtCache
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2
+      with:
+        version: '5.15.2'
+        setup-python: 'false'
+        cached: '${{steps.cache-qt.outputs.cache-hit}}'
+
+    - name: Configure cmake
+      run: cmake -B ${{github.workspace}}/build ${{matrix.cmake_generator}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DBUILD_TESTS=ON
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --verbose
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      run: ctest -C ${{env.BUILD_TYPE}} --output-on-failure
