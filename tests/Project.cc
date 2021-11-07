@@ -1,3 +1,5 @@
+#include <QSignalSpy>
+
 #include "gtest/gtest.h"
 
 #include "testutils.h"
@@ -76,19 +78,23 @@ TEST(Project, addTag)
   QString tag("tag");
 
   {
-    auto spy = SIGNAL_SPY_ZERO(&p, &Project::tagsChanged);
-    auto spy2 = SIGNAL_SPY_ZERO(&p, &Project::modified);
+    QSignalSpy tagsChangedSpy(&p, &Project::tagsChanged);
+    QSignalSpy modifiedSpy(&p, &Project::modified);
+
     EXPECT_TRUE(p.addAddressTag(tag, addr));
+
+    EXPECT_EQ(1, tagsChangedSpy.count());
+    EXPECT_EQ(1, modifiedSpy.count());
   }
 
   {
-    auto spy = SIGNAL_SPY_ZERO(&p, &Project::tagsChanged);
-    spy->setExpect(false);
-
-    auto spy2 = SIGNAL_SPY_ZERO(&p, &Project::modified);
-    spy2->setExpect(false);
+    QSignalSpy tagsChangedSpy(&p, &Project::tagsChanged);
+    QSignalSpy modifiedSpy(&p, &Project::modified);
 
     EXPECT_FALSE(p.addAddressTag(tag, addr)); // Ignore existent.
+
+    EXPECT_EQ(0, tagsChangedSpy.count());
+    EXPECT_EQ(0, modifiedSpy.count());
   }
 
   auto tags = p.addressTags(addr);
@@ -96,15 +102,15 @@ TEST(Project, addTag)
   EXPECT_EQ(tags[0], tag);
 
   {
-    auto spy = SIGNAL_SPY_ZERO(&p, &Project::tagsChanged);
-    spy->setExpect(false);
-
-    auto spy2 = SIGNAL_SPY_ZERO(&p, &Project::modified);
-    spy2->setExpect(false);
+    QSignalSpy tagsChangedSpy(&p, &Project::tagsChanged);
+    QSignalSpy modifiedSpy(&p, &Project::modified);
 
     // Can't add same tag to different address.
     quint64 addr2 = 0x4321;
     EXPECT_FALSE(p.addAddressTag(tag, addr2));
+
+    EXPECT_EQ(0, tagsChangedSpy.count());
+    EXPECT_EQ(0, modifiedSpy.count());
   }
 }
 
@@ -122,20 +128,24 @@ TEST(Project, removeTag)
   EXPECT_EQ(tags[0], tag);
 
   {
-    auto spy = SIGNAL_SPY_ZERO(&p, &Project::tagsChanged);
-    auto spy2 = SIGNAL_SPY_ZERO(&p, &Project::modified);
+    QSignalSpy tagsChangedSpy(&p, &Project::tagsChanged);
+    QSignalSpy modifiedSpy(&p, &Project::modified);
+
     EXPECT_TRUE(p.removeAddressTag(tag));
+
+    EXPECT_EQ(1, tagsChangedSpy.count());
+    EXPECT_EQ(1, modifiedSpy.count());
   }
 
   {
-    auto spy = SIGNAL_SPY_ZERO(&p, &Project::tagsChanged);
-    spy->setExpect(false);
-
-    auto spy2 = SIGNAL_SPY_ZERO(&p, &Project::modified);
-    spy2->setExpect(false);
+    QSignalSpy tagsChangedSpy(&p, &Project::tagsChanged);
+    QSignalSpy modifiedSpy(&p, &Project::modified);
 
     // Not removed because already removed.
     EXPECT_FALSE(p.removeAddressTag(tag));
+
+    EXPECT_EQ(0, tagsChangedSpy.count());
+    EXPECT_EQ(0, modifiedSpy.count());
   }
 
   EXPECT_EQ(p.addressTags(addr).size(), 0);
@@ -157,20 +167,24 @@ TEST(Project, removeTags)
 
   QStringList tags{tag, tag2};
   {
-    auto spy = SIGNAL_SPY_ZERO(&p, &Project::tagsChanged);
-    auto spy2 = SIGNAL_SPY_ZERO(&p, &Project::modified);
+    QSignalSpy tagsChangedSpy(&p, &Project::tagsChanged);
+    QSignalSpy modifiedSpy(&p, &Project::modified);
+
     EXPECT_TRUE(p.removeAddressTags(tags));
+
+    EXPECT_EQ(1, tagsChangedSpy.count());
+    EXPECT_EQ(1, modifiedSpy.count());
   }
 
   {
-    auto spy = SIGNAL_SPY_ZERO(&p, &Project::tagsChanged);
-    spy->setExpect(false);
-
-    auto spy2 = SIGNAL_SPY_ZERO(&p, &Project::modified);
-    spy2->setExpect(false);
+    QSignalSpy tagsChangedSpy(&p, &Project::tagsChanged);
+    QSignalSpy modifiedSpy(&p, &Project::modified);
 
     // Not removed because already removed.
     EXPECT_FALSE(p.removeAddressTags(tags));
+
+    EXPECT_EQ(0, tagsChangedSpy.count());
+    EXPECT_EQ(0, modifiedSpy.count());
   }
 
   EXPECT_EQ(p.addressTags(addr).size(), 0);

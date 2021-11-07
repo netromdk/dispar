@@ -1,3 +1,5 @@
+#include <QSignalSpy>
+
 #include "gtest/gtest.h"
 
 #include "testutils.h"
@@ -9,13 +11,13 @@ TEST(FormatLoader, failedNonexistent)
 {
   FormatLoader loader("_/something/that/does/not/exist");
 
-  auto failedSpy = SIGNAL_SPY_ONE(const QString &, &loader, &FormatLoader::failed);
-
-  auto successSpy = SIGNAL_SPY_ONE(std::shared_ptr<Format>, &loader, &FormatLoader::success);
-  successSpy->setExpect(false);
+  QSignalSpy failedSpy(&loader, &FormatLoader::failed);
+  QSignalSpy successSpy(&loader, &FormatLoader::success);
 
   loader.start();
-  failedSpy->wait();
+
+  EXPECT_TRUE(failedSpy.wait());
+  EXPECT_EQ(0, successSpy.count());
 }
 
 TEST(FormatLoader, failedCouldNotDetect)
@@ -23,13 +25,13 @@ TEST(FormatLoader, failedCouldNotDetect)
   auto file = tempFile();
   FormatLoader loader(file->fileName());
 
-  auto failedSpy = SIGNAL_SPY_ONE(const QString &, &loader, &FormatLoader::failed);
-
-  auto successSpy = SIGNAL_SPY_ONE(std::shared_ptr<Format>, &loader, &FormatLoader::success);
-  successSpy->setExpect(false);
+  QSignalSpy failedSpy(&loader, &FormatLoader::failed);
+  QSignalSpy successSpy(&loader, &FormatLoader::success);
 
   loader.start();
-  failedSpy->wait();
+
+  EXPECT_TRUE(failedSpy.wait());
+  EXPECT_EQ(0, successSpy.count());
 }
 
 TEST(FormatLoader, failedCouldNotParse)
@@ -46,38 +48,34 @@ TEST(FormatLoader, failedCouldNotParse)
   auto file = tempFile(data);
   FormatLoader loader(file->fileName());
 
-  auto failedSpy = SIGNAL_SPY_ONE(const QString &, &loader, &FormatLoader::failed);
-
-  auto successSpy = SIGNAL_SPY_ONE(std::shared_ptr<Format>, &loader, &FormatLoader::success);
-  successSpy->setExpect(false);
+  QSignalSpy failedSpy(&loader, &FormatLoader::failed);
+  QSignalSpy successSpy(&loader, &FormatLoader::success);
 
   loader.start();
-  failedSpy->wait();
+
+  EXPECT_TRUE(failedSpy.wait());
+  EXPECT_EQ(0, successSpy.count());
 }
 
 TEST(FormatLoader, success)
 {
   FormatLoader loader(":macho_main");
 
-  auto statusSpy = SIGNAL_SPY_ONE(const QString &, &loader, &FormatLoader::status);
-
-  auto progressSpy =
-    SIGNAL_SPY_ONE_FUNC(float, &loader, &FormatLoader::progress, [](float progress) {
-      static int cnt = 0;
-      cnt++;
-      if (cnt == 1) {
-        EXPECT_FLOAT_EQ(progress, 0.5);
-      }
-      else if (cnt == 2) {
-        EXPECT_FLOAT_EQ(progress, 1);
-      }
-    });
-
-  auto successSpy = SIGNAL_SPY_ONE(std::shared_ptr<Format>, &loader, &FormatLoader::success);
+  QSignalSpy failedSpy(&loader, &FormatLoader::failed);
+  QSignalSpy successSpy(&loader, &FormatLoader::success);
+  QSignalSpy statusSpy(&loader, &FormatLoader::status);
+  QSignalSpy progressSpy(&loader, &FormatLoader::progress);
 
   loader.start();
 
-  statusSpy->wait();
-  progressSpy->wait();
-  successSpy->wait();
+  EXPECT_TRUE(successSpy.wait());
+  EXPECT_EQ(0, failedSpy.count());
+
+  // "Detected..." + "Success"
+  EXPECT_EQ(2, statusSpy.count());
+
+  // 0.5 + 1
+  ASSERT_EQ(2, progressSpy.count());
+  EXPECT_FLOAT_EQ(0.5f, progressSpy[0][0].toFloat());
+  EXPECT_FLOAT_EQ(1.0f, progressSpy[1][0].toFloat());
 }
