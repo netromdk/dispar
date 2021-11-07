@@ -1,1 +1,3 @@
-src:*qsignalspy.h
+[thread]
+src:*/qsignalspy.h
+src:*/dispar/tests/formats/FormatLoader.cc
