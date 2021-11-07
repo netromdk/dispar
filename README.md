@@ -62,7 +62,7 @@ A suite of software tests can be run like this:
 ```
 % cmake -DBUILD_TESTS=ON .
 % make
-% ./bin/tests
+% ctest
 ```
 
 # Contributing
