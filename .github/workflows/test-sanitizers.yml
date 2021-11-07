@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        sanitizer: [ADDRESS_SANITIZER, THREAD_SANITIZER]
+        sanitizer: [ADDRESS_SANITIZER, THREAD_SANITIZER, UNDEFINED_SANITIZER]
 
     steps:
     - uses: actions/checkout@v2
