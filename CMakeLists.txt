@@ -174,7 +174,7 @@ if (CODE_COVERAGE)
   add_custom_target(
     codecov
 
-    sh ${CMAKE_SOURCE_DIR}/scripts/code_coverage.sh "${CMAKE_CURRENT_BINARY_DIR}" "$<TARGET_FILE:${testName}>" "${LLVM_PROFDATA}" "${LLVM_COV}"
+    sh ${CMAKE_SOURCE_DIR}/scripts/code_coverage.sh "${CMAKE_CURRENT_BINARY_DIR}" "${LLVM_PROFDATA}" "${LLVM_COV}"
 
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     USES_TERMINAL
