@@ -58,6 +58,7 @@ macro(add_dispar_test name)
   qt5_use_modules(
     ${targetName}
     Core
+    Test
     )
 endmacro()
 

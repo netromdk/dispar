@@ -72,4 +72,8 @@ elseif (LINUX)
   requireQtModule(Qt5DBus)
 endif()
 
+if (BUILD_TESTS)
+  requireQtModule(Qt5Test)
+endif()
+
 set(FOUND_QT YES)
