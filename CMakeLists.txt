@@ -126,7 +126,6 @@ set(MINOR_VERSION ${num})
 # Names
 set(libName core)
 set(binName dispar)
-set(testName tests)
 
 if (BUILD_TESTS)
   include(CTest)
@@ -180,7 +179,7 @@ if (CODE_COVERAGE)
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     USES_TERMINAL
     COMMENT "Generating test code coverage report"
-    DEPENDS ${testName}
+    DEPENDS tests
     )
 endif()
 

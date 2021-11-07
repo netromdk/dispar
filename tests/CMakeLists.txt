@@ -13,6 +13,8 @@ add_library(
 
 disable_all_warnings(gtest)
 
+add_custom_target(tests)
+
 macro(add_dispar_test name)
   set(targetName "test_${name}")
   add_dispar_executable(
@@ -27,6 +29,8 @@ macro(add_dispar_test name)
 
     ${ARGN}
     )
+
+  add_dependencies(tests ${targetName})
 
   add_test(
     NAME ${name}
