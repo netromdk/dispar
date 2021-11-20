@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "BinaryObject.h"
+#include "Constants.h"
 using namespace dispar;
 
 TEST(BinaryObject, instantiate)
@@ -30,10 +31,10 @@ TEST(BinaryObject, cpuSubType)
 TEST(BinaryObject, isLittleEndian)
 {
   BinaryObject b;
-  EXPECT_TRUE(b.isLittleEndian());
+  EXPECT_TRUE(b.endianness() == Constants::Endianness::Little);
 
-  b.setLittleEndian(false);
-  EXPECT_FALSE(b.isLittleEndian());
+  b.setEndianness(Constants::Endianness::Big);
+  EXPECT_TRUE(b.endianness() == Constants::Endianness::Big);
 }
 
 TEST(BinaryObject, systemBits)

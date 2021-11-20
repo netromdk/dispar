@@ -1,22 +1,24 @@
 #include "Reader.h"
+#include "Constants.h"
 
 #include <QByteArray>
 #include <QIODevice>
 
 namespace dispar {
 
-Reader::Reader(QIODevice &dev_, bool littleEndian_) : dev(dev_), littleEndian(littleEndian_)
+Reader::Reader(QIODevice &dev_, Constants::Endianness endianness_)
+  : dev(dev_), endianness_(endianness_)
 {
 }
 
-bool Reader::isLittleEndian() const
+Constants::Endianness Reader::endianness() const
 {
-  return littleEndian;
+  return endianness_;
 }
 
-void Reader::setLittleEndian(bool little)
+void Reader::setEndianness(Constants::Endianness endianness)
 {
-  littleEndian = little;
+  endianness_ = endianness;
 }
 
 quint16 Reader::getUInt16(bool *ok)
@@ -113,7 +115,7 @@ T Reader::getUInt(bool *ok)
   T res{0};
   for (int i = 0; i < num; i++) {
     int j = i;
-    if (!littleEndian) {
+    if (endianness_ == Constants::Endianness::Big) {
       j = num - (i + 1);
     }
     res += ((T) static_cast<unsigned char>(buf[i])) << j * 8;

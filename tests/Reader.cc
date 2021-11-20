@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 
+#include "Constants.h"
 #include "Reader.h"
 using namespace dispar;
 
@@ -28,7 +29,7 @@ TEST(Reader, instantiate)
 {
   QBuffer buf;
   Reader reader(buf);
-  EXPECT_TRUE(reader.isLittleEndian());
+  EXPECT_TRUE(reader.endianness() == Constants::Endianness::Little);
 }
 
 TEST_F(ReaderTest, read)
@@ -176,7 +177,7 @@ TEST_F(ReaderTest, getUInt16BigEndian)
   array.append(2);
   array.append(1);
 
-  reader->setLittleEndian(false);
+  reader->setEndianness(Constants::Endianness::Big);
 
   bool ok;
   auto tmp = reader->getUInt16(&ok);
@@ -216,7 +217,7 @@ TEST_F(ReaderTest, getUInt32BigEndian)
   array.append(2);
   array.append(1);
 
-  reader->setLittleEndian(false);
+  reader->setEndianness(Constants::Endianness::Big);
 
   bool ok;
   auto tmp = reader->getUInt32(&ok);
@@ -266,7 +267,7 @@ TEST_F(ReaderTest, getUInt64BigEndian)
   array.append(2);
   array.append(1);
 
-  reader->setLittleEndian(false);
+  reader->setEndianness(Constants::Endianness::Big);
 
   bool ok;
   auto tmp = reader->getUInt64(&ok);

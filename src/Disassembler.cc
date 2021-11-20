@@ -1,5 +1,6 @@
 #include "Disassembler.h"
 #include "BinaryObject.h"
+#include "Constants.h"
 #include "Util.h"
 
 #include <cassert>
@@ -62,7 +63,8 @@ Disassembler::Disassembler(const BinaryObject &object, Syntax syntax)
   }
 
   int mode = (object.systemBits() == 32 ? cs_mode::CS_MODE_32 : cs_mode::CS_MODE_64);
-  mode += (object.isLittleEndian() ? cs_mode::CS_MODE_LITTLE_ENDIAN : cs_mode::CS_MODE_BIG_ENDIAN);
+  mode += (object.endianness() == Constants::Endianness::Little ? cs_mode::CS_MODE_LITTLE_ENDIAN
+                                                                : cs_mode::CS_MODE_BIG_ENDIAN);
 
   cs_err err = cs_open(arch, static_cast<cs_mode>(mode), &handle);
   if (err != 0U) {

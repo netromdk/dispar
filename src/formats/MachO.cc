@@ -4,6 +4,7 @@
 #include <cmath>
 
 #include "BinaryObject.h"
+#include "Constants.h"
 #include "Reader.h"
 #include "Util.h"
 #include "formats/MachO.h"
@@ -54,7 +55,7 @@ bool MachO::parse()
   // Check if this is a universal "fat" binary.
   if (magic == 0xCAFEBABE || magic == 0xBEBAFECA) {
     // Values are saved as big-endian so read as such.
-    r.setLittleEndian(false);
+    r.setEndianness(Constants::Endianness::Big);
 
     quint32 nfat_arch = r.getUInt32(&ok);
     if (!ok) return false;
@@ -115,36 +116,36 @@ bool MachO::parseHeader(quint32 offset, quint32 size, Reader &r)
   auto binaryObject = std::make_unique<BinaryObject>();
 
   r.seek(offset);
-  r.setLittleEndian(true);
+  r.setEndianness(Constants::Endianness::Little);
 
   bool ok = false;
   quint32 magic = r.getUInt32(&ok);
   if (!ok) return false;
 
   int systemBits{32};
-  bool littleEndian{true};
+  auto endianness{Constants::Endianness::Little};
   if (magic == 0xFEEDFACE) {
     systemBits = 32;
-    littleEndian = true;
+    endianness = Constants::Endianness::Little;
   }
   else if (magic == 0xFEEDFACF) {
     systemBits = 64;
-    littleEndian = true;
+    endianness = Constants::Endianness::Little;
   }
   else if (magic == 0xECAFDEEF) {
     systemBits = 32;
-    littleEndian = false;
+    endianness = Constants::Endianness::Big;
   }
   else if (magic == 0xFCAFDEEF) {
     systemBits = 64;
-    littleEndian = false;
+    endianness = Constants::Endianness::Big;
   }
 
   binaryObject->setSystemBits(systemBits);
-  binaryObject->setLittleEndian(littleEndian);
+  binaryObject->setEndianness(endianness);
 
   // Read info in the endianness of the file.
-  r.setLittleEndian(littleEndian);
+  r.setEndianness(endianness);
 
   quint32 cputype = 0, cpusubtype = 0, filetype = 0, ncmds = 0, sizeofcmds = 0, flags = 0;
 
