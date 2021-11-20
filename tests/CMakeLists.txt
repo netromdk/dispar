@@ -15,17 +15,46 @@ disable_all_warnings(gtest)
 
 add_custom_target(tests)
 
+include_directories(
+  gtest/include
+  ../src
+  )
+
+add_library(
+  test_util
+  STATIC
+
+  main.cc
+
+  testutils.h
+  testutils.cc
+
+  binaries.qrc
+  )
+
+target_link_libraries(
+  test_util
+  gtest
+  ${libName}
+  )
+
+if (LINUX)
+  target_link_libraries(
+    test_util
+    pthread
+    )
+endif()
+
+qt5_use_modules(
+  test_util
+  Core
+  Test
+  )
+
 macro(add_dispar_test name)
   set(targetName "test_${name}")
   add_dispar_executable(
     ${targetName}
-
-    main.cc
-
-    testutils.h
-    testutils.cc
-
-    binaries.qrc
 
     ${ARGN}
     )
@@ -39,26 +68,7 @@ macro(add_dispar_test name)
 
   target_link_libraries(
     ${targetName}
-    gtest
-    ${libName}
-    )
-
-  if (LINUX)
-    target_link_libraries(
-      ${targetName}
-      pthread
-      )
-  endif()
-
-  include_directories(
-    gtest/include
-    ../src
-    )
-
-  qt5_use_modules(
-    ${targetName}
-    Core
-    Test
+    test_util
     )
 endmacro()
 
