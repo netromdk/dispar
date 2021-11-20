@@ -5,6 +5,7 @@
 #include <QEventLoop>
 #include <QMutexLocker>
 #include <QThread>
+#include <QTimer>
 
 #include <algorithm>
 
@@ -43,7 +44,11 @@ void AddrHexAsciiEncoder::start(const bool blocking)
     // QRunnable::autoDelete() enabled by default, so it isn't necessary to use std::unique_ptr or
     // similar. NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
     auto *task = new AddrHexAsciiEncoderTask(section->data(), section->address(), i, size);
-    connect(task, &AddrHexAsciiEncoderTask::result, this, &AddrHexAsciiEncoder::addResult);
+
+    // It is very important that it is a blocking queued connection such that the task isn't
+    // destroyed before the signal is processed.
+    connect(task, &AddrHexAsciiEncoderTask::result, this, &AddrHexAsciiEncoder::addResult,
+            Qt::BlockingQueuedConnection);
 
     // Takes ownership and starts task.
     pool.start(task);
@@ -66,16 +71,27 @@ void AddrHexAsciiEncoder::addResult(const quint64 index, const QString &result)
   QMutexLocker locker(&mutex);
   results.append({index, result});
 
+  bool done = false;
   if (results.size() == tasks) {
     std::sort(results.begin(), results.end(),
               [](const auto &a, const auto &b) { return a.index < b.index; });
+
     QStringList totals;
     for (const auto &res : results) {
       totals.append(res.data);
     }
     result_ = totals.join("\n");
+    done = true;
+  }
 
-    emit finished();
+  locker.unlock();
+  if (done) {
+    // Emit finished afte returning from this function because the task will only get destroyed
+    // afterwards due to Qt::BlockingQueuedConnection.
+    QTimer::singleShot(1, [this] {
+      pool.waitForDone(); // Wait for threads to get destroyed.
+      emit finished();
+    });
   }
 }
 
