@@ -1,3 +1,1 @@
-[thread]
-src:*/qsignalspy.h
-src:*/dispar/tests/formats/FormatLoader.cc
+# Nothing on the blacklist for now.
