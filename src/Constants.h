@@ -79,6 +79,11 @@ static const QString VERSION("2.27");
 
 } // namespace Deps
 
+enum class Endianness {
+  Little,
+  Big,
+};
+
 } // namespace dispar::Constants
 
 #endif // SRC_CONSTANTS_H
