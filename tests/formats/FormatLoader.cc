@@ -16,7 +16,11 @@ TEST(FormatLoader, failedNonexistent)
 
   loader.start();
 
-  EXPECT_TRUE(failedSpy.wait());
+  // Wait for thread to complete such that proper cleanup is done. AND
+  // it also means TSAN doesn't show a lot of errors.
+  loader.wait();
+
+  EXPECT_EQ(1, failedSpy.count());
   EXPECT_EQ(0, successSpy.count());
 }
 
@@ -29,8 +33,9 @@ TEST(FormatLoader, failedCouldNotDetect)
   QSignalSpy successSpy(&loader, &FormatLoader::success);
 
   loader.start();
+  loader.wait();
 
-  EXPECT_TRUE(failedSpy.wait());
+  EXPECT_EQ(1, failedSpy.count());
   EXPECT_EQ(0, successSpy.count());
 }
 
@@ -52,8 +57,9 @@ TEST(FormatLoader, failedCouldNotParse)
   QSignalSpy successSpy(&loader, &FormatLoader::success);
 
   loader.start();
+  loader.wait();
 
-  EXPECT_TRUE(failedSpy.wait());
+  EXPECT_EQ(1, failedSpy.count());
   EXPECT_EQ(0, successSpy.count());
 }
 
@@ -67,8 +73,9 @@ TEST(FormatLoader, success)
   QSignalSpy progressSpy(&loader, &FormatLoader::progress);
 
   loader.start();
+  loader.wait();
 
-  EXPECT_TRUE(successSpy.wait());
+  EXPECT_EQ(1, successSpy.count());
   EXPECT_EQ(0, failedSpy.count());
 
   // "Detected..." + "Success"
