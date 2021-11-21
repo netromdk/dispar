@@ -3,6 +3,7 @@
 #include "testutils.h"
 
 #include "BinaryObject.h"
+#include "Constants.h"
 #include "CpuType.h"
 #include "Disassembler.h"
 using namespace dispar;
@@ -22,7 +23,8 @@ TEST(Disassembler, valid)
   }
 
   {
-    auto obj = std::make_unique<BinaryObject>(CpuType::X86_64, CpuType::I386, true, 64);
+    auto obj = std::make_unique<BinaryObject>(CpuType::X86_64, CpuType::I386,
+                                              Constants::Endianness::Little, 64);
     Disassembler dis(*obj.get());
     EXPECT_TRUE(dis.valid());
   }

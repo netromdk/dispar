@@ -1,12 +1,13 @@
 #include "BinaryObject.h"
+#include "Constants.h"
 #include "CpuType.h"
 #include "cxx.h"
 
 namespace dispar {
 
-BinaryObject::BinaryObject(CpuType cpuType, CpuType cpuSubType, bool littleEndian_, int systemBits,
-                           FileType fileType)
-  : cpuType_{cpuType}, cpuSubType_{cpuSubType}, littleEndian{littleEndian_},
+BinaryObject::BinaryObject(CpuType cpuType, CpuType cpuSubType, Constants::Endianness endianness_,
+                           int systemBits, FileType fileType)
+  : cpuType_{cpuType}, cpuSubType_{cpuSubType}, endianness_{endianness_},
     systemBits_{systemBits}, fileType_{fileType}
 {
   setCpuType(cpuType);
@@ -35,14 +36,14 @@ void BinaryObject::setCpuSubType(CpuType type)
   cpuSubType_ = type;
 }
 
-bool BinaryObject::isLittleEndian() const
+Constants::Endianness BinaryObject::endianness() const
 {
-  return littleEndian;
+  return endianness_;
 }
 
-void BinaryObject::setLittleEndian(bool little)
+void BinaryObject::setEndianness(Constants::Endianness endianness)
 {
-  littleEndian = little;
+  endianness_ = endianness;
 }
 
 int BinaryObject::systemBits() const
@@ -72,7 +73,7 @@ QString BinaryObject::toString() const
     .arg(cpuTypeName(cpuSubType()))
     .arg(systemBits())
     .arg(fileTypeName(fileType()))
-    .arg(isLittleEndian() ? "Little" : "Big")
+    .arg(endianness_ == Constants::Endianness::Little ? "Little" : "Big")
     .arg(sections().size());
 }
 

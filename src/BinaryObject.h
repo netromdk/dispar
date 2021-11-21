@@ -6,6 +6,7 @@
 #include <memory>
 #include <vector>
 
+#include "Constants.h"
 #include "CpuType.h"
 #include "FileType.h"
 #include "Section.h"
@@ -16,8 +17,8 @@ namespace dispar {
 class BinaryObject {
 public:
   BinaryObject(CpuType cpuType = CpuType::X86, CpuType cpuSubType = CpuType::I386,
-               bool littleEndian = true, int systemBits = 32,
-               FileType fileType = FileType::EXECUTE);
+               Constants::Endianness endianness = Constants::Endianness::Little,
+               int systemBits = 32, FileType fileType = FileType::EXECUTE);
 
   [[nodiscard]] CpuType cpuType() const;
   void setCpuType(CpuType type);
@@ -25,8 +26,9 @@ public:
   [[nodiscard]] CpuType cpuSubType() const;
   void setCpuSubType(CpuType type);
 
-  [[nodiscard]] bool isLittleEndian() const;
-  void setLittleEndian(bool little);
+  [[nodiscard]] Constants::Endianness endianness() const;
+
+  void setEndianness(Constants::Endianness endianness);
 
   [[nodiscard]] int systemBits() const;
   void setSystemBits(int bits);
@@ -57,7 +59,7 @@ public:
 
 private:
   CpuType cpuType_, cpuSubType_;
-  bool littleEndian;
+  Constants::Endianness endianness_;
   int systemBits_;
   FileType fileType_;
   std::vector<std::unique_ptr<Section>> sections_;

@@ -19,7 +19,7 @@ static const int DEFAULT_LIMIT = 1000;
 static const int MIN_LIMIT = 10;
 static const int MAX_LIMIT = 100000;
 
-}
+} // namespace Omni
 
 namespace Log {
 
@@ -78,6 +78,11 @@ static const QString VERSION("2.27");
 } // namespace Libiberty
 
 } // namespace Deps
+
+enum class Endianness {
+  Little,
+  Big,
+};
 
 } // namespace dispar::Constants
 

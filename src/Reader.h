@@ -1,6 +1,7 @@
 #ifndef DISPAR_READER_H
 #define DISPAR_READER_H
 
+#include "Constants.h"
 #include <QtGlobal>
 
 class QIODevice;
@@ -10,10 +11,11 @@ namespace dispar {
 
 class Reader {
 public:
-  Reader(QIODevice &dev, bool littleEndian = true);
+  Reader(QIODevice &dev, Constants::Endianness endianness = Constants::Endianness::Little);
 
-  [[nodiscard]] bool isLittleEndian() const;
-  void setLittleEndian(bool little);
+  [[nodiscard]] Constants::Endianness endianness() const;
+
+  void setEndianness(Constants::Endianness);
 
   /// Read 2 bytes = 16 bits.
   quint16 getUInt16(bool *ok = nullptr);
@@ -42,7 +44,7 @@ private:
   T getUInt(bool *ok = nullptr);
 
   QIODevice &dev;
-  bool littleEndian;
+  Constants::Endianness endianness_;
 };
 
 } // namespace dispar
